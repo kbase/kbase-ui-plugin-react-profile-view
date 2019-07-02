@@ -1,0 +1,23 @@
+## Plugin Configuration
+---
+package:
+  author: Akiyo Marukawa
+  name: React UI Profile View
+  description: KBase profile view plugin built with React.
+  type: iframe
+install:
+  routes:
+    - path: ["example-hello"]
+      queryParams:
+        path: { literal: ["main"] }
+      widget: kb_iframe_loader
+      authorization: true 
+      # TODO: get rid of this!!
+      params:
+        plugin: example-hello
+  menu:
+    - name: example-hello
+      definition:
+        path: ["example-hello"]
+        label: Example Hello
+        icon: flask
