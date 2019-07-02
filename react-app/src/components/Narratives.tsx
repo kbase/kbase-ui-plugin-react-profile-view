@@ -17,7 +17,6 @@ interface TableData {
 
 interface Props {
     token: string;
-    loggedInUser: string;
     narratives: Array<NarrativeData>;
     narrativesloaded: Boolean;
 }

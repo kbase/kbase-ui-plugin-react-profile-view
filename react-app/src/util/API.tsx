@@ -1,4 +1,5 @@
-const bffServiceUrl = 'http://localhost:5000';
+// const bffServiceUrl = 'http://localhost:5000';
+const bffServiceUrl = 'https://ci.kbase.us/dynserv/5da839747dbd7a5d0c652f4260940582bc06bb64.bff';
 // TODO: make sure to get rid of local host 3000
 // TODO: response.json() It returns a promise so make sure to change all of them into await!  
 const serviceUrl = 'https://kbase.us/services';
@@ -121,34 +122,3 @@ export async function filteredUserAPI(searchValue:string, token: string){
     }
 }
 
-/**
- * returns uesr id of the logged in user
- * @param token kbase session cookie
- */
-export async function fetchLoggedInUserAPI(token:string) {
-    const authMeUrl = serviceUrl + '/auth/me';
-    let response;
-    try {
-        response = await fetch(authMeUrl, {
-            method: 'GET',
-            mode: 'cors',
-            headers: {
-                Authorization: token,
-                'Content-Type': 'application/json'
-            }
-        });
-        
-    }
-    catch (error) {
-        console.error("fetch logged user failed", error);
-    }
-    if ( response ) {
-        try {
-            const res_json = await response.json();
-            return res_json.user;
-        }
-        catch (error) {
-            console.error("fetch logged user failed", error);
-        }
-    }
-}

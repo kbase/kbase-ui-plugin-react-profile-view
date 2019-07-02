@@ -1,6 +1,5 @@
 import React from 'react';
 import { Select } from 'antd';
-import { Store } from '../pages/Home';
 import { filteredUserAPI } from '../util/API';
 const { Option } = Select;
 
@@ -28,7 +27,7 @@ interface Props {
  * @param props 
  */
 class SearchUsers extends React.Component<Props, State>{
-    constructor(props:Store) {
+    constructor(props:Props) {
         super(props);
         this.state = {
             data: [],

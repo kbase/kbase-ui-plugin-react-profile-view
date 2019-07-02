@@ -4,15 +4,30 @@ import { connect} from 'react-redux';
 import SearchUsers from './SearchUsers';
 import { Store } from '../pages/Home';
 
-// function mapStateToProps(state:Store) {
-//     return state
-// }
-const mapStateToProps = (state:Store) => {
+interface AppState {
+    app: {
+        config: {
+            baseUrl: string;
+        }
+    };
+    auth: AuthData;
+}
+
+interface AuthData {
+    userAuthorization: {
+        realname: string;
+        roles: Array<string>;
+        token: string;
+        username: string;
+    }
+}
+
+const mapStateToProps = (state:AppState) => {
     return state
 }
-function SearchUsersRedux(mapStateToProps:Store) {
+function SearchUsersRedux(mapStateToProps:AppState) {
     return (
-        <SearchUsers token={mapStateToProps.token} hostName={mapStateToProps.hostName}/>
+        <SearchUsers token={mapStateToProps.auth.userAuthorization.token} hostName={mapStateToProps.app.config.baseUrl}/>
     )
 }
 

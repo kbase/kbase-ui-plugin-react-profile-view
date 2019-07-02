@@ -3,7 +3,7 @@ import { Tabs } from 'antd';
 import Profile from '../components/Profile';
 import Narratives from '../components/Narratives';
 import SearchUsersRedux from '../components/SearchUsersRedux';
-import { fetchLoggedInUserAPI, fetchOrgsOfProfileAPI, fetchProfileAPI, fetchNarrativesAPI } from '../util/API';
+import { fetchOrgsOfProfileAPI, fetchProfileAPI, fetchNarrativesAPI } from '../util/API';
 
 const TabPane = Tabs.TabPane;
 /**
@@ -67,11 +67,8 @@ export interface UserName {
     userID: string;
 }
 interface State {
-    token: string;
-    proxy: string;
     tabTitle: Array<string>;
     userName: UserName;
-    loggedInUser: string;
     userProfile: ProfileData;
     userProfileLoaded: Boolean;
     narratives: Array<NarrativeData>;
@@ -84,24 +81,26 @@ interface State {
 };
 
 export interface Store {
-    hostName: string;
-    token: string;
-    loggedInUser: string;
+    userData: { 
+        realname: string; 
+        roles: string[]; 
+        token: string; 
+        username: string; 
+    }; 
+    baseURL: string; 
 }
+
 
 
 class Home extends React.Component<Store, State> {
     constructor(props: Store) {
         super(props);
         this.state = {
-            token: '3SLUNTKN5UABYMKHIB5QINDHTSQP442M',
-            proxy: 'https://narrative.kbase.us',
             tabTitle: ['Profile', 'Narratives', 'Shared narratives', 'Search users'],
             userName: {
                 name: '',
                 userID: '',
             },
-            loggedInUser: '',
             userProfile: {
                 organization: '',
                 department: '',
@@ -131,12 +130,12 @@ class Home extends React.Component<Store, State> {
 
 
     componentDidMount() {
-        const userID = window.location.search.replace('?', '');
+        const profileID = window.location.search.replace('?', '');
         /**
          * fetch user profile 
          *  @param {string} id  profile ID
          */
-        fetchProfileAPI(userID)
+        fetchProfileAPI(profileID)
             .then((response) => {
                 if(typeof response !== 'undefined') {
                     this.setState({
@@ -163,12 +162,12 @@ class Home extends React.Component<Store, State> {
          * fetch orgs that user blongs to the profile 
          *  @param {string} id  profile ID
          */
-        fetchOrgsOfProfileAPI(userID, this.state.token)
+        fetchOrgsOfProfileAPI(profileID, this.props.userData.token)
             .then((response: Array<Org>) => {
                 let orgArr: Array<OrgProp> = [];
                 if( typeof response !== 'undefined'){
                     response.forEach(org => {
-                        orgArr.push({ 'name': org.name, 'url': this.state.proxy + '/#org/' + org.id })
+                        orgArr.push({ 'name': org.name, 'url': this.props.baseURL + '/#org/' + org.id })
                     });
                     this.setState(
                         { 
@@ -189,50 +188,98 @@ class Home extends React.Component<Store, State> {
 
         /**
          * Returns narratives that shows in Narrative table.
-         * @param {string} token Auth Token/cookie
          * 
-         * fetch who is logged in first and determine which set of narratives needs to be fetched.
-         * fetchLoggedInUser uses url search parameter.
+         * 
+         * Below logic determines which set of narratives needs to be fetched.
          * if the viewing profile userid is not the logged in user, 
          * then fetch all of shared and public narrative and filter with the viewing profile userid.
          */
-
-        fetchLoggedInUserAPI(this.state.token)
-            .then((response: string) => {
-                if(typeof response === 'undefined') {
-                    // something went wrong during fetching.
-                    this.setState(
-                        { 
-                            narratives: [
-                                {
-                                    wsID: '',
-                                    permission: '',
-                                    name: 'Something went wrong. Please check console for error messages.',
-                                    last_saved: 1,
-                                    users: {},
-                                    narrative_detail: {creator: ''}
-                                }
-                            ],
-                            narrativesLoaded: true
+        
+        if( this.props.userData.username === 'undefined' ) {
+            // if there is no logged in user in run time config (redux app state)
+            // returns an empty narrative list
+            this.setState(
+                { 
+                    narratives: [
+                        {
+                            wsID: '',
+                            permission: '',
+                            name: 'Something went wrong. Please check console for error messages.',
+                            last_saved: 1,
+                            users: {},
+                            narrative_detail: {creator: ''}
                         }
+                    ],
+                    narrativesLoaded: true
+                }
+            );
+            return;
+        } else {
+            const profileID = window.location.search.replace('?', '');
+            // when logged in user is viewing his/her profile
+            // fetch both "mine" and "shared" profile
+            if (this.props.userData.username === profileID) {
+                fetchNarrativesAPI('mine', this.props.userData.token)
+                .then((response: Array<NarrativeData>) => {
+                    if(typeof response !== 'undefined') {
+                        this.setState(
+                            { 
+                                narratives: response,
+                                narrativesLoaded: true
+                            }
                         );
-                        return
+                    } else {
+                        // fetch failed
+                        this.setState(
+                            { 
+                                narratives: [
+                                    {
+                                        wsID: '',
+                                        permission: '',
+                                        name: 'Something went wrong. Please check console for error messages.',
+                                        last_saved: 0,
+                                        users: {},
+                                        narrative_detail: {creator: ''}
+                                    }
+                                ],
+                                narrativesLoaded: true
+                            }
+                        );
                     }
-                    // fetch user was successful 
-                    const userid = window.location.search.replace('?', '');
-                    this.setState({ loggedInUser: response });
-                    if (response === userid) {
-                        fetchNarrativesAPI('mine', this.state.token)
-                        .then((response: Array<NarrativeData>) => {
+                });
+                fetchNarrativesAPI('shared', this.props.userData.token)
+                    .then((response: Array<NarrativeData>) => {
                         if(typeof response !== 'undefined') {
                             this.setState(
                                 { 
-                                    narratives: response,
-                                    narrativesLoaded: true
+                                    sharedNarratives: response,
+                                    sharedNarrativesLoaded: true
                                 }
                             );
                         } else {
-                            // fetch failed
+                            // something went wrong during fetching.
+                            this.setState(
+                                { 
+                                    sharedNarratives: [
+                                        {
+                                            wsID: '',
+                                            permission: '',
+                                            name: 'Something went wrong. Please check console for error messages.',
+                                            last_saved: 0,
+                                            users: {},
+                                            narrative_detail: {creator: ''}
+                                        }
+                                    ],
+                                    sharedNarrativesLoaded: true
+                                }
+                            );
+                        }
+                    })
+            } else {
+                let publicNarratives = fetchNarrativesAPI('public', this.props.userData.token)
+                    .then((response: Array<NarrativeData>) => {
+                        if(typeof response === 'undefined') {
+                            // fetch failed.
                             this.setState(
                                 { 
                                     narratives: [
@@ -248,71 +295,22 @@ class Home extends React.Component<Store, State> {
                                     narrativesLoaded: true
                                 }
                             );
-                        }
+                            return;
+                        } 
+                        return response 
                     });
-                    fetchNarrativesAPI('shared', this.state.token)
-                        .then((response: Array<NarrativeData>) => {
-                            if(typeof response !== 'undefined') {
-                                this.setState(
-                                    { 
-                                        sharedNarratives: response,
-                                        sharedNarrativesLoaded: true
-                                    }
-                                );
-                            } else {
-                                // something went wrong during fetching.
-                                this.setState(
-                                    { 
-                                        sharedNarratives: [
-                                            {
-                                                wsID: '',
-                                                permission: '',
-                                                name: 'Something went wrong. Please check console for error messages.',
-                                                last_saved: 0,
-                                                users: {},
-                                                narrative_detail: {creator: ''}
-                                            }
-                                        ],
-                                        sharedNarrativesLoaded: true
-                                    }
-                                );
-                            }
-                        })
-                } else {
-                    let publicNarratives = fetchNarrativesAPI('public', this.state.token)
-                        .then((response: Array<NarrativeData>) => {
-                            if(typeof response === 'undefined') {
-                                // fetch failed.
-                                this.setState(
-                                    { 
-                                        narratives: [
-                                            {
-                                                wsID: '',
-                                                permission: '',
-                                                name: 'Something went wrong. Please check console for error messages.',
-                                                last_saved: 0,
-                                                users: {},
-                                                narrative_detail: {creator: ''}
-                                            }
-                                        ],
-                                        narrativesLoaded: true
-                                    }
-                                );
-                                return
-                            } 
-                            return response 
-                        });
-                    let sharedNarratives = fetchNarrativesAPI('shared', this.state.token)
-                        .then((response: Array<NarrativeData>) => { return response });
-                    Promise.all([publicNarratives, sharedNarratives]).then(
+                let sharedNarratives = fetchNarrativesAPI('shared', this.props.userData.token)
+                    .then((response: Array<NarrativeData>) => { return response });
+                Promise.all([publicNarratives, sharedNarratives])
+                    .then(
                         (values) => {
                             let sharedNarrativeList = [];
                             if(typeof values[1] !== 'undefined'){
                                 for (let i = 0; i < values[1].length; i++) {
                                     let narrative = values[1][i];
-                                    if (narrative.narrative_detail.creator !== userID) {
+                                    if (narrative.narrative_detail.creator !== profileID) {
                                         for (let user in narrative.users) {
-                                            if (user === userID) {
+                                            if (user === profileID) {
                                                 sharedNarrativeList.push(narrative);
                                             }
                                         }
@@ -324,7 +322,7 @@ class Home extends React.Component<Store, State> {
                             if(typeof values[0] !== 'undefined'){
                                 let allNarratives = values[0].concat(values[1]);
                                 for (let i = 0; i < allNarratives.length; i += 1) {
-                                    if (allNarratives[i]['narrative_detail']['creator'] === userid) {
+                                    if (allNarratives[i]['narrative_detail']['creator'] === profileID) {
                                         narrativeList.push(allNarratives[i]);
                                     }
                                 }
@@ -339,8 +337,8 @@ class Home extends React.Component<Store, State> {
                             )
                         }
                     )
-                }
-            });
+            }
+        };
     }
 
     componentDidUpdate(prevProps: any, prevState: any) {
@@ -361,15 +359,14 @@ class Home extends React.Component<Store, State> {
                         gravatarHash={this.state.gravatarHash} 
                         profileloaded={this.state.userProfileLoaded}
                         orgsloaded={this.state.organizationsLoaded}
-                        token={this.props.token}
+                        token={this.props.userData.token}
                     />
                 </TabPane>
                 <TabPane tab="Narratives" key="3">
                     <Narratives 
-                        loggedInUser={this.state.loggedInUser} 
                         narratives={this.state.narratives} 
                         narrativesloaded={this.state.narrativesLoaded}
-                        token={this.props.token}
+                        token={this.props.userData.token}
                     />
                 </TabPane>
                 <TabPane tab="Search other users" key="6">

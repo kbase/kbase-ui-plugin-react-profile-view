@@ -2,15 +2,33 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import Home from './Home';
-import { Store } from '../pages/Home';
 
-const mapStateToProps = (state:Store) => {
+interface AppState {
+    app: {
+        config: {
+            baseUrl: string;
+        }
+    };
+    auth: AuthData;
+}
+
+interface AuthData {
+    userAuthorization: {
+        realname: string;
+        roles: Array<string>;
+        token: string;
+        username: string;
+    }
+}
+
+const mapStateToProps = (state:AppState) => {
     console.log(state)
     return state
 }
-function HomeRedux(mapStateToProps:Store) {
+
+function HomeRedux(mapStateToProps:AppState) {
     return (
-        <Home loggedInUser={mapStateToProps.loggedInUser} token={mapStateToProps.token} hostName={mapStateToProps.hostName}/>
+        <Home userData={mapStateToProps.auth.userAuthorization} baseURL={mapStateToProps.app.config.baseUrl}/>
     )
 }
 
