@@ -1,5 +1,5 @@
 echo "Running plugin post install script"
-cd ant-design-profile && \
+cd react-app && \
 npm install && \
 echo "✓ dependencies installed successfully" && \
 npm run build && \

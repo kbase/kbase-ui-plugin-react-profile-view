@@ -48,7 +48,7 @@
 			"last 1 safari version"
 		]
 	},
-	"proxy": "https://narrative.kbase.us",
+	"proxy": "https://kbase.us",
 	"devDependencies": {
 		"typedoc": "0.14.2"
 	},
