@@ -7,17 +7,17 @@ package:
   type: iframe
 install:
   routes:
-    - path: ["profieview-react"]
+    - path: ["react-profile-view"]
       queryParams:
         path: { literal: ["main"] }
       widget: kb_iframe_loader
       authorization: true 
       # TODO: get rid of this!!
       params:
-        plugin: profieview-react
+        plugin: react-profile-view
   menu:
-    - name: profieview-react
+    - name: react-profile-view
       definition:
-        path: ["profieview-react"]
-        label: profieview-react
+        path: ["react-profile-view"]
+        label: react-profile-view
         icon: flask
