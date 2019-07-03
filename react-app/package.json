@@ -50,7 +50,7 @@
 	},
 	"proxy": "https://ci.kbase.us",
 	"devDependencies": {
-		"typedoc": "0.14.2"
+		"typedoc": "^0.14.2"
 	},
 	"jest": {
 		"collectCoverageFrom": [

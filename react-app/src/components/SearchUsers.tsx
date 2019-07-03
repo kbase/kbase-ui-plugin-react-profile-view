@@ -63,7 +63,7 @@ class SearchUsers extends React.Component<Props, State>{
     };
     onChangeHandler(value:string): void{
         if(value !== "error" && typeof value !== 'undefined') {
-            let url = 'http://localhost:3000/?' + value; // for dev version
+            let url = '/?' + value; // for dev version
             // let url = this.props.hostName + value; 
             window.open(url, '_blank');
         }
