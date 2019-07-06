@@ -135,7 +135,7 @@ class Home extends React.Component<Store, State> {
          * fetch user profile 
          *  @param {string} id  profile ID
          */
-        fetchProfileAPI(profileID)
+        fetchProfileAPI(profileID, this.props.userData.token)
             .then((response) => {
                 if(typeof response !== 'undefined') {
                     this.setState({

@@ -1,13 +1,40 @@
-// const bffServiceUrl = 'http://localhost:5000';
-const bffServiceUrl = 'https://ci.kbase.us/dynserv/5da839747dbd7a5d0c652f4260940582bc06bb64.bff';
 const serviceUrl = 'https://ci.kbase.us/services';
+
+export async function getBFFServiceUrl(token: string){
+    let url = serviceUrl + '/service_wizard';
+    const body = {
+        'id': 0,
+        'method': 'ServiceWizard.get_service_status',
+        'version': '1.1',
+        'params':[
+            {
+                'module_name': 'bff',
+                'version': null
+            }
+        ]
+    }
+    const stringBody = JSON.stringify(body);
+    const response = await fetch(url, {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            Authorization: token
+        },
+        body: stringBody
+    });
+    const responseJson = await response.json();
+    console.log(responseJson, responseJson.result[0]['url']);
+    return responseJson.result[0]['url'];
+}
 
 
 /**
  * Return profile data
  * @param id profile id
  */
-export async function fetchProfileAPI(id: string) {
+export async function fetchProfileAPI(id: string, token: string) {
+    const bffServiceUrl = await getBFFServiceUrl(token);
+    console.log('bffServiceUrl', bffServiceUrl)
     let url = bffServiceUrl + '/fetchUserProfile/' + id;
     const response = await fetch(url, {
         method: 'GET'
@@ -35,6 +62,7 @@ export async function fetchProfileAPI(id: string) {
  * @param token kbase session cookie
  */
 export async function fetchNarrativesAPI(param:string, token:string) {
+    const bffServiceUrl = await getBFFServiceUrl(token);
     let url = bffServiceUrl + '/narrative_list/'+param;
     const response = await fetch(url, {
         method: 'GET',
@@ -61,6 +89,7 @@ export async function fetchNarrativesAPI(param:string, token:string) {
  * @param token kbase session cookie
  */
 export async function fetchOrgsOfProfileAPI(id:string, token:string) {
+    const bffServiceUrl = await getBFFServiceUrl(token);
     const url = bffServiceUrl + '/org_list/' + id;
     const response = await fetch(url, {
         method: 'GET',
