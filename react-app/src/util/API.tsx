@@ -1,7 +1,7 @@
-const serviceUrl = 'https://ci.kbase.us/services';
 
-export async function getBFFServiceUrl(token: string){
-    let url = serviceUrl + '/service_wizard';
+export async function getBFFServiceUrl(token: string, baseURL: string){
+    baseURL = 'https://ci.kbase.us/services'; // for dev
+    let url = baseURL + '/service_wizard';
     const body = {
         'id': 0,
         'method': 'ServiceWizard.get_service_status',
@@ -31,9 +31,11 @@ export async function getBFFServiceUrl(token: string){
 /**
  * Return profile data
  * @param id profile id
+ * @param token KBase session cookie
+ * @param baseUrl hostname
  */
-export async function fetchProfileAPI(id: string, token: string) {
-    const bffServiceUrl = await getBFFServiceUrl(token);
+export async function fetchProfileAPI(id: string, token: string, baseURL: string) {
+    const bffServiceUrl = await getBFFServiceUrl(token, baseURL);
     console.log('bffServiceUrl', bffServiceUrl)
     let url = bffServiceUrl + '/fetchUserProfile/' + id;
     const response = await fetch(url, {
@@ -61,8 +63,8 @@ export async function fetchProfileAPI(id: string, token: string) {
  * @param param shared/mine/public
  * @param token kbase session cookie
  */
-export async function fetchNarrativesAPI(param:string, token:string) {
-    const bffServiceUrl = await getBFFServiceUrl(token);
+export async function fetchNarrativesAPI(param:string, token:string, baseURL: string) {
+    const bffServiceUrl = await getBFFServiceUrl(token, baseURL);
     let url = bffServiceUrl + '/narrative_list/'+param;
     const response = await fetch(url, {
         method: 'GET',
@@ -88,8 +90,8 @@ export async function fetchNarrativesAPI(param:string, token:string) {
  * @param id id of the profile 
  * @param token kbase session cookie
  */
-export async function fetchOrgsOfProfileAPI(id:string, token:string) {
-    const bffServiceUrl = await getBFFServiceUrl(token);
+export async function fetchOrgsOfProfileAPI(id:string, token:string, baseURL: string) {
+    const bffServiceUrl = await getBFFServiceUrl(token, baseURL);
     const url = bffServiceUrl + '/org_list/' + id;
     const response = await fetch(url, {
         method: 'GET',
@@ -115,15 +117,16 @@ export async function fetchOrgsOfProfileAPI(id:string, token:string) {
  * @param searchValue search values
  * @param token kbase session cookie
  */
-export async function filteredUserAPI(searchValue:string, token: string){
+export async function filteredUserAPI(searchValue:string, token: string, baseURL: string){
     const body = {
         'version': '1.1',
         'method': 'UserProfile.filter_users',
         'params': [{'filter': searchValue}]
     }
     const stringBody = JSON.stringify(body);
-
-    const url = serviceUrl + '/user_profile/rpc'
+    
+    baseURL = 'https://ci.kbase.us/services'; // for dev
+    const url = baseURL + '/user_profile/rpc'
     const response = await fetch(url,{
         method: 'POST',
         mode: 'cors',

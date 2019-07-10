@@ -2,7 +2,6 @@ import React from 'react';
 import { connect} from 'react-redux';
 
 import SearchUsers from './SearchUsers';
-import { Store } from '../pages/Home';
 
 interface AppState {
     app: {
@@ -27,7 +26,7 @@ const mapStateToProps = (state:AppState) => {
 }
 function SearchUsersRedux(mapStateToProps:AppState) {
     return (
-        <SearchUsers token={mapStateToProps.auth.userAuthorization.token} hostName={mapStateToProps.app.config.baseUrl}/>
+        <SearchUsers token={mapStateToProps.auth.userAuthorization.token} baseURL={mapStateToProps.app.config.baseUrl}/>
     )
 }
 

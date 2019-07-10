@@ -91,7 +91,6 @@ export interface Store {
 }
 
 
-
 class Home extends React.Component<Store, State> {
     constructor(props: Store) {
         super(props);
@@ -135,7 +134,7 @@ class Home extends React.Component<Store, State> {
          * fetch user profile 
          *  @param {string} id  profile ID
          */
-        fetchProfileAPI(profileID, this.props.userData.token)
+        fetchProfileAPI(profileID, this.props.userData.token, this.props.baseURL)
             .then((response) => {
                 if(typeof response !== 'undefined') {
                     this.setState({
@@ -151,7 +150,7 @@ class Home extends React.Component<Store, State> {
                     // something went wrong during fetching.  
                     this.setState({
                         userName: {
-                            name: 'Something went wrong. Please Please check console for error messages..',
+                            name: 'Something went wrong. Please check console for error messages..',
                             userID: ''
                         }
                     })
@@ -162,7 +161,7 @@ class Home extends React.Component<Store, State> {
          * fetch orgs that user blongs to the profile 
          *  @param {string} id  profile ID
          */
-        fetchOrgsOfProfileAPI(profileID, this.props.userData.token)
+        fetchOrgsOfProfileAPI(profileID, this.props.userData.token, this.props.baseURL)
             .then((response: Array<Org>) => {
                 let orgArr: Array<OrgProp> = [];
                 if( typeof response !== 'undefined'){
@@ -219,7 +218,7 @@ class Home extends React.Component<Store, State> {
             // when logged in user is viewing his/her profile
             // fetch both "mine" and "shared" profile
             if (this.props.userData.username === profileID) {
-                fetchNarrativesAPI('mine', this.props.userData.token)
+                fetchNarrativesAPI('mine', this.props.userData.token, this.props.baseURL)
                 .then((response: Array<NarrativeData>) => {
                     if(typeof response !== 'undefined') {
                         this.setState(
@@ -247,7 +246,7 @@ class Home extends React.Component<Store, State> {
                         );
                     }
                 });
-                fetchNarrativesAPI('shared', this.props.userData.token)
+                fetchNarrativesAPI('shared', this.props.userData.token, this.props.baseURL)
                     .then((response: Array<NarrativeData>) => {
                         if(typeof response !== 'undefined') {
                             this.setState(
@@ -276,7 +275,7 @@ class Home extends React.Component<Store, State> {
                         }
                     })
             } else {
-                let publicNarratives = fetchNarrativesAPI('public', this.props.userData.token)
+                let publicNarratives = fetchNarrativesAPI('public', this.props.userData.token, this.props.baseURL)
                     .then((response: Array<NarrativeData>) => {
                         if(typeof response === 'undefined') {
                             // fetch failed.
@@ -299,7 +298,7 @@ class Home extends React.Component<Store, State> {
                         } 
                         return response 
                     });
-                let sharedNarratives = fetchNarrativesAPI('shared', this.props.userData.token)
+                let sharedNarratives = fetchNarrativesAPI('shared', this.props.userData.token, this.props.baseURL)
                     .then((response: Array<NarrativeData>) => { return response });
                 Promise.all([publicNarratives, sharedNarratives])
                     .then(

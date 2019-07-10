@@ -20,7 +20,7 @@ interface State {
 
 interface Props {
     token: string;
-    hostName: string;
+    baseURL: string;
 }
 /**
  * View component with user search feature. 
@@ -42,7 +42,7 @@ class SearchUsers extends React.Component<Props, State>{
     
     onSearchHandler(value:string): void{
         if(value.length>2  && this.state.mouseLeave !== true){
-            filteredUserAPI(value, this.props.token)
+            filteredUserAPI(value, this.props.token, this.props.baseURL)
             .then((response:Response)=>{ 
                 if(typeof response !== "undefined") {
                     this.setState({data: response['result'][0]});
