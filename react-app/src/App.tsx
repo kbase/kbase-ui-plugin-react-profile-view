@@ -1,8 +1,8 @@
 import React from 'react';
 import { Layout } from 'antd';
 import { Provider } from 'react-redux';
-import { createReduxStore } from "./redux/store";
-import { AppBase, DevWrapper } from "@kbase/ui-lib";
+import { createReduxStore } from './redux/store';
+import { AppBase, AuthGate } from '@kbase/ui-lib';
 // import store from './redux/store_basic';
 import './App.css';
 import HomeRedux from './pages/HomeRedux';
@@ -14,8 +14,8 @@ interface AppState {}
 const App: React.FC = () => {
     return (
         <Provider store={store}>
-            <DevWrapper>
-                <AppBase>
+            <AppBase>
+                <AuthGate required={true}>
                     <div className="App">
                         <Layout style={{ minHeight: '100vh' }}>
                             <Content style={{ backgroundColor: 'white' }}>
@@ -23,10 +23,10 @@ const App: React.FC = () => {
                             </Content>
                         </Layout>
                     </div>
-                </AppBase>
-            </DevWrapper>
+                </AuthGate>
+            </AppBase>
         </Provider>
     );
-}
+};
 
 export default App;

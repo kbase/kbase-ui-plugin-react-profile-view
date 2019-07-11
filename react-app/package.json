@@ -1,67 +1,67 @@
 {
-	"name": "ant-design-profile",
-	"version": "0.1.0",
-	"private": true,
-	"dependencies": {
-		"@babel/runtime": "7.4.5",
-		"@craco/craco": "5.2.1",
-		"@kbase/ui-lib": "0.1.0-alpha.22",
-		"@types/enzyme": "3.9.3",
-		"@types/enzyme-adapter-react-16": "1.0.5",
-		"@types/jest": "24.0.13",
-		"@types/node": "12.0.7",
-		"@types/react": "16.8.19",
-		"@types/react-dom": "16.8.4",
-		"@types/react-redux": "^7.1.0",
-		"antd": "3.19.3",
-		"craco-antd": "1.11.0",
-		"enzyme": "3.10.0",
-		"enzyme-adapter-react-16": "1.14.0",
-		"react": "16.8.6",
-		"react-dom": "16.8.6",
-		"react-redux": "7.1.0",
-		"react-scripts": "3.0.1",
-		"react-test-renderer": "16.8.6",
-		"redux": "4.0.1",
-		"typescript": "3.4.5"
-	},
-	"scripts": {
-		"start": "craco start",
-		"build": "craco build",
-		"test": "react-scripts test",
-		"eject": "react-scripts eject",
-		"typedoc": "typedoc --exclude \"**/*.test.*\" --out spec src",
-		"install-plugin": "bash scripts/install-plugin.bash"
-	},
-	"eslintConfig": {
-		"extends": "react-app"
-	},
-	"browserslist": {
-		"production": [
-			">0.2%",
-			"not dead",
-			"not op_mini all"
-		],
-		"development": [
-			"last 1 chrome version",
-			"last 1 firefox version",
-			"last 1 safari version"
-		]
-	},
-	"proxy": "https://ci.kbase.us",
-	"devDependencies": {
-		"typedoc": "^0.14.2"
-	},
-	"jest": {
-		"collectCoverageFrom": [
-			"./src/**/*.{ts,tsx}",
-			"src/components/Narratives.tsx",
-			"src/components/SearchUsers.tsx",
-			"src/components/Profile.tsx",
-			"!/node_modules/",
-			"!src/index.tsx",
-			"!src/serviceWorker.ts"
-		]
-	},
-	"homepage": "./"
+    "name": "ant-design-profile",
+    "version": "0.1.0",
+    "private": true,
+    "dependencies": {
+        "@craco/craco": "5.2.3",
+        "@kbase/ui-lib": "0.1.0-alpha.39",
+        "@types/enzyme": "3.10.2",
+        "@types/enzyme-adapter-react-16": "1.0.5",
+        "@types/jest": "24.0.15",
+        "@types/node": "12.6.2",
+        "@types/react": "16.8.23",
+        "@types/react-dom": "16.8.4",
+        "@types/react-redux": "^7.1.0",
+        "antd": "3.20.1",
+        "craco-antd": "1.11.0",
+        "enzyme": "3.10.0",
+        "enzyme-adapter-react-16": "1.14.0",
+        "react": "16.8.6",
+        "react-dom": "16.8.6",
+        "react-redux": "7.1.0",
+        "react-scripts": "3.0.1",
+        "react-test-renderer": "16.8.6",
+        "redux": "4.0.4",
+        "typescript": "3.5.3"
+    },
+    "scripts": {
+        "start": "nodemon -w ./craco.config.js -w ./src/custom/style/antd/theme.less --exec 'craco start'",
+        "build": "craco build",
+        "test": "react-scripts test",
+        "eject": "react-scripts eject",
+        "typedoc": "typedoc --exclude \"**/*.test.*\" --out spec src",
+        "install-plugin": "bash scripts/install-plugin.bash"
+    },
+    "eslintConfig": {
+        "extends": "react-app"
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    },
+    "proxy": "https://ci.kbase.us",
+    "devDependencies": {
+        "nodemon": "^1.19.1",
+        "typedoc": "^0.14.2"
+    },
+    "jest": {
+        "collectCoverageFrom": [
+            "./src/**/*.{ts,tsx}",
+            "src/components/Narratives.tsx",
+            "src/components/SearchUsers.tsx",
+            "src/components/Profile.tsx",
+            "!/node_modules/",
+            "!src/index.tsx",
+            "!src/serviceWorker.ts"
+        ]
+    },
+    "homepage": "./"
 }

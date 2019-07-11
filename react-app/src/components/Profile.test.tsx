@@ -1,28 +1,29 @@
 import React from 'react';
 
-import { configure  } from 'enzyme';
+import { configure } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
-
-configure({ adapter: new Adapter() });
 import { shallow, render, mount } from 'enzyme';
 import Profile from './Profile';
-import { ProfileData, UserName, OrgProp } from '../pages/Home'; //interface 
+import { ProfileData, UserName, OrgProp } from '../pages/Home';
+
+configure({ adapter: new Adapter() }); //interface
 
 /**
  * Test if it loads without crashing
  *  - with correct type and data
  *  - with really bad data
  *  - with undefined everything data
- * 
+ *
  * Test if it can find elements
  */
-it('renders without crashing with correct type and data', ()=>{
-    const userName:UserName = {
+it('renders without crashing with correct type and data', () => {
+    const userName: UserName = {
         name: 'akiyo maruakwa',
         userID: 'amarukawa'
     };
-    const token = 'X4QQGMLPKTRDZARHFTH3KSP64XDYQEPI';
-    const userProfile:ProfileData = {
+    // TODO: shouldn't check tokens into github
+    const token = 'xxx';
+    const userProfile: ProfileData = {
         organization: 'Current organiztaion',
         department: 'Current department',
         city: 'Current city',
@@ -30,37 +31,33 @@ it('renders without crashing with correct type and data', ()=>{
         postalCode: '',
         country: 'usa',
         affiliations: [
-            {title: 'past job title 1',
-            organization: 'past org 1' ,
-            started: 'started 1',
-            ended: 'ended 1'},
-            {title: 'past job title 2',
-            organization: 'past org 2' ,
-            started: 'started 2',
-            ended: 'ended 2'}
+            { title: 'past job title 1', organization: 'past org 1', started: 'started 1', ended: 'ended 1' },
+            { title: 'past job title 2', organization: 'past org 2', started: 'started 2', ended: 'ended 2' }
         ],
         researchStatement: 'blah blah',
         jobTitle: 'Current Job Title',
         jobTitleOther: '',
         researchInterests: ['foo', 'bar', 'baz'],
-        fundingSource: 'I don\'t have any money',
+        fundingSource: "I don't have any money",
         gravatarDefault: 'mm',
         avatarOption: ''
     };
-    const orgs:Array<OrgProp> = [
-        {name: 'Bronco',
-        url: 'https://about.google/intl/en/?fg=1&utm_source=google-US&utm_medium=referral&utm_campaign=hp-header'}
+    const orgs: Array<OrgProp> = [
+        {
+            name: 'Bronco',
+            url: 'https://about.google/intl/en/?fg=1&utm_source=google-US&utm_medium=referral&utm_campaign=hp-header'
+        }
     ];
-    const gravatarHash='ceccacd4f6311e66cdf51f1666be71a9'
-    const profileloaded=true;
-    const orgsloaded=true;
+    const gravatarHash = 'ceccacd4f6311e66cdf51f1666be71a9';
+    const profileloaded = true;
+    const orgsloaded = true;
 
     shallow(
-        <Profile 
-            userName={userName}  
-            userProfile={userProfile} 
+        <Profile
+            userName={userName}
+            userProfile={userProfile}
             orgs={orgs}
-            gravatarHash='ceccacd4f6311e66cdf51f1666be71a9'
+            gravatarHash="ceccacd4f6311e66cdf51f1666be71a9"
             profileloaded={profileloaded}
             orgsloaded={orgsloaded}
             token={token}
@@ -68,11 +65,11 @@ it('renders without crashing with correct type and data', ()=>{
     );
 });
 
-it('renders without crashing with REALLY bad data', ()=>{
+it('renders without crashing with REALLY bad data', () => {
     const userName = {
         name: 'akiyo maruakwa',
-        userID:  12345
-    } as unknown
+        userID: 12345
+    } as unknown;
     const userProfile = {
         organization: 12345,
         department: 'baaar',
@@ -88,21 +85,18 @@ it('renders without crashing with REALLY bad data', ()=>{
         fundingSource: '',
         gravatarDefault: 'mm',
         avatarOption: ''
-    } as unknown
-    const orgs = [
-        {   name: 'org string',
-            url: 1234
-        }
-    ];
-    const gravatarHash=''
-    const profileloaded=true;
-    const orgsloaded=true;
-    const token = 'X4QQGMLPKTRDZARHFTH3KSP64XDYQEPI';
+    } as unknown;
+    const orgs = [{ name: 'org string', url: 1234 }];
+    const gravatarHash = '';
+    const profileloaded = true;
+    const orgsloaded = true;
+    // TODO: shouldn't check tokens into github
+    const token = 'xxx';
 
     shallow(
-        <Profile 
-            userName={userName as UserName}  
-            userProfile={userProfile as ProfileData} 
+        <Profile
+            userName={userName as UserName}
+            userProfile={userProfile as ProfileData}
             orgs={orgs as Array<OrgProp>}
             gravatarHash={gravatarHash}
             profileloaded={profileloaded}
@@ -112,11 +106,11 @@ it('renders without crashing with REALLY bad data', ()=>{
     );
 });
 
-it('renders without crashing with all props undefined', ()=>{
+it('renders without crashing with all props undefined', () => {
     const userName = {
         name: undefined,
         userID: undefined
-    } as unknown
+    } as unknown;
     const userProfile = {
         organization: undefined,
         department: undefined,
@@ -132,16 +126,17 @@ it('renders without crashing with all props undefined', ()=>{
         fundingSource: undefined,
         gravatarDefault: undefined,
         avatarOption: undefined
-    } as unknown
+    } as unknown;
     const orgs = undefined as unknown;
-    const gravatarHash=undefined;
-    const profileloaded=undefined;
-    const orgsloaded=undefined;
-    const token = 'X4QQGMLPKTRDZARHFTH3KSP64XDYQEPI';
+    const gravatarHash = undefined;
+    const profileloaded = undefined;
+    const orgsloaded = undefined;
+    // TODO: shouldn't check tokens into github
+    const token = 'xxx';
     shallow(
-        <Profile 
-            userName={userName as UserName}  
-            userProfile={userProfile as ProfileData} 
+        <Profile
+            userName={userName as UserName}
+            userProfile={userProfile as ProfileData}
             orgs={orgs as Array<OrgProp>}
             gravatarHash={gravatarHash as string}
             profileloaded={profileloaded as Boolean}
@@ -149,5 +144,4 @@ it('renders without crashing with all props undefined', ()=>{
             token={token}
         />
     );
-    
 });

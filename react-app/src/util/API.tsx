@@ -1,18 +1,18 @@
-
-export async function getBFFServiceUrl(token: string, baseURL: string){
-    baseURL = 'https://ci.kbase.us/services'; // for dev
-    let url = baseURL + '/service_wizard';
+export async function getBFFServiceUrl(token: string, baseURL: string) {
+    // TODO: for dev, the baseUrl will be whatever works for the CRA workflow, which is ''.
+    // baseURL = 'https://ci.kbase.us/services'; // for dev
+    let url = baseURL + '/services/service_wizard';
     const body = {
-        'id': 0,
-        'method': 'ServiceWizard.get_service_status',
-        'version': '1.1',
-        'params':[
+        id: 0,
+        method: 'ServiceWizard.get_service_status',
+        version: '1.1',
+        params: [
             {
-                'module_name': 'bff',
-                'version': null
+                module_name: 'bff',
+                version: null
             }
         ]
-    }
+    };
     const stringBody = JSON.stringify(body);
     const response = await fetch(url, {
         method: 'POST',
@@ -27,7 +27,6 @@ export async function getBFFServiceUrl(token: string, baseURL: string){
     return responseJson.result[0]['url'];
 }
 
-
 /**
  * Return profile data
  * @param id profile id
@@ -36,26 +35,23 @@ export async function getBFFServiceUrl(token: string, baseURL: string){
  */
 export async function fetchProfileAPI(id: string, token: string, baseURL: string) {
     const bffServiceUrl = await getBFFServiceUrl(token, baseURL);
-    console.log('bffServiceUrl', bffServiceUrl)
+    console.log('bffServiceUrl', bffServiceUrl);
     let url = bffServiceUrl + '/fetchUserProfile/' + id;
     const response = await fetch(url, {
         method: 'GET'
     });
     if (response.status === 404) {
-        console.warn("404 response:", response);
-    }
-    else if (response.status === 500) {
-        console.error("500 response:", response);
+        console.warn('404 response:', response);
+    } else if (response.status === 500) {
+        console.error('500 response:', response);
         return;
     }
     try {
         const profile = await response.json();
         return profile;
-    }
-    catch (err) {
+    } catch (err) {
         console.error('profile fetch failed', response);
     }
-    
 }
 
 /**
@@ -63,9 +59,9 @@ export async function fetchProfileAPI(id: string, token: string, baseURL: string
  * @param param shared/mine/public
  * @param token kbase session cookie
  */
-export async function fetchNarrativesAPI(param:string, token:string, baseURL: string) {
+export async function fetchNarrativesAPI(param: string, token: string, baseURL: string) {
     const bffServiceUrl = await getBFFServiceUrl(token, baseURL);
-    let url = bffServiceUrl + '/narrative_list/'+param;
+    let url = bffServiceUrl + '/narrative_list/' + param;
     const response = await fetch(url, {
         method: 'GET',
         headers: {
@@ -73,24 +69,23 @@ export async function fetchNarrativesAPI(param:string, token:string, baseURL: st
         }
     });
     if (response.status === 500) {
-        console.error("Fetch Narratives 500 response:", response);
+        console.error('Fetch Narratives 500 response:', response);
         return;
     }
     try {
         const narratives = await response.json();
         return narratives;
-    }
-    catch (err) {
-        console.error('fetch narratives failed', response)
+    } catch (err) {
+        console.error('fetch narratives failed', response);
     }
 }
 
 /**
  * returns list of orgs that profile and logged in user are both associated with.
- * @param id id of the profile 
+ * @param id id of the profile
  * @param token kbase session cookie
  */
-export async function fetchOrgsOfProfileAPI(id:string, token:string, baseURL: string) {
+export async function fetchOrgsOfProfileAPI(id: string, token: string, baseURL: string) {
     const bffServiceUrl = await getBFFServiceUrl(token, baseURL);
     const url = bffServiceUrl + '/org_list/' + id;
     const response = await fetch(url, {
@@ -100,15 +95,14 @@ export async function fetchOrgsOfProfileAPI(id:string, token:string, baseURL: st
         }
     });
     if (response.status === 500) {
-        console.error("500 response:", response);
+        console.error('500 response:', response);
         return;
     }
     try {
         const orgs = await response.json();
         return orgs;
-    }
-    catch (err) {
-        console.error('fetch org failed', response)
+    } catch (err) {
+        console.error('fetch org failed', response);
     }
 }
 
@@ -117,17 +111,18 @@ export async function fetchOrgsOfProfileAPI(id:string, token:string, baseURL: st
  * @param searchValue search values
  * @param token kbase session cookie
  */
-export async function filteredUserAPI(searchValue:string, token: string, baseURL: string){
+export async function filteredUserAPI(searchValue: string, token: string, baseURL: string) {
     const body = {
-        'version': '1.1',
-        'method': 'UserProfile.filter_users',
-        'params': [{'filter': searchValue}]
-    }
+        version: '1.1',
+        method: 'UserProfile.filter_users',
+        params: [{ filter: searchValue }]
+    };
     const stringBody = JSON.stringify(body);
-    
-    baseURL = 'https://ci.kbase.us/services'; // for dev
-    const url = baseURL + '/user_profile/rpc'
-    const response = await fetch(url,{
+
+    // baseURL = 'https://ci.kbase.us/services'; // for dev
+    // TODO: this should come from config
+    const url = baseURL + '/services/user_profile/rpc';
+    const response = await fetch(url, {
         method: 'POST',
         mode: 'cors',
         headers: {
@@ -137,7 +132,7 @@ export async function filteredUserAPI(searchValue:string, token: string, baseURL
         body: stringBody
     });
     if (response.status === 500) {
-        console.error("500 response:", response);
+        console.error('500 response:', response);
         return;
     }
     try {
@@ -146,9 +141,7 @@ export async function filteredUserAPI(searchValue:string, token: string, baseURL
         // Unhandled Rejection (TypeError): Failed to execute 'json' on 'Response': body stream is locked
         // but assiging it to a vairable somehow magically works.
         return res;
-    } 
-    catch (err) {
-        console.error('fetch search users failed', response)
+    } catch (err) {
+        console.error('fetch search users failed', response);
     }
 }
-
