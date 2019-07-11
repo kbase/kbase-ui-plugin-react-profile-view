@@ -66,7 +66,7 @@ export interface UserName {
     name: string;
     userID: string;
 }
-interface State {
+interface HomeState {
     tabTitle: Array<string>;
     userName: UserName;
     userProfile: ProfileData;
@@ -80,14 +80,15 @@ interface State {
     gravatarHash: string;
 }
 
-export interface Store {
+export interface HomeProps {
     token: string;
     username: string;
     baseURL: string;
+    setTitle: (title: string) => void;
 }
 
-class Home extends React.Component<Store, State> {
-    constructor(props: Store) {
+class Home extends React.Component<HomeProps, HomeState> {
+    constructor(props: HomeProps) {
         super(props);
         this.state = {
             tabTitle: ['Profile', 'Narratives', 'Shared narratives', 'Search users'],
@@ -123,14 +124,25 @@ class Home extends React.Component<Store, State> {
     }
 
     componentDidMount() {
-        const profileID = window.location.search.replace('?', '') || this.props.username;
+        // const profileID = window.location.search.replace('?', '') || this.props.username;
+
+        let username;
+        const usernameFromParam = window.location.search.slice(1);
+        if (usernameFromParam) {
+            username = usernameFromParam;
+            this.props.setTitle('User Profile for ' + username);
+        } else {
+            username = this.props.username;
+            this.props.setTitle('Your User Profile');
+        }
+
         /**
          * fetch user profile
          *  @param {string} id  profile ID
          */
-        console.log('about to fetch', profileID, this.props.token, this.props.baseURL);
-        fetchProfileAPI(profileID, this.props.token, this.props.baseURL).then((response) => {
+        fetchProfileAPI(username, this.props.token, this.props.baseURL).then((response) => {
             if (typeof response !== 'undefined') {
+                this.props.setTitle('User Profile for ' + response.user.realname);
                 this.setState({
                     userName: {
                         name: response['user']['realname'],
@@ -155,7 +167,7 @@ class Home extends React.Component<Store, State> {
          * fetch orgs that user blongs to the profile
          *  @param {string} id  profile ID
          */
-        fetchOrgsOfProfileAPI(profileID, this.props.token, this.props.baseURL).then((response: Array<Org>) => {
+        fetchOrgsOfProfileAPI(username, this.props.token, this.props.baseURL).then((response: Array<Org>) => {
             let orgArr: Array<OrgProp> = [];
             if (typeof response !== 'undefined') {
                 response.forEach((org) => {

@@ -1,27 +1,24 @@
 import { connect } from 'react-redux';
 
 import Home from './Home';
+
 import { StoreState } from '../redux/store';
+import { Action, Dispatch } from 'redux';
+import { setTitle } from '@kbase/ui-lib';
 
-// interface AppState {
-//     app: {
-//         config: {
-//             baseUrl: string;
-//         }
-//     };
-//     auth: AuthData;
-// }
+interface OwnProps {}
 
-// interface AuthData {
-//     userAuthorization: {
-//         realname: string;
-//         roles: Array<string>;
-//         token: string;
-//         username: string;
-//     }
-// }
+interface StateProps {
+    token: string;
+    username: string;
+    baseURL: string;
+}
 
-const mapStateToProps = (state: StoreState) => {
+interface DispatchProps {
+    setTitle: (title: string) => void;
+}
+
+function mapStateToProps(state: StoreState, ownProps: OwnProps): StateProps {
     const {
         auth: { userAuthorization },
         app: {
@@ -36,7 +33,15 @@ const mapStateToProps = (state: StoreState) => {
         username: userAuthorization.username,
         baseURL: baseUrl
     };
-};
+}
+
+function mapDispatchToProps(dispatch: Dispatch<Action>, ownProps: OwnProps): DispatchProps {
+    return {
+        setTitle: (title: string) => {
+            return dispatch(setTitle(title) as any);
+        }
+    };
+}
 
 // function HomeRedux(mapStateToProps:AppState) {
 //     return (
@@ -44,4 +49,7 @@ const mapStateToProps = (state: StoreState) => {
 //     )
 // }
 
-export default connect(mapStateToProps)(Home);
+export default connect<StateProps, DispatchProps, OwnProps, StoreState>(
+    mapStateToProps,
+    mapDispatchToProps
+)(Home);
