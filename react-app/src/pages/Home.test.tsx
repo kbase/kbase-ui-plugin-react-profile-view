@@ -5,10 +5,13 @@ import ReactDOM from 'react-dom';
 import Home from './Home';
 configure({ adapter: new Adapter() });
 
+function setTitle(title: string) {
+    // does nothing
+}
 it('Home loads without crashing', () => {
     // TODO: shouldn't check tokens into github
     const token = 'xxx';
-    const hostName = 'https://narrative.kbase.us';
+    const baseURL = 'https://ci.kbase.us';
     const loggedInUser = 'amarukawa';
-    shallow(<Home token={token} hostName={hostName} loggedInUser={loggedInUser} />);
+    shallow(<Home token={token} baseURL={baseURL} username={null} authUsername={loggedInUser} setTitle={setTitle} />);
 });

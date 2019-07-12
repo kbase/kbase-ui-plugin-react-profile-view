@@ -7,8 +7,10 @@ package:
   type: iframe
 install:
   routes:
-    - path: [["people2", "user2"], {type: 'rest', name: 'pathParams'}]
-      queryParams: {}
+    - path: [["people", "user"], {type: 'param', name: 'username', required: false}]
+      captureExtraPath: true
+      # queryParams: 
+      #   username: {}
       widget: kb_iframe_loader
       authorization: true 
       params:

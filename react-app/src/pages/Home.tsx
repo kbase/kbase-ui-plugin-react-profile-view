@@ -82,7 +82,8 @@ interface HomeState {
 
 export interface HomeProps {
     token: string;
-    username: string;
+    authUsername: string;
+    username: string | null;
     baseURL: string;
     setTitle: (title: string) => void;
 }
@@ -124,15 +125,12 @@ class Home extends React.Component<HomeProps, HomeState> {
     }
 
     componentDidMount() {
-        // const profileID = window.location.search.replace('?', '') || this.props.username;
-
         let username;
-        const usernameFromParam = window.location.search.slice(1);
-        if (usernameFromParam) {
-            username = usernameFromParam;
+        if (this.props.username) {
+            username = this.props.username;
             this.props.setTitle('User Profile for ' + username);
         } else {
-            username = this.props.username;
+            username = this.props.authUsername;
             this.props.setTitle('Your User Profile');
         }
 
@@ -142,10 +140,19 @@ class Home extends React.Component<HomeProps, HomeState> {
          */
         fetchProfileAPI(username, this.props.token, this.props.baseURL).then((response) => {
             if (typeof response !== 'undefined') {
-                this.props.setTitle('User Profile for ' + response.user.realname);
+                if (this.props.username) {
+                    this.props.setTitle('User Profile for ' + response.user.realname);
+                }
                 this.setState({
                     userName: {
+                        // TODO: it is better to use dot syntax than array syntax for objects,
+                        // it makes it clearer what the intention is (at least I think so)
+                        // there is no functional difference other than fewer characters to type
+                        // for dot syntax, and of course better IDE help when the
+                        // variable is well typed.
+                        // e.g.: name: response.user.realname
                         name: response['user']['realname'],
+
                         userID: response['user']['username']
                     },
                     gravatarHash: response['profile']['synced']['gravatarHash'],

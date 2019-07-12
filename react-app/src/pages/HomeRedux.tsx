@@ -4,13 +4,14 @@ import Home from './Home';
 
 import { StoreState } from '../redux/store';
 import { Action, Dispatch } from 'redux';
-import { setTitle } from '@kbase/ui-lib';
+import { sendTitle } from '@kbase/ui-lib';
 
 interface OwnProps {}
 
 interface StateProps {
     token: string;
-    username: string;
+    authUsername: string;
+    username: string | null;
     baseURL: string;
 }
 
@@ -18,19 +19,29 @@ interface DispatchProps {
     setTitle: (title: string) => void;
 }
 
+// TODO this should be part of the view definition
+interface UserProfileViewParams {
+    username?: string;
+}
+
 function mapStateToProps(state: StoreState, ownProps: OwnProps): StateProps {
     const {
         auth: { userAuthorization },
         app: {
-            config: { baseUrl }
+            config: { baseUrl },
+            runtime: {
+                navigation: { params: rawParams }
+            }
         }
     } = state;
     if (!userAuthorization) {
         throw new Error('This plugin only operates with authentication; no KBase token in store');
     }
+    const params = (rawParams as unknown) as UserProfileViewParams;
     return {
         token: userAuthorization.token,
-        username: userAuthorization.username,
+        authUsername: userAuthorization.username,
+        username: params.username || null,
         baseURL: baseUrl
     };
 }
@@ -38,7 +49,7 @@ function mapStateToProps(state: StoreState, ownProps: OwnProps): StateProps {
 function mapDispatchToProps(dispatch: Dispatch<Action>, ownProps: OwnProps): DispatchProps {
     return {
         setTitle: (title: string) => {
-            return dispatch(setTitle(title) as any);
+            return dispatch(sendTitle(title) as any);
         }
     };
 }
