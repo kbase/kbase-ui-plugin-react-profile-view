@@ -4,7 +4,7 @@
     "private": true,
     "dependencies": {
         "@craco/craco": "5.2.4",
-        "@kbase/ui-lib": "0.1.0-alpha.49",
+        "@kbase/ui-lib": "0.1.0-alpha.50",
         "@types/enzyme": "3.10.2",
         "@types/enzyme-adapter-react-16": "1.0.5",
         "@types/jest": "24.0.15",
@@ -12,7 +12,7 @@
         "@types/react": "16.8.23",
         "@types/react-dom": "16.8.4",
         "@types/react-redux": "7.1.1",
-        "antd": "3.20.1",
+        "antd": "3.20.2",
         "craco-antd": "1.11.0",
         "enzyme": "3.10.0",
         "enzyme-adapter-react-16": "1.14.0",
