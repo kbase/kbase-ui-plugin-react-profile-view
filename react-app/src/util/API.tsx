@@ -23,7 +23,6 @@ export async function getBFFServiceUrl(token: string, baseURL: string) {
         body: stringBody
     });
     const responseJson = await response.json();
-    console.log(responseJson, responseJson.result[0]['url']);
     return responseJson.result[0]['url'];
 }
 
@@ -35,7 +34,6 @@ export async function getBFFServiceUrl(token: string, baseURL: string) {
  */
 export async function fetchProfileAPI(id: string, token: string, baseURL: string) {
     const bffServiceUrl = await getBFFServiceUrl(token, baseURL);
-    console.log('bffServiceUrl', bffServiceUrl);
     let url = bffServiceUrl + '/fetchUserProfile/' + id;
     const response = await fetch(url, {
         method: 'GET'

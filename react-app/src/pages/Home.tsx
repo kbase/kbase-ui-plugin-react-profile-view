@@ -66,7 +66,7 @@ export interface UserName {
     name: string;
     userID: string;
 }
-interface State {
+interface HomeState {
     tabTitle: Array<string>;
     userName: UserName;
     userProfile: ProfileData;
@@ -80,14 +80,16 @@ interface State {
     gravatarHash: string;
 }
 
-export interface Store {
+export interface HomeProps {
     token: string;
-    username: string;
+    authUsername: string;
+    username: string | null;
     baseURL: string;
+    setTitle: (title: string) => void;
 }
 
-class Home extends React.Component<Store, State> {
-    constructor(props: Store) {
+class Home extends React.Component<HomeProps, HomeState> {
+    constructor(props: HomeProps) {
         super(props);
         this.state = {
             tabTitle: ['Profile', 'Narratives', 'Shared narratives', 'Search users'],
@@ -123,17 +125,34 @@ class Home extends React.Component<Store, State> {
     }
 
     componentDidMount() {
-        const profileID = window.location.search.replace('?', '') || this.props.username;
+        let username;
+        if (this.props.username) {
+            username = this.props.username;
+            this.props.setTitle('User Profile for ' + username);
+        } else {
+            username = this.props.authUsername;
+            this.props.setTitle('Your User Profile');
+        }
+
         /**
          * fetch user profile
          *  @param {string} id  profile ID
          */
-        console.log('about to fetch', profileID, this.props.token, this.props.baseURL);
-        fetchProfileAPI(profileID, this.props.token, this.props.baseURL).then((response) => {
+        fetchProfileAPI(username, this.props.token, this.props.baseURL).then((response) => {
             if (typeof response !== 'undefined') {
+                if (this.props.username) {
+                    this.props.setTitle('User Profile for ' + response.user.realname);
+                }
                 this.setState({
                     userName: {
+                        // TODO: it is better to use dot syntax than array syntax for objects,
+                        // it makes it clearer what the intention is (at least I think so)
+                        // there is no functional difference other than fewer characters to type
+                        // for dot syntax, and of course better IDE help when the
+                        // variable is well typed.
+                        // e.g.: name: response.user.realname
                         name: response['user']['realname'],
+
                         userID: response['user']['username']
                     },
                     gravatarHash: response['profile']['synced']['gravatarHash'],
@@ -155,7 +174,7 @@ class Home extends React.Component<Store, State> {
          * fetch orgs that user blongs to the profile
          *  @param {string} id  profile ID
          */
-        fetchOrgsOfProfileAPI(profileID, this.props.token, this.props.baseURL).then((response: Array<Org>) => {
+        fetchOrgsOfProfileAPI(username, this.props.token, this.props.baseURL).then((response: Array<Org>) => {
             let orgArr: Array<OrgProp> = [];
             if (typeof response !== 'undefined') {
                 response.forEach((org) => {
