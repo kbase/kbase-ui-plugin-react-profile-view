@@ -1,6 +1,6 @@
 import React from 'react';
 import { Select } from 'antd';
-import { filteredUserAPI } from '../util/API';
+import { filteredUserAPI } from '../../util/API';
 const { Option } = Select;
 
 interface FilteredUser {

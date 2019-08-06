@@ -1,8 +1,9 @@
 import React from 'react';
 import { Tabs } from 'antd';
 import Profile from '../components/Profile';
-import Narratives from '../components/Narratives';
-import SearchUsersRedux from '../components/SearchUsersRedux';
+import Narratives from '../components/Narratives/Narratives';
+import TestContainer from '../components/Test/TestContainer';
+import SearchUsersContainer from '../components/SearchUsers/SearchUsersContainer';
 import { fetchOrgsOfProfileAPI, fetchProfileAPI, fetchNarrativesAPI } from '../util/API';
 
 const TabPane = Tabs.TabPane;
@@ -125,6 +126,7 @@ class Home extends React.Component<HomeProps, HomeState> {
     }
 
     componentDidMount() {
+        console.log(this.props)
         let username;
         if (this.props.username) {
             username = this.props.username;
@@ -133,7 +135,6 @@ class Home extends React.Component<HomeProps, HomeState> {
             username = this.props.authUsername;
             this.props.setTitle('Your User Profile');
         }
-
         /**
          * fetch user profile
          *  @param {string} id  profile ID
@@ -145,18 +146,11 @@ class Home extends React.Component<HomeProps, HomeState> {
                 }
                 this.setState({
                     userName: {
-                        // TODO: it is better to use dot syntax than array syntax for objects,
-                        // it makes it clearer what the intention is (at least I think so)
-                        // there is no functional difference other than fewer characters to type
-                        // for dot syntax, and of course better IDE help when the
-                        // variable is well typed.
-                        // e.g.: name: response.user.realname
-                        name: response['user']['realname'],
-
-                        userID: response['user']['username']
+                        name: response.user.realname,
+                        userID: response.user.username
                     },
-                    gravatarHash: response['profile']['synced']['gravatarHash'],
-                    userProfile: response['profile']['userdata'],
+                    gravatarHash: response.profile.synced.gravatarHash,
+                    userProfile: response.profile.userdata,
                     userProfileLoaded: true
                 });
             } else {
@@ -203,10 +197,9 @@ class Home extends React.Component<HomeProps, HomeState> {
          * if the viewing profile userid is not the logged in user,
          * then fetch all of shared and public narrative and filter with the viewing profile userid.
          */
-
-        // TODO: this should only be true if the username is actually undefined. For an undefined test
-        // you can do either !this.props.username, or typeof this.props.username === 'undefined'.
-        if (this.props.username === 'undefined') {
+        console.log(this.props.username, this.props.authUsername)
+        let profileID = this.props.username; // profile to be viewed 
+        if (typeof this.props.username === 'undefined'|| typeof this.props.authUsername === 'undefined') {
             // if there is no logged in user in run time config (redux app state)
             // returns an empty narrative list
             this.setState({
@@ -224,13 +217,13 @@ class Home extends React.Component<HomeProps, HomeState> {
             });
             return;
         } else {
-            const profileID = window.location.search.replace('?', '');
             // when logged in user is viewing his/her profile
             // fetch both "mine" and "shared" profile
-            if (this.props.username === profileID) {
+            if (this.props.username === this.props.authUsername) {
                 fetchNarrativesAPI('mine', this.props.token, this.props.baseURL).then(
                     (response: Array<NarrativeData>) => {
                         if (typeof response !== 'undefined') {
+                            console.log('response fetchNarrativesAPI', response)
                             this.setState({
                                 narratives: response,
                                 narrativesLoaded: true
@@ -279,6 +272,8 @@ class Home extends React.Component<HomeProps, HomeState> {
                     }
                 );
             } else {
+                // when logged in user is not viewing other user's profile
+                // fetch both "public" and "shared" profile and fileter response with profileID
                 let publicNarratives = fetchNarrativesAPI('public', this.props.token, this.props.baseURL).then(
                     (response: Array<NarrativeData>) => {
                         if (typeof response === 'undefined') {
@@ -347,9 +342,12 @@ class Home extends React.Component<HomeProps, HomeState> {
             return;
         }
     }
-
+    //TODO:AKIYO  EXPLAIN!!! 
+    searchOnATab = <div className="search-on-a-tab">Search other users <SearchUsersContainer /></div>
+    
     render() {
         return (
+            <div>
             <Tabs type="line" defaultActiveKey="1">
                 <TabPane tab="Profile" key="1">
                     <Profile
@@ -366,13 +364,18 @@ class Home extends React.Component<HomeProps, HomeState> {
                     <Narratives
                         narratives={this.state.narratives}
                         narrativesloaded={this.state.narrativesLoaded}
-                        token={this.props.token}
                     />
                 </TabPane>
-                <TabPane tab="Search other users" key="6">
-                    <SearchUsersRedux />
+                {/* <TabPane tab="Search other users" key="6">
+                    <SearchUsersContainer />
+                </TabPane> */}
+                <TabPane tab="Testing" key="6">
+                    <TestContainer />
                 </TabPane>
+                {/* TODO:AKIYO  EXPLAIN!!!  */}
+                <TabPane disabled tab={this.searchOnATab} key="8"></TabPane>
             </Tabs>
+            </div>
         );
     }
 }

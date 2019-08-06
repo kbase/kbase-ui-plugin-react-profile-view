@@ -115,7 +115,7 @@ function Profile(props: Props) {
                 <Col span={16}>
                     <Row gutter={8}>
                         <Col span={12}>
-                            <Card loading={profileloading} style={{ margin: '8px 0px' }} title="Research Interests">
+                            <Card className="card-with-height" loading={profileloading} style={{ margin: '8px 0px' }} title="Research Interests">
                                 <ul style={{ textAlign: 'left' }}>
                                     {researchInterests.map((interest) => (
                                         <li key={interest}>{interest}</li>
@@ -124,7 +124,7 @@ function Profile(props: Props) {
                             </Card>
                         </Col>
                         <Col span={12}>
-                            <Card loading={orgloading} style={{ margin: '8px 0px' }} title="Organizations">
+                            <Card className="card-with-height" loading={orgloading} style={{ margin: '8px 0px' }} title="Organizations">
                                 <ul style={{ textAlign: 'left' }}>
                                     {orgs.map((org, index) => (
                                         <li key={index}>
