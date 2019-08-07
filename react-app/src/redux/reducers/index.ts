@@ -3,31 +3,34 @@ import narrativeReducer from './narrative_reducers';
 import reducer from './reducer';
 import { StoreState } from "../store";
 
+//TODO:AKIYO convert this to combine reducers
 
-const fooReducer: Reducer<StoreState | undefined, Action> = (state: StoreState | undefined, action: Action) => {
-  const fooState = reducer(state as StoreState, action);
-  if (fooState) {
-    console.log('return foo state ')
-    return fooState as StoreState;
-  } 
+
+const rootReducer: Reducer<StoreState | undefined, Action> = (state: StoreState | undefined, action: Action) => {
+
+  // Inital combine state created by store is loaded first 
+  const kbaseUIStore = reducer(state as StoreState, action);
+  // if state doesn't load for whatever the reason possibly could be 
   if (!state) {
     console.log('return state ')
-   return state }
+    return state // honestly I don't know what this returns
+  }
+  
+  // when reducer is creating KbaseUIStore 
+  if (kbaseUIStore) {
+    return kbaseUIStore as StoreState;
+  } 
   else {
-    console.log('calling narrative Reducer', action)
-    return narrativeReducer(state, action) ;
+    // when actions from app needs specific reducers
+    switch(action.type) {
+      case "LOAD_NARRATIVES": 
+        console.log('calling narrative Reducer', action)
+        return narrativeReducer(state, action) ;
+      default:
+        return state;
+    }
   }
 }
-// const reactAppReducer = combineReducers({
-  
-//   narrativeReducer
-// })
 
-export default fooReducer;
 
-/**
- * import { combineReducers } from 'redux'
-import * as reducers from './reducers'
-
-const todoApp = combineReducers(reducers)
- */
+export default rootReducer;

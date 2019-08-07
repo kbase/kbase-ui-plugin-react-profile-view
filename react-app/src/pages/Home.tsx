@@ -87,6 +87,8 @@ export interface HomeProps {
     username: string | null;
     baseURL: string;
     setTitle: (title: string) => void;
+    loadNarratives: (filter: string, token: string, baseURL:String) => void;
+    loadNarratives_original: () => Array<NarrativeData>;
 }
 
 class Home extends React.Component<HomeProps, HomeState> {
@@ -126,7 +128,7 @@ class Home extends React.Component<HomeProps, HomeState> {
     }
 
     componentDidMount() {
-        console.log(this.props)
+        console.log('home page props', this.props, this.props.loadNarratives)
         let username;
         if (this.props.username) {
             username = this.props.username;
@@ -197,8 +199,8 @@ class Home extends React.Component<HomeProps, HomeState> {
          * if the viewing profile userid is not the logged in user,
          * then fetch all of shared and public narrative and filter with the viewing profile userid.
          */
-        console.log(this.props.username, this.props.authUsername)
         let profileID = this.props.username; // profile to be viewed 
+        //this.props.loadNarratives()
         if (typeof this.props.username === 'undefined'|| typeof this.props.authUsername === 'undefined') {
             // if there is no logged in user in run time config (redux app state)
             // returns an empty narrative list
@@ -216,7 +218,7 @@ class Home extends React.Component<HomeProps, HomeState> {
                 narrativesLoaded: true
             });
             return;
-        } else {
+        } else {            
             // when logged in user is viewing his/her profile
             // fetch both "mine" and "shared" profile
             if (this.props.username === this.props.authUsername) {

@@ -1,10 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
-import { bindActionCreators } from 'redux';
 import { NarrativeData } from '../../pages/Home';
 import { StoreState } from '../../redux/store';
-import { loadNarratives } from '../../redux/actions/index';
+import { loadNarratives, loadNarratives_original } from '../../redux/actions/index';
 import { Form, Icon, Input, Button } from 'antd';
 
 
@@ -36,7 +35,7 @@ function mapStateToProps (state:StoreState):StateProps {
 function mapDispatchToProps(dispatch: Dispatch):DispatchProps {
     return {
                 onSubmitDispatch: ()=> {
-                dispatch(loadNarratives())
+                dispatch(loadNarratives_original())
             }
     }
 }
@@ -53,7 +52,7 @@ function MapThatList ( list:Array<NarrativeData> ) {
 
 
 function TestContainer (props: Props) {
-    console.log('testcontainer', props.narrativeList)
+    console.log('testcontainer',props, props.narrativeList)
     function onSubmit(event:React.FormEvent<HTMLFormElement>){
         event.preventDefault()
         props.onSubmitDispatch()

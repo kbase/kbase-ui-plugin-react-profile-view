@@ -3,21 +3,16 @@ import { createStore, compose, applyMiddleware } from "redux";
 import thunk from "redux-thunk";
 
 import { NarrativeData } from '../pages/Home';
-import reducer from "./reducers/reducer";
-import reactAppReducer from "./reducers/index";
+import rootReducer from "./reducers/index";
 
-interface ReactAppState {
-    userProfileApp: {
-        narrativeDataArray: Array<NarrativeData>; 
-    }
-}
+
 interface NarrativeState {
         narrativeDataArray: Array<NarrativeData>; 
 }
 // export interface StoreState extends BaseStoreState,  ReactAppState{ }
 export interface StoreState extends BaseStoreState,  NarrativeState {}
 
-
+// When app starts, this runs first to set the initial state.
 export function makeInitialStoreState(): StoreState {
     const baseStoreState = makeBaseStoreState();
     const narrativePreloadedState: Array<NarrativeData>  = [{
@@ -34,7 +29,6 @@ export function makeInitialStoreState(): StoreState {
         ...baseStoreState,  narrativeDataArray: narrativePreloadedState 
     };
 }
-console.log('makeInitialStoreState', makeInitialStoreState())
 export function createReduxStore() {
-    return createStore(reactAppReducer, makeInitialStoreState(), compose(applyMiddleware(thunk)));
+    return createStore(rootReducer, makeInitialStoreState(), compose(applyMiddleware(thunk)));
 }
