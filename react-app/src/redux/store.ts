@@ -15,13 +15,14 @@ export interface StoreState extends BaseStoreState,  NarrativeState {}
 // When app starts, this runs first to set the initial state.
 export function makeInitialStoreState(): StoreState {
     const baseStoreState = makeBaseStoreState();
+    // setting initial empty narrative state
     const narrativePreloadedState: Array<NarrativeData>  = [{
         wsID: '',
         permission: '',
         name: '',
         last_saved: 0,
         users: {},
-        narrative_detail: { creator: 'me' }
+        narrative_detail: { creator: '' }
     }]
     console.log('baseStoreState', baseStoreState)
     return {

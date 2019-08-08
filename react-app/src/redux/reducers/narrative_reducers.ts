@@ -1,11 +1,18 @@
-import { Action, Reducer } from "redux";
+import { Action } from "redux";
 import { StoreState } from "../store";
+import { NarrativeData } from "../../pages/Home";
 
-export default function narrativeReducer(state: StoreState, action:Action ):StoreState   {
-    console.log('im in narrative reducer', action)
+interface narrativeFetchActionType {
+    type: string;
+    payload: Array<NarrativeData>
+}
+
+export default function narrativeReducer(state: StoreState, action: narrativeFetchActionType):StoreState   {
+    console.log('im in narrative reducer', action.payload)
+    const payload = action.payload;
+    console.log('im in narrative reducer', payload)
     switch (action.type) {
         case 'LOAD_NARRATIVES':
-
             return (
                 { ...state,
                     narrativeDataArray: [
@@ -41,6 +48,14 @@ export default function narrativeReducer(state: StoreState, action:Action ):Stor
                     ]
                 }
             );
+            break;
+        case 'LOAD_MINE_NARRATIVES':
+
+                return (
+                    { ...state,
+                        narrativeDataArray: payload
+                    }
+                );
             break;
         default: 
                 return state;

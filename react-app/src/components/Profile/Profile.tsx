@@ -1,7 +1,7 @@
 import React from 'react';
-import { UserName, ProfileData, OrgProp } from '../pages/Home';
+import { UserName, ProfileData, OrgProp } from '../../pages/Home';
 import { Row, Col, Card } from 'antd';
-import nouserpic from '../assets/nouserpic.png';
+import nouserpic from '../../assets/nouserpic.png';
 const { Meta } = Card;
 
 /**
@@ -25,6 +25,7 @@ interface Props {
  * @param props
  */
 function Profile(props: Props) {
+    console.log('profile props', props)
     const profile = props.userProfile;
     // Set initial value to props for initial render and no-data
     let jobTitle = '';

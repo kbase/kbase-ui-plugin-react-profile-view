@@ -1,6 +1,6 @@
 import React from 'react';
 import { Tabs } from 'antd';
-import Profile from '../components/Profile';
+import Profile from '../components/Profile/Profile';
 import Narratives from '../components/Narratives/Narratives';
 import TestContainer from '../components/Test/TestContainer';
 import SearchUsersContainer from '../components/SearchUsers/SearchUsersContainer';
@@ -87,7 +87,7 @@ export interface HomeProps {
     username: string | null;
     baseURL: string;
     setTitle: (title: string) => void;
-    loadNarratives: (filter: string, token: string, baseURL:String) => void;
+    loadNarratives: (filter: string) => void;
     loadNarratives_original: () => Array<NarrativeData>;
 }
 
@@ -200,7 +200,6 @@ class Home extends React.Component<HomeProps, HomeState> {
          * then fetch all of shared and public narrative and filter with the viewing profile userid.
          */
         let profileID = this.props.username; // profile to be viewed 
-        //this.props.loadNarratives()
         if (typeof this.props.username === 'undefined'|| typeof this.props.authUsername === 'undefined') {
             // if there is no logged in user in run time config (redux app state)
             // returns an empty narrative list
@@ -221,7 +220,9 @@ class Home extends React.Component<HomeProps, HomeState> {
         } else {            
             // when logged in user is viewing his/her profile
             // fetch both "mine" and "shared" profile
-            if (this.props.username === this.props.authUsername) {
+            // if (this.props.username === this.props.authUsername) {
+            if (this.props.username === profileID) {
+                this.props.loadNarratives('mine');
                 fetchNarrativesAPI('mine', this.props.token, this.props.baseURL).then(
                     (response: Array<NarrativeData>) => {
                         if (typeof response !== 'undefined') {
@@ -248,6 +249,9 @@ class Home extends React.Component<HomeProps, HomeState> {
                         }
                     }
                 );
+                    
+                    this.props.loadNarratives('public');
+                
                 fetchNarrativesAPI('shared', this.props.token, this.props.baseURL).then(
                     (response: Array<NarrativeData>) => {
                         if (typeof response !== 'undefined') {
@@ -344,7 +348,9 @@ class Home extends React.Component<HomeProps, HomeState> {
             return;
         }
     }
-    //TODO:AKIYO  EXPLAIN!!! 
+    // wrap search user component with a div so that display can be controlled.
+    // in order to place search component/box on the navigation tab, 
+    // make it into a variable and insert it as tab title. 
     searchOnATab = <div className="search-on-a-tab">Search other users <SearchUsersContainer /></div>
     
     render() {
@@ -368,13 +374,10 @@ class Home extends React.Component<HomeProps, HomeState> {
                         narrativesloaded={this.state.narrativesLoaded}
                     />
                 </TabPane>
-                {/* <TabPane tab="Search other users" key="6">
-                    <SearchUsersContainer />
-                </TabPane> */}
-                <TabPane tab="Testing" key="6">
+                {/* <TabPane tab="Testing" key="6">
                     <TestContainer />
-                </TabPane>
-                {/* TODO:AKIYO  EXPLAIN!!!  */}
+                </TabPane> */}
+                {/* Insert search user component div as a title to place it on the navigation tab  */}
                 <TabPane disabled tab={this.searchOnATab} key="8"></TabPane>
             </Tabs>
             </div>

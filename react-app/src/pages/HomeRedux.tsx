@@ -7,7 +7,6 @@ import { Action, Dispatch } from 'redux';
 import { sendTitle } from '@kbase/ui-lib';
 import { loadNarratives, loadNarratives_original } from '../redux/actions/index';
 import { NarrativeData } from './Home';
-import { string } from 'prop-types';
 
 interface OwnProps {}
 
@@ -20,7 +19,7 @@ interface StateProps {
 
 interface DispatchProps {
     setTitle: (title: string) => void;
-    loadNarratives: (filter: string, token: string, baseURL:String) => void;
+    loadNarratives: (filter:string) => void;
     loadNarratives_original: () => Array<NarrativeData>;
 }
 
@@ -54,8 +53,8 @@ function mapStateToProps(state: StoreState, ownProps: OwnProps): StateProps {
 function mapDispatchToProps(dispatch: Dispatch<Action>, ownProps: OwnProps): DispatchProps {
     return {
         // action creator loadNarratives is passed as props to the home page.
-        loadNarratives: (filter: string, token: string, baseURL:String) => {
-            return dispatch(loadNarratives(filter, token, baseURL) as any);
+        loadNarratives: (filter: string) => {
+            return dispatch(loadNarratives(filter)as any);
         },
         setTitle: (title: string) => {
             return dispatch(sendTitle(title) as any);
