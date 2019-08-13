@@ -1,7 +1,7 @@
 import { Action, Reducer } from "redux";
 import { baseReducer } from "@kbase/ui-lib"; //? 
 import { BaseStoreState } from "@kbase/ui-lib"; //? 
-import { StoreState } from "../store";
+import { StoreState } from "../interfaces";
 
 const reducer: Reducer<StoreState | undefined, Action> = (state: StoreState | undefined, action: Action) => {
   const baseState = baseReducer(state as BaseStoreState, action);

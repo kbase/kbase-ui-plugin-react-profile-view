@@ -6,7 +6,7 @@
 import React from 'react';
 import { dateDisplay } from '../../util/dateDisplay'; // date format
 import { Table, Popover } from 'antd';
-import { Narrative_detail, NarrativeData } from '../../pages/Home'; //interface
+import { Narrative_detail, NarrativeData } from '../../redux/interfaces'; //interface
 
 interface TableData {
     key: string;

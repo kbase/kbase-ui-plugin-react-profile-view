@@ -1,11 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
-import { NarrativeData } from '../../pages/Home';
-import { StoreState } from '../../redux/store';
+import { NarrativeData, StoreState } from '../../redux/interfaces';
 import { loadNarratives, loadNarratives_original } from '../../redux/actions/index';
 import { Form, Button } from 'antd';
-import { string } from 'prop-types';
 
 
 interface DispatchProps {

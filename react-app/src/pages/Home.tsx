@@ -2,7 +2,10 @@ import React from 'react';
 import { Tabs } from 'antd';
 import Profile from '../components/Profile/Profile';
 import Narratives from '../components/Narratives/Narratives';
-import TestContainer from '../components/Test/TestContainer';
+
+import { NarrativeData, OrgProp, Org, ProfileData,  UserName } from '../redux/interfaces';
+// import x from '../components/Test/TestContainer';
+import {TestContainer, MockProfileContainer } from '../components/Test';
 import SearchUsersContainer from '../components/SearchUsers/SearchUsersContainer';
 import { fetchOrgsOfProfileAPI, fetchProfileAPI, fetchNarrativesAPI } from '../util/API';
 
@@ -14,64 +17,13 @@ const TabPane = Tabs.TabPane;
  */
 
 // add Narrative_detail if needed. Currently, data in the object is not used - Akiyo.
-export interface Narrative_detail {
-    creator: string;
-}
 
-export interface NarrativeData {
-    wsID: string;
-    permission: string;
-    name: string;
-    last_saved: number;
-    users: object;
-    narrative_detail: Narrative_detail;
-}
-
-// org data that
-export interface OrgProp {
-    name: string;
-    url: string;
-}
-
-// fetchOrgsOfProfile returns a full group info,
-// but only name and id is needed to make OrgProp
-export interface Org {
-    name: string;
-    id: string;
-}
-
-export interface Affiliation {
-    title: string;
-    organization: string;
-    started: string;
-    ended: string;
-}
-export interface ProfileData {
-    organization: string;
-    department: string;
-    city: string;
-    state: string;
-    postalCode: string;
-    country: string;
-    affiliations: Array<Affiliation>;
-    researchStatement: string;
-    jobTitle: string;
-    jobTitleOther: string;
-    researchInterests: Array<string>;
-    fundingSource: string;
-    gravatarDefault: string;
-    avatarOption: string;
-}
-
-export interface UserName {
-    name: string;
-    userID: string;
-}
 interface HomeState {
     tabTitle: Array<string>;
     userName: UserName;
     userProfile: ProfileData;
     userProfileLoaded: Boolean;
+    editEnable: Boolean; // profile edit enable 
     narratives: Array<NarrativeData>;
     narrativesLoaded: Boolean;
     sharedNarratives: Array<NarrativeData>;
@@ -100,6 +52,7 @@ class Home extends React.Component<HomeProps, HomeState> {
                 name: '',
                 userID: ''
             },
+            editEnable: false,
             userProfile: {
                 organization: '',
                 department: '',
@@ -128,7 +81,7 @@ class Home extends React.Component<HomeProps, HomeState> {
     }
 
     componentDidMount() {
-        console.log('home page props', this.props, this.props.loadNarratives)
+        console.log('home page props', this.props)
         let username;
         if (this.props.username) {
             username = this.props.username;
@@ -136,6 +89,7 @@ class Home extends React.Component<HomeProps, HomeState> {
         } else {
             username = this.props.authUsername;
             this.props.setTitle('Your User Profile');
+            this.setState({ editEnable: true })
         }
         /**
          * fetch user profile
@@ -222,7 +176,7 @@ class Home extends React.Component<HomeProps, HomeState> {
             // fetch both "mine" and "shared" profile
             // if (this.props.username === this.props.authUsername) {
             if (this.props.username === profileID) {
-                this.props.loadNarratives('mine');
+                this.props.loadNarratives('mine'); // redux 
                 fetchNarrativesAPI('mine', this.props.token, this.props.baseURL).then(
                     (response: Array<NarrativeData>) => {
                         if (typeof response !== 'undefined') {
@@ -250,7 +204,7 @@ class Home extends React.Component<HomeProps, HomeState> {
                     }
                 );
                     
-                    this.props.loadNarratives('public');
+                    // this.props.loadNarratives('public');
                 
                 fetchNarrativesAPI('shared', this.props.token, this.props.baseURL).then(
                     (response: Array<NarrativeData>) => {
@@ -360,6 +314,7 @@ class Home extends React.Component<HomeProps, HomeState> {
                 <TabPane tab="Profile" key="1">
                     <Profile
                         userName={this.state.userName}
+                        editEnable={this.state.editEnable}
                         userProfile={this.state.userProfile}
                         orgs={this.state.organizations}
                         gravatarHash={this.state.gravatarHash}
@@ -374,9 +329,18 @@ class Home extends React.Component<HomeProps, HomeState> {
                         narrativesloaded={this.state.narrativesLoaded}
                     />
                 </TabPane>
-                {/* <TabPane tab="Testing" key="6">
-                    <TestContainer />
-                </TabPane> */}
+                <TabPane tab="Testing" key="6">
+                    <MockProfileContainer  
+                        userName={this.state.userName}
+                        editEnable={this.state.editEnable}
+                        userProfile={this.state.userProfile}
+                        orgs={this.state.organizations}
+                        gravatarHash={this.state.gravatarHash}
+                        profileloaded={this.state.userProfileLoaded}
+                        orgsloaded={this.state.organizationsLoaded}
+                        token={this.props.token}
+                    />
+                </TabPane>
                 {/* Insert search user component div as a title to place it on the navigation tab  */}
                 <TabPane disabled tab={this.searchOnATab} key="8"></TabPane>
             </Tabs>

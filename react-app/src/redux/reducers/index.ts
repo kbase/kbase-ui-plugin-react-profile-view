@@ -1,8 +1,7 @@
 import { Action, Reducer } from 'redux';
 import narrativeReducer from './narrative_reducers';
 import reducer from './reducer';
-import { StoreState } from "../store";
-import { NarrativeData } from "../../pages/Home";
+import { StoreState, NarrativeData } from  "../interfaces";;
 
 interface narrativeFetchActionType {
   type: string;

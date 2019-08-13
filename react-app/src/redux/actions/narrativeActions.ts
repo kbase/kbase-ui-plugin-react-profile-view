@@ -1,5 +1,5 @@
 import { ThunkDispatch } from "redux-thunk";
-import { StoreState } from "../store";
+import { StoreState } from "../interfaces";
 import { Action, AnyAction, Dispatch } from 'redux';
 import { fetchOrgsOfProfileAPI, fetchProfileAPI, fetchNarrativesAPI } from '../../util/API';
 

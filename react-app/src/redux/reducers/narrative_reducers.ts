@@ -1,6 +1,6 @@
 import { Action } from "redux";
-import { StoreState } from "../store";
-import { NarrativeData } from "../../pages/Home";
+import { StoreState } from "../interfaces";
+import { NarrativeData } from "../interfaces";
 
 interface narrativeFetchActionType {
     type: string;

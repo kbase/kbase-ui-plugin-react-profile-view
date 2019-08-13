@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { NarrativeData } from '../../pages/Home';
+import { NarrativeData } from '../../redux/interfaces';
 import Narratives from './Narratives';
 
 
@@ -18,6 +18,7 @@ function mapStateToProps (state: State) {
 }
 
 function NarrativeContainer (mapStateToProps:State) {
+    console.log('load NarrativeContainer')
     return (
         <Narratives 
             narratives={mapStateToProps.narratives} 

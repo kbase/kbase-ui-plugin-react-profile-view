@@ -1,16 +1,10 @@
-import { BaseStoreState, makeBaseStoreState } from "@kbase/ui-lib";
 import { createStore, compose, applyMiddleware } from "redux";
 import thunk from "redux-thunk";
 
-import { NarrativeData } from '../pages/Home';
+import { makeBaseStoreState } from "@kbase/ui-lib";
+import { StoreState,  NarrativeData, ProfileData,  NarrativeState } from './interfaces';
 import rootReducer from "./reducers/index";
 
-
-interface NarrativeState {
-        narrativeDataArray: Array<NarrativeData>; 
-}
-// export interface StoreState extends BaseStoreState,  ReactAppState{ }
-export interface StoreState extends BaseStoreState,  NarrativeState {}
 
 // When app starts, this runs first to set the initial state.
 export function makeInitialStoreState(): StoreState {

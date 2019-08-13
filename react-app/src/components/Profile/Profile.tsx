@@ -1,5 +1,5 @@
 import React from 'react';
-import { UserName, ProfileData, OrgProp } from '../../pages/Home';
+import { UserName, ProfileData, OrgProp } from '../../redux/interfaces';
 import { Row, Col, Card } from 'antd';
 import nouserpic from '../../assets/nouserpic.png';
 const { Meta } = Card;
@@ -13,6 +13,7 @@ const { Meta } = Card;
 interface Props {
     token: string;
     userName: UserName;
+    editEnable: Boolean;
     userProfile: ProfileData;
     orgs: Array<OrgProp>;
     gravatarHash: string;
