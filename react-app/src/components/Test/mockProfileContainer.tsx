@@ -1,10 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import MockProfile from './MockProfile';
-import Profile from '../Profile/Profile';
 import { StoreState, UserName, ProfileData, OrgProp } from '../../redux/interfaces';
 
 
+/// when home page is loaded, it triggers action to fetch API call
+// to get profile info.
+// then store state will get populated by the user profile 
+// then dispatch? update the component this component? 
 
 function mapStateToProps(state: StoreState): StoreState {
     console.log("mockProfileContainer mapStateToProp", state);

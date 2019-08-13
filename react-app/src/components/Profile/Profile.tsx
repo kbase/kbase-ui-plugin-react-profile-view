@@ -26,7 +26,7 @@ interface Props {
  * @param props
  */
 function Profile(props: Props) {
-    console.log('profile props', props)
+    // console.log('profile props', props)
     const profile = props.userProfile;
     // Set initial value to props for initial render and no-data
     let jobTitle = '';
