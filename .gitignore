@@ -3,7 +3,7 @@ node_modules/
 
 # The built plugin app goes here during a top level build; we don't want to check
 # that is as it is build during install in kbase-ui
-/plugin/iframe_root 
+# /plugin/iframe_root 
 
 # created by npm if install with --no-cache option
 false
