@@ -4,7 +4,7 @@ import { configure } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import { shallow, render, mount } from 'enzyme';
 import Profile from './Profile';
-import { ProfileData, UserName, OrgProp } from '../pages/Home';
+import { ProfileData, UserName, OrgProp } from '../../pages/Home';
 
 configure({ adapter: new Adapter() }); //interface
 

@@ -1,8 +1,12 @@
 import React from 'react';
 import { Tabs } from 'antd';
-import Profile from '../components/Profile';
-import Narratives from '../components/Narratives';
-import SearchUsersRedux from '../components/SearchUsersRedux';
+import Profile from '../components/Profile/Profile';
+import Narratives from '../components/Narratives/Narratives';
+
+import { NarrativeData, OrgProp, Org, ProfileData,  UserName } from '../redux/interfaces';
+// import x from '../components/Test/TestContainer';
+import {TestContainer, MockProfileContainer } from '../components/Test';
+import SearchUsersContainer from '../components/SearchUsers/SearchUsersContainer';
 import { fetchOrgsOfProfileAPI, fetchProfileAPI, fetchNarrativesAPI } from '../util/API';
 
 const TabPane = Tabs.TabPane;
@@ -13,64 +17,13 @@ const TabPane = Tabs.TabPane;
  */
 
 // add Narrative_detail if needed. Currently, data in the object is not used - Akiyo.
-export interface Narrative_detail {
-    creator: string;
-}
 
-export interface NarrativeData {
-    wsID: string;
-    permission: string;
-    name: string;
-    last_saved: number;
-    users: object;
-    narrative_detail: Narrative_detail;
-}
-
-// org data that
-export interface OrgProp {
-    name: string;
-    url: string;
-}
-
-// fetchOrgsOfProfile returns a full group info,
-// but only name and id is needed to make OrgProp
-export interface Org {
-    name: string;
-    id: string;
-}
-
-export interface Affiliation {
-    title: string;
-    organization: string;
-    started: string;
-    ended: string;
-}
-export interface ProfileData {
-    organization: string;
-    department: string;
-    city: string;
-    state: string;
-    postalCode: string;
-    country: string;
-    affiliations: Array<Affiliation>;
-    researchStatement: string;
-    jobTitle: string;
-    jobTitleOther: string;
-    researchInterests: Array<string>;
-    fundingSource: string;
-    gravatarDefault: string;
-    avatarOption: string;
-}
-
-export interface UserName {
-    name: string;
-    userID: string;
-}
 interface HomeState {
     tabTitle: Array<string>;
     userName: UserName;
     userProfile: ProfileData;
     userProfileLoaded: Boolean;
+    editEnable: Boolean; // profile edit enable 
     narratives: Array<NarrativeData>;
     narrativesLoaded: Boolean;
     sharedNarratives: Array<NarrativeData>;
@@ -86,6 +39,8 @@ export interface HomeProps {
     username: string | null;
     baseURL: string;
     setTitle: (title: string) => void;
+    loadNarratives: (filter: string) => void;
+    loadNarratives_original: () => Array<NarrativeData>;
 }
 
 class Home extends React.Component<HomeProps, HomeState> {
@@ -97,6 +52,7 @@ class Home extends React.Component<HomeProps, HomeState> {
                 name: '',
                 userID: ''
             },
+            editEnable: false,
             userProfile: {
                 organization: '',
                 department: '',
@@ -125,6 +81,7 @@ class Home extends React.Component<HomeProps, HomeState> {
     }
 
     componentDidMount() {
+        console.log('home page props', this.props)
         let username;
         if (this.props.username) {
             username = this.props.username;
@@ -132,31 +89,25 @@ class Home extends React.Component<HomeProps, HomeState> {
         } else {
             username = this.props.authUsername;
             this.props.setTitle('Your User Profile');
+            this.setState({ editEnable: true })
         }
-
         /**
          * fetch user profile
          *  @param {string} id  profile ID
          */
         fetchProfileAPI(username, this.props.token, this.props.baseURL).then((response) => {
+            console.log('user profile response', response)
             if (typeof response !== 'undefined') {
                 if (this.props.username) {
                     this.props.setTitle('User Profile for ' + response.user.realname);
                 }
                 this.setState({
                     userName: {
-                        // TODO: it is better to use dot syntax than array syntax for objects,
-                        // it makes it clearer what the intention is (at least I think so)
-                        // there is no functional difference other than fewer characters to type
-                        // for dot syntax, and of course better IDE help when the
-                        // variable is well typed.
-                        // e.g.: name: response.user.realname
-                        name: response['user']['realname'],
-
-                        userID: response['user']['username']
+                        name: response.user.realname,
+                        userID: response.user.username
                     },
-                    gravatarHash: response['profile']['synced']['gravatarHash'],
-                    userProfile: response['profile']['userdata'],
+                    gravatarHash: response.profile.synced.gravatarHash,
+                    userProfile: response.profile.userdata,
                     userProfileLoaded: true
                 });
             } else {
@@ -203,10 +154,8 @@ class Home extends React.Component<HomeProps, HomeState> {
          * if the viewing profile userid is not the logged in user,
          * then fetch all of shared and public narrative and filter with the viewing profile userid.
          */
-
-        // TODO: this should only be true if the username is actually undefined. For an undefined test
-        // you can do either !this.props.username, or typeof this.props.username === 'undefined'.
-        if (this.props.username === 'undefined') {
+        let profileID = this.props.username; // profile to be viewed 
+        if (typeof this.props.username === 'undefined'|| typeof this.props.authUsername === 'undefined') {
             // if there is no logged in user in run time config (redux app state)
             // returns an empty narrative list
             this.setState({
@@ -223,14 +172,16 @@ class Home extends React.Component<HomeProps, HomeState> {
                 narrativesLoaded: true
             });
             return;
-        } else {
-            const profileID = window.location.search.replace('?', '');
+        } else {            
             // when logged in user is viewing his/her profile
             // fetch both "mine" and "shared" profile
+            // if (this.props.username === this.props.authUsername) {
             if (this.props.username === profileID) {
+                this.props.loadNarratives('mine'); // redux 
                 fetchNarrativesAPI('mine', this.props.token, this.props.baseURL).then(
                     (response: Array<NarrativeData>) => {
                         if (typeof response !== 'undefined') {
+                            console.log('response fetchNarrativesAPI', response)
                             this.setState({
                                 narratives: response,
                                 narrativesLoaded: true
@@ -253,6 +204,9 @@ class Home extends React.Component<HomeProps, HomeState> {
                         }
                     }
                 );
+                    
+                    // this.props.loadNarratives('public');
+                
                 fetchNarrativesAPI('shared', this.props.token, this.props.baseURL).then(
                     (response: Array<NarrativeData>) => {
                         if (typeof response !== 'undefined') {
@@ -279,6 +233,8 @@ class Home extends React.Component<HomeProps, HomeState> {
                     }
                 );
             } else {
+                // when logged in user is not viewing other user's profile
+                // fetch both "public" and "shared" profile and fileter response with profileID
                 let publicNarratives = fetchNarrativesAPI('public', this.props.token, this.props.baseURL).then(
                     (response: Array<NarrativeData>) => {
                         if (typeof response === 'undefined') {
@@ -347,13 +303,19 @@ class Home extends React.Component<HomeProps, HomeState> {
             return;
         }
     }
-
+    // wrap search user component with a div so that display can be controlled.
+    // in order to place search component/box on the navigation tab, 
+    // make it into a variable and insert it as tab title. 
+    searchOnATab = <div className="search-on-a-tab">Search other users <SearchUsersContainer /></div>
+    
     render() {
         return (
+            <div>
             <Tabs type="line" defaultActiveKey="1">
                 <TabPane tab="Profile" key="1">
                     <Profile
                         userName={this.state.userName}
+                        editEnable={this.state.editEnable}
                         userProfile={this.state.userProfile}
                         orgs={this.state.organizations}
                         gravatarHash={this.state.gravatarHash}
@@ -366,13 +328,25 @@ class Home extends React.Component<HomeProps, HomeState> {
                     <Narratives
                         narratives={this.state.narratives}
                         narrativesloaded={this.state.narrativesLoaded}
+                    />
+                </TabPane>
+                <TabPane tab="Testing" key="6">
+                    <MockProfileContainer
+                        baseURL={this.props.baseURL}
+                        userName={this.state.userName}
+                        editEnable={this.state.editEnable}
+                        userProfile={this.state.userProfile}
+                        orgs={this.state.organizations}
+                        gravatarHash={this.state.gravatarHash}
+                        profileloaded={this.state.userProfileLoaded}
+                        orgsloaded={this.state.organizationsLoaded}
                         token={this.props.token}
                     />
                 </TabPane>
-                <TabPane tab="Search other users" key="6">
-                    <SearchUsersRedux />
-                </TabPane>
+                {/* Insert search user component div as a title to place it on the navigation tab  */}
+                <TabPane disabled tab={this.searchOnATab} key="8"></TabPane>
             </Tabs>
+            </div>
         );
     }
 }

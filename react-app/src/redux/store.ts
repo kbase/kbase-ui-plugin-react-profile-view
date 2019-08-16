@@ -1,17 +1,29 @@
-import { BaseStoreState, makeBaseStoreState } from "@kbase/ui-lib";
 import { createStore, compose, applyMiddleware } from "redux";
 import thunk from "redux-thunk";
-import reducer from "./reducer";
 
-export interface StoreState extends BaseStoreState {}
+import { makeBaseStoreState } from "@kbase/ui-lib";
+import { StoreState,  NarrativeData, ProfileData,  NarrativeState } from './interfaces';
+import rootReducer from "./reducers/index";
 
+
+// When app starts, this runs first to set the initial state.
 export function makeInitialStoreState(): StoreState {
-  const baseStoreState = makeBaseStoreState();
-  return {
-    ...baseStoreState
-  };
+    const baseStoreState = makeBaseStoreState();
+    // setting initial empty narrative state
+    const narrativePreloadedState: Array<NarrativeData>  = [{
+        wsID: '',
+        permission: '',
+        name: '',
+        last_saved: 0,
+        users: {},
+        narrative_detail: { creator: '' }
+    }]
+    console.log('baseStoreState', baseStoreState)
+    return {
+        // ...baseStoreState, userProfileApp:{ narrativeDataArray: narrativePreloadedState }
+        ...baseStoreState,  narrativeDataArray: narrativePreloadedState 
+    };
 }
-
 export function createReduxStore() {
-  return createStore(reducer, makeInitialStoreState(), compose(applyMiddleware(thunk)));
+    return createStore(rootReducer, makeInitialStoreState(), compose(applyMiddleware(thunk)));
 }

@@ -1,7 +1,7 @@
 import React from 'react';
-import { UserName, ProfileData, OrgProp } from '../pages/Home';
+import { UserName, ProfileData, OrgProp } from '../../redux/interfaces';
 import { Row, Col, Card } from 'antd';
-import nouserpic from '../assets/nouserpic.png';
+import nouserpic from '../../assets/nouserpic.png';
 const { Meta } = Card;
 
 /**
@@ -13,6 +13,7 @@ const { Meta } = Card;
 interface Props {
     token: string;
     userName: UserName;
+    editEnable: Boolean;
     userProfile: ProfileData;
     orgs: Array<OrgProp>;
     gravatarHash: string;
@@ -25,6 +26,7 @@ interface Props {
  * @param props
  */
 function Profile(props: Props) {
+    // console.log('profile props', props)
     const profile = props.userProfile;
     // Set initial value to props for initial render and no-data
     let jobTitle = '';
@@ -115,7 +117,7 @@ function Profile(props: Props) {
                 <Col span={16}>
                     <Row gutter={8}>
                         <Col span={12}>
-                            <Card loading={profileloading} style={{ margin: '8px 0px' }} title="Research Interests">
+                            <Card className="card-with-height" loading={profileloading} style={{ margin: '8px 0px' }} title="Research Interests">
                                 <ul style={{ textAlign: 'left' }}>
                                     {researchInterests.map((interest) => (
                                         <li key={interest}>{interest}</li>
@@ -124,7 +126,7 @@ function Profile(props: Props) {
                             </Card>
                         </Col>
                         <Col span={12}>
-                            <Card loading={orgloading} style={{ margin: '8px 0px' }} title="Organizations">
+                            <Card className="card-with-height" loading={orgloading} style={{ margin: '8px 0px' }} title="Organizations">
                                 <ul style={{ textAlign: 'left' }}>
                                     {orgs.map((org, index) => (
                                         <li key={index}>

@@ -22,6 +22,9 @@ interface AuthData {
 }
 
 const mapStateToProps = (state:AppState) => {
+    // Since this component is just a redux wrapper 
+    // and not modifying state to make component props
+    // simply return state asd props
     return state
 }
 function SearchUsersRedux(mapStateToProps:AppState) {

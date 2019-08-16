@@ -25,8 +25,20 @@ it('renders without crashing with correct type and data', () => {
     const narrativesloaded = false;
     shallow(
         <Narratives
-            token={token}
-            loggedInUser={loggedInUser}
+            narratives={narratives}
+            narrativesloaded={narrativesloaded}
+        />
+    );
+});
+
+it('renders without crashing with empty array', () => {
+    // TODO: shouldn't check tokens into github
+    const token = 'xxx';
+    const loggedInUser = 'amarukawa';
+    const narratives = [];
+    const narrativesloaded = false;
+    shallow(
+        <Narratives
             narratives={narratives}
             narrativesloaded={narrativesloaded}
         />
@@ -50,8 +62,6 @@ it('renders without crashing with bad type and data', () => {
     const narrativesloaded = 'boo';
     shallow(
         <Narratives
-            token={token as string}
-            loggedInUser={loggedInUser as string}
             narratives={narratives as Array<any>}
             narrativesloaded={narrativesloaded as boolean}
         />

@@ -4,9 +4,9 @@
  *
  */
 import React from 'react';
-import { dateDisplay } from '../util/dateDisplay'; // date format
+import { dateDisplay } from '../../util/dateDisplay'; // date format
 import { Table, Popover } from 'antd';
-import { Narrative_detail, NarrativeData } from '../pages/Home'; //interface
+import { Narrative_detail, NarrativeData } from '../../redux/interfaces'; //interface
 
 interface TableData {
     key: string;
@@ -16,7 +16,6 @@ interface TableData {
 }
 
 interface Props {
-    token: string;
     narratives: Array<NarrativeData>;
     narrativesloaded: Boolean;
 }
@@ -26,6 +25,7 @@ interface Props {
  * @param props
  */
 function Narratives(props: Props) {
+    console.log("Narrative props", props)
     let data: Array<TableData> = [];
     let loading = true;
     if (props.narrativesloaded) {

@@ -1,3 +1,5 @@
+import { UserProfileService } from "../redux/interfaces";
+
 export async function getBFFServiceUrl(token: string, baseURL: string) {
     // TODO: for dev, the baseUrl will be whatever works for the CRA workflow, which is ''.
     // baseURL = 'https://ci.kbase.us/services'; // for dev
@@ -49,6 +51,31 @@ export async function fetchProfileAPI(id: string, token: string, baseURL: string
         return profile;
     } catch (err) {
         console.error('profile fetch failed', response);
+    }
+}
+
+export async function updateProfileAPI(token: string, baseURL: string, updatedUserProfle:UserProfileService) {
+    const body = {
+        version: '1.1',
+        method: 'UserProfile.update_user_profile',
+        params: {updatedUserProfle}
+    };
+    const stringBody = JSON.stringify(body);
+    //TODO: Akiyo - remove this after testing
+    baseURL = 'https://ci.kbase.us'
+    const url = baseURL + '/services/user_profile/rpc';
+    const response = await fetch(url, {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            Authorization: token,
+            'Content-Type': 'application/json'
+        },
+        body: stringBody
+    });
+    if( response.status === 500) {
+        console.error('500 response:', response);
+        return;
     }
 }
 
@@ -116,9 +143,6 @@ export async function filteredUserAPI(searchValue: string, token: string, baseUR
         params: [{ filter: searchValue }]
     };
     const stringBody = JSON.stringify(body);
-
-    // baseURL = 'https://ci.kbase.us/services'; // for dev
-    // TODO: this should come from config
     const url = baseURL + '/services/user_profile/rpc';
     const response = await fetch(url, {
         method: 'POST',
