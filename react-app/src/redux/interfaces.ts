@@ -50,22 +50,38 @@ export interface ProfileData {
     avatarOption: string;
 }
 
+// used in app
 export interface UserName {
     name: string;
     userID: string;
 }
 
-
+// user profile servie resturns
+// converted to UserName 
+// https://github.com/kbase/user_profile/blob/master/UserProfile.spec
 export interface FilteredUser {
     username: string;
     realname: string;
 }
 
-export interface Response {
-    version: string;
-    result: Array<any>;
-}
-
 export interface NarrativeState {
     narrativeDataArray: Array<NarrativeData>; 
+}
+/**
+ * user profile service uses this type
+ * typedef structure {
+        User user;
+        UnspecifiedObject profile;
+    } UserProfile;
+ *  "UnspecifiedObject profile;"
+ * is pecified below
+ */
+export interface UserProfileService {
+    'user': FilteredUser;
+    'profile': {
+        'userdata': ProfileData;
+    };
+    'synced':{
+        'gravatarHash': string;
+    }
 }

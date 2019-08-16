@@ -1,7 +1,7 @@
 import React from 'react';
 import { Select } from 'antd';
 import { filteredUserAPI } from '../../util/API';
-import { FilteredUser, Response } from '../../redux/interfaces';
+import { FilteredUser } from '../../redux/interfaces';
 const { Option } = Select;
 
 
@@ -14,6 +14,12 @@ interface Props {
     token: string;
     baseURL: string;
 }
+
+interface Response {
+    version: string;
+    result: Array<any>;
+}
+
 /**
  * View component with user search feature.
  * @param props

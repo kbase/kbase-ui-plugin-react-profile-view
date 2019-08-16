@@ -15,6 +15,7 @@ function mapStateToProps(state: StoreState): StoreState {
 }
 
 interface Props {
+    baseURL: string;
     token: string;
     userName: UserName;
     editEnable: Boolean;
@@ -29,7 +30,8 @@ function MockProfileContainer(props:Props) {
     console.log("mockProfileContainer props", props);
 
     return (
-    <MockProfile 
+    <MockProfile
+        baseURL={props.baseURL}
         userName={props.userName}
         editEnable={props.editEnable}
         userProfile={props.userProfile}

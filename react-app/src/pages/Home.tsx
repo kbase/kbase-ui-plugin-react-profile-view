@@ -96,6 +96,7 @@ class Home extends React.Component<HomeProps, HomeState> {
          *  @param {string} id  profile ID
          */
         fetchProfileAPI(username, this.props.token, this.props.baseURL).then((response) => {
+            console.log('user profile response', response)
             if (typeof response !== 'undefined') {
                 if (this.props.username) {
                     this.props.setTitle('User Profile for ' + response.user.realname);
@@ -330,7 +331,8 @@ class Home extends React.Component<HomeProps, HomeState> {
                     />
                 </TabPane>
                 <TabPane tab="Testing" key="6">
-                    <MockProfileContainer  
+                    <MockProfileContainer
+                        baseURL={this.props.baseURL}
                         userName={this.state.userName}
                         editEnable={this.state.editEnable}
                         userProfile={this.state.userProfile}

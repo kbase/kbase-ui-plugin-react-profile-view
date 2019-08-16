@@ -15,3 +15,16 @@
   right: -40vw;
   margin-top: -8px;
 }
+.edit-button-on-title {
+  float: right;
+  border: 0px !important;
+}
+.save-button-on-title {
+  float: right;
+  border: 0px !important;
+}
+.clear-disabled {
+  color:rgba(0, 0, 0, 0.65) !important;
+  background-color: white !important;
+  border: 0px !important;
+}
