@@ -63,5 +63,8 @@
             "!src/serviceWorker.ts"
         ]
     },
+    "resolutions": {
+        "**/less-loader": "5.0.0"
+    },
     "homepage": "./"
 }

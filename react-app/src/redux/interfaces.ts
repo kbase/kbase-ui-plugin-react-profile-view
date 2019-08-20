@@ -85,3 +85,9 @@ export interface UserProfileService {
         'gravatarHash': string;
     }
 }
+
+export interface UpdatedUserData { 
+    profile: {
+        userdata: ProfileData
+    }
+}

@@ -1,8 +1,9 @@
 import React from 'react';
 import { UserName, ProfileData, OrgProp } from '../../redux/interfaces';
-import { Row, Col, Card } from 'antd';
+import { Row, Col, Card, Input } from 'antd';
 import nouserpic from '../../assets/nouserpic.png';
 const { Meta } = Card;
+const { TextArea } = Input;
 
 /**
  *  Profile.tsx is a view component
@@ -146,7 +147,7 @@ function Profile(props: Props) {
                             style={{ margin: '8px 0px' }}
                             title="Research or Personal Statement"
                         >
-                            {profile.researchStatement}
+                            <TextArea readOnly className='clear-disabled' defaultValue={profile.researchStatement}/>{profile.researchStatement}
                         </Card>
                         <Card loading={profileloading} style={{ margin: '8px 0px' }} title="Afflications">
                             <ul style={{ textAlign: 'left' }}>

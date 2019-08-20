@@ -1,9 +1,9 @@
 import React from 'react';
 import { updateProfileAPI } from '../../util/API'; 
-import { UserName, ProfileData, OrgProp, Affiliation, UserProfileService } from '../../redux/interfaces';
+import { UserName, ProfileData, OrgProp, Affiliation, UserProfileService, UpdatedUserData} from '../../redux/interfaces';
 import nouserpic from '../../assets/nouserpic.png';
 
-import { Row, Col, Card, Input, Icon, Button } from 'antd';
+import { Row, Col, Card, Input, Icon, Button, Form , Tooltip} from 'antd';
 const { Meta } = Card;
 const { TextArea } = Input;
 
@@ -83,12 +83,13 @@ class MockProfile extends React.Component<Props, State> {
             organizationsLoading: true,
             gravatar: <img style={{ maxWidth: '100%', margin: '8px 0px' }} alt="avatar" src={nouserpic} />
         }
-        this.inputEnableDisable =this.inputEnableDisable.bind(this);
-        this.toggleSaveEdit = this.toggleSaveEdit.bind(this);
+        this.inputEnable =this.inputEnable.bind(this);
+        // this.toggleSaveEdit = this.toggleSaveEdit.bind(this);
         this.handleEdit = this.handleEdit.bind(this);
         this.userNameDisplay = this.userNameDisplay.bind(this);
-        this.editSaveButtons = this.editSaveButtons.bind(this);
-        this.cardTitle = this.cardTitle.bind(this);
+        this.inputSave = this.inputSave.bind(this)
+        // this.editSaveButtons = this.editSaveButtons.bind(this);
+        // this.cardTitle = this.cardTitle.bind(this);
     }
     //TODO: AKIYO  to separate this props value checking from componentDidmount
     // so that componentDidUpdate can also use it. 
@@ -166,52 +167,91 @@ class MockProfile extends React.Component<Props, State> {
      * @param event
      * @param edit if the input field should be disabled or not false=disabled
      */
-    inputEnableDisable(event: any, edit:boolean){
-        let divID = event.target.parentNode.className;
-        let selectorText = '#'+ divID;
-        let el = document.querySelector(selectorText);
-        if( el instanceof HTMLElement ) {
+    inputEnable(event: any){
+        console.log(event.target)
+        console.log(event.target.attributes)
+        // let divID = event.target.parentNode.className;
+        // let selectorText = '#'+ divID;
+        // let el = document.querySelector(selectorText);
+        if( event.target instanceof HTMLElement ) {
             // without this type check, dynamic styling doens't work.
-            if ( edit) {
-                el.removeAttribute('disabled');
-                el.style.cursor = 'pointer'
-            } else if ( !edit) {
-                el.setAttribute("disabled", "");
-                el.style.cursor = 'not-allowed'
-            }
+            if ( event.target.hasAttribute('readonly') ) {
+                event.target.removeAttribute('readonly');
+            } 
         } else {
             throw new Error("element not in document")
         }
     }
+    inputSave(event: any){
+        if( event.target instanceof HTMLElement ) {
+            if ( !event.target.hasAttribute('readonly')) {
+                event.target.setAttribute("readonly", "");
+            }
+        } else {
+            throw new Error("element not in document")
+        }
 
+           // TODO: AKIYO this is going to be action 
+        interface foo {
+
+                userdata: ProfileData;
+
+        }
+            let profile:ProfileData = {
+                  
+                        organization: 'Lawrence Berkeley National Laboratory (LBNL)',
+                        department: 'BOOO',
+                        city: 'Berkeley',
+                        state: 'California',
+                        postalCode: '94720',
+                        country: 'United States',
+                        affiliations:[{title: 'foobarrrrrr', organization: 'buzz', started: '1969', ended: 'Present'}, {title: 'bazBuz barz', organization: 'Hello', started: '1969', ended: '1973'}],
+                        researchStatement: event.target.value,
+                        jobTitle: 'Other',
+                        jobTitleOther: 'Front end dev',
+                        researchInterests: ['Genome Annotation', 'Genome Assembly', 'Microbial Communities', 'Comparative Genomics', 'Expression', 'Metabolic Modeling', 'Read Processing', 'Sequence Analysis', 'Utilities', 'Other'],
+                        fundingSource: 'DOE National Nuclear Security Administration (NNSA)',
+                        gravatarDefault: 'mm',
+                        avatarOption: ''
+           }
+        
+
+        console.log(event.target.value)
+        // TODO: AKIYO FIX THE API USING HARD COREDED BASEURL
+        // let updatedProfileString:string = JSON.stringify(updatedProfile)
+        // updateProfileAPI(this.props.token, this.props.baseURL, updatedProfileString)
+        updateProfileAPI(this.props.token, this.props.baseURL, profile)
+
+    }
     /**
      * Taggle save/edit button
      * @param event 
      */
-    toggleSaveEdit(event:any){
-        event.target.style.visibility= "hidden";
-        if(event.target.className.includes('save-button-on-title')) {
-            // save button is clicked
-            let elem = event.target.parentNode
-            let el = elem.querySelector('.edit-button-on-title');
-            if ( el instanceof HTMLElement ) {
-                // without this type check, dynamic styling doens't work.
-                el.style.visibility= "visible";
-            } else {
-                throw new Error("element not in document")
-            }
-        } else if(event.target.className.includes('edit-button-on-title')) {
-            // edit button is clicked
-            let elem = event.target.parentNode;
-            let el = elem.querySelector('.save-button-on-title');
-            if ( el instanceof HTMLElement ) {
-                // without this type check, dynamic styling doens't work.
-                el.style.visibility = 'visible';
-            } else {
-                throw new Error("element not in document")
-            }
-        }
-    } 
+    // toggleSaveEdit(event:any){
+    //     event.target.style.visibility= "hidden";
+    //     if(event.target.className.includes('save-button-on-title')) {
+    //         // save button is clicked
+    //         let elem = event.target.parentNode
+    //         let el = elem.querySelector('.edit-button-on-title');
+    //         if ( el instanceof HTMLElement ) {
+    //             // without this type check, dynamic styling doens't work.
+    //             el.style.visibility= "visible";
+    //         } else {
+    //             throw new Error("element not in document")
+    //         }
+    //     } else if(event.target.className.includes('edit-button-on-title')) {
+    //         // edit button is clicked
+    //         let elem = event.target.parentNode;
+    //         let el = elem.querySelector('.save-button-on-title');
+    //         if ( el instanceof HTMLElement ) {
+    //             // without this type check, dynamic styling doens't work.
+    //             el.style.visibility = 'visible';
+    //         } else {
+    //             throw new Error("element not in document")
+    //         }
+    //     }
+    // } 
+
 
     /**
      * handle edit/save button onclick
@@ -222,57 +262,27 @@ class MockProfile extends React.Component<Props, State> {
      * @param event 
      */
     handleEdit(event:any) {
-        let edit:boolean = false;
-        if( event.target.className.includes('save-button-on-title') ) {
-            edit = false;
-        } else if (event.target.className.includes('edit-button-on-title')) {
-            edit = true;
-        }
-        console.log(event.target.value)
-        let value:string = event.target.value;
-        this.toggleSaveEdit(event); // toggle save/edit button
-        this.inputEnableDisable(event, edit); // enable and disable input/text field
-        // TODO: AKIYO this is going to be action 
-        let updatedProfile:UserProfileService = {
-            user: {
-                username: 'amarukawa',
-                realname: 'Akiyo Marukawa'
-            },
-            profile: {
-                userdata: {
-                    organization: 'Lawrence Berkeley National Laboratory (LBNL)',
-                    department: 'BOOO',
-                    city: 'Berkeley',
-                    state: 'California',
-                    postalCode: '94720',
-                    country: 'United States',
-                    affiliations:[{title: 'foobarrrrrr', organization: 'buzz', started: '1969', ended: 'Present'}, {title: 'bazBuz barz', organization: 'Hello', started: '1969', ended: '1973'}],
-                    researchStatement: value,
-                    jobTitle: 'Other',
-                    jobTitleOther: 'Front end dev',
-                    researchInterests: ['Genome Annotation', 'Genome Assembly', 'Microbial Communities', 'Comparative Genomics', 'Expression', 'Metabolic Modeling', 'Read Processing', 'Sequence Analysis', 'Utilities', 'Other'],
-                    fundingSource: 'DOE National Nuclear Security Administration (NNSA)',
-                    gravatarDefault: 'mm',
-                    avatarOption: ''
-                }
-            },
-            synced:{
-                gravatarHash: '4210d8e14db97e647b8cedc9fa3c4119'
-            }
-            
-        }
-        updateProfileAPI(this.props.token, this.props.baseURL, updatedProfile)
-        
+        console.log('inhandleEdit')
+        // let edit:boolean = false;
+        // if( event.target.className.includes('save-button-on-title') ) {
+        //     edit = false;
+        // } else if (event.target.className.includes('edit-button-on-title')) {
+        //     edit = true;
+        // }
+        // console.log(event.target.parentNode)
+        // this.toggleSaveEdit(event); // toggle save/edit button
+        this.inputEnable(event); // enable and disable input/text field
+     
     }
     /**
      * make edit and save buttons
      * @param divClassName 
      */
-    editSaveButtons(divClassName:string){
-        return (
-            <div className={divClassName}><Button className="edit-button-on-title" icon="edit" key='editing' onClick={this.handleEdit}/><Button className="save-button-on-title" icon="save" key='saving' onClick={this.handleEdit}/></div>
-            )
-        }
+    // editSaveButtons(divClassName:string){
+    //     return (
+    //         <div className={divClassName}><Button className="edit-button-on-title" icon="edit" key='editing' onClick={this.handleEdit}/><Button className="save-button-on-title" icon="save" key='saving' onClick={this.handleEdit}/></div>
+    //         )
+    // }
         
     /**
      * Due to Ant design dealing with React life cycle, 
@@ -289,12 +299,18 @@ class MockProfile extends React.Component<Props, State> {
         } else {
             name = "error";
         }
-        return <div><Input className='clear-disabled' id='userName-name' defaultValue={name}/>{this.editSaveButtons('userName-name')}</div>
+        
+        // return <div><Input className='clear-disabled' id='userName-name' defaultValue={name}/>{this.editSaveButtons('userName-name')}</div>
+        return <div><Input className='clear-disabled' id='userName-name' defaultValue={name} onClick={this.handleEdit} /></div>
     }
-    
-    cardTitle(title:string, classname:string){
-        return<div>{title}{this.editSaveButtons(classname)}</div>
-    }
+    /**
+     * make card title with edit/save buttons
+     * @param title 
+     * @param classname 
+     */
+    // cardTitle(title:string, classname:string){
+    //     // return<div>{title}{this.editSaveButtons(classname)}</div>
+    // }
 
     render(){
         console.log("rendering", this.state.userName.name)
@@ -311,22 +327,32 @@ class MockProfile extends React.Component<Props, State> {
                             style={{ margin: '8px 0px', textAlign: 'left' }}
                             title={this.userNameDisplay()}
                         >
-                            {this.editSaveButtons('userProfile')}
+                            {/* {this.editSaveButtons('userProfile')} */}
                             {/* TODO:AKIYO this is going to be form */}
-                            <Meta title="User ID" />
-                            <p>{this.state.userName.userID}</p>
-                            <Meta title="Position" />
-                            <Input id='userProfile-jobtitle' className='clear-disabled' defaultValue={this.state.userProfile.jobTitle} disabled={true}/>
-                            <Meta title="Department" />
-                            <Input id='userProfile-department' className='clear-disabled' defaultValue={this.state.userProfile.department} disabled={true}/>
-                            <Meta title="Organization" />
-                            <Input id='userProfile-organization' className='clear-disabled' defaultValue={this.state.userProfile.organization} disabled={true}/>
-                            <Meta title="Location" />
-                            <p>
-                                {this.state.userProfile.city}, {this.state.userProfile.state}, {this.state.userProfile.country}
-                            </p>
-                            <Meta title="Primary Funding Source" />
-                            <p>{this.state.userProfile.fundingSource}</p>
+                            <Form layout='vertical'>
+                                <Form.Item label='User ID' >
+                                <Tooltip placement="top" title="Once create an account with a user ID, the system does not allow you to change it later.">
+                                        <Input className='clear-disabled' defaultValue={this.state.userName.userID} disabled={true} onClick={this.handleEdit}></Input>
+                                </Tooltip>
+                                </Form.Item>
+                                <Form.Item label='Position' >
+                                    <Input className='clear-disabled' defaultValue={this.state.userProfile.jobTitle} disabled={true}></Input>
+                                </Form.Item>
+                                <Form.Item label='Department' >
+                                    <Input className='clear-disabled' defaultValue={this.state.userProfile.department} disabled={true}></Input>
+                                </Form.Item>
+                                <Form.Item label='Organization' >
+                                    <Input className='clear-disabled' defaultValue={this.state.userProfile.organization} disabled={true}></Input>
+                                </Form.Item>
+                                <Form.Item label='Location' >
+                                    <Input className='clear-disabled' defaultValue={this.state.userProfile.city} disabled={true}></Input>
+                                    <Input className='clear-disabled' defaultValue={this.state.userProfile.state} disabled={true}></Input>
+                                    <Input className='clear-disabled' defaultValue={this.state.userProfile.country} disabled={true}></Input>
+                                </Form.Item>
+                                <Form.Item label='Primary Funding Source' >
+                                    <Input className='clear-disabled' defaultValue={this.state.userProfile.fundingSource} disabled={true}></Input>
+                                </Form.Item>
+                            </Form>
                         </Card>
                     </Col>
                     <Col span={16}>
@@ -359,11 +385,11 @@ class MockProfile extends React.Component<Props, State> {
                             <Card
                                 loading={this.state.userProfileLoading}
                                 style={{ margin: '8px 0px' }}
-                                title={this.cardTitle('Research or Personal Statement','researchStatement')}
+                                title='Research or Personal Statement'
                             >
-                                <TextArea className='clear-disabled' id="researchStatement" disabled={true} defaultValue={this.state.userProfile.researchStatement}/>
+                                <TextArea className='clear-disabled' id="researchStatement" defaultValue={this.state.userProfile.researchStatement} readOnly  onClick={this.handleEdit} onBlur={this.inputSave} onPressEnter={this.inputSave} />
                             </Card>
-                            <Card loading={this.state.userProfileLoading} style={{ margin: '8px 0px' }} title="Afflications">
+                            <Card loading={this.state.userProfileLoading} style={{ margin: '8px 0px' }} title="Affliations">
                                 <ul style={{ textAlign: 'left' }}>
                                     {this.state.userProfile.affiliations.map((position, index) => (
                                         <li key={index}>

@@ -1,5 +1,9 @@
-import { UserProfileService } from "../redux/interfaces";
+import { UserProfileService, ProfileData, UpdatedUserData} from "../redux/interfaces";
+interface foo {
 
+    userdata: ProfileData;
+
+}
 export async function getBFFServiceUrl(token: string, baseURL: string) {
     // TODO: for dev, the baseUrl will be whatever works for the CRA workflow, which is ''.
     // baseURL = 'https://ci.kbase.us/services'; // for dev
@@ -54,11 +58,13 @@ export async function fetchProfileAPI(id: string, token: string, baseURL: string
     }
 }
 
-export async function updateProfileAPI(token: string, baseURL: string, updatedUserProfle:UserProfileService) {
+export async function updateProfileAPI(token: string, baseURL: string, userdata:ProfileData) {
+    
+// export async function updateProfileAPI(token: string, baseURL: string, updatedUserProfleString:string) {
     const body = {
         version: '1.1',
         method: 'UserProfile.update_user_profile',
-        params: {updatedUserProfle}
+        params: [ {profile: {user: {realname: "Akiyo Marukawa", username: "amarukawa"}, userdata: {userdata}}}]
     };
     const stringBody = JSON.stringify(body);
     //TODO: Akiyo - remove this after testing
