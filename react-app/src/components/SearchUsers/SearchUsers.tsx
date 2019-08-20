@@ -70,7 +70,7 @@ class SearchUsers extends React.Component<Props, State> {
         return (
             <Select
                 mode="single"
-                style={{ width: 300 }}
+                style={{ width: 250 }}
                 allowClear
                 showSearch
                 placeholder="enter more than 3 characters"

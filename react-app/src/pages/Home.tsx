@@ -1,11 +1,9 @@
 import React from 'react';
 import { Tabs } from 'antd';
-import Profile from '../components/Profile/Profile';
+import ProfileContainer from '../components/Profile/Profile';
 import Narratives from '../components/Narratives/Narratives';
 
 import { NarrativeData, OrgProp, Org, ProfileData,  UserName } from '../redux/interfaces';
-// import x from '../components/Test/TestContainer';
-import {TestContainer, MockProfileContainer } from '../components/Test';
 import SearchUsersContainer from '../components/SearchUsers/SearchUsersContainer';
 import { fetchOrgsOfProfileAPI, fetchProfileAPI, fetchNarrativesAPI } from '../util/API';
 
@@ -310,42 +308,30 @@ class Home extends React.Component<HomeProps, HomeState> {
     
     render() {
         return (
-            <div>
-            <Tabs type="line" defaultActiveKey="1">
-                <TabPane tab="Profile" key="1">
-                    <Profile
-                        userName={this.state.userName}
-                        editEnable={this.state.editEnable}
-                        userProfile={this.state.userProfile}
-                        orgs={this.state.organizations}
-                        gravatarHash={this.state.gravatarHash}
-                        profileloaded={this.state.userProfileLoaded}
-                        orgsloaded={this.state.organizationsLoaded}
-                        token={this.props.token}
-                    />
-                </TabPane>
-                <TabPane tab="Narratives" key="3">
-                    <Narratives
-                        narratives={this.state.narratives}
-                        narrativesloaded={this.state.narrativesLoaded}
-                    />
-                </TabPane>
-                <TabPane tab="Testing" key="6">
-                    <MockProfileContainer
-                        baseURL={this.props.baseURL}
-                        userName={this.state.userName}
-                        editEnable={this.state.editEnable}
-                        userProfile={this.state.userProfile}
-                        orgs={this.state.organizations}
-                        gravatarHash={this.state.gravatarHash}
-                        profileloaded={this.state.userProfileLoaded}
-                        orgsloaded={this.state.organizationsLoaded}
-                        token={this.props.token}
-                    />
-                </TabPane>
-                {/* Insert search user component div as a title to place it on the navigation tab  */}
-                <TabPane disabled tab={this.searchOnATab} key="8"></TabPane>
-            </Tabs>
+            <div className="profile-tabs">
+                <Tabs type="line" defaultActiveKey="1">
+                    <TabPane  tab="Profile" key="1">
+                        <ProfileContainer
+                            baseURL={this.props.baseURL}
+                            userName={this.state.userName}
+                            editEnable={this.state.editEnable}
+                            userProfile={this.state.userProfile}
+                            orgs={this.state.organizations}
+                            gravatarHash={this.state.gravatarHash}
+                            profileloaded={this.state.userProfileLoaded}
+                            orgsloaded={this.state.organizationsLoaded}
+                            token={this.props.token}
+                        />
+                    </TabPane>
+                    <TabPane tab="Narratives" key="3">
+                        <Narratives
+                            narratives={this.state.narratives}
+                            narrativesloaded={this.state.narrativesLoaded}
+                        />
+                    </TabPane>
+                    {/* Insert search user component div as a title to place it on the navigation tab  */}
+                    <TabPane disabled tab={this.searchOnATab} key="8"></TabPane>
+                </Tabs>
             </div>
         );
     }

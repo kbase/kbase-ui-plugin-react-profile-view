@@ -12,6 +12,7 @@ const { TextArea } = Input;
  */
 
 interface Props {
+    baseURL: string;
     token: string;
     userName: UserName;
     editEnable: Boolean;
@@ -100,19 +101,19 @@ function Profile(props: Props) {
                         title={props.userName.name}
                     >
                         <Meta title="User ID" />
-                        <p>{props.userName.userID}</p>
+                        <Input className="clear-disabled" disabled defaultValue={props.userName.userID}/>
                         <Meta title="Position" />
-                        <p>{jobTitle}</p>
+                        <Input className="clear-disabled" disabled defaultValue={jobTitle}/>
                         <Meta title="Department" />
-                        <p>{profile.department}</p>
+                        <Input className="clear-disabled" disabled defaultValue={profile.department} />
                         <Meta title="Organization" />
-                        <p>{profile.organization}</p>
+                        <Input className="clear-disabled" disabled defaultValue={profile.organization}/>
                         <Meta title="Location" />
-                        <p>
-                            {profile.city}, {profile.state}, {profile.country}
-                        </p>
+                        <Input className="clear-disabled" disabled defaultValue={profile.city}/>
+                        <Input className="clear-disabled" disabled defaultValue={profile.state}/>
+                        <Input className="clear-disabled" disabled defaultValue={profile.country}/>
                         <Meta title="Primary Funding Source" />
-                        <p>{profile.fundingSource}</p>
+                        <Input className="clear-disabled" disabled defaultValue={profile.fundingSource}/>
                     </Card>
                 </Col>
                 <Col span={16}>
@@ -147,7 +148,7 @@ function Profile(props: Props) {
                             style={{ margin: '8px 0px' }}
                             title="Research or Personal Statement"
                         >
-                            <TextArea readOnly className='clear-disabled' defaultValue={profile.researchStatement}/>{profile.researchStatement}
+                            <TextArea autosize readOnly className='clear-disabled' defaultValue={profile.researchStatement}/>
                         </Card>
                         <Card loading={profileloading} style={{ margin: '8px 0px' }} title="Afflications">
                             <ul style={{ textAlign: 'left' }}>

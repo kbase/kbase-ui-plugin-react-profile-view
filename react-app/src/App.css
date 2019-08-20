@@ -1,7 +1,6 @@
 
 
 .App {
-  text-align: center;
   font-family: 'Oxygen', sans-serif;
 }
 
@@ -12,7 +11,7 @@
 .search-on-a-tab {
   color: rgba(0, 0, 0, 0.65);
   position: absolute;
-  right: -40vw;
+  right: -76vw;
   margin-top: -8px;
 }
 .edit-button-on-title {
@@ -27,5 +26,9 @@
   color:rgba(0, 0, 0, 0.65) !important;
   background-color: white !important;
   border: 0px !important;
-  cursor: pointer !important;
+  cursor: text !important;
+}
+
+.profile-tabs {
+  margin: 0 0.5em;
 }
