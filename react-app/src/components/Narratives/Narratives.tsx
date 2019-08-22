@@ -27,10 +27,11 @@ interface Props {
 function Narratives(props: Props) {
     console.log("Narrative props", props)
     let data: Array<TableData> = [];
-    let loading = true;
-    if (props.narrativesloaded) {
-        loading = false;
-    }
+    let loading = false;
+    // let loading = true;
+    // if (props.narrativesloaded) {
+    //     loading = false;
+    // }
     // initialize data for the table to be an empty array.
     const colums = [
         {

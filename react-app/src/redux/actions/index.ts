@@ -1,1 +1,1 @@
-export { loadNarratives_original, loadNarratives } from './narrativeActions';
+export { loadNarratives } from './narrativeActions';

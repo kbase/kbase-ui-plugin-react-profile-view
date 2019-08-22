@@ -29,10 +29,7 @@ const rootReducer: Reducer<StoreState | undefined, Action> = (state: StoreState 
     switch(action.type) {
       case "LOAD_NARRATIVES": 
         console.log('calling narrative Reducer', action)
-        return narrativeReducer(state, action as narrativeFetchActionType) ;
-      case "LOAD_MINE_NARRATIVES": 
-        console.log('calling narrative Reducer', action)
-        return narrativeReducer(state, action as narrativeFetchActionType) ;
+        return narrativeReducer(state, action as narrativeFetchActionType);
       default:
         return state;
     }

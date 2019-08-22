@@ -2,13 +2,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { NarrativeData, StoreState } from '../../redux/interfaces';
-import { loadNarratives, loadNarratives_original } from '../../redux/actions/index';
+import { loadNarratives} from '../../redux/actions/index';
 import { Form, Button } from 'antd';
 
 
 interface DispatchProps {
     onSubmitDispatch: (filter:string) => void;
-    onSubmitDispatchThat: () => void;
 }
 
 
@@ -32,8 +31,7 @@ function mapStateToProps (state:StoreState):StateProps {
 
 function mapDispatchToProps(dispatch: Dispatch):DispatchProps {
     return {
-        onSubmitDispatch: () =>  dispatch(loadNarratives('public') as any), // cuz I can't figure it out. 
-        onSubmitDispatchThat: () => dispatch(loadNarratives_original())
+        onSubmitDispatch: () =>  dispatch(loadNarratives('public', 'amarukawa') as any), // cuz I can't figure it out. 
     }
 }
 
@@ -46,16 +44,13 @@ function TestContainer (props: Props) {
         event.preventDefault()
         props.onSubmitDispatch('public')
     }
-    function onSubmitThat(event:React.FormEvent<HTMLFormElement>){
-        event.preventDefault()
-        props.onSubmitDispatchThat()
-    }
+
     let narrativeList = mapStateToProps;
     // MapThatList(mapStateToProps);
     return (
         // <ul>{ MapThatList(narrativeList) }</ul>
         <div>pow- <Form onSubmit={onSubmit}><Form.Item><Button htmlType="submit" >push this</Button> </Form.Item></Form>
-        pow- <Form onSubmit={onSubmitThat}><Form.Item><Button htmlType="submit" >push that</Button> </Form.Item></Form></div>
+        pow- <Form onSubmit={onSubmit}><Form.Item><Button htmlType="submit" >push that</Button> </Form.Item></Form></div>
     )
 }
 

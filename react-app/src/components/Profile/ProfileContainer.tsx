@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { OrgProp, UserName, ProfileData, NarrativeData, StoreState } from '../../redux/interfaces';
-import { loadNarratives, loadNarratives_original } from '../../redux/actions/index';
+import { loadNarratives} from '../../redux/actions/index';
 import Profile from './Profile';
 
 

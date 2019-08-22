@@ -1,11 +1,13 @@
 import React from 'react';
+
 import { Tabs } from 'antd';
 import ProfileContainer from '../components/Profile/Profile';
 import Narratives from '../components/Narratives/Narratives';
 
 import { NarrativeData, OrgProp, Org, ProfileData,  UserName } from '../redux/interfaces';
 import SearchUsersContainer from '../components/SearchUsers/SearchUsersContainer';
-import { fetchOrgsOfProfileAPI, fetchProfileAPI, fetchNarrativesAPI } from '../util/API';
+import { fetchOrgsOfProfileAPI, fetchProfileAPI } from '../util/API';
+import NarrativeContainer from '../components/Narratives';
 
 const TabPane = Tabs.TabPane;
 /**
@@ -31,14 +33,14 @@ interface HomeState {
     gravatarHash: string;
 }
 
+
 export interface HomeProps {
     token: string;
     authUsername: string;
     username: string | null;
     baseURL: string;
     setTitle: (title: string) => void;
-    loadNarratives: (filter: string) => void;
-    loadNarratives_original: () => Array<NarrativeData>;
+    loadNarratives: (filter: string, profileID: string) => void;
 }
 
 class Home extends React.Component<HomeProps, HomeState> {
@@ -78,8 +80,9 @@ class Home extends React.Component<HomeProps, HomeState> {
         };
     }
 
+
     componentDidMount() {
-        console.log('home page props', this.props)
+        console.log('homeprops in compDidMount', this.props)
         let username;
         if (this.props.username) {
             username = this.props.username;
@@ -171,131 +174,137 @@ class Home extends React.Component<HomeProps, HomeState> {
             });
             return;
         } else {            
-            // when logged in user is viewing his/her profile
-            // fetch both "mine" and "shared" profile
-            // if (this.props.username === this.props.authUsername) {
-            if (this.props.username === profileID) {
-                this.props.loadNarratives('mine'); // redux 
-                fetchNarrativesAPI('mine', this.props.token, this.props.baseURL).then(
-                    (response: Array<NarrativeData>) => {
-                        if (typeof response !== 'undefined') {
-                            console.log('response fetchNarrativesAPI', response)
-                            this.setState({
-                                narratives: response,
-                                narrativesLoaded: true
-                            });
-                        } else {
-                            // fetch failed
-                            this.setState({
-                                narratives: [
-                                    {
-                                        wsID: '',
-                                        permission: '',
-                                        name: 'Something went wrong. Please check console for error messages.',
-                                        last_saved: 0,
-                                        users: {},
-                                        narrative_detail: { creator: '' }
-                                    }
-                                ],
-                                narrativesLoaded: true
-                            });
-                        }
-                    }
-                );
-                    
-                    // this.props.loadNarratives('public');
-                
-                fetchNarrativesAPI('shared', this.props.token, this.props.baseURL).then(
-                    (response: Array<NarrativeData>) => {
-                        if (typeof response !== 'undefined') {
-                            this.setState({
-                                sharedNarratives: response,
-                                sharedNarrativesLoaded: true
-                            });
-                        } else {
-                            // something went wrong during fetching.
-                            this.setState({
-                                sharedNarratives: [
-                                    {
-                                        wsID: '',
-                                        permission: '',
-                                        name: 'Something went wrong. Please check console for error messages.',
-                                        last_saved: 0,
-                                        users: {},
-                                        narrative_detail: { creator: '' }
-                                    }
-                                ],
-                                sharedNarrativesLoaded: true
-                            });
-                        }
-                    }
-                );
+            // when logged-in user is viewing own profile. 
+            if (this.props.username === this.props.authUsername || this.props.username === null) {
+                console.log("fetch 'mine'")
+                    this.props.loadNarratives('mine', this.props.authUsername ); // redux 
+                    // fetchNarrativesAPI('mine', this.props.token, this.props.baseURL).then(
+                    //     (response: Array<NarrativeData>) => {
+                    //         if (typeof response !== 'undefined') {
+                    //             console.log('response fetchNarrativesAPI', response)
+                    //             this.setState({
+                    //                 narratives: response,
+                    //                 narrativesLoaded: true
+                    //             });
+                    //         } else {
+                    //             // fetch failed
+                    //             this.setState({
+                    //                 narratives: [
+                    //                     {
+                    //                         wsID: '',
+                    //                         permission: '',
+                    //                         name: 'Something went wrong. Please check console for error messages.',
+                    //                         last_saved: 0,
+                    //                         users: {},
+                    //                         narrative_detail: { creator: '' }
+                    //                     }
+                    //                 ],
+                    //                 narrativesLoaded: true
+                    //             });
+                    //         }
+                    //     }
+                    //     );
+                        
+                    // this.props.loadNarratives('shared'); // redux 
+                    // console.log("fetch 'shared'")
+                    // fetchNarrativesAPI('shared', this.props.token, this.props.baseURL).then(
+                    //     (response: Array<NarrativeData>) => {
+                    //         if (typeof response !== 'undefined') {
+                    //             this.setState({
+                    //                 sharedNarratives: response,
+                    //                 sharedNarrativesLoaded: true
+                    //             });
+                    //         } else {
+                    //             // something went wrong during fetching.
+                    //             this.setState({
+                    //                 sharedNarratives: [
+                    //                     {
+                    //                         wsID: '',
+                    //                         permission: '',
+                    //                         name: 'Something went wrong. Please check console for error messages.',
+                    //                         last_saved: 0,
+                    //                         users: {},
+                    //                         narrative_detail: { creator: '' }
+                    //                     }
+                    //                 ],
+                    //                 sharedNarrativesLoaded: true
+                    //             });
+                    //         }
+                    //     }
+                    //     );
             } else {
-                // when logged in user is not viewing other user's profile
-                // fetch both "public" and "shared" profile and fileter response with profileID
-                let publicNarratives = fetchNarrativesAPI('public', this.props.token, this.props.baseURL).then(
-                    (response: Array<NarrativeData>) => {
-                        if (typeof response === 'undefined') {
-                            // fetch failed.
-                            this.setState({
-                                narratives: [
-                                    {
-                                        wsID: '',
-                                        permission: '',
-                                        name: 'Something went wrong. Please check console for error messages.',
-                                        last_saved: 0,
-                                        users: {},
-                                        narrative_detail: { creator: '' }
-                                    }
-                                ],
-                                narrativesLoaded: true
-                            });
-                            return;
-                        }
-                        return response;
-                    }
-                );
-                let sharedNarratives = fetchNarrativesAPI('shared', this.props.token, this.props.baseURL).then(
-                    (response: Array<NarrativeData>) => {
-                        return response;
-                    }
-                );
-                Promise.all([publicNarratives, sharedNarratives]).then((values) => {
-                    let sharedNarrativeList = [];
-                    if (typeof values[1] !== 'undefined') {
-                        for (let i = 0; i < values[1].length; i++) {
-                            let narrative = values[1][i];
-                            if (narrative.narrative_detail.creator !== profileID) {
-                                for (let user in narrative.users) {
-                                    if (user === profileID) {
-                                        sharedNarrativeList.push(narrative);
-                                    }
-                                }
-                            }
-                        }
-                    }
+                /**
+                 * when logged in user is not viewing other user's profile
+                 * pass filter "they" <-- gender-neutral singular they
+                 * which tfetch both "public" and "shared" and filter response with profileID
+                 */
+                
+                console.log("fetch 'they'")
+                this.props.loadNarratives('they', this.props.username); // redux 
+                // let publicNarratives = fetchNarrativesAPI('public', this.props.token, this.props.baseURL).then(
+                //     (response: Array<NarrativeData>) => {
+                //         if (typeof response === 'undefined') {
+                //             // fetch failed.
+                //             this.setState({
+                //                 narratives: [
+                //                     {
+                //                         wsID: '',
+                //                         permission: '',
+                //                         name: 'Something went wrong. Please check console for error messages.',
+                //                         last_saved: 0,
+                //                         users: {},
+                //                         narrative_detail: { creator: '' }
+                //                     }
+                //                 ],
+                //                 narrativesLoaded: true
+                //             });
+                //             return;
+                //         }
+                //         return response;
+                //     }
+                // );
+                // let sharedNarratives = fetchNarrativesAPI('shared', this.props.token, this.props.baseURL).then(
+                //     (response: Array<NarrativeData>) => {
+                //         return response;
+                //     }
+                // );
+                // Promise.all([publicNarratives, sharedNarratives]).then((values) => {
+                //     let sharedNarrativeList = [];
+                //     if (typeof values[1] !== 'undefined') {
+                //         for (let i = 0; i < values[1].length; i++) {
+                //             let narrative = values[1][i];
+                //             if (narrative.narrative_detail.creator !== profileID) {
+                //                 for (let user in narrative.users) {
+                //                     if (user === profileID) {
+                //                         sharedNarrativeList.push(narrative);
+                //                     }
+                //                 }
+                //             }
+                //         }
+                //     }
 
-                    let narrativeList = [];
-                    if (typeof values[0] !== 'undefined') {
-                        let allNarratives = values[0].concat(values[1]);
-                        for (let i = 0; i < allNarratives.length; i += 1) {
-                            if (allNarratives[i]['narrative_detail']['creator'] === profileID) {
-                                narrativeList.push(allNarratives[i]);
-                            }
-                        }
-                    }
-                    this.setState({
-                        narratives: narrativeList,
-                        narrativesLoaded: true,
-                        sharedNarratives: sharedNarrativeList,
-                        sharedNarrativesLoaded: true
-                    });
-                });
+                    // let narrativeList = [];
+                    // if (typeof values[0] !== 'undefined') {
+                    //     let allNarratives = values[0].concat(values[1]);
+                    //     for (let i = 0; i < allNarratives.length; i += 1) {
+                    //         if (allNarratives[i]['narrative_detail']['creator'] === profileID) {
+                    //             narrativeList.push(allNarratives[i]);
+                    //         }
+                    //     }
+                    // }
+                    // this.setState({
+                    //     narratives: narrativeList,
+                    //     narrativesLoaded: true,
+                    //     sharedNarratives: sharedNarrativeList,
+                    //     sharedNarrativesLoaded: true
+                    // });
+                // });
             }
         }
     }
 
     componentDidUpdate(prevProps: any, prevState: any) {
+        console.log('homeprops in compDidUpdate', this.props)
         // This privents from infinate component loading loop.
         if (this.state === prevState) {
             return;
@@ -324,10 +333,7 @@ class Home extends React.Component<HomeProps, HomeState> {
                         />
                     </TabPane>
                     <TabPane tab="Narratives" key="3">
-                        <Narratives
-                            narratives={this.state.narratives}
-                            narrativesloaded={this.state.narrativesLoaded}
-                        />
+                        <NarrativeContainer />
                     </TabPane>
                     {/* Insert search user component div as a title to place it on the navigation tab  */}
                     <TabPane disabled tab={this.searchOnATab} key="8"></TabPane>
