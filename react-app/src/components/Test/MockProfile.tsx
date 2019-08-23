@@ -1,6 +1,6 @@
 import React from 'react';
 import { updateProfileAPI } from '../../util/API'; 
-import { UserName, ProfileData, OrgProp, Affiliation, UserProfileService, UpdatedUserData} from '../../redux/interfaces';
+import { UserName, ProfileData, OrgProp, Affiliation} from '../../redux/interfaces';
 import nouserpic from '../../assets/nouserpic.png';
 
 import { Row, Col, Card, Input, Icon, Button, Form , Tooltip} from 'antd';

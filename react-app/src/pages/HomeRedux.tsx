@@ -4,7 +4,7 @@ import { Action, Dispatch } from 'redux';
 import Home from './Home';
 import { StoreState, NarrativeData } from '../redux/interfaces';
 import { sendTitle } from '@kbase/ui-lib';
-import { loadNarratives } from '../redux/actions/index';
+import { loadNarratives, loadProfile, updateProfile } from '../redux/actions/index';
 
 
 interface OwnProps {}
@@ -19,6 +19,8 @@ interface StateProps {
 interface DispatchProps {
     setTitle: (title: string) => void;
     loadNarratives: (filter:string, profileID: string) => void;
+    loadProfile: (profileID: string) => void;
+    updateProfile: (profileID: string) => void;
 }
 
 // TODO this should be part of the view definition
@@ -56,15 +58,17 @@ function mapDispatchToProps(dispatch: Dispatch<Action>, ownProps: OwnProps): Dis
         },
         setTitle: (title: string) => {
             return dispatch(sendTitle(title) as any);
+        },
+        updateProfile: (profileID: string) => {
+            return dispatch(updateProfile(profileID) as any);
+        },
+        loadProfile: (profileID: string) => {
+            return dispatch(loadProfile(profileID) as any);
         }
+    
     };
 }
 
-// function HomeRedux(mapStateToProps:AppState) {
-//     return (
-//         <Home userData={mapStateToProps.auth.userAuthorization} baseURL={mapStateToProps.app.config.baseUrl}/>
-//     )
-// }
 
 export default connect<StateProps, DispatchProps, OwnProps, StoreState>(
     mapStateToProps,

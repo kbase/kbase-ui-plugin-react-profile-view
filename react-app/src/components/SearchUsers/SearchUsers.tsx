@@ -1,12 +1,12 @@
 import React from 'react';
 import { Select } from 'antd';
 import { filteredUserAPI } from '../../util/API';
-import { FilteredUser } from '../../redux/interfaces';
+import { UsernameRealname } from '../../redux/interfaces';
 const { Option } = Select;
 
 
 interface State {
-    data: Array<FilteredUser>;
+    data: Array<UsernameRealname>;
     mouseLeave: boolean;
 }
 

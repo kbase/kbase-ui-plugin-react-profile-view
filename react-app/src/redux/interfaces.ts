@@ -1,5 +1,5 @@
 import { BaseStoreState } from "@kbase/ui-lib";
-export interface StoreState extends BaseStoreState,  NarrativeState {}
+export interface StoreState extends BaseStoreState,  NarrativeState, ProfileView {}
 
 export interface Narrative_detail {
     creator: string;
@@ -59,13 +59,16 @@ export interface UserName {
 // user profile servie resturns
 // converted to UserName 
 // https://github.com/kbase/user_profile/blob/master/UserProfile.spec
-export interface FilteredUser {
+export interface UsernameRealname {
     username: string;
     realname: string;
 }
 
 export interface NarrativeState {
     narrativeDataArray: Array<NarrativeData>; 
+}
+export interface ProfileView {
+    profileView: UserProfileService
 }
 /**
  * user profile service uses this type
@@ -77,13 +80,14 @@ export interface NarrativeState {
  * is pecified below
  */
 export interface UserProfileService {
-    'user': FilteredUser;
-    'profile': {
-        'userdata': ProfileData;
+    user: FilteredUser;
+    profile: {
+        userdata: ProfileData,
+        synced:{
+            gravatarHash: string;
+        }
     };
-    'synced':{
-        'gravatarHash': string;
-    }
+    
 }
 
 export interface UpdatedUserData { 

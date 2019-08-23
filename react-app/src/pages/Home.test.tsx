@@ -13,5 +13,11 @@ it('Home loads without crashing', () => {
     const token = 'xxx';
     const baseURL = 'https://ci.kbase.us';
     const loggedInUser = 'amarukawa';
-    shallow(<Home token={token} baseURL={baseURL} username={null} authUsername={loggedInUser} setTitle={setTitle} />);
+    shallow(<Home 
+                token={token} 
+                baseURL={baseURL} 
+                username={null} 
+                authUsername={loggedInUser} 
+                setTitle={setTitle} 
+            />);
 });

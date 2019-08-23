@@ -14,7 +14,6 @@ const LOAD_NARRATIVES = 'LOAD_NARRATIVES';
  * @param filter 
  */
 export function loadNarratives (filter:string, profileID: string) {
-    console.log('filter???', filter, profileID)
     // ThunkDispatch<RootState(Store), ExtraArg, Action>;
     return async function (dispatch:ThunkDispatch<StoreState, void, AnyAction>, getState: () => StoreState) {
         const rootStore = getState();
@@ -34,12 +33,14 @@ export function loadNarratives (filter:string, profileID: string) {
                         if ( typeof response[0] !== 'undefined' && typeof response[1] !== 'undefined') {
                             narrativeList = response[0].concat(response[1]);
                         } else if (typeof response[0] === 'undefined' && typeof response[1] !== 'undefined' ) {
+                            // if public narrative fetch came back empty, there is something major wrong happened
+                            console.error('error occuerred during fetching narratives.');
                             narrativeList = response[1];
                         } else if (typeof response[0] !== 'undefined' && typeof response[1] === 'undefined' ) {
                             narrativeList = response[0];
                         } else {
-                            // if publich narrative fetch came back empty, there is something major wrong happened
-                            console.error('public narratives are not being fetched correctly.');
+                            // if public narrative fetch came back empty, there is something major wrong happened
+                            console.error('error occuerred during fetching narratives.');
                             narrativeList  = [
                                 {
                                     wsID: '',
@@ -51,8 +52,6 @@ export function loadNarratives (filter:string, profileID: string) {
                                 }
                             ]
                         }
-                        console.log('narrative they profileID', profileID)
-                        console.log('narrative they narrativeList', narrativeList);
                         
                         for (let i = 0; i < narrativeList.length; i +=1) {
   
@@ -72,7 +71,6 @@ export function loadNarratives (filter:string, profileID: string) {
 
                     if(typeof response !== 'undefined') {
                         // console.log("rootstore", rootStore)
-                        console.log('loadNarratives action with async', response)
                         dispatch({ type: LOAD_NARRATIVES, payload: response })
                     } else {
                         let fetchFailed =  [

@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { NarrativeData, StoreState } from '../../redux/interfaces';
+import { StoreState } from '../../redux/interfaces';
 import Narratives from './Narratives';
 
 

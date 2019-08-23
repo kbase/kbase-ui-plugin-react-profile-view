@@ -1,4 +1,4 @@
-import { UserProfileService, ProfileData, UpdatedUserData} from "../redux/interfaces";
+import { UserProfileService, ProfileData} from "../redux/interfaces";
 interface foo {
 
     userdata: ProfileData;
@@ -58,6 +58,13 @@ export async function fetchProfileAPI(id: string, token: string, baseURL: string
     }
 }
 
+/**
+ * update profile 
+ * method "UserProfile.update_user_profile" takes top level key of profile object. 
+ * @param token 
+ * @param baseURL 
+ * @param userdata 
+ */
 export async function updateProfileAPI(token: string, baseURL: string, userdata:ProfileData) {
     
 // export async function updateProfileAPI(token: string, baseURL: string, updatedUserProfleString:string) {
@@ -68,7 +75,7 @@ export async function updateProfileAPI(token: string, baseURL: string, userdata:
     };
     const stringBody = JSON.stringify(body);
     //TODO: Akiyo - remove this after testing
-    baseURL = 'https://ci.kbase.us'
+    baseURL = 'https://ci.kbase.us';
     const url = baseURL + '/services/user_profile/rpc';
     const response = await fetch(url, {
         method: 'POST',

@@ -2,7 +2,7 @@ import { createStore, compose, applyMiddleware } from "redux";
 import thunk from "redux-thunk";
 
 import { makeBaseStoreState } from "@kbase/ui-lib";
-import { StoreState,  NarrativeData, ProfileData,  NarrativeState } from './interfaces';
+import { StoreState,  NarrativeData, UserProfileService } from './interfaces';
 import rootReducer from "./reducers/index";
 
 
@@ -17,11 +17,40 @@ export function makeInitialStoreState(): StoreState {
         last_saved: 0,
         users: {},
         narrative_detail: { creator: '' }
-    }]
+    }];
+    // 
+    const profileViewInitialState: UserProfileService = {
+        
+            user: {
+                username: '',
+                realname: ''
+            },
+            profile: {
+                userdata: {
+                    affiliations: [],
+                    avatarOption: '',
+                    city: '',
+                    country: '',
+                    department: '',
+                    fundingSource: '',
+                    gravatarDefault: '',
+                    jobTitle: '',
+                    jobTitleOther: '',
+                    organization: '',
+                    postalCode: '',
+                    researchInterests: [],
+                    researchStatement: '', 
+                    state: '', 
+                },
+                synced: {
+                    gravatarHash: ''
+                }
+            }
+    }
     console.log('baseStoreState', baseStoreState)
     return {
         // ...baseStoreState, userProfileApp:{ narrativeDataArray: narrativePreloadedState }
-        ...baseStoreState,  narrativeDataArray: narrativePreloadedState 
+        ...baseStoreState,  narrativeDataArray: narrativePreloadedState, profileView: profileViewInitialState
     };
 }
 export function createReduxStore() {
