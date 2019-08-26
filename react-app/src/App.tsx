@@ -8,6 +8,7 @@ import './App.css';
 import HomeRedux from './pages/HomeRedux';
 
 const { Content } = Layout;
+console.log("i'm in app!!!")
 const store = createReduxStore();
 interface AppProps {}
 interface AppState {}

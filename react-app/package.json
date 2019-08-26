@@ -3,24 +3,24 @@
     "version": "0.1.0",
     "private": true,
     "dependencies": {
-        "@craco/craco": "5.2.4",
+        "@craco/craco": "5.3.0",
         "@kbase/ui-lib": "0.1.0-alpha.50",
-        "@types/enzyme": "3.10.2",
+        "@types/enzyme": "3.10.3",
         "@types/enzyme-adapter-react-16": "1.0.5",
-        "@types/jest": "24.0.15",
-        "@types/node": "12.6.2",
-        "@types/react": "16.8.23",
-        "@types/react-dom": "16.8.4",
-        "@types/react-redux": "7.1.1",
-        "antd": "3.20.2",
+        "@types/jest": "24.0.18",
+        "@types/node": "12.7.2",
+        "@types/react": "16.9.2",
+        "@types/react-dom": "16.9.0",
+        "@types/react-redux": "7.1.2",
+        "antd": "3.22.1",
         "craco-antd": "1.11.0",
         "enzyme": "3.10.0",
         "enzyme-adapter-react-16": "1.14.0",
-        "react": "16.8.6",
-        "react-dom": "16.8.6",
-        "react-redux": "7.1.0",
-        "react-scripts": "3.0.1",
-        "react-test-renderer": "16.8.6",
+        "react": "16.9.0",
+        "react-dom": "16.9.0",
+        "react-redux": "7.1.1",
+        "react-scripts": "3.1.1",
+        "react-test-renderer": "16.9.0",
         "redux": "4.0.4",
         "typescript": "3.5.3"
     },
@@ -50,7 +50,7 @@
     "proxy": "https://ci.kbase.us",
     "devDependencies": {
         "nodemon": "^1.19.1",
-        "typedoc": "^0.14.2"
+        "typedoc": "0.15.0"
     },
     "jest": {
         "collectCoverageFrom": [
@@ -62,9 +62,6 @@
             "!src/index.tsx",
             "!src/serviceWorker.ts"
         ]
-    },
-    "resolutions": {
-        "**/less-loader": "5.0.0"
     },
     "homepage": "./"
 }

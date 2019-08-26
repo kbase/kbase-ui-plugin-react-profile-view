@@ -80,7 +80,7 @@ export interface ProfileView {
  * is pecified below
  */
 export interface UserProfileService {
-    user: FilteredUser;
+    user: UsernameRealname;
     profile: {
         userdata: ProfileData,
         synced:{
