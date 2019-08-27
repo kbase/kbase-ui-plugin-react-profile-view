@@ -1,5 +1,12 @@
 import { BaseStoreState } from "@kbase/ui-lib";
-export interface StoreState extends BaseStoreState,  NarrativeState, ProfileView {}
+export interface StoreState extends BaseStoreState,  NarrativeState, ProfileState {}
+
+export interface UserAuthorization {
+    realname: string;
+    role?: Array<string>;
+    token: string;
+    username: string;
+}
 
 export interface Narrative_detail {
     creator: string;
@@ -12,6 +19,21 @@ export interface NarrativeData {
     last_saved: number;
     users: object;
     narrative_detail: Narrative_detail;
+}
+
+// used in reducer index
+export interface narrativeFetchActionType {
+    type: string;
+    payload: Array<NarrativeData>
+}
+
+// need this for adding type to StoreState - see store.ts
+export interface NarrativeState {
+    narrativeDataArray: Array<NarrativeData>; 
+}
+// need this for adding type to StoreState - see store.ts
+export interface  ProfileState {
+    profileView: ProfileView
 }
 
 // org data that
@@ -33,6 +55,7 @@ export interface Affiliation {
     started: string;
     ended: string;
 }
+
 export interface ProfileData {
     organization: string;
     department: string;
@@ -49,27 +72,27 @@ export interface ProfileData {
     gravatarDefault: string;
     avatarOption: string;
 }
+// used in reducer index
+export interface profileActionType {
+    type: string;
+    payload: ProfileView;
+}
 
-// used in app
+/**
+ * part of profile view component 
+ */
+export interface ProfileView {
+    userName: UserName,
+    profileData: ProfileData,
+    gravatarHash: string
+}
+
+// used in Profile View app
 export interface UserName {
     name: string;
     userID: string;
 }
 
-// user profile servie resturns
-// converted to UserName 
-// https://github.com/kbase/user_profile/blob/master/UserProfile.spec
-export interface UsernameRealname {
-    username: string;
-    realname: string;
-}
-
-export interface NarrativeState {
-    narrativeDataArray: Array<NarrativeData>; 
-}
-export interface ProfileView {
-    profileView: UserProfileService
-}
 /**
  * user profile service uses this type
  * typedef structure {
@@ -90,8 +113,10 @@ export interface UserProfileService {
     
 }
 
-export interface UpdatedUserData { 
-    profile: {
-        userdata: ProfileData
-    }
+// user profile servie resturns
+// converted to UserName 
+// https://github.com/kbase/user_profile/blob/master/UserProfile.spec
+export interface UsernameRealname {
+    username: string;
+    realname: string;
 }

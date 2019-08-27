@@ -2,7 +2,7 @@ import { createStore, compose, applyMiddleware } from "redux";
 import thunk from "redux-thunk";
 
 import { makeBaseStoreState } from "@kbase/ui-lib";
-import { StoreState,  NarrativeData, UserProfileService } from './interfaces';
+import { StoreState,  NarrativeData, ProfileView } from './interfaces';
 import rootReducer from "./reducers/index";
 
 
@@ -10,7 +10,7 @@ import rootReducer from "./reducers/index";
 export function makeInitialStoreState(): StoreState {
     const baseStoreState = makeBaseStoreState();
     // setting initial empty narrative state
-    const narrativePreloadedState: Array<NarrativeData>  = [{
+    const narrativeInitialState: Array<NarrativeData>  = [{
         wsID: '',
         permission: '',
         name: '',
@@ -19,38 +19,34 @@ export function makeInitialStoreState(): StoreState {
         narrative_detail: { creator: '' }
     }];
     // 
-    const profileViewInitialState: UserProfileService = {
-        
-            user: {
-                username: '',
-                realname: ''
-            },
-            profile: {
-                userdata: {
-                    affiliations: [],
-                    avatarOption: '',
-                    city: '',
-                    country: '',
-                    department: '',
-                    fundingSource: '',
-                    gravatarDefault: '',
-                    jobTitle: '',
-                    jobTitleOther: '',
-                    organization: '',
-                    postalCode: '',
-                    researchInterests: [],
-                    researchStatement: '', 
-                    state: '', 
-                },
-                synced: {
-                    gravatarHash: ''
-                }
-            }
+    const profileViewInitialState: ProfileView = {
+        userName: {
+            name: '',
+            userID: ''
+        },
+        profileData: {
+            organization: '',
+            department: '',
+            city: '',
+            state: '',
+            postalCode: '',
+            country: '',
+            affiliations: [],
+            researchStatement: '', 
+            jobTitle: '',
+            jobTitleOther: '',
+            researchInterests: [],
+            fundingSource: '',
+            gravatarDefault: '',
+            avatarOption: '',
+        },
+        gravatarHash: ''
     }
+
     console.log('baseStoreState', baseStoreState)
     return {
         // ...baseStoreState, userProfileApp:{ narrativeDataArray: narrativePreloadedState }
-        ...baseStoreState,  narrativeDataArray: narrativePreloadedState, profileView: profileViewInitialState
+        ...baseStoreState,  narrativeDataArray: narrativeInitialState, profileView: profileViewInitialState
     };
 }
 export function createReduxStore() {

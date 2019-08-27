@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
 
-import { OrgProp, UserName, ProfileData, StoreState } from '../../redux/interfaces';
+import { OrgProp, UserName, ProfileData, StoreState, UserAuthorization } from '../../redux/interfaces';
 import {  updateProfile } from '../../redux/actions';
 import Profile from './Profile';
 
@@ -12,7 +12,7 @@ interface Props {
     token: string;
     userName: UserName;
     editEnable: Boolean;
-    userProfile: ProfileData;
+    profileData: ProfileData;
     orgs: Array<OrgProp>;
     gravatarHash: string;
     profileloaded: Boolean;
@@ -27,37 +27,44 @@ interface DispatchProps {
 interface OwnProps {}
 
 function mapStateToProps(state: StoreState): Props {
-    console.log("ProfileContainer mapStateToProp", state);
+
+    // token can be null
+    let userAuthToken;
+    if( state.auth.userAuthorization !== null ) {
+        userAuthToken = state.auth.userAuthorization.token
+    }
     return {
-        baseURL: "",
-        token: "",
+        baseURL: state.app.config.baseUrl,
+        token: userAuthToken ? userAuthToken : '', 
         userName: {
-            userID: "",
-            name:''
+            userID: state.profileView.userName.userID,
+            name: state.profileView.userName.name
         },
         editEnable:false,
-        userProfile: {
-            organization: '',
-            department: '',
-            city: '',
-            state: '',
-            postalCode: '',
-            country: '',
-            affiliations: [],
-            researchStatement: '',
-            jobTitle: '',
-            jobTitleOther: '',
-            researchInterests: [],
-            fundingSource: '',
-            gravatarDefault: '',
-            avatarOption: ''
+        profileData: {
+            organization: state.profileView.profileData.organization,
+            department: state.profileView.profileData.department,
+            city: state.profileView.profileData.city,
+            state: state.profileView.profileData.state,
+            postalCode: state.profileView.profileData.postalCode,
+            country: state.profileView.profileData.country,
+            affiliations: state.profileView.profileData.affiliations,
+            researchStatement: state.profileView.profileData.researchStatement,
+            jobTitle: state.profileView.profileData.jobTitle,
+            jobTitleOther: state.profileView.profileData.jobTitleOther,
+            researchInterests: state.profileView.profileData.researchInterests,
+            fundingSource: state.profileView.profileData.fundingSource,
+            gravatarDefault: state.profileView.profileData.gravatarDefault,
+            avatarOption: state.profileView.profileData.avatarOption
         },
         orgs: [],
-        gravatarHash:"",
+        gravatarHash: state.profileView.gravatarHash,
         profileloaded: true,
         orgsloaded: true
     }
-}
+    
+    };
+
 
 function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
     return {
@@ -67,23 +74,7 @@ function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
     }
 }
 
-// function ProfileContainer(props:Props) {
-    
-//     return (
-//         <Profile
-//             baseURL={props.baseURL}
-//             token={props.token}
-//             userName={props.userName}
-//             editEnable={props.editEnable}
-//             userProfile={props.userProfile}
-//             orgs={props.orgs}
-//             gravatarHash={props.gravatarHash}
-//             profileloaded={props.profileloaded}
-//             orgsloaded={props.orgsloaded}
-//         />
-//     )
 
-// }
 export default connect<Props, DispatchProps, OwnProps, StoreState>(
     mapStateToProps, 
     mapDispatchToProps

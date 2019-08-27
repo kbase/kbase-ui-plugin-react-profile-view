@@ -6,7 +6,6 @@ import { StoreState, NarrativeData } from '../redux/interfaces';
 import { sendTitle } from '@kbase/ui-lib';
 import { loadNarratives, loadProfile, updateProfile } from '../redux/actions/index';
 
-
 interface OwnProps {}
 
 interface StateProps {
@@ -65,7 +64,7 @@ function mapDispatchToProps(dispatch: Dispatch<Action>, ownProps: OwnProps): Dis
         loadProfile: (profileID: string) => {
             return dispatch(loadProfile(profileID) as any);
         }
-    
+        
     };
 }
 

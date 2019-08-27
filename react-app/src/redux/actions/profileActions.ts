@@ -6,33 +6,6 @@ import { sendTitle } from '@kbase/ui-lib';
 
 const LOAD_PROFILE = 'LOAD_PROFILE';
 
-        // fetchProfileAPI().then((response) => {
-        //     console.log('user profile response', response)
-        //     if (typeof response !== 'undefined') {
-        //         if (this.props.username) {
-        //             this.props.setTitle('User Profile for ' + response.user.realname);
-        //         }
-        //         this.setState({
-        //             userName: {
-        //                 name: response.user.realname,
-        //                 userID: response.user.username
-        //             },
-        //             gravatarHash: response.profile.synced.gravatarHash,
-        //             userProfile: response.profile.userdata,
-        //             userProfileLoaded: true
-        //         });
-        //     } else {
-        //         // something went wrong during fetching.
-        //         this.setState({
-        //             userName: {
-        //                 name: 'Something went wrong. Please check console for error messages..',
-        //                 userID: ''
-        //             }
-        //         });
-        //     }
-        // });
-
-
 /**
  * fetch user profile
  *  @param {string} id  profile ID
@@ -50,13 +23,15 @@ export function loadProfile(profileID:string) {
                 if (response.user.username !== rootStore.auth.userAuthorization.username) {
                     dispatch(sendTitle('User Profile for ' + response.user.realname));
                 }
-                // // shape response to profile
+                // // shape response to profile before dispatch 
+                // TODO: Should this be in reduce? 
                 payload = {
                     userName: {
                         userID: response.user.username,
-                        username: response.user.realname
+                        name: response.user.realname
                     },
-                    userProfile: {
+                    profileData: {
+                        organization: response.profile.userdata.organization,
                         department: response.profile.userdata.department,
                         city: response.profile.userdata.city,
                         state: response.profile.userdata.state,
@@ -73,8 +48,6 @@ export function loadProfile(profileID:string) {
                     },
                     gravatarHash: response.profile.synced.gravatarHash
                 }
-
-                // payload = profile;
             } else {
                 payload = {
                     userName: {

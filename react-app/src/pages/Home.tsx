@@ -4,9 +4,9 @@ import { Tabs } from 'antd';
 
 import ProfileContainer from '../components/Profile/ProfileContainer';
 import NarrativeContainer from '../components/Narratives';
-import { NarrativeData, OrgProp, Org, ProfileData,  UserName } from '../redux/interfaces';
+import { OrgProp, Org, ProfileData,  UserName } from '../redux/interfaces';
 import SearchUsersContainer from '../components/SearchUsers/SearchUsersContainer';
-import { fetchOrgsOfProfileAPI, fetchProfileAPI } from '../util/API';
+import { fetchOrgsOfProfileAPI } from '../util/API';
 
 
 const TabPane = Tabs.TabPane;
@@ -17,7 +17,6 @@ const TabPane = Tabs.TabPane;
  */
 
 // add Narrative_detail if needed. Currently, data in the object is not used - Akiyo.
-
 interface HomeState {
     userName: UserName;
     userProfile: ProfileData;
@@ -87,36 +86,36 @@ class Home extends React.Component<HomeProps, HomeState> {
             this.setState({ editEnable: true })
         }
 
-        this.props.loadProfile(username);
-        /**
-         * fetch user profile
-         *  @param {string} id  profile ID
-         */
-        fetchProfileAPI(username, this.props.token, this.props.baseURL).then((response) => {
-            console.log('user profile response', response)
-            if (typeof response !== 'undefined') {
-                // if (this.props.username) {
-                //     this.props.setTitle('User Profile for ' + response.user.realname);
-                // }
-                this.setState({
-                    userName: {
-                        name: response.user.realname,
-                        userID: response.user.username
-                    },
-                    gravatarHash: response.profile.synced.gravatarHash,
-                    userProfile: response.profile.userdata,
-                    userProfileLoaded: true
-                });
-            } else {
-                // something went wrong during fetching.
-                this.setState({
-                    userName: {
-                        name: 'Something went wrong. Please check console for error messages..',
-                        userID: ''
-                    }
-                });
-            }
-        });
+        this.props.loadProfile(username); // reduux
+        // /**
+        //  * fetch user profile
+        //  *  @param {string} id  profile ID
+        //  */
+        // fetchProfileAPI(username, this.props.token, this.props.baseURL).then((response) => {
+        //     console.log('user profile response', response)
+        //     if (typeof response !== 'undefined') {
+        //         // if (this.props.username) {
+        //         //     this.props.setTitle('User Profile for ' + response.user.realname);
+        //         // }
+        //         this.setState({
+        //             userName: {
+        //                 name: response.user.realname,
+        //                 userID: response.user.username
+        //             },
+        //             gravatarHash: response.profile.synced.gravatarHash,
+        //             userProfile: response.profile.userdata,
+        //             userProfileLoaded: true
+        //         });
+        //     } else {
+        //         // something went wrong during fetching.
+        //         this.setState({
+        //             userName: {
+        //                 name: 'Something went wrong. Please check console for error messages..',
+        //                 userID: ''
+        //             }
+        //         });
+        //     }
+        // });
 
         /**
          * fetch orgs that user blongs to the profile

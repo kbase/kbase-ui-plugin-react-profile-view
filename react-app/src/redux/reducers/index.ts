@@ -2,16 +2,10 @@ import { Action, Reducer } from 'redux';
 import narrativeReducer from './narrative_reducers';
 import profileReducer from './profile_reducers';
 import reducer from './reducer';
-import { StoreState, NarrativeData, UserProfileService } from  "../interfaces";
+import { StoreState, narrativeFetchActionType, profileActionType } from  "../interfaces";
 
-interface narrativeFetchActionType {
-  type: string;
-  payload: Array<NarrativeData>
-}
-interface profileActionType {
-    type: string;
-    payload: UserProfileService;
-}
+
+
 //TODO:AKIYO convert this to combine reducers
 
 
