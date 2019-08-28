@@ -1,8 +1,8 @@
-import { StoreState, ProfileView, profileActionType } from "../interfaces";
+import { StoreState, ProfileActionType } from "../interfaces";
 
 
 
-export default function profileReducer(state:StoreState, action: profileActionType): StoreState {
+export default function profileReducer(state:StoreState, action: ProfileActionType): StoreState {
     const payload = action.payload;
     console.log('profile reducers', action)
     switch (action.type) {

@@ -1,13 +1,8 @@
-import { Action } from "redux";
-import { StoreState } from "../interfaces";
-import { NarrativeData } from "../interfaces";
+import { StoreState, NarrativeActionType } from "../interfaces";
 
-interface narrativeFetchActionType {
-    type: string;
-    payload: Array<NarrativeData>
-}
 
-export default function narrativeReducer(state: StoreState, action: narrativeFetchActionType):StoreState   {
+
+export default function narrativeReducer(state: StoreState, action: NarrativeActionType):StoreState   {
     const payload = action.payload;
     switch (action.type) {
         

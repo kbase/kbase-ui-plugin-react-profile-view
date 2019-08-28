@@ -1,45 +1,19 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Action, Dispatch } from 'redux';
 
-
-import { OrgProp, StoreState } from '../../redux/interfaces';
+import { StoreState } from '../../redux/interfaces';
 import Orgs from  './Orgs';
 
 
-interface Props {
-    orgList: Array<OrgProp>;
+function mapStateToProps(state: StoreState) {
+    // Since this component is just a redux wrapper 
+    // and not modifying state to make component props
+    // simply return state as props
+    return state
 }
 
-
-interface DispatchProps {
-    loadOrgs: (profileID: String) => void;
+function OrgsContainer(mapStateToProps:StoreState){
+    return <Orgs orgList={mapStateToProps.orgListArray} />
 }
 
-function mapStateToProps(state: StoreState):Props {
-    let array =  {
-        orgList:
-        [
-            {
-                name: 'hahahah',
-                url: 'hehehehe'
-            }
-        ]
-    }
-
-    return array
-}
-
-function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
-    return {
-        loadOrgs: (profileID: string) => {
-            return dispatch(loadOrgs(profileID) as any);
-        }
-    }
-    
-};
-
-export default connect<Props, DispatchProps, {}, StoreState>(
-    mapStateToProps,
-    mapDispatchToProps
-)(Orgs);
+export default connect(mapStateToProps)(Orgs);

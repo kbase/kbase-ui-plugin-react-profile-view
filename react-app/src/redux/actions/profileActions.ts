@@ -1,4 +1,4 @@
-import { ThunkDispatch } from "redux-thunk";
+import { ThunkDispatch } from 'redux-thunk';
 import { StoreState, UserProfileService } from "../interfaces";
 import { AnyAction } from 'redux';
 import { fetchProfileAPI, updateProfileAPI } from '../../util/API';
@@ -70,11 +70,6 @@ export function updateProfile(profile:any) {
             const token = rootStore.auth.userAuthorization.token;
             const baseURL = rootStore.app.config.baseUrl;
             updateProfileAPI(token, baseURL, profile);
-
-            // humm it does update profile data in the database, but it's not going to call
-            // new fetch 
-            // also, i need to set something that shows user it's been udpated and 
-            // still fetching the new updated profile data
         }
     }
 }

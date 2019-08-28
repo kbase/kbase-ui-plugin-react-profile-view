@@ -1,5 +1,5 @@
 import { BaseStoreState } from "@kbase/ui-lib";
-export interface StoreState extends BaseStoreState,  NarrativeState, ProfileState {}
+export interface StoreState extends BaseStoreState,  NarrativeState, ProfileState, OrgState {}
 
 export interface UserAuthorization {
     realname: string;
@@ -21,12 +21,18 @@ export interface NarrativeData {
     narrative_detail: Narrative_detail;
 }
 
-// used in reducer index
-export interface narrativeFetchActionType {
+// used in reducer 
+export interface NarrativeActionType {
     type: string;
     payload: Array<NarrativeData>
 }
 
+// used in reducer 
+
+export interface OrgsActionType {
+    type: string;
+    payload: Array<OrgProp>
+}
 // need this for adding type to StoreState - see store.ts
 export interface NarrativeState {
     narrativeDataArray: Array<NarrativeData>; 
@@ -36,7 +42,12 @@ export interface  ProfileState {
     profileView: ProfileView
 }
 
-// org data that
+// need this for adding type to StoreState - see store.ts
+export interface  OrgState {
+    orgListArray: Array<OrgProp>
+}
+
+// Used for org list 
 export interface OrgProp {
     name: string;
     url: string;
@@ -72,8 +83,8 @@ export interface ProfileData {
     gravatarDefault: string;
     avatarOption: string;
 }
-// used in reducer index
-export interface profileActionType {
+// used in reducer 
+export interface ProfileActionType {
     type: string;
     payload: ProfileView;
 }
