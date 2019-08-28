@@ -17,14 +17,14 @@ interface Props {
     gravatarHash: string;
     profileloaded: Boolean;
     orgsloaded: Boolean;
-}
+};
 
 interface DispatchProps {
     updateProfile: (profileID: string) => void;
-}
+};
 
 
-interface OwnProps {}
+interface OwnProps {};
 
 function mapStateToProps(state: StoreState): Props {
 
@@ -63,7 +63,7 @@ function mapStateToProps(state: StoreState): Props {
         orgsloaded: true
     }
     
-    };
+};
 
 
 function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
@@ -72,10 +72,10 @@ function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
             return dispatch(updateProfile(profileID) as any);
         }
     }
-}
+};
 
 
 export default connect<Props, DispatchProps, OwnProps, StoreState>(
     mapStateToProps, 
     mapDispatchToProps
-    )(Profile);
+)(Profile);

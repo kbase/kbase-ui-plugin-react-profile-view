@@ -1,6 +1,7 @@
 import React from 'react';
-import { UserName, ProfileData, OrgProp, profileActionType } from '../../redux/interfaces';
+import { UserName, ProfileData, OrgProp } from '../../redux/interfaces';
 import { Row, Col, Card, Input, Spin } from 'antd';
+import Orgs from '../Orgs/Orgs';
 import nouserpic from '../../assets/nouserpic.png';
 const { Meta } = Card;
 const { TextArea } = Input;
@@ -76,6 +77,7 @@ function Profile(props: Props) {
     if (props.orgs) {
         orgs = props.orgs;
     }
+
     // Set gravatarURL
     function gravaterSrc(){
         if (profile['avatarOption'] === 'silhoutte' || !props.gravatarHash) {
@@ -99,6 +101,10 @@ function Profile(props: Props) {
             return '';
         }
     }
+    const orgListEmpty = [{
+            name: 'hahahah',
+            url: 'hehehehe'
+    }];
 
     if(props.userName.name !== ''){
         console.log("it claims it's not empty prop")
@@ -156,6 +162,7 @@ function Profile(props: Props) {
                                         ))}
                                     </ul>
                                 </Card>
+                                <Orgs orgList={orgListEmpty}/>
                             </Col>
                         </Row>
                         <Row>
