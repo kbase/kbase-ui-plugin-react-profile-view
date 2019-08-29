@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
 
-import { OrgProp, UserName, ProfileData, StoreState } from '../../redux/interfaces';
+import { UserName, ProfileData, StoreState } from '../../redux/interfaces';
 import {  updateProfile } from '../../redux/actions';
 import Profile from './Profile';
 
@@ -13,10 +13,8 @@ interface Props {
     userName: UserName;
     editEnable: Boolean;
     profileData: ProfileData;
-    orgs: Array<OrgProp>;
     gravatarHash: string;
     profileloaded: Boolean;
-    orgsloaded: Boolean;
 };
 
 interface DispatchProps {
@@ -40,7 +38,7 @@ function mapStateToProps(state: StoreState): Props {
             userID: state.profileView.userName.userID,
             name: state.profileView.userName.name
         },
-        editEnable:false,
+        editEnable: false,
         profileData: {
             organization: state.profileView.profileData.organization,
             department: state.profileView.profileData.department,
@@ -57,10 +55,8 @@ function mapStateToProps(state: StoreState): Props {
             gravatarDefault: state.profileView.profileData.gravatarDefault,
             avatarOption: state.profileView.profileData.avatarOption
         },
-        orgs: [],
         gravatarHash: state.profileView.gravatarHash,
         profileloaded: true,
-        orgsloaded: true
     }
     
 };
@@ -71,7 +67,7 @@ function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
         updateProfile: (profileID: string) => {
             return dispatch(updateProfile(profileID) as any);
         }
-    }
+    };
 };
 
 

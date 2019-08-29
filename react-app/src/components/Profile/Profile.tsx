@@ -12,10 +12,8 @@ interface Props {
     userName: UserName;
     editEnable: Boolean;
     profileData: ProfileData;
-    orgs: Array<OrgProp>;
     gravatarHash: string;
     profileloaded: Boolean;
-    orgsloaded: Boolean;
 }
 
 
