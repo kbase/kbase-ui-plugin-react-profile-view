@@ -6,12 +6,6 @@ import OrgsContainer from '../Orgs/OrgsContainer';
 const { Meta } = Card;
 const { TextArea } = Input;
 
-/**
- *  Profile.tsx is a view component
- *  Parent componenet - pages/Home.tsx
- *
- */
-
 interface Props {
     baseURL: string;
     token: string;
@@ -65,10 +59,6 @@ function Profile(props: Props) {
     if (typeof profile.researchInterests !== 'undefined' && Array.isArray(profile.researchInterests)) {
         researchInterests = profile.researchInterests;
     }
-  
-    // function handleOnBlur(event) {
-    //     console.log(event.target)
-    // }
 
     // Set gravatarURL
     function gravaterSrc(){

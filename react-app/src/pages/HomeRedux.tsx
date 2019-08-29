@@ -52,7 +52,6 @@ function mapStateToProps(state: StoreState, ownProps: OwnProps): StateProps {
 
 function mapDispatchToProps(dispatch: Dispatch<Action>, ownProps: OwnProps): DispatchProps {
     return {
-        // action creator loadNarratives is passed as props to the home page.
         loadNarratives: (filter: string, profileID: string) => {
             return dispatch(loadNarratives(filter, profileID) as any);
         },

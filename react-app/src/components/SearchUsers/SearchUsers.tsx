@@ -36,7 +36,12 @@ class SearchUsers extends React.Component<Props, State> {
         this.onMouseLeaveHandler = this.onMouseLeaveHandler.bind(this);
         this.onMouseEnterHandler = this.onMouseEnterHandler.bind(this);
     }
-
+    /**
+     * when search value is more than 2 charactors, 
+     * it makes API call and returns filtered list of users 
+     * 
+     * @param value 
+     */
     onSearchHandler(value: string): void {
         if (value.length > 2 && this.state.mouseLeave !== true) {
             filteredUserAPI(value, this.props.token, this.props.baseURL).then((response: Response) => {

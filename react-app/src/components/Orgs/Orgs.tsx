@@ -1,9 +1,6 @@
 import React from'react';
 import {OrgProp} from '../../redux/interfaces';
-
-
 import { Card } from 'antd';
-
 
 
 interface Props {
@@ -11,10 +8,11 @@ interface Props {
     loading: boolean;
 }
 
-// orgList type could setup as Array<OrgProp> or null 
-// and use it to set conditional rendering 
-// but it might defeat the purpose of typescript? 
-
+/**
+ * render org component 
+ * loading is false when fetch organization completes and returns response. 
+ * @param props 
+ */
 function Orgs(props: Props) {
     console.log(props)
     let orgList = props.orgList;
