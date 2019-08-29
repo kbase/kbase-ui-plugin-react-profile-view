@@ -10,14 +10,15 @@ function mapStateToProps (state: StoreState) {
     // Since this component is just a redux wrapper 
     // and not modifying state to make component props
     // simply return state as props
+    console.log('narrativeState', state)
     return state 
 }
 
 function NarrativeContainer (mapStateToProps:StoreState) {
     return (
         <Narratives 
-            narratives={mapStateToProps.narrativeSate.narrativeDataArray} 
-            loading={mapStateToProps.narrativeSate.loading}
+            narratives={mapStateToProps.narrativeState.narrativeList} 
+            loading={mapStateToProps.narrativeState.loading}
         />
     )
 }

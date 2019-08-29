@@ -26,18 +26,18 @@ export function loadNarratives (filter:string, profileID: string) {
                 case "they":
                     const publicNarratives = fetchNarrativesAPI('public', token, 'https://ci.kbase.us/');
                     const sharedNarratives = fetchNarrativesAPI('shared', token, 'https://ci.kbase.us/');
-                    let narrativeList = [];
-                    let narrativePayload:Array<NarrativeData> = [];
+                    let allNarratives:Array<NarrativeData> = [];
+                    let narrativeList:Array<NarrativeData> = [];
                     Promise.all([publicNarratives, sharedNarratives]).then((response) => {
                         // generate combined narrative list 
                         if ( typeof response[0] !== 'undefined' && typeof response[1] !== 'undefined') {
-                            narrativeList = response[0].concat(response[1]);
+                            allNarratives = response[0].concat(response[1]);
                         } else if (typeof response[0] === 'undefined' && typeof response[1] !== 'undefined' ) {
                             // if public narrative fetch came back empty, there is something major wrong happened
                             console.error('error occuerred during fetching narratives.');
-                            narrativeList = response[1];
+                            allNarratives = response[1];
                         } else if (typeof response[0] !== 'undefined' && typeof response[1] === 'undefined' ) {
-                            narrativeList = response[0];
+                            allNarratives = response[0];
                         } else {
                             // if public narrative fetch came back empty, there is something major wrong happened
                             console.error('error occuerred during fetching narratives.');
@@ -53,14 +53,14 @@ export function loadNarratives (filter:string, profileID: string) {
                             ]
                         }
                         
-                        for (let i = 0; i < narrativeList.length; i +=1) {
+                        for (let i = 0; i < allNarratives.length; i +=1) {
   
-                            if( narrativeList[i].narrative_detail.creator ===  profileID) {
-                                narrativePayload.push(narrativeList[i]);
+                            if( allNarratives[i].narrative_detail.creator ===  profileID) {
+                                narrativeList.push(allNarratives[i]);
                             }
                         }
                         
-                        dispatch({ type: LOAD_NARRATIVES, payload: { narrativeList: narrativePayload, 
+                        dispatch({ type: LOAD_NARRATIVES, payload: { narrativeList: narrativeList, 
                                                                         loading: false }})     
                                 
                     })
@@ -72,7 +72,7 @@ export function loadNarratives (filter:string, profileID: string) {
 
                     if(typeof response !== 'undefined') {
                         // console.log("rootstore", rootStore)
-                        dispatch({ type: LOAD_NARRATIVES, payload: response })
+                        dispatch({ type: LOAD_NARRATIVES, payload: { narrativeList: response, loading: false }})
                     } else {
                         let fetchFailed =  [
                             {

@@ -6,7 +6,7 @@ export default function orgsReducer(state: StoreState, action: OrgsActionType){
         case 'LOAD_ORGS':
             return (
                 { ...state,
-                    orgListState: payload
+                    orgState: payload
                 }
             )
             break;
