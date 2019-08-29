@@ -19,12 +19,10 @@ export function loadProfile(profileID:string) {
             let payload:any;
             let response:UserProfileService = await fetchProfileAPI(profileID, token, baseURL);
             if (typeof response !== 'undefined') {
-                console.log("in profileAction loadProfile", response)
                 if (response.user.username !== rootStore.auth.userAuthorization.username) {
                     dispatch(sendTitle('User Profile for ' + response.user.realname));
                 }
-                // // shape response to profile before dispatch 
-                // TODO: Should this be in reduce? 
+                // shape response to profile before dispatch 
                 payload = {
                     userName: {
                         userID: response.user.username,

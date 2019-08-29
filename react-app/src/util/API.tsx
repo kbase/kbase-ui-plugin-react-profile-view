@@ -1,9 +1,5 @@
 import { UserProfileService, ProfileData} from "../redux/interfaces";
-interface foo {
 
-    userdata: ProfileData;
-
-}
 export async function getBFFServiceUrl(token: string, baseURL: string) {
     // TODO: for dev, the baseUrl will be whatever works for the CRA workflow, which is ''.
     // baseURL = 'https://ci.kbase.us/services'; // for dev

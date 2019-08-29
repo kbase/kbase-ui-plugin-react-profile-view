@@ -4,9 +4,8 @@ import { Tabs } from 'antd';
 
 import ProfileContainer from '../components/Profile/ProfileContainer';
 import NarrativeContainer from '../components/Narratives';
-import { OrgProp, Org, UserName } from '../redux/interfaces';
+import { OrgProp, UserName } from '../redux/interfaces';
 import SearchUsersContainer from '../components/SearchUsers/SearchUsersContainer';
-import { fetchOrgsOfProfileAPI } from '../util/API';
 
 
 const TabPane = Tabs.TabPane;
@@ -36,6 +35,7 @@ export interface HomeProps {
     loadNarratives: (filter: string, profileID: string) => void;
     loadProfile: (profileID: string) => void;
     updateProfile: (profileID: string) => void;
+    loadOrgs: (profileID: string) => void;
 }
 
 class Home extends React.Component<HomeProps, HomeState> {
@@ -56,7 +56,6 @@ class Home extends React.Component<HomeProps, HomeState> {
 
 
     componentDidMount() {
-        console.log('homeprops in compDidMount', this.props)
         let username;
         if (this.props.username) {
             username = this.props.username;
@@ -67,34 +66,20 @@ class Home extends React.Component<HomeProps, HomeState> {
             this.setState({ editEnable: true })
         }
 
-        // get profile data 
+         /**
+         * fetch profile data for the diplayed profile
+         * and load it to the profile component.
+         *  @param {string} id  profile ID
+         */
         this.props.loadProfile(username); // reduux
 
 
         /**
          * fetch orgs that user blongs to the profile
+         * and load them to the orgs component.
          *  @param {string} id  profile ID
          */
-        fetchOrgsOfProfileAPI(username, this.props.token, this.props.baseURL).then((response: Array<Org>) => {
-            let orgArr: Array<OrgProp> = [];
-            if (typeof response !== 'undefined') {
-                response.forEach((org) => {
-                    orgArr.push({ name: org.name, url: this.props.baseURL + '/#org/' + org.id });
-                });
-                this.setState({
-                    organizations: orgArr,
-                    organizationsLoaded: true
-                });
-            } else {
-                // something went wrong during fetching.
-                this.setState({
-                    organizations: [
-                        { name: 'Something went wrong. Please check console for error messages.', url: '' }
-                    ],
-                    organizationsLoaded: true
-                });
-            }
-        });
+        this.props.loadOrgs(username); //redux
 
         /**
          * Returns narratives that shows in Narrative table.
@@ -107,13 +92,11 @@ class Home extends React.Component<HomeProps, HomeState> {
         if (typeof this.props.username === 'undefined'|| typeof this.props.authUsername === 'undefined') {
             // if there is no logged in user in run time config (redux app state)
             // returns an empty narrative list
-
-            //TODO: AKIYO OMG WHAT AM I GOING TO DO HERE!!
+            console.error('How did this even happened? Check error message from Kbase-UI.')
             return;
         } else {            
             // when logged-in user is viewing own profile. 
             if (this.props.username === this.props.authUsername || this.props.username === null) {
-                console.log("fetch 'mine'")
                     this.props.loadNarratives('mine', this.props.authUsername ); // redux 
             } else {
                 /**
@@ -121,16 +104,12 @@ class Home extends React.Component<HomeProps, HomeState> {
                  * pass filter "they" <-- gender-neutral singular they
                  * which tfetch both "public" and "shared" and filter response with profileID
                  */
-
-                console.log("fetch 'they'")
                 this.props.loadNarratives('they', this.props.username); // redux 
-
             }
         }
     }
 
     componentDidUpdate(prevProps: any, prevState: any) {
-        console.log('homeprops in compDidUpdate', this.props)
         // This privents from infinate component loading loop.
         if (this.state === prevState) {
             return;

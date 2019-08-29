@@ -24,19 +24,29 @@ export interface NarrativeData {
 // used in reducer 
 export interface NarrativeActionType {
     type: string;
-    payload: Array<NarrativeData>
+    payload: {
+        narrativeList: Array<NarrativeData>;
+        loading: boolean;
+    }
 }
 
 // used in reducer 
-
 export interface OrgsActionType {
     type: string;
-    payload: Array<OrgProp>
+    payload: {
+        orgList: Array<OrgProp>,
+        loading: boolean
+    }
 }
+
 // need this for adding type to StoreState - see store.ts
 export interface NarrativeState {
-    narrativeDataArray: Array<NarrativeData>; 
+    narrativeState: {
+        narrativeList: Array<NarrativeData>;
+        loading: boolean;
+    }
 }
+
 // need this for adding type to StoreState - see store.ts
 export interface  ProfileState {
     profileView: ProfileView
@@ -44,7 +54,10 @@ export interface  ProfileState {
 
 // need this for adding type to StoreState - see store.ts
 export interface  OrgState {
-    orgListArray: Array<OrgProp>
+    orgState: {
+        orgList: Array<OrgProp>,
+        loading: boolean
+    }
 }
 
 // Used for org list 
@@ -83,15 +96,14 @@ export interface ProfileData {
     gravatarDefault: string;
     avatarOption: string;
 }
+
 // used in reducer 
 export interface ProfileActionType {
     type: string;
     payload: ProfileView;
 }
 
-/**
- * part of profile view component 
- */
+
 export interface ProfileView {
     userName: UserName,
     profileData: ProfileData,

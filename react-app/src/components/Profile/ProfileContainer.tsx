@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
 
-import { OrgProp, UserName, ProfileData, StoreState, UserAuthorization } from '../../redux/interfaces';
+import { OrgProp, UserName, ProfileData, StoreState } from '../../redux/interfaces';
 import {  updateProfile } from '../../redux/actions';
 import Profile from './Profile';
 

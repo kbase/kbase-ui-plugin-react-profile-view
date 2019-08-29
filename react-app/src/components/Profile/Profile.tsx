@@ -1,8 +1,8 @@
 import React from 'react';
 import { UserName, ProfileData, OrgProp } from '../../redux/interfaces';
 import { Row, Col, Card, Input, Spin } from 'antd';
-import Orgs from '../Orgs/Orgs';
 import nouserpic from '../../assets/nouserpic.png';
+import OrgsContainer from '../Orgs/OrgsContainer';
 const { Meta } = Card;
 const { TextArea } = Input;
 
@@ -30,15 +30,16 @@ interface Props {
  * @param props
  */
 function Profile(props: Props) {
-    console.log('profile props', props)
     const profile = props.profileData;
-    // Set initial value to props for initial render and no-data
-    //set affiliations
+
+    // Set initial value for properties that are arrays. 
+    // otherwise .map will complain during initial render. 
+
+    // set affiliations
     function setAffiliations(){
         if(typeof profile.affiliations !== 'undefined' && Array.isArray(profile.affiliations)){
             return profile.affiliations;
         } else {
-
             return [
                 {
                     title: '',
@@ -49,34 +50,25 @@ function Profile(props: Props) {
             ];
         }
     }
-
+    // set researchInterests to an empty array inital render.
     let researchInterests: Array<string> = [];
+
+    // set org to an empty org list for inital render.
     let orgs = [
         {
             name: '',
             url: ''
         }
     ];
-    let orgloading = true;
-    if (props.orgsloaded) {
-        orgloading = false;
-    }
-
+    
     // Set researchInterests
     if (typeof profile.researchInterests !== 'undefined' && Array.isArray(profile.researchInterests)) {
         researchInterests = profile.researchInterests;
     }
-
-
+  
     // function handleOnBlur(event) {
     //     console.log(event.target)
     // }
-    let foo = undefined;
-
-    // set orgs
-    if (props.orgs) {
-        orgs = props.orgs;
-    }
 
     // Set gravatarURL
     function gravaterSrc(){
@@ -92,7 +84,6 @@ function Profile(props: Props) {
 
     // Set jobTitle
     function setJobTitle():string {
-        console.log("when this setjobtitle goes?", profile.jobTitleOther)
         if (profile.jobTitle === 'Other' && typeof profile.jobTitle !== 'undefined') {
             return profile.jobTitleOther;
         } else if (typeof profile.jobTitle !== 'undefined') {
@@ -101,13 +92,9 @@ function Profile(props: Props) {
             return '';
         }
     }
-    const orgListEmpty = [{
-            name: 'hahahah',
-            url: 'hehehehe'
-    }];
-
+    
+    // conditional rendering of the profile tab pane
     if(props.userName.name !== ''){
-        console.log("it claims it's not empty prop")
         return (
             <Row style={{ padding: 16 }}>
                 <Row gutter={8}>
@@ -151,18 +138,7 @@ function Profile(props: Props) {
                                 </Card>
                             </Col>
                             <Col span={12}>
-                                <Card className="card-with-height" loading={orgloading} style={{ margin: '8px 0px' }} title="Organizations">
-                                    <ul style={{ textAlign: 'left' }}>
-                                        {orgs.map((org, index) => (
-                                            <li key={index}>
-                                                <a href={org.url} target="_blank" rel="noopener noreferrer">
-                                                    {org.name}
-                                                </a>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </Card>
-                                <Orgs orgList={orgListEmpty}/>
+                                <OrgsContainer />
                             </Col>
                         </Row>
                         <Row>
@@ -175,7 +151,6 @@ function Profile(props: Props) {
                             </Card>
                             <Card style={{ margin: '8px 0px' }} title="Afflications">
                                 <ul style={{ textAlign: 'left' }}>
-                                    {/* {affiliations.map((position, index) => ( */}
                                     {setAffiliations().map((position, index) => (
                                         <li key={index}>
                                             {position.title} @ {position.organization}, {position.started} -{' '}

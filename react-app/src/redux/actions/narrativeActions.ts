@@ -60,7 +60,8 @@ export function loadNarratives (filter:string, profileID: string) {
                             }
                         }
                         
-                        dispatch({ type: LOAD_NARRATIVES, payload: narrativePayload })     
+                        dispatch({ type: LOAD_NARRATIVES, payload: { narrativeList: narrativePayload, 
+                                                                        loading: false }})     
                                 
                     })
                     break;
@@ -83,7 +84,8 @@ export function loadNarratives (filter:string, profileID: string) {
                                 narrative_detail: { creator: '' }
                             }
                         ]
-                        dispatch({ type: LOAD_NARRATIVES, payload: fetchFailed})
+
+                        dispatch({ type: LOAD_NARRATIVES, payload: { narrativeList: fetchFailed, loading: false }})
                     }
                     break;
 

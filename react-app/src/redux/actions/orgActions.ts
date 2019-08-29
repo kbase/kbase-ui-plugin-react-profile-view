@@ -21,11 +21,16 @@ export function loadOrgs(profileID:string){
                     orgArr.push({ name: org.name, url: rootStore.app.config.baseUrl + '/#org/' + org.id });
                 });
             } else {
-                //TODO: Akiyo return empty org and "something went wrong"
-                console.error('org fetch failed.')
+                // Fetch error
+                orgArr = [
+                    {
+                        name: 'Something went wrong during fetching organizations. Check console for errors.',
+                        url: ''
+                    }
+                ]
             }
         } 
-        dispatch({ type: LOAD_ORGS, payload: orgArr });
+        dispatch({ type: LOAD_ORGS, payload: {orgList: orgArr, loading: false} });
     }
 }
 

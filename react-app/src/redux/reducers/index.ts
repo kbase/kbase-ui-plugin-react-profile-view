@@ -7,7 +7,7 @@ import orgsReducer from './org_reducers';
 
 
 
-//TODO:AKIYO convert this to combine reducers
+//TODO: convert this to combine reducers
 
 
 const rootReducer: Reducer<StoreState | undefined, Action> = (state: StoreState | undefined, action: Action) => {
@@ -16,17 +16,15 @@ const rootReducer: Reducer<StoreState | undefined, Action> = (state: StoreState 
   const kbaseUIStore = reducer(state as StoreState, action);
   // if state doesn't load for whatever the reason possibly could be 
   if (!state) {
-    console.log('return state ')
-    return state // honestly I don't know what this returns
+    // TODO: AKIYO - update this.
+    return state;
   }
   
-  // when reducer is creating KbaseUIStore 
+  // root reducer is creating KbaseUIStore 
   if (kbaseUIStore) {
     return kbaseUIStore as StoreState;
   } 
   else {
-      console.log('Reducer', state, action)
-    // when actions from app needs specific reducers
     switch(action.type) {
         case "LOAD_NARRATIVES": 
             return narrativeReducer(state, action as NarrativeActionType);

@@ -1,6 +1,5 @@
 /**
  *  Narrative.tsx is a view component
- *  Parent componenet - pages/Home.tsx
  *
  */
 import React from 'react';
@@ -17,7 +16,7 @@ interface TableData {
 
 interface Props {
     narratives: Array<NarrativeData>;
-    narrativesloaded: Boolean;
+    loading: boolean;
 }
 
 /**
@@ -25,14 +24,10 @@ interface Props {
  * @param props
  */
 function Narratives(props: Props) {
-    console.log("Narrative props", props)
+    console.log(props)
     let data: Array<TableData> = [];
-    let loading = false;
-    // let loading = true;
-    // if (props.narrativesloaded) {
-    //     loading = false;
-    // }
-    // initialize data for the table to be an empty array.
+    let loading = props.loading;
+
     const colums = [
         {
             title: 'Title',
