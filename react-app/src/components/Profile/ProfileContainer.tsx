@@ -56,7 +56,7 @@ function mapStateToProps(state: StoreState): Props {
             avatarOption: state.profileView.profileData.avatarOption
         },
         gravatarHash: state.profileView.gravatarHash,
-        profileloaded: true,
+        profileloaded: state.profileView.profileloaded
     }
     
 };

@@ -30,7 +30,8 @@ export function makeInitialStoreState(): StoreState {
             gravatarDefault: '',
             avatarOption: '',
         },
-        gravatarHash: ''
+        gravatarHash: '',
+        profileloaded: false
     }
     
 

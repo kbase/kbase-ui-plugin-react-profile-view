@@ -107,7 +107,8 @@ export interface ProfileActionType {
 export interface ProfileView {
     userName: UserName,
     profileData: ProfileData,
-    gravatarHash: string
+    gravatarHash: string,
+    profileloaded: boolean
 }
 
 // used in Profile View app

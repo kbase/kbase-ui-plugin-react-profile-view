@@ -22,6 +22,7 @@ interface Props {
  * @param props
  */
 function Profile(props: Props) {
+    console.log('profile props', props)
     const profile = props.profileData;
 
     // Set initial value for properties that are arrays. 
@@ -82,7 +83,7 @@ function Profile(props: Props) {
     }
     
     // conditional rendering of the profile tab pane
-    if(props.userName.name !== ''){
+    if(props.profileloaded === true){
         return (
             <Row style={{ padding: 16 }}>
                 <Row gutter={8}>

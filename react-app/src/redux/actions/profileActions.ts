@@ -44,7 +44,8 @@ export function loadProfile(profileID:string) {
                         gravatarDefault: response.profile.userdata.gravatarDefault,
                         avatarOption: response.profile.userdata.avatarOption
                     },
-                    gravatarHash: response.profile.synced.gravatarHash
+                    gravatarHash: response.profile.synced.gravatarHash,
+                    profileloaded: true
                 }
             } else {
                 payload = {
