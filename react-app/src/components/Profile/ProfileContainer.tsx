@@ -14,7 +14,7 @@ interface Props {
     editEnable: Boolean;
     profileData: ProfileData;
     gravatarHash: string;
-    profileloaded: Boolean;
+    profileIsFetching: string;
 };
 
 interface DispatchProps {
@@ -56,7 +56,7 @@ function mapStateToProps(state: StoreState): Props {
             avatarOption: state.profileView.profileData.avatarOption
         },
         gravatarHash: state.profileView.gravatarHash,
-        profileloaded: state.profileView.profileloaded
+        profileIsFetching: state.profileView.profileIsFetching
     }
     
 };

@@ -2,7 +2,7 @@ import { Action, Reducer } from 'redux';
 import narrativeReducer from './narrative_reducers';
 import profileReducer from './profile_reducers';
 import reducer from './reducer';
-import { StoreState, NarrativeActionType, ProfileActionType, OrgsActionType } from  "../interfaces";
+import { StoreState, NarrativeAction, ProfileAction, OrgsAction } from  "../interfaces";
 import orgsReducer from './org_reducers';
 
 
@@ -16,7 +16,7 @@ const rootReducer: Reducer<StoreState | undefined, Action> = (state: StoreState 
   const kbaseUIStore = reducer(state as StoreState, action);
   // if state doesn't load for whatever the reason possibly could be 
   if (!state) {
-    // TODO: AKIYO - update this.
+    // TODO: AKIYO - return intial state 
     return state;
   }
   
@@ -27,11 +27,11 @@ const rootReducer: Reducer<StoreState | undefined, Action> = (state: StoreState 
   else {
     switch(action.type) {
         case "LOAD_NARRATIVES": 
-            return narrativeReducer(state, action as NarrativeActionType);
+            return narrativeReducer(state, action as NarrativeAction);
         case "LOAD_PROFILE": 
-            return profileReducer(state, action as ProfileActionType);
+            return profileReducer(state, action as ProfileAction);
         case "LOAD_ORGS":
-            return orgsReducer(state, action as OrgsActionType);
+            return orgsReducer(state, action as OrgsAction);
         
       default:
         return state;

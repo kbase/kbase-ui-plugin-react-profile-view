@@ -33,9 +33,9 @@ export interface HomeProps {
     baseURL: string;
     setTitle: (title: string) => void;
     loadNarratives: (filter: string, profileID: string) => void;
-    loadProfile: (profileID: string) => void;
+    getProfile: (profileID: string) => void;
     updateProfile: (profileID: string) => void;
-    loadOrgs: (profileID: string) => void;
+    loadOrgsAction: (profileID: string) => void;
 }
 
 class Home extends React.Component<HomeProps, HomeState> {
@@ -71,7 +71,7 @@ class Home extends React.Component<HomeProps, HomeState> {
          * and load it to the profile component.
          *  @param {string} id  profile ID
          */
-        this.props.loadProfile(username); // reduux
+        this.props.getProfile(username); // reduux
 
 
         /**
@@ -79,7 +79,7 @@ class Home extends React.Component<HomeProps, HomeState> {
          * and load them to the orgs component.
          *  @param {string} id  profile ID
          */
-        this.props.loadOrgs(username); //redux
+        this.props.loadOrgsAction(username); //redux
 
         /**
          * Returns narratives that shows in Narrative table.

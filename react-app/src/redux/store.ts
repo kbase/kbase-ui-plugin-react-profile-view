@@ -31,7 +31,7 @@ export function makeInitialStoreState(): StoreState {
             avatarOption: '',
         },
         gravatarHash: '',
-        profileloaded: false
+        profileIsFetching: 'none'
     }
     
 

@@ -1,11 +1,13 @@
-import { StoreState, ProfileActionType } from "../interfaces";
+import { StoreState, ProfileAction } from "../interfaces";
+import { profileActionTypes } from "../actions/actionTypes";
 
 
-
-export default function profileReducer(state:StoreState, action: ProfileActionType): StoreState {
+export default function profileReducer(state:StoreState, action: ProfileAction): StoreState {
     const payload = action.payload;
     switch (action.type) {
-        case 'LOAD_PROFILE':
+        case profileActionTypes.LOAD_PROFILE:
+        case profileActionTypes.FETCH_PROFILE_SUCCESS:
+        case profileActionTypes.FETCH_PROFILE_ERROR:
             return (
                 {
                     ...state,
@@ -13,6 +15,13 @@ export default function profileReducer(state:StoreState, action: ProfileActionTy
                 }
             )
             break;
+        
+        case profileActionTypes.INITIAL_RENDER_PROFILE:
+        case profileActionTypes.FETCH_PROFILE:
+            return {
+
+                ...state
+            }
 
         default:
             return state;

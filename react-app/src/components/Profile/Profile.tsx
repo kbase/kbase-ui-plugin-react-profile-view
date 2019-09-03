@@ -6,14 +6,14 @@ import OrgsContainer from '../Orgs/OrgsContainer';
 const { Meta } = Card;
 const { TextArea } = Input;
 
-interface Props {
+interface Props { // this should be profileView or something else
     baseURL: string;
     token: string;
     userName: UserName;
     editEnable: Boolean;
     profileData: ProfileData;
     gravatarHash: string;
-    profileloaded: Boolean;
+    profileIsFetching: string;
 }
 
 
@@ -83,7 +83,7 @@ function Profile(props: Props) {
     }
     
     // conditional rendering of the profile tab pane
-    if(props.profileloaded === true){
+    if(props.profileIsFetching === 'success'){
         return (
             <Row style={{ padding: 16 }}>
                 <Row gutter={8}>

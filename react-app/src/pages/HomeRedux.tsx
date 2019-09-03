@@ -4,7 +4,7 @@ import { Action, Dispatch } from 'redux';
 import Home from './Home';
 import { StoreState } from '../redux/interfaces';
 import { sendTitle } from '@kbase/ui-lib';
-import { loadNarratives, loadProfile, updateProfile, loadOrgs } from '../redux/actions/index';
+import { loadNarratives, getProfile, updateProfile, loadOrgsAction } from '../redux/actions/index';
 
 interface OwnProps {}
 
@@ -18,9 +18,9 @@ interface StateProps {
 interface DispatchProps {
     setTitle: (title: string) => void;
     loadNarratives: (filter:string, profileID: string) => void;
-    loadProfile: (profileID: string) => void;
+    getProfile: (profileID: string) => void;
     updateProfile: (profileID: string) => void;
-    loadOrgs: (profileID: string) => void;
+    loadOrgsAction: (profileID: string) => void;
 }
 
 // TODO this should be part of the view definition
@@ -61,11 +61,11 @@ function mapDispatchToProps(dispatch: Dispatch<Action>, ownProps: OwnProps): Dis
         updateProfile: (profileID: string) => {
             return dispatch(updateProfile(profileID) as any);
         },
-        loadProfile: (profileID: string) => {
-            return dispatch(loadProfile(profileID) as any);
+        getProfile: (profileID: string) => {
+            return dispatch(getProfile(profileID) as any);
         },
-        loadOrgs: (profileID: string) => {
-            return dispatch(loadOrgs(profileID) as any);
+        loadOrgsAction: (profileID: string) => {
+            return dispatch(loadOrgsAction(profileID) as any);
         }
         
     };

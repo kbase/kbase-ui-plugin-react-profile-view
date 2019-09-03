@@ -1,8 +1,8 @@
-import { StoreState, NarrativeActionType } from "../interfaces";
+import { StoreState, NarrativeAction } from "../interfaces";
 
 
 
-export default function narrativeReducer(state: StoreState, action: NarrativeActionType):StoreState   {
+export default function narrativeReducer(state: StoreState, action: NarrativeAction):StoreState   {
     const payload = action.payload;
     switch (action.type) {
         

@@ -3,15 +3,18 @@ import { StoreState, UserProfileService } from "../interfaces";
 import { AnyAction } from 'redux';
 import { fetchProfileAPI, updateProfileAPI } from '../../util/API';
 import { sendTitle } from '@kbase/ui-lib';
-
-const LOAD_PROFILE = 'LOAD_PROFILE';
+import { fetchProfile, loadProfile } from '../actions/actions';
 
 /**
  * fetch user profile
  *  @param {string} id  profile ID
  */
-export function loadProfile(profileID:string) {
+export function getProfile(profileID:string) {
+    
     return async function (dispatch:ThunkDispatch<StoreState, void, AnyAction>, getState:() => StoreState ) {
+        dispatch(fetchProfile())
+        // set the life cycle state to "is fetching"
+
         const rootStore = getState();
         if(rootStore.auth.userAuthorization !== null) {
             const token = rootStore.auth.userAuthorization.token;
@@ -45,7 +48,7 @@ export function loadProfile(profileID:string) {
                         avatarOption: response.profile.userdata.avatarOption
                     },
                     gravatarHash: response.profile.synced.gravatarHash,
-                    profileloaded: true
+                    profileIsFetching: 'success'
                 }
             } else {
                 payload = {
@@ -55,9 +58,10 @@ export function loadProfile(profileID:string) {
                     }
                 }
             }
-            
-            dispatch({ type: LOAD_PROFILE, payload: payload});
-
+            // set state to 
+            // dispatch({ type: LOAD_PROFILE, payload: payload });
+            // type check 
+            dispatch(loadProfile(payload));
         }
     }
 }
