@@ -1,19 +1,19 @@
 {
   "files": {
-    "main.css": "./static/css/main.d2230bbb.chunk.css",
-    "main.js": "./static/js/main.b962aba3.chunk.js",
-    "main.js.map": "./static/js/main.b962aba3.chunk.js.map",
-    "runtime~main.js": "./static/js/runtime~main.d653cc00.js",
-    "runtime~main.js.map": "./static/js/runtime~main.d653cc00.js.map",
-    "static/css/2.a4e97285.chunk.css": "./static/css/2.a4e97285.chunk.css",
-    "static/js/2.48d20184.chunk.js": "./static/js/2.48d20184.chunk.js",
-    "static/js/2.48d20184.chunk.js.map": "./static/js/2.48d20184.chunk.js.map",
+    "main.css": "./static/css/main.8d92d471.chunk.css",
+    "main.js": "./static/js/main.2c2d9652.chunk.js",
+    "main.js.map": "./static/js/main.2c2d9652.chunk.js.map",
+    "runtime~main.js": "./static/js/runtime~main.a8878816.js",
+    "runtime~main.js.map": "./static/js/runtime~main.a8878816.js.map",
+    "static/css/2.0d76b58c.chunk.css": "./static/css/2.0d76b58c.chunk.css",
+    "static/js/2.59c77d00.chunk.js": "./static/js/2.59c77d00.chunk.js",
+    "static/js/2.59c77d00.chunk.js.map": "./static/js/2.59c77d00.chunk.js.map",
     "index.html": "./index.html",
-    "precache-manifest.e8229c7a0c0f3336a6aacb8953af8a18.js": "./precache-manifest.e8229c7a0c0f3336a6aacb8953af8a18.js",
+    "precache-manifest.1ed9ff6a771a8faa31338639ac11466d.js": "./precache-manifest.1ed9ff6a771a8faa31338639ac11466d.js",
     "service-worker.js": "./service-worker.js",
-    "static/css/2.a4e97285.chunk.css.map": "./static/css/2.a4e97285.chunk.css.map",
-    "static/css/main.d2230bbb.chunk.css.map": "./static/css/main.d2230bbb.chunk.css.map",
-    "static/media/fonts.css": "./static/media/Roboto-Black-webfont.dda74841.ttf",
-    "static/media/nouserpic.png": "./static/media/nouserpic.9af42ba9.png"
+    "static/css/2.0d76b58c.chunk.css.map": "./static/css/2.0d76b58c.chunk.css.map",
+    "static/css/main.8d92d471.chunk.css.map": "./static/css/main.8d92d471.chunk.css.map",
+    "static/media/nouserpic.png": "./static/media/nouserpic.9af42ba9.png",
+    "static/media/index.css": "./static/media/roboto-latin-900italic.ebf6d164.woff2"
   }
 }

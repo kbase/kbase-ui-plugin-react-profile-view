@@ -1,6 +1,5 @@
 .DS_Store
 node_modules/
-
 # The built plugin app goes here during a top level build; we don't want to check
 # that is as it is build during install in kbase-ui
 # /plugin/iframe_root 
@@ -17,3 +16,4 @@ _site
 # Put stuff in _trash to move it out of the way, and omit it from the repo 
 # (but keep it locally to support procrastination.)
 _trash
+

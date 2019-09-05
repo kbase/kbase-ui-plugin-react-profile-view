@@ -1,5 +1,34 @@
 
 
 .App {
-  text-align: center;
+  font-family: 'Oxygen', sans-serif;
+}
+
+.card-with-height {
+  height: 245px;
+  overflow: auto;
+}
+.search-on-a-tab {
+  color: rgba(0, 0, 0, 0.65);
+  position: absolute;
+  right: -76vw;
+  margin-top: -8px;
+}
+.edit-button-on-title {
+  float: right;
+  border: 0px !important;
+}
+.save-button-on-title {
+  float: right;
+  border: 0px !important;
+}
+.clear-disabled {
+  color:rgba(0, 0, 0, 0.65) !important;
+  background-color: white !important;
+  border: 0px !important;
+  cursor: text !important;
+}
+
+.profile-tabs {
+  margin: 0 0.5em;
 }
