@@ -1,21 +1,19 @@
 import React from 'react';
-import { UserName, ProfileData, OrgProp } from '../../redux/interfaces';
-import { Row, Col, Card, Input, Spin } from 'antd';
+import { UserName, ProfileData } from '../../redux/interfaces';
+import { Row, Col, Card, Input} from 'antd';
 import nouserpic from '../../assets/nouserpic.png';
 import OrgsContainer from '../Orgs/OrgsContainer';
 const { Meta } = Card;
 const { TextArea } = Input;
 
-interface Props { // this should be profileView or something else
-    baseURL: string;
-    token: string;
+
+interface Props {
     userName: UserName;
     editEnable: Boolean;
     profileData: ProfileData;
     gravatarHash: string;
-    profileIsFetching: string;
-}
-
+    profileFetchStatus: string;
+};
 
 /**
  * Returns profile component.
@@ -23,7 +21,8 @@ interface Props { // this should be profileView or something else
  */
 function Profile(props: Props) {
     console.log('profile props', props)
-    const profile = props.profileData;
+    let profile: ProfileData
+        profile = props.profileData;
 
     // Set initial value for properties that are arrays. 
     // otherwise .map will complain during initial render. 
@@ -82,82 +81,78 @@ function Profile(props: Props) {
         }
     }
     
-    // conditional rendering of the profile tab pane
-    if(props.profileIsFetching === 'success'){
-        return (
-            <Row style={{ padding: 16 }}>
-                <Row gutter={8}>
-                    <Col span={8}>
-                        <Card style={{ margin: '8px 0px', textAlign: 'center' }}>
-                            <img style={{ maxWidth: '100%', margin: '8px 0px' }} alt='avatar' src={ gravaterSrc() } />
-                            {/* {gravatar} */}
-                        </Card>
-                        {/* <pre>
-                            { JSON.stringify(props.profileData, null, 2) }
-                        </pre> */}
-                        <Card
-                            style={{ margin: '8px 0px', textAlign: 'left' }}
-                            title={props.userName.name}
-                        >
-                            <Meta title="User ID" />
-                            <Input className="clear-disabled" disabled defaultValue={props.userName.userID} />
-                            <Meta title="Position" />
-                            <Input className="clear-disabled" defaultValue={setJobTitle()}/>
-                            <Meta title="Department" />
-                            <Input className="clear-disabled" disabled defaultValue={profile.department} />
-                            <Meta title="Organization" />
-                            <Input className="clear-disabled" disabled defaultValue={profile.organization}/>
-                            <Meta title="Location" />
-                            <Input className="clear-disabled" disabled defaultValue={profile.city}/>
-                            <Input className="clear-disabled" disabled defaultValue={profile.state}/>
-                            <Input className="clear-disabled" disabled defaultValue={profile.country}/>
-                            <Meta title="Primary Funding Source" />
-                            <Input className="clear-disabled" disabled defaultValue={profile.fundingSource}/>
-                        </Card>
-                    </Col>
-                    <Col span={16}>
-                        <Row gutter={8}>
-                            <Col span={12}>
-                                <Card className="card-with-height" style={{ margin: '8px 0px' }} title="Research Interests">
-                                    <ul style={{ textAlign: 'left' }}>
-                                        {researchInterests.map((interest) => (
-                                            <li key={interest}>{interest}</li>
-                                        ))}
-                                    </ul>
-                                </Card>
-                            </Col>
-                            <Col span={12}>
-                                <OrgsContainer />
-                            </Col>
-                        </Row>
-                        <Row>
-                            {/* TODO:AKIYO FIX - when the box is very small it doesn't break or hide word */}
-                            <Card
-                                style={{ margin: '8px 0px' }}
-                                title="Research or Personal Statement"
-                            >
-                                <TextArea autosize readOnly className='clear-disabled'  defaultValue={props.profileData.researchStatement}/>
-                            </Card>
-                            <Card style={{ margin: '8px 0px' }} title="Afflications">
+
+    return (
+        <Row style={{ padding: 16 }}>
+            <Row gutter={8}>
+                <Col span={8}>
+                    <Card style={{ margin: '8px 0px', textAlign: 'center' }}>
+                        <img style={{ maxWidth: '100%', margin: '8px 0px' }} alt='avatar' src={ gravaterSrc() } />
+                        {/* {gravatar} */}
+                    </Card>
+                    {/* <pre>
+                        { JSON.stringify(props.profileData, null, 2) }
+                    </pre> */}
+                    <Card
+                        style={{ margin: '8px 0px', textAlign: 'left' }}
+                        title={props.userName.name}
+                    >
+                        <Meta title="User ID" />
+                        <Input className="clear-disabled" disabled defaultValue={props.userName.userID} />
+                        <Meta title="Position" />
+                        <Input className="clear-disabled" defaultValue={setJobTitle()}/>
+                        <Meta title="Department" />
+                        <Input className="clear-disabled" disabled defaultValue={profile.department} />
+                        <Meta title="Organization" />
+                        <Input className="clear-disabled" disabled defaultValue={profile.organization}/>
+                        <Meta title="Location" />
+                        <Input className="clear-disabled" disabled defaultValue={profile.city}/>
+                        <Input className="clear-disabled" disabled defaultValue={profile.state}/>
+                        <Input className="clear-disabled" disabled defaultValue={profile.country}/>
+                        <Meta title="Primary Funding Source" />
+                        <Input className="clear-disabled" disabled defaultValue={profile.fundingSource}/>
+                    </Card>
+                </Col>
+                <Col span={16}>
+                    <Row gutter={8}>
+                        <Col span={12}>
+                            <Card className="card-with-height" style={{ margin: '8px 0px' }} title="Research Interests">
                                 <ul style={{ textAlign: 'left' }}>
-                                    {setAffiliations().map((position, index) => (
-                                        <li key={index}>
-                                            {position.title} @ {position.organization}, {position.started} -{' '}
-                                            {position.ended}{' '}
-                                        </li>
+                                    {researchInterests.map((interest) => (
+                                        <li key={interest}>{interest}</li>
                                     ))}
                                 </ul>
                             </Card>
-                        </Row>
-                    </Col>
-                </Row>
+                        </Col>
+                        <Col span={12}>
+                            <Card className="card-with-height" style={{ margin: '8px 0px' }} title="Organizations">
+                                <OrgsContainer />
+                            </Card>
+                        </Col>
+                    </Row>
+                    <Row>
+                        {/* TODO:AKIYO FIX - when the box is very small it doesn't break or hide word */}
+                        <Card
+                            style={{ margin: '8px 0px' }}
+                            title="Research or Personal Statement"
+                        >
+                            <TextArea autosize readOnly className='clear-disabled'  defaultValue={props.profileData.researchStatement}/>
+                        </Card>
+                        <Card style={{ margin: '8px 0px' }} title="Afflications">
+                            <ul style={{ textAlign: 'left' }}>
+                                {setAffiliations().map((position, index) => (
+                                    <li key={index}>
+                                        {position.title} @ {position.organization}, {position.started} -{' '}
+                                        {position.ended}{' '}
+                                    </li>
+                                ))}
+                            </ul>
+                        </Card>
+                    </Row>
+                </Col>
             </Row>
-        );
-    } 
-    else {
-        return(
-            <div style={{ textAlign: 'center' }}><Spin size="large" /></div>
-        )
-    }
-}
+        </Row>
+    );
+} 
+
 export default Profile;

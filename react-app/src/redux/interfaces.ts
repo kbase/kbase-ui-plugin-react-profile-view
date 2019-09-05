@@ -1,6 +1,6 @@
 import { BaseStoreState } from "@kbase/ui-lib";
 export interface StoreState extends BaseStoreState,  NarrativeState, ProfileState, OrgState {}
-
+import { profileFetchStatuses } from '../redux/fetchStatuses';
 export interface UserAuthorization {
     realname: string;
     role?: Array<string>;
@@ -8,17 +8,18 @@ export interface UserAuthorization {
     username: string;
 }
 
-export interface Narrative_detail {
-    creator: string;
-}
-
+/**
+ * Narrative 
+ */
 export interface NarrativeData {
     wsID: string;
     permission: string;
     name: string;
     last_saved: number;
     users: object;
-    narrative_detail: Narrative_detail;
+    narrative_detail: {
+        creator: string;
+    };
 }
 
 // used in reducer 
@@ -30,6 +31,19 @@ export interface NarrativeAction {
     }
 }
 
+// need this for adding type to StoreState - see store.ts
+export interface NarrativeState {
+    narrativeState: {
+        narrativeList: Array<NarrativeData>;
+        loading: boolean;
+    }
+}
+
+
+/**
+ * Orgs  
+ */
+
 // used in reducer 
 export interface OrgsAction {
     type: string;
@@ -39,18 +53,6 @@ export interface OrgsAction {
     }
 }
 
-// need this for adding type to StoreState - see store.ts
-export interface NarrativeState {
-    narrativeState: {
-        narrativeList: Array<NarrativeData>;
-        loading: boolean;
-    }
-}
-
-// need this for adding type to StoreState - see store.ts
-export interface  ProfileState {
-    profileView: ProfileView 
-}
 
 // need this for adding type to StoreState - see store.ts
 export interface  OrgState {
@@ -73,49 +75,10 @@ export interface Org {
     id: string;
 }
 
-export interface Affiliation {
-    title: string;
-    organization: string;
-    started: string;
-    ended: string;
-}
 
-export interface ProfileData {
-    organization: string;
-    department: string;
-    city: string;
-    state: string;
-    postalCode: string;
-    country: string;
-    affiliations: Array<Affiliation>;
-    researchStatement: string;
-    jobTitle: string;
-    jobTitleOther: string;
-    researchInterests: Array<string>;
-    fundingSource: string;
-    gravatarDefault: string;
-    avatarOption: string;
-}
-
-// used in reducer 
-export interface ProfileAction {
-    type: string;
-    payload: ProfileView;
-}
-
-
-export interface ProfileView {
-    userName: UserName,
-    profileData: ProfileData,
-    gravatarHash: string,
-    profileIsFetching: string // fetching, success, error, none
-}
-
-// used in Profile View app
-export interface UserName {
-    name: string;
-    userID: string;
-}
+/**
+ * Profile 
+ */
 
 /**
  * user profile service uses this type
@@ -144,3 +107,60 @@ export interface UsernameRealname {
     username: string;
     realname: string;
 }
+
+
+// need this for adding type to StoreState - see store.ts
+export interface  ProfileState {
+    profileView: ProfileView | ProfileFetchStatus
+}
+
+export interface ProfileFetchStatus{
+    profileFetchStatus: profileFetchStatuses.NONE | profileFetchStatuses.ERROR | profileFetchStatuses.SUCCESS | profileFetchStatuses.FETCHING;
+}
+
+
+export interface ProfileView {
+    userName: UserName,
+    profileData: ProfileData,
+    gravatarHash: string,
+    profileFetchStatus: profileFetchStatuses.SUCCESS
+}
+
+export interface ProfileData {
+    organization: string;
+    department: string;
+    city: string;
+    state: string;
+    postalCode: string;
+    country: string;
+    affiliations: Array<Affiliation>;
+    researchStatement: string;
+    jobTitle: string;
+    jobTitleOther: string;
+    researchInterests: Array<string>;
+    fundingSource: string;
+    gravatarDefault: string;
+    avatarOption: string;
+}
+
+export interface Affiliation {
+    title: string;
+    organization: string;
+    started: string;
+    ended: string;
+}
+
+// used in Profile View app
+export interface UserName {
+    name: string;
+    userID: string;
+}
+
+// used in reducer 
+export interface loadProfileAction {
+    type: string;
+    payload: ProfileView;
+}
+
+
+

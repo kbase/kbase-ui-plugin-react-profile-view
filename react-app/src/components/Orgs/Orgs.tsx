@@ -5,7 +5,6 @@ import { Card } from 'antd';
 
 interface Props {
     orgList: Array<OrgProp>;
-    loading: boolean;
 }
 
 /**
@@ -16,9 +15,7 @@ interface Props {
 function Orgs(props: Props) {
     console.log(props)
     let orgList = props.orgList;
-    let loading = props.loading;
     return(
-        <Card className="card-with-height" loading={loading} style={{ margin: '8px 0px' }} title="Organizations">
             <ul style={{ textAlign: 'left' }}>
                 {orgList.map((org, index) => (
                     <li key={index}>
@@ -28,7 +25,6 @@ function Orgs(props: Props) {
                     </li>
                 ))}
             </ul>
-        </Card>
     )
     
 }

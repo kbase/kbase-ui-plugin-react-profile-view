@@ -1,9 +1,10 @@
 import { ThunkDispatch } from 'redux-thunk';
-import { StoreState, UserProfileService } from "../interfaces";
+import { StoreState, UserProfileService, ProfileView } from "../interfaces";
 import { AnyAction } from 'redux';
 import { fetchProfileAPI, updateProfileAPI } from '../../util/API';
 import { sendTitle } from '@kbase/ui-lib';
-import { fetchProfile, loadProfile } from '../actions/actions';
+import { fetchProfile, loadProfile, fetchErrorProfile } from '../actions/actions';
+import { profileFetchStatuses } from '../fetchStatuses';
 
 /**
  * fetch user profile
@@ -12,14 +13,14 @@ import { fetchProfile, loadProfile } from '../actions/actions';
 export function getProfile(profileID:string) {
     
     return async function (dispatch:ThunkDispatch<StoreState, void, AnyAction>, getState:() => StoreState ) {
+        // set the life cycle state "profileIsFetching" to "fetching"
         dispatch(fetchProfile())
-        // set the life cycle state to "is fetching"
 
         const rootStore = getState();
         if(rootStore.auth.userAuthorization !== null) {
             const token = rootStore.auth.userAuthorization.token;
             const baseURL = rootStore.app.config.baseUrl;
-            let payload:any;
+            let payload:ProfileView;
             let response:UserProfileService = await fetchProfileAPI(profileID, token, baseURL);
             if (typeof response !== 'undefined') {
                 if (response.user.username !== rootStore.auth.userAuthorization.username) {
@@ -48,26 +49,20 @@ export function getProfile(profileID:string) {
                         avatarOption: response.profile.userdata.avatarOption
                     },
                     gravatarHash: response.profile.synced.gravatarHash,
-                    profileIsFetching: 'success'
+                    profileFetchStatus: profileFetchStatuses.SUCCESS
                 }
+                dispatch(loadProfile(payload));
             } else {
-                payload = {
-                    userName: {
-                        name: 'Something went wrong. Please check console for error messages..',
-                        userID: ''
-                    }
-                }
+                //  set "profileIsFetching" to "error"
+                dispatch(fetchErrorProfile());
             }
-            // set state to 
-            // dispatch({ type: LOAD_PROFILE, payload: payload });
-            // type check 
-            dispatch(loadProfile(payload));
         }
     }
 }
 
 export function updateProfile(profile:any) {
     return async function (dispatch:ThunkDispatch<StoreState, void, AnyAction> , getState:() => StoreState ) {
+        dispatch(fetchProfile())
         const rootStore = getState();
         if(rootStore.auth.userAuthorization !== null) {
             const token = rootStore.auth.userAuthorization.token;
