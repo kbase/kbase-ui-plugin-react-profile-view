@@ -4,29 +4,29 @@ import { Action, Dispatch } from 'redux';
 import Home from './Home';
 import { StoreState } from '../redux/interfaces';
 import { sendTitle } from '@kbase/ui-lib';
-import { loadNarratives, getProfile, updateProfile, loadOrgsAction } from '../redux/actions/index';
+import { loadNarratives, getProfile, updateProfile, getOrgs } from '../redux/actions/index';
 
-interface OwnProps {}
+interface OwnProps {};
 
 interface StateProps {
     token: string;
     authUsername: string;
     username: string | null;
     baseURL: string;
-}
+};
 
 interface DispatchProps {
     setTitle: (title: string) => void;
     loadNarratives: (filter:string, profileID: string) => void;
     getProfile: (profileID: string) => void;
     updateProfile: (profileID: string) => void;
-    loadOrgsAction: (profileID: string) => void;
-}
+    getOrgs: (profileID: string) => void;
+};
 
 // TODO this should be part of the view definition
 interface UserProfileViewParams {
     username?: string;
-}
+};
 
 function mapStateToProps(state: StoreState, ownProps: OwnProps): StateProps {
     const {
@@ -48,7 +48,7 @@ function mapStateToProps(state: StoreState, ownProps: OwnProps): StateProps {
         username: params.username || null,
         baseURL: baseUrl
     };
-}
+};
 
 function mapDispatchToProps(dispatch: Dispatch<Action>, ownProps: OwnProps): DispatchProps {
     return {
@@ -64,12 +64,11 @@ function mapDispatchToProps(dispatch: Dispatch<Action>, ownProps: OwnProps): Dis
         getProfile: (profileID: string) => {
             return dispatch(getProfile(profileID) as any);
         },
-        loadOrgsAction: (profileID: string) => {
-            return dispatch(loadOrgsAction(profileID) as any);
+        getOrgs: (profileID: string) => {
+            return dispatch(getOrgs(profileID) as any);
         }
-        
     };
-}
+};
 
 
 export default connect<StateProps, DispatchProps, OwnProps, StoreState>(

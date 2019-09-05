@@ -6,8 +6,7 @@ import ErrorMessage from '../ErrorMessage';
 
 export default function WhichComponent(props:any) {
     console.log('whichcomponent', props)
-    let foo = props
-    switch(foo.orgsFetchStatus){
+    switch(props.orgFetchStatus){
         case 'none':
             return <Spinner />;
             break;
@@ -19,12 +18,12 @@ export default function WhichComponent(props:any) {
         case 'success':
             return <Orgs orgList={props.orgList} />;
             break;
-
-        case 'error':
-            return <ErrorMessage />;
-            break;
-
-        default: 
+            
+            case 'error':
+                return <ErrorMessage />;
+                break;
+                
+            default: 
             return ( <div>hello</div>);
             break;
 

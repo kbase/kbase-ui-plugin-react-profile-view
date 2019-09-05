@@ -4,7 +4,9 @@ import thunk from "redux-thunk";
 import { makeBaseStoreState } from "@kbase/ui-lib";
 import { StoreState } from './interfaces';
 import rootReducer from "./reducers/index";
-import { profileFetchStatuses } from './fetchStatuses';
+import { profileFetchStatuses, orgFetchStatuses } from './fetchStatuses';
+
+// I think i need to use action creator initialRenderOrgs & initialRenderProfile instead
 
 // When app starts, this runs first to set the initial state.
 export function makeInitialStoreState(): StoreState {
@@ -17,12 +19,10 @@ export function makeInitialStoreState(): StoreState {
             loading: true
         },
         profileView: { profileFetchStatus: profileFetchStatuses.NONE },
-        orgState: {
-            orgList: [],
-            loading: true
-        }
+        orgState:  { orgFetchStatus: orgFetchStatuses.NONE }
     };
-}
+};
+
 export function createReduxStore() {
     return createStore(rootReducer, makeInitialStoreState(), compose(applyMiddleware(thunk)));
-}
+};

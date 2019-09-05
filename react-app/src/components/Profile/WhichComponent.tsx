@@ -6,8 +6,7 @@ import ErrorMessage from '../ErrorMessage'
 
 export default function WhichComponent(props:any) {
     console.log('whichcomponent', props)
-    let foo = props
-    switch(foo.profileFetchStatus){
+    switch(props.profileFetchStatus){
         case 'none':
             return <Spinner />;
             break;

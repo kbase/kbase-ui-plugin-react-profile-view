@@ -4,7 +4,7 @@ import { profileFetchStatuses } from '../fetchStatuses';
 
 export default function profileReducer(state:StoreState, action: loadProfileAction): StoreState {
     const payload = action.payload;
-    console.log('inprofile reducer ', payload)
+    console.log('in profile reducer ', payload)
     switch (action.type) {
         case profileActionTypes.FETCH_PROFILE_SUCCESS:
             return (
@@ -25,7 +25,7 @@ export default function profileReducer(state:StoreState, action: loadProfileActi
                 ... state,
                 profileView: { profileFetchStatus: profileFetchStatuses.FETCHING }
             }
-        case profileActionTypes.INITIAL_RENDER_PROFILE:
+        case profileActionTypes.FETCH_PROFILE_NONE:
             return {
                 ...state,
                 profileView: { profileFetchStatus: profileFetchStatuses.NONE }

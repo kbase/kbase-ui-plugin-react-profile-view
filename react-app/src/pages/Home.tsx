@@ -35,7 +35,7 @@ export interface HomeProps {
     loadNarratives: (filter: string, profileID: string) => void;
     getProfile: (profileID: string) => void;
     updateProfile: (profileID: string) => void;
-    loadOrgsAction: (profileID: string) => void;
+    getOrgs: (profileID: string) => void;
 }
 
 class Home extends React.Component<HomeProps, HomeState> {
@@ -52,7 +52,7 @@ class Home extends React.Component<HomeProps, HomeState> {
             organizationsLoaded: false,
             gravatarHash: ''
         };
-    }
+    };
 
 
     componentDidMount() {
@@ -63,7 +63,7 @@ class Home extends React.Component<HomeProps, HomeState> {
         } else {
             username = this.props.authUsername;
             this.props.setTitle('Your User Profile');
-            this.setState({ editEnable: true })
+            this.setState({ editEnable: true });
         }
 
          /**
@@ -79,7 +79,7 @@ class Home extends React.Component<HomeProps, HomeState> {
          * and load them to the orgs component.
          *  @param {string} id  profile ID
          */
-        this.props.loadOrgsAction(username); //redux
+        this.props.getOrgs(username); //redux
 
         /**
          * Returns narratives that shows in Narrative table.
@@ -105,16 +105,16 @@ class Home extends React.Component<HomeProps, HomeState> {
                  * which tfetch both "public" and "shared" and filter response with profileID
                  */
                 this.props.loadNarratives('they', this.props.username); // redux 
-            }
-        }
-    }
+            };
+        };
+    };
 
     componentDidUpdate(prevProps: any, prevState: any) {
         // This privents from infinate component loading loop.
         if (this.state === prevState) {
             return;
-        }
-    }
+        };
+    };
     // wrap search user component with a div so that display can be controlled.
     // in order to place search component/box on the navigation tab, 
     // make it into a variable and insert it as tab title. 
@@ -135,7 +135,7 @@ class Home extends React.Component<HomeProps, HomeState> {
                 </Tabs>
             </div>
         );
-    }
-}
+    };
+};
 
 export default Home;

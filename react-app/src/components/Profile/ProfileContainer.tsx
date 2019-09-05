@@ -39,31 +39,39 @@ function mapStateToProps(state: StoreState): Props {
     }
     switch(state.profileView.profileFetchStatus) {
         case profileFetchStatuses.NONE:
+        case profileFetchStatuses.FETCHING:
             return {
-                    profileFetchStatus: state.profileView.profileFetchStatus,
+                    profileFetchStatus: state.profileView.profileFetchStatus
                 }
                 break;
 
-        case profileFetchStatuses.NONE:
+        case profileFetchStatuses.ERROR:
             return {
-                    profileFetchStatus: state.profileView.profileFetchStatus,
+                    profileFetchStatus: state.profileView.profileFetchStatus
                 }
                 break;
-                
+
         case profileFetchStatuses.SUCCESS:
-            let foo = state.profileView as ProfileView;
+            // typescript isn't good at switch case yet... 
+            let profileData = state.profileView as ProfileView;
             return {
-                userName: foo.userName,
+                userName: profileData.userName,
                 editEnable: false,
-                profileData: foo.profileData,
-                gravatarHash: foo.gravatarHash,
-                profileFetchStatus: foo.profileFetchStatus
+                profileData: profileData.profileData,
+                gravatarHash: profileData.gravatarHash,
+                profileFetchStatus: profileData.profileFetchStatus
             }
             break;
 
         default:
-            return {profileFetchStatus: state.profileView.profileFetchStatus}
-            break;
+            // if you don't return Props type, it will complain. 
+            // but if you try to return state.profileView.profileFetchStatus
+            // it's type "never" 
+            // hacky way to fix that. 
+            return {
+                profileFetchStatus: profileFetchStatuses.NONE
+            }
+            break;    
     }
 
 };

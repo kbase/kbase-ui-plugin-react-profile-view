@@ -3,7 +3,7 @@ import { StoreState, UserProfileService, ProfileView } from "../interfaces";
 import { AnyAction } from 'redux';
 import { fetchProfileAPI, updateProfileAPI } from '../../util/API';
 import { sendTitle } from '@kbase/ui-lib';
-import { fetchProfile, loadProfile, fetchErrorProfile } from '../actions/actions';
+import { fetchProfile, loadProfile, fetchErrorProfile } from './actionCreators';
 import { profileFetchStatuses } from '../fetchStatuses';
 
 /**

@@ -2,18 +2,18 @@ import { ThunkDispatch } from 'redux-thunk';
 import { StoreState, OrgProp, Org } from '../interfaces';
 import { AnyAction } from 'redux';
 import { fetchOrgsOfProfileAPI } from '../../util/API'
-import { loadOrgs } from '../actions/actions';
+import { loadOrgs, fetchOrgs, fetchErrorOrgs } from './actionCreators';
+import { orgFetchStatuses } from '../fetchStatuses';
 
-// const LOAD_ORGS = 'LOAD_ORGS';
 
 /**
  * 
  * @param userID 
  */
-export function loadOrgsAction(profileID:string){
+export function getOrgs(profileID:string){
     // add dispatch to let the app know fetch is started so spinner can be loaded 
-    // dispatch({ type: FETCH_ORGS })
     return async function (dispatch:ThunkDispatch<StoreState, void, AnyAction>, getState:() => StoreState ) {
+        dispatch(fetchOrgs());
         const rootStore = getState();
         let orgArr: Array<OrgProp> = [];
         if(rootStore.auth.userAuthorization !== null ) {
@@ -23,18 +23,12 @@ export function loadOrgsAction(profileID:string){
                 response.forEach((org) => {
                     orgArr.push({ name: org.name, url: rootStore.app.config.baseUrl + '/#org/' + org.id });
                 });
+                
+                dispatch(loadOrgs({ orgList: orgArr, orgFetchStatus: orgFetchStatuses.SUCCESS}));
             } else {
-                // Fetch error
-                orgArr = [
-                    {
-                        name: 'Something went wrong during fetching organizations. Check console for errors.',
-                        url: ''
-                    }
-                ]
+                dispatch(fetchErrorOrgs());
             }
         } 
-        // dispatch({ type: LOAD_ORGS, payload: {orgList: orgArr, loading: false} });
-        dispatch(loadOrgs(orgArr, false));
     }
 }
 

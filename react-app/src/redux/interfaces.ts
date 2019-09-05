@@ -1,6 +1,6 @@
 import { BaseStoreState } from "@kbase/ui-lib";
 export interface StoreState extends BaseStoreState,  NarrativeState, ProfileState, OrgState {}
-import { profileFetchStatuses } from '../redux/fetchStatuses';
+import { profileFetchStatuses, orgFetchStatuses } from '../redux/fetchStatuses';
 export interface UserAuthorization {
     realname: string;
     role?: Array<string>;
@@ -47,19 +47,23 @@ export interface NarrativeState {
 // used in reducer 
 export interface OrgsAction {
     type: string;
-    payload: {
-        orgList: Array<OrgProp>,
-        loading: boolean
-    }
+    payload: OrgState;
 }
 
 
 // need this for adding type to StoreState - see store.ts
 export interface  OrgState {
-    orgState: {
-        orgList: Array<OrgProp>,
-        loading: boolean
-    }
+    orgState: OrgList | OrgFetchStatus
+}
+
+
+export interface OrgList {
+    orgList: Array<OrgProp>,
+    orgFetchStatus: orgFetchStatuses.NONE | orgFetchStatuses.SUCCESS | orgFetchStatuses.ERROR | orgFetchStatuses.FETCHING
+}
+
+export interface OrgFetchStatus {
+    orgFetchStatus: orgFetchStatuses.NONE | orgFetchStatuses.SUCCESS | orgFetchStatuses.ERROR | orgFetchStatuses.FETCHING
 }
 
 // Used for org list 
@@ -74,6 +78,12 @@ export interface Org {
     name: string;
     id: string;
 }
+
+export interface loadOrgAction {
+    type: string;
+    payload: OrgList;
+}
+
 
 
 /**
