@@ -66,7 +66,7 @@ function mapStateToProps(state: StoreState): Props {
         default:
             // if you don't return Props type, it will complain. 
             // but if you try to return state.profileView.profileFetchStatus
-            // it's type "never" 
+            // its type is "never" 
             // hacky way to fix that. 
             return {
                 profileFetchStatus: profileFetchStatuses.NONE

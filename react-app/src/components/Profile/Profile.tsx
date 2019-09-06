@@ -1,7 +1,7 @@
 import React from 'react';
 import { Row, Col, Card, Input} from 'antd';
 
-import { UserName, ProfileData, ProfileView } from '../../redux/interfaces';
+import { UserName, ProfileData } from '../../redux/interfaces';
 import nouserpic from '../../assets/nouserpic.png';
 import OrgsContainer from '../Orgs/OrgsContainer';
 
@@ -17,9 +17,7 @@ interface Props {
     profileFetchStatus: string;
     updateProfile: (profileID: string, userdata:ProfileData) => void;
 };
-interface Dictionary<T> {
-    [key: string]: T;
-}
+
 /**
  * Returns profile component.
  * @param props
@@ -28,11 +26,12 @@ function Profile(props: Props) {
     console.log('profile props', props)
     let profile: ProfileData
         profile = props.profileData;
-    let foo = new Set();
+
+    let profileDataKeySet = new Set();
     for (let item in profile) {
-        foo.add(item);
+        profileDataKeySet.add(item);
     }
-    console.log(foo)
+    console.log(profileDataKeySet)
     // Set initial value for properties that are arrays. 
     // Otherwise .map will complain during initial render. 
 
@@ -83,22 +82,46 @@ function Profile(props: Props) {
     }
     
     function handleOnClick(event:any) {
-        // console.log('on clicke',  event.target, event.target.value)
+        // console.log('on click',  event.target, event.target.value)
         event.stopPropagation(); // <-- not working!! 
         if(event.target.hasAttribute('readonly')) {
             event.target.removeAttribute('readonly');
         };
     }
+
     function handleOnBlur(event:any) {
         console.log('handleOnBlur',  event.target)
-        event.stopPropagation();
+        let elem = event.target;
+        let value = elem.value.trim();
+        elem.stopPropagation();
         let profileData:any = props.profileData;
-        for( let i = 0; i < event.target.classList.length; i++ ){
-            if (foo.has(event.target.classList[i])){
-                profileData[event.target.classList[i]] = event.target.value;
+        for( let i = 0; i < elem.classList.length; i++ ){
+            let targetClass = elem.classList[i];
+            if ( profileDataKeySet.has(targetClass) && profileData[targetClass] !== value ){
+                props.updateProfile(props.userName.userID, profileData);
             }
         }
-        props.updateProfile(props.userName.userID, profileData)
+    }
+
+    function researchStatementChange(event:any) {
+        console.log('researchStatement',  event.target)
+        // need to check if it's really the right element has(class)
+        // trim value
+        // check if it's the same as before. don't re-render when you don't need to
+        let elem = event.target;
+        elem.stopPropagation();
+        let value = elem.value.trim();
+
+        // haven't figure out how to make it work without using 'any' type.
+        let profileData:any = props.profileData; 
+        for( let i = 0; i < elem.classList.length; i++ ){
+            let targetClass = elem.classList[i];
+            if ( profileDataKeySet.has(targetClass) && profileData[targetClass] !== value ){
+                props.updateProfile(props.userName.userID, profileData);
+            } else {
+                console.log('what did you do to yourself.')
+            }
+        }
     }
         
         
@@ -119,12 +142,13 @@ function Profile(props: Props) {
                     </pre> */}
                     <Card
                         style={{ margin: '8px 0px', textAlign: 'left' }}
-                        title={props.userName.name}
+                        title={props.userName.name} // less than 100
                     >
                         <Meta title="User ID" />
                         <Input className="clear-disabled userID" readOnly defaultValue={props.userName.userID} />
                         <Meta title="Position" />
-                        <Input className="clear-disabled" defaultValue={setJobTitle()}/>
+                        {/* less than 50 */}
+                        <Input className="clear-disabled" defaultValue={setJobTitle()}/> 
                         <Meta title="Department" />
                         <Input className="clear-disabled department" readOnly onClick={handleOnClick} onBlur={handleOnBlur} defaultValue={profile.department} />
                         <Meta title="Organization" />
@@ -159,8 +183,9 @@ function Profile(props: Props) {
                         <Card
                             style={{ margin: '8px 0px' }}
                             title="Research or Personal Statement"
-                        >
-                            <TextArea autosize readOnly className='clear-disabled researchStatement' onClick={handleOnClick} onBlur={handleOnBlur} defaultValue={props.profileData.researchStatement}/>
+                        > 
+                        {/* less than 1000 */}
+                            <TextArea autosize readOnly className='clear-disabled researchStatement' onClick={handleOnClick} onBlur={researchStatementChange} defaultValue={props.profileData.researchStatement}/> 
                         </Card>
                         <Card style={{ margin: '8px 0px' }} title="Afflications">
                             <div className='affiliations' onClick={handleOnClick} onBlur={handleOnBlur} >
