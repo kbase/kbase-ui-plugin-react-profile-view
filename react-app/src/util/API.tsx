@@ -62,12 +62,14 @@ export async function fetchProfileAPI(id: string, token: string, baseURL: string
  * @param userdata 
  */
 export async function updateProfileAPI(token: string, baseURL: string, userdata:ProfileData) {
-    
+    console.log(userdata)
+
 // export async function updateProfileAPI(token: string, baseURL: string, updatedUserProfleString:string) {
     const body = {
         version: '1.1',
         method: 'UserProfile.update_user_profile',
-        params: [ {profile: {user: {realname: "Akiyo Marukawa", username: "amarukawa"}, userdata: {userdata}}}]
+        params: [ { profile: { user: { realname: "Akiyo Marukawa", username: "amarukawa" }, profile: {userdata: userdata}}}]
+        // params: [ { profile: { user: { realname: "Akiyo Marukawa", username: "amarukawa" }, userdata: userdata}}]
     };
     const stringBody = JSON.stringify(body);
     //TODO: Akiyo - remove this after testing
@@ -82,10 +84,7 @@ export async function updateProfileAPI(token: string, baseURL: string, userdata:
         },
         body: stringBody
     });
-    if( response.status === 500) {
-        console.error('500 response:', response);
-        return;
-    }
+    return(response.status);
 }
 
 /**

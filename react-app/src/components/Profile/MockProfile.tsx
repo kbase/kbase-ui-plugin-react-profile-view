@@ -199,20 +199,20 @@ class MockProfile extends React.Component<Props, State> {
         }
             let profile:ProfileData = {
                   
-                        organization: 'Lawrence Berkeley National Laboratory (LBNL)',
-                        department: 'BOOO',
-                        city: 'Berkeley',
-                        state: 'California',
-                        postalCode: '94720',
-                        country: 'United States',
-                        affiliations:[{title: 'foobarrrrrr', organization: 'buzz', started: '1969', ended: 'Present'}, {title: 'bazBuz barz', organization: 'Hello', started: '1969', ended: '1973'}],
-                        researchStatement: event.target.value,
-                        jobTitle: 'Other',
-                        jobTitleOther: 'Front end dev',
-                        researchInterests: ['Genome Annotation', 'Genome Assembly', 'Microbial Communities', 'Comparative Genomics', 'Expression', 'Metabolic Modeling', 'Read Processing', 'Sequence Analysis', 'Utilities', 'Other'],
-                        fundingSource: 'DOE National Nuclear Security Administration (NNSA)',
-                        gravatarDefault: 'mm',
-                        avatarOption: ''
+                affiliations:[{title: 'foobarrrrrr', organization: 'buzz', started: '1969', ended: 'Present'}, {title: 'bazBuz barz', organization: 'Hello', started: '1969', ended: '1973'}],
+                avatarOption: '',
+                city: 'Berkeley',
+                country: 'United States',
+                department: 'BOOO',
+                fundingSource: 'DOE National Nuclear Security Administration (NNSA)',
+                gravatarDefault: 'mm',
+                jobTitle: 'Other',
+                jobTitleOther: 'Front end dev',
+                organization: 'Lawrence Berkeley National Laboratory (LBNL)',
+                postalCode: '94720',
+                researchStatement: event.target.value,
+                researchInterests: ['Genome Annotation', 'Genome Assembly', 'Microbial Communities', 'Comparative Genomics', 'Expression', 'Metabolic Modeling', 'Read Processing', 'Sequence Analysis', 'Utilities', 'Other'],
+                state: 'California',
            }
         
 

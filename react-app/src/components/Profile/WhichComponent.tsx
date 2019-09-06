@@ -5,7 +5,7 @@ import Spinner from '../Spinner';
 import ErrorMessage from '../ErrorMessage'
 
 export default function WhichComponent(props:any) {
-    console.log('whichcomponent', props)
+    // console.log('whichcomponent', props)
     switch(props.profileFetchStatus){
         case 'none':
             return <Spinner />;
@@ -20,7 +20,8 @@ export default function WhichComponent(props:any) {
             editEnable= {props.editEnable}
             profileData= {props.profileData}
             gravatarHash= {props.gravatarHash}
-            profileFetchStatus= {props.profileFetchStatus}/>;
+            profileFetchStatus= {props.profileFetchStatus}
+            updateProfile = {props.updateProfile} />;
             break;
 
         case 'error':

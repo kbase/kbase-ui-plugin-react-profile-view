@@ -22,14 +22,14 @@ interface PropsWithoutProfileData {
 type Props = PropsWithoutProfileData | PropsWithProfileData;
 
 interface DispatchProps {
-    updateProfile: (profileID: string) => void;
+    updateProfile: (profileID: string, profileData: ProfileData) => void;
 };
 
 
 interface OwnProps {};
 let component: JSX.Element;
 function mapStateToProps(state: StoreState): Props {
-    console.log('profile state container', state)
+    // console.log('profile state container', state)
     // token can be null
     let userAuthToken;
     if( state.auth.userAuthorization !== null ) {
@@ -79,8 +79,8 @@ function mapStateToProps(state: StoreState): Props {
 
 function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
     return {
-        updateProfile: (profileID: string) => {
-            return dispatch(updateProfile(profileID) as any);
+        updateProfile: (profileID: string, profileData: ProfileData) => {
+            return dispatch(updateProfile(profileID, profileData) as any);
         }
     };
 };

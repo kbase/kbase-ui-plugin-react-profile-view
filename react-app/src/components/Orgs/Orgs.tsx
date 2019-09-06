@@ -1,6 +1,5 @@
 import React from'react';
 import {OrgProp} from '../../redux/interfaces';
-import { Card } from 'antd';
 
 
 interface Props {

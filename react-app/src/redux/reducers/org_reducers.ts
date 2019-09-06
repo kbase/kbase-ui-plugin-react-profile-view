@@ -4,7 +4,7 @@ import { orgFetchStatuses } from '../fetchStatuses';
 
 export default function orgsReducer(state: StoreState, action: loadOrgAction){
     const payload = action.payload;
-    console.log('in orgs reducer ', payload)
+    // console.log('in orgs reducer ', payload)
     switch (action.type) {
 
         case orgsActionTypes.FETCH_ORGS_SUCCESS:

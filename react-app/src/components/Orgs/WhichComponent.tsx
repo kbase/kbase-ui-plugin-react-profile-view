@@ -5,7 +5,6 @@ import Spinner from '../Spinner';
 import ErrorMessage from '../ErrorMessage';
 
 export default function WhichComponent(props:any) {
-    console.log('whichcomponent', props)
     switch(props.orgFetchStatus){
         case 'none':
             return <Spinner />;

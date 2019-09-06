@@ -6,7 +6,7 @@ import WhichComponent from './WhichComponent';
 import { orgFetchStatuses } from '../../redux/fetchStatuses';
 
 function mapStateToProps(state: StoreState) {
-    console.log('orgs container', state);
+    // console.log('orgs container', state);
     switch( state.orgState.orgFetchStatus ){
         case orgFetchStatuses.NONE:
         case orgFetchStatuses.FETCHING:

@@ -4,7 +4,7 @@ import { Action, Dispatch } from 'redux';
 import Home from './Home';
 import { StoreState } from '../redux/interfaces';
 import { sendTitle } from '@kbase/ui-lib';
-import { loadNarratives, getProfile, updateProfile, getOrgs } from '../redux/actions/index';
+import { loadNarratives, getProfile,  getOrgs } from '../redux/actions';
 
 interface OwnProps {};
 
@@ -19,7 +19,6 @@ interface DispatchProps {
     setTitle: (title: string) => void;
     loadNarratives: (filter:string, profileID: string) => void;
     getProfile: (profileID: string) => void;
-    updateProfile: (profileID: string) => void;
     getOrgs: (profileID: string) => void;
 };
 
@@ -57,9 +56,6 @@ function mapDispatchToProps(dispatch: Dispatch<Action>, ownProps: OwnProps): Dis
         },
         setTitle: (title: string) => {
             return dispatch(sendTitle(title) as any);
-        },
-        updateProfile: (profileID: string) => {
-            return dispatch(updateProfile(profileID) as any);
         },
         getProfile: (profileID: string) => {
             return dispatch(getProfile(profileID) as any);

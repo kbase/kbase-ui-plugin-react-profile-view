@@ -2,9 +2,7 @@ import { ThunkDispatch } from "redux-thunk";
 import { StoreState, NarrativeData } from "../interfaces";
 import { AnyAction} from 'redux';
 import { fetchNarrativesAPI } from '../../util/API';
-
-
-const LOAD_NARRATIVES = 'LOAD_NARRATIVES';
+import { narrativeActionTypes } from '../actions/actionTypes';
 
 /**
  * Fetch narratives dependeing on the filter.
@@ -60,8 +58,8 @@ export function loadNarratives (filter:string, profileID: string) {
                             }
                         }
                         
-                        dispatch({ type: LOAD_NARRATIVES, payload: { narrativeList: narrativeList, 
-                                                                        loading: false }})     
+                        dispatch({ type: narrativeActionTypes.FETCH_NARRATIVE_SUCCESS, 
+                                payload: { narrativeList: narrativeList, loading: false }})     
                                 
                     })
                     break;
@@ -72,7 +70,8 @@ export function loadNarratives (filter:string, profileID: string) {
 
                     if(typeof response !== 'undefined') {
                         // console.log("rootstore", rootStore)
-                        dispatch({ type: LOAD_NARRATIVES, payload: { narrativeList: response, loading: false }})
+                        dispatch({ type: narrativeActionTypes.FETCH_NARRATIVE_SUCCESS,
+                            payload: { narrativeList: response, loading: false }})
                     } else {
                         let fetchFailed =  [
                             {
@@ -85,7 +84,8 @@ export function loadNarratives (filter:string, profileID: string) {
                             }
                         ]
 
-                        dispatch({ type: LOAD_NARRATIVES, payload: { narrativeList: fetchFailed, loading: false }})
+                        dispatch({ type: narrativeActionTypes.FETCH_NARRATIVE_ERROR, 
+                            payload: { narrativeList: fetchFailed, loading: false }})
                     }
                     break;
 

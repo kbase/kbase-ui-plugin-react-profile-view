@@ -1,8 +1,10 @@
 import React from 'react';
-import { UserName, ProfileData } from '../../redux/interfaces';
 import { Row, Col, Card, Input} from 'antd';
+
+import { UserName, ProfileData, ProfileView } from '../../redux/interfaces';
 import nouserpic from '../../assets/nouserpic.png';
 import OrgsContainer from '../Orgs/OrgsContainer';
+
 const { Meta } = Card;
 const { TextArea } = Input;
 
@@ -13,8 +15,11 @@ interface Props {
     profileData: ProfileData;
     gravatarHash: string;
     profileFetchStatus: string;
+    updateProfile: (profileID: string, userdata:ProfileData) => void;
 };
-
+interface Dictionary<T> {
+    [key: string]: T;
+}
 /**
  * Returns profile component.
  * @param props
@@ -23,11 +28,15 @@ function Profile(props: Props) {
     console.log('profile props', props)
     let profile: ProfileData
         profile = props.profileData;
-
+    let foo = new Set();
+    for (let item in profile) {
+        foo.add(item);
+    }
+    console.log(foo)
     // Set initial value for properties that are arrays. 
-    // otherwise .map will complain during initial render. 
+    // Otherwise .map will complain during initial render. 
 
-    // set affiliations
+    // set affiliations to an empty strings for undefined case.
     function setAffiliations(){
         if(typeof profile.affiliations !== 'undefined' && Array.isArray(profile.affiliations)){
             return profile.affiliations;
@@ -42,18 +51,10 @@ function Profile(props: Props) {
             ];
         }
     }
-    // set researchInterests to an empty array inital render.
+    // set researchInterests to an empty array for undefined case - inital render.
     let researchInterests: Array<string> = [];
 
-    // set org to an empty org list for inital render.
-    let orgs = [
-        {
-            name: '',
-            url: ''
-        }
-    ];
-    
-    // Set researchInterests
+    // Set researchInterests to an empty array for undefined case - inital render.
     if (typeof profile.researchInterests !== 'undefined' && Array.isArray(profile.researchInterests)) {
         researchInterests = profile.researchInterests;
     }
@@ -81,8 +82,31 @@ function Profile(props: Props) {
         }
     }
     
-
-    return (
+    function handleOnClick(event:any) {
+        // console.log('on clicke',  event.target, event.target.value)
+        event.stopPropagation(); // <-- not working!! 
+        if(event.target.hasAttribute('readonly')) {
+            event.target.removeAttribute('readonly');
+        };
+    }
+    function handleOnBlur(event:any) {
+        console.log('handleOnBlur',  event.target)
+        event.stopPropagation();
+        let profileData:any = props.profileData;
+        for( let i = 0; i < event.target.classList.length; i++ ){
+            if (foo.has(event.target.classList[i])){
+                profileData[event.target.classList[i]] = event.target.value;
+            }
+        }
+        props.updateProfile(props.userName.userID, profileData)
+    }
+        
+        
+        // i don't think I need this either...
+        // event.target.setAttribute('readonly', 'readonly');
+        // props.updateProfile(props.userName.userID, profileData);
+    
+     return (
         <Row style={{ padding: 16 }}>
             <Row gutter={8}>
                 <Col span={8}>
@@ -98,11 +122,11 @@ function Profile(props: Props) {
                         title={props.userName.name}
                     >
                         <Meta title="User ID" />
-                        <Input className="clear-disabled" disabled defaultValue={props.userName.userID} />
+                        <Input className="clear-disabled userID" readOnly defaultValue={props.userName.userID} />
                         <Meta title="Position" />
                         <Input className="clear-disabled" defaultValue={setJobTitle()}/>
                         <Meta title="Department" />
-                        <Input className="clear-disabled" disabled defaultValue={profile.department} />
+                        <Input className="clear-disabled department" readOnly onClick={handleOnClick} onBlur={handleOnBlur} defaultValue={profile.department} />
                         <Meta title="Organization" />
                         <Input className="clear-disabled" disabled defaultValue={profile.organization}/>
                         <Meta title="Location" />
@@ -116,7 +140,7 @@ function Profile(props: Props) {
                 <Col span={16}>
                     <Row gutter={8}>
                         <Col span={12}>
-                            <Card className="card-with-height" style={{ margin: '8px 0px' }} title="Research Interests">
+                            <Card className="card-with-height researchInterests" onClick={handleOnClick} style={{ margin: '8px 0px' }} title="Research Interests">
                                 <ul style={{ textAlign: 'left' }}>
                                     {researchInterests.map((interest) => (
                                         <li key={interest}>{interest}</li>
@@ -136,9 +160,10 @@ function Profile(props: Props) {
                             style={{ margin: '8px 0px' }}
                             title="Research or Personal Statement"
                         >
-                            <TextArea autosize readOnly className='clear-disabled'  defaultValue={props.profileData.researchStatement}/>
+                            <TextArea autosize readOnly className='clear-disabled researchStatement' onClick={handleOnClick} onBlur={handleOnBlur} defaultValue={props.profileData.researchStatement}/>
                         </Card>
                         <Card style={{ margin: '8px 0px' }} title="Afflications">
+                            <div className='affiliations' onClick={handleOnClick} onBlur={handleOnBlur} >
                             <ul style={{ textAlign: 'left' }}>
                                 {setAffiliations().map((position, index) => (
                                     <li key={index}>
@@ -147,6 +172,7 @@ function Profile(props: Props) {
                                     </li>
                                 ))}
                             </ul>
+                            </div>
                         </Card>
                     </Row>
                 </Col>

@@ -3,7 +3,7 @@ import narrativeReducer from './narrative_reducers';
 import profileReducer from './profile_reducers';
 import reducer from './reducer';
 import { StoreState, NarrativeAction, loadProfileAction, loadOrgAction } from  "../interfaces";
-import { profileActionTypes, orgsActionTypes } from '../actions/actionTypes';
+import { profileActionTypes, orgsActionTypes, narrativeActionTypes } from '../actions/actionTypes';
 import orgsReducer from './org_reducers';
 
 
@@ -27,11 +27,20 @@ const rootReducer: Reducer<StoreState | undefined, Action> = (state: StoreState 
   } 
   else {
     switch(action.type) {
-        case "LOAD_NARRATIVES": 
+        case narrativeActionTypes.FETCH_NARRATIVE: 
+        case narrativeActionTypes.FETCH_NARRATIVE_NONE: 
+        case narrativeActionTypes.FETCH_NARRATIVE_SUCCESS: 
+        case narrativeActionTypes.FETCH_NARRATIVE_ERROR: 
             return narrativeReducer(state, action as NarrativeAction);
+        case profileActionTypes.FETCH_PROFILE: 
+        case profileActionTypes.FETCH_PROFILE_NONE: 
         case profileActionTypes.FETCH_PROFILE_SUCCESS: 
+        case profileActionTypes.FETCH_PROFILE_ERROR: 
             return profileReducer(state, action as loadProfileAction);
+        case orgsActionTypes.FETCH_ORGS:
+        case orgsActionTypes.FETCH_ORGS_NONE:
         case orgsActionTypes.FETCH_ORGS_SUCCESS:
+        case orgsActionTypes.FETCH_ORGS_ERROR:
             return orgsReducer(state, action as loadOrgAction);
         
       default:

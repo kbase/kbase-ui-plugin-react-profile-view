@@ -34,7 +34,6 @@ export interface HomeProps {
     setTitle: (title: string) => void;
     loadNarratives: (filter: string, profileID: string) => void;
     getProfile: (profileID: string) => void;
-    updateProfile: (profileID: string) => void;
     getOrgs: (profileID: string) => void;
 }
 
