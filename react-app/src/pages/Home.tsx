@@ -3,6 +3,7 @@ import React from 'react';
 import { Tabs } from 'antd';
 
 import ProfileContainer from '../components/Profile/ProfileContainer';
+import ProfileClassContainer from '../components/Profile/ProfileClassCountainer';
 import NarrativeContainer from '../components/Narratives';
 import { OrgProp, UserName } from '../redux/interfaces';
 import SearchUsersContainer from '../components/SearchUsers/SearchUsersContainer';
@@ -128,6 +129,9 @@ class Home extends React.Component<HomeProps, HomeState> {
                     </TabPane>
                     <TabPane tab="Narratives" key="3">
                         <NarrativeContainer />
+                    </TabPane>
+                    <TabPane tab="Narratives" key="5">
+                        <ProfileClassContainer />
                     </TabPane>
                     {/* Insert search user component div as a title to place it on the navigation tab  */}
                     <TabPane disabled tab={this.searchOnATab} key="8"></TabPane>

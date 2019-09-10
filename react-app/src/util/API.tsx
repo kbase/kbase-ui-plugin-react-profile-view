@@ -1,4 +1,4 @@
-import { UserProfileService, ProfileData} from "../redux/interfaces";
+import { ProfileData } from "../redux/interfaces";
 
 export async function getBFFServiceUrl(token: string, baseURL: string) {
     // TODO: for dev, the baseUrl will be whatever works for the CRA workflow, which is ''.
@@ -25,6 +25,7 @@ export async function getBFFServiceUrl(token: string, baseURL: string) {
         body: stringBody
     });
     const responseJson = await response.json();
+    console.log("getBFFServiceUrl", responseJson)
     return responseJson.result[0]['url'];
 }
 
@@ -40,6 +41,7 @@ export async function fetchProfileAPI(id: string, token: string, baseURL: string
     const response = await fetch(url, {
         method: 'GET'
     });
+    console.log("fetchProfileAPI", response)
     if (response.status === 404) {
         console.warn('404 response:', response);
     } else if (response.status === 500) {
@@ -62,7 +64,7 @@ export async function fetchProfileAPI(id: string, token: string, baseURL: string
  * @param userdata 
  */
 export async function updateProfileAPI(token: string, baseURL: string, userdata:ProfileData) {
-    console.log(userdata)
+    // console.log(userdata)
 
 // export async function updateProfileAPI(token: string, baseURL: string, updatedUserProfleString:string) {
     const body = {

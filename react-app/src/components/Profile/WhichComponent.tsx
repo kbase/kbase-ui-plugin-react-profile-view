@@ -1,6 +1,7 @@
 import React from 'react';
 
 import Profile from './Profile';
+import ProfileClass from './Profile';
 import Spinner from '../Spinner';
 import ErrorMessage from '../ErrorMessage'
 

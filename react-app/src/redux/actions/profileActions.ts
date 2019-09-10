@@ -21,6 +21,7 @@ export function getProfile(profileID:string) {
             const baseURL = rootStore.app.config.baseUrl;
             let payload:ProfileView;
             let response:UserProfileService = await fetchProfileAPI(profileID, token, baseURL);
+            console.log('getProfile', response);
             if (typeof response !== 'undefined') {
                 if (response.user.username !== rootStore.auth.userAuthorization.username) {
                     dispatch(sendTitle('User Profile for ' + response.user.realname));

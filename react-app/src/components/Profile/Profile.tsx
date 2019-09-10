@@ -1,13 +1,14 @@
-import React from 'react';
-import { Row, Col, Card, Input} from 'antd';
+import React, { CSSProperties } from 'react';
+import { Row, Col, Card, Input, Tooltip, Form, Checkbox, Modal, Button } from 'antd';
+import { FormItemProps } from 'antd/es/form';
 
 import { UserName, ProfileData } from '../../redux/interfaces';
 import nouserpic from '../../assets/nouserpic.png';
 import OrgsContainer from '../Orgs/OrgsContainer';
+import { maxInputLength, researchInterestsList } from '../../profileConfig';
 
 const { Meta } = Card;
 const { TextArea } = Input;
-
 
 interface Props {
     userName: UserName;
@@ -17,21 +18,42 @@ interface Props {
     profileFetchStatus: string;
     updateProfile: (profileID: string, userdata:ProfileData) => void;
 };
+interface Woo {
+    woo:FormItemProps;
+}
 
 /**
  * Returns profile component.
  * @param props
  */
 function Profile(props: Props) {
+
     console.log('profile props', props)
-    let profile: ProfileData
+    let profile: ProfileData;
         profile = props.profileData;
 
     let profileDataKeySet = new Set();
     for (let item in profile) {
         profileDataKeySet.add(item);
+    };
+    
+    //TODO: move this to some config file with other options etc 
+    // let maxInputLength = {
+    //     researchStatement: 1000,
+    //     department: 100,
+    //     position: 50,
+    //     name: 100
+    // }
+
+    
+    function tooltipVisibility ():CSSProperties {
+        // if (props.profileEdit) {
+        //     return {visibility: 'visible'}
+        // } else {visibility: 'hidden' }
+        return {visibility: 'visible'};
     }
-    console.log(profileDataKeySet)
+
+    // console.log(profileDataKeySet);
     // Set initial value for properties that are arrays. 
     // Otherwise .map will complain during initial render. 
 
@@ -48,15 +70,15 @@ function Profile(props: Props) {
                     ended: ''
                 }
             ];
-        }
-    }
+        };
+    };
     // set researchInterests to an empty array for undefined case - inital render.
     let researchInterests: Array<string> = [];
 
     // Set researchInterests to an empty array for undefined case - inital render.
     if (typeof profile.researchInterests !== 'undefined' && Array.isArray(profile.researchInterests)) {
         researchInterests = profile.researchInterests;
-    }
+    };
 
     // Set gravatarURL
     function gravaterSrc(){
@@ -68,7 +90,7 @@ function Profile(props: Props) {
             // let gravatar = <img style={{ maxWidth: '100%', margin: '8px 0px' }} alt="avatar" src={gravaterSrc} />;
         }
         return 'https://www.gravatar.com/avatar/' + props.gravatarHash + '?s=300&amp;r=pg&d=' + profile.gravatarDefault;
-    }
+    };
 
     // Set jobTitle
     function setJobTitle():string {
@@ -78,83 +100,114 @@ function Profile(props: Props) {
             return profile.jobTitle;
         } else {
             return '';
-        }
-    }
+        };
+    };
     
+    // Set name and tooltip 
+    function setName(){
+        return <Tooltip title='must be less than 100 characters'><Input className="clear-disabled" maxLength={maxInputLength.name} defaultValue={props.userName.name}/> </Tooltip>
+    }
+
     function handleOnClick(event:any) {
-        // console.log('on click',  event.target, event.target.value)
-        event.stopPropagation(); // <-- not working!! 
+        console.log('on click',  event.target)
+        event.target.stopPropagation(); // <-- not working!! 
         if(event.target.hasAttribute('readonly')) {
             event.target.removeAttribute('readonly');
         };
+    };
+    function showModal(event:any) {
+        console.log('showModal',  event.currentTarget)
+        // let foo:Array<HTMLElement> = event.target.children;
+        // for( let i = 0; i< foo.length; i++) {
+        //     foo[i].addEventListener('click', showModal)    
+        // };
+        // event.stopProagation();
+
+    };
+    function closeModal(event:any) {
+        console.log('closeModal',  event.target)
+
     }
 
     function handleOnBlur(event:any) {
         console.log('handleOnBlur',  event.target)
         let elem = event.target;
-        let value = elem.value.trim();
-        elem.stopPropagation();
         let profileData:any = props.profileData;
         for( let i = 0; i < elem.classList.length; i++ ){
             let targetClass = elem.classList[i];
-            if ( profileDataKeySet.has(targetClass) && profileData[targetClass] !== value ){
+            if ( profileDataKeySet.has(targetClass) && profileData[targetClass] !== elem.value ){
+                profileData[targetClass] = elem.value.trim();
                 props.updateProfile(props.userName.userID, profileData);
-            }
-        }
-    }
+            };
+        };
+    };
 
+    /**
+     * onBlur event handler for reseachStatement
+     * if the event targat value is not the same as the prop value, 
+     * then update / make sure to trim it! 
+     * @param event 
+     */
     function researchStatementChange(event:any) {
         console.log('researchStatement',  event.target)
         // need to check if it's really the right element has(class)
         // trim value
         // check if it's the same as before. don't re-render when you don't need to
         let elem = event.target;
-        elem.stopPropagation();
-        let value = elem.value.trim();
 
         // haven't figure out how to make it work without using 'any' type.
         let profileData:any = props.profileData; 
         for( let i = 0; i < elem.classList.length; i++ ){
             let targetClass = elem.classList[i];
-            if ( profileDataKeySet.has(targetClass) && profileData[targetClass] !== value ){
+            if ( profileDataKeySet.has(targetClass) && profileData[targetClass] !== elem.value ){
+                profileData[targetClass] = elem.value.trim();
                 props.updateProfile(props.userName.userID, profileData);
-            } else {
-                console.log('what did you do to yourself.')
-            }
-        }
-    }
-        
-        
-        // i don't think I need this either...
-        // event.target.setAttribute('readonly', 'readonly');
-        // props.updateProfile(props.userName.userID, profileData);
+            };
+        };
+    };
     
+    function onChangeHanlder(event:any){
+        // console.log(event.target.value.length);
+        console.log(event);
+    }
+
+    function foo(boo:string) {
+        let moo:FormItemProps["validateStatus"] = 'success';
+        return moo
+    }
      return (
         <Row style={{ padding: 16 }}>
             <Row gutter={8}>
                 <Col span={8}>
                     <Card style={{ margin: '8px 0px', textAlign: 'center' }}>
-                        <img style={{ maxWidth: '100%', margin: '8px 0px' }} alt='avatar' src={ gravaterSrc() } />
-                        {/* {gravatar} */}
+                        <Tooltip  overlayStyle={tooltipVisibility()} title='click to edit Avatar Options'>
+                            <img style={{ maxWidth: '100%', margin: '8px 0px' }} alt='avatar' src={ gravaterSrc() } />
+                            {/* {gravatar} */}
+                        </Tooltip>
                     </Card>
                     {/* <pre>
                         { JSON.stringify(props.profileData, null, 2) }
                     </pre> */}
                     <Card
                         style={{ margin: '8px 0px', textAlign: 'left' }}
-                        title={props.userName.name} // less than 100
+                        // title={props.userName.name} // less than 100
+                        title={setName()} // less than 100
                     >
                         <Meta title="User ID" />
-                        <Input className="clear-disabled userID" readOnly defaultValue={props.userName.userID} />
+                        <Tooltip overlayStyle={tooltipVisibility()} trigger={'click'} title='User ID cannot be changed'>
+                            <Input className="clear-disabled userID" readOnly placeholder='User ID' defaultValue={props.userName.userID} />
+                        </Tooltip>
                         <Meta title="Position" />
-                        {/* less than 50 */}
-                        <Input className="clear-disabled" defaultValue={setJobTitle()}/> 
+                        {/* job title less than 50 */}
+                        <Input className="clear-disabled" maxLength={maxInputLength.position} defaultValue={setJobTitle()}/> 
                         <Meta title="Department" />
-                        <Input className="clear-disabled department" readOnly onClick={handleOnClick} onBlur={handleOnBlur} defaultValue={profile.department} />
+                        <Tooltip overlayStyle={tooltipVisibility()} trigger={'click'} title='must be more than 2 and less than 50 characters'>
+                            <Input className="clear-disabled department" readOnly maxLength={maxInputLength.department} onClick={handleOnClick} onBlur={handleOnBlur} defaultValue={profile.department} />
+                        </Tooltip>
                         <Meta title="Organization" />
                         <Input className="clear-disabled" disabled defaultValue={profile.organization}/>
                         <Meta title="Location" />
-                        <Input className="clear-disabled" disabled defaultValue={profile.city}/>
+                        <Tooltip overlayStyle={tooltipVisibility()}  trigger={'click'} title='must be less than 100 characters'><Input className="clear-disabled" disabled defaultValue={profile.city}/></Tooltip>
                         <Input className="clear-disabled" disabled defaultValue={profile.state}/>
                         <Input className="clear-disabled" disabled defaultValue={profile.country}/>
                         <Meta title="Primary Funding Source" />
@@ -164,12 +217,27 @@ function Profile(props: Props) {
                 <Col span={16}>
                     <Row gutter={8}>
                         <Col span={12}>
-                            <Card className="card-with-height researchInterests" onClick={handleOnClick} style={{ margin: '8px 0px' }} title="Research Interests">
+                            <Card className="card-with-height researchInterests" style={{ margin: '8px 0px' }} title="Research Interests">
+                                <div className="popup" title="researchInterests" onClick={showModal} >
                                 <ul style={{ textAlign: 'left' }}>
                                     {researchInterests.map((interest) => (
                                         <li key={interest}>{interest}</li>
                                     ))}
                                 </ul>
+                                <Modal
+                                    // visible={visible}
+                                    title="Title"
+                                    okText="Save"
+                                    onOk={handleOnBlur}
+                                    onCancel={closeModal}
+                                >
+                                    {/* <Checkbox.Group
+                                        options={researchInterestsList}
+                                        defaultValue={researchInterests}
+                                        onChange={onChangeHanlder}
+                                    /> */}
+                                </Modal>
+                                </div>  
                             </Card>
                         </Col>
                         <Col span={12}>
@@ -185,9 +253,14 @@ function Profile(props: Props) {
                             title="Research or Personal Statement"
                         > 
                         {/* less than 1000 */}
-                            <TextArea autosize readOnly className='clear-disabled researchStatement' onClick={handleOnClick} onBlur={researchStatementChange} defaultValue={props.profileData.researchStatement}/> 
+                        <Form.Item>
+                        <Tooltip overlayStyle={tooltipVisibility()} trigger={'click'} title='must be less than 1000 characters'>
+                            <TextArea autosize maxLength={maxInputLength.researchStatement} readOnly className='clear-disabled researchStatement' onClick={handleOnClick} onBlur={researchStatementChange} defaultValue={props.profileData.researchStatement} onChange={onChangeHanlder} /> 
+                            {/* <TextArea autosize maxLength={maxInputLength.researchStatement} readOnly className='clear-disabled researchStatement' onClick={handleOnClick} onBlur={researchStatementChange} value={props.profileData.researchStatement}/>  */}
+                        </Tooltip>
+                        </Form.Item>
                         </Card>
-                        <Card style={{ margin: '8px 0px' }} title="Afflications">
+                        <Card style={{ margin: '8px 0px' }} title="Affiliations">
                             <div className='affiliations' onClick={handleOnClick} onBlur={handleOnBlur} >
                             <ul style={{ textAlign: 'left' }}>
                                 {setAffiliations().map((position, index) => (
@@ -204,6 +277,6 @@ function Profile(props: Props) {
             </Row>
         </Row>
     );
-} 
+};
 
 export default Profile;
