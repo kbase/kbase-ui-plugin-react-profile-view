@@ -37,14 +37,6 @@ function Profile(props: Props) {
         profileDataKeySet.add(item);
     };
     
-    //TODO: move this to some config file with other options etc 
-    // let maxInputLength = {
-    //     researchStatement: 1000,
-    //     department: 100,
-    //     position: 50,
-    //     name: 100
-    // }
-
     
     function tooltipVisibility ():CSSProperties {
         // if (props.profileEdit) {
@@ -115,15 +107,15 @@ function Profile(props: Props) {
             event.target.removeAttribute('readonly');
         };
     };
-    function showModal(event:any) {
-        console.log('showModal',  event.currentTarget)
-        // let foo:Array<HTMLElement> = event.target.children;
-        // for( let i = 0; i< foo.length; i++) {
-        //     foo[i].addEventListener('click', showModal)    
-        // };
-        // event.stopProagation();
+    // function showModal(event:any) {
+    //     console.log('showModal',  event.currentTarget)
+    //     // let foo:Array<HTMLElement> = event.target.children;
+    //     // for( let i = 0; i< foo.length; i++) {
+    //     //     foo[i].addEventListener('click', showModal)    
+    //     // };
+    //     // event.stopProagation();
 
-    };
+    // };
     function closeModal(event:any) {
         console.log('closeModal',  event.target)
 
@@ -218,7 +210,7 @@ function Profile(props: Props) {
                     <Row gutter={8}>
                         <Col span={12}>
                             <Card className="card-with-height researchInterests" style={{ margin: '8px 0px' }} title="Research Interests">
-                                <div className="popup" title="researchInterests" onClick={showModal} >
+                                <div className="popup" title="researchInterests"  >
                                 <ul style={{ textAlign: 'left' }}>
                                     {researchInterests.map((interest) => (
                                         <li key={interest}>{interest}</li>

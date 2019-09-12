@@ -4,8 +4,7 @@ import { Action, Dispatch } from 'redux';
 
 import { UserName, ProfileData, StoreState, ProfileView, ProfileFetchStatus } from '../../redux/interfaces';
 import {  updateProfile } from '../../redux/actions';
-import whichcomponent from './WhichComponent';
-import whichClasscomponent from './ohwhattodo';
+import OhWhat from './ohwhattodo';
 
 import { profileFetchStatuses } from '../../redux/fetchStatuses';
 
@@ -89,4 +88,4 @@ function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
 export default connect<Props, DispatchProps, OwnProps, StoreState>(
     mapStateToProps, 
     mapDispatchToProps
-)(whichClasscomponent);
+)(OhWhat);

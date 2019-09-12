@@ -1,12 +1,10 @@
 import React from 'react';
 
-import Profile from './Profile';
-import ProfileClass from './Profile';
+import ProfileClass from './ProfileClass';
 import Spinner from '../Spinner';
 import ErrorMessage from '../ErrorMessage'
 
-export default function WhichClassComponent(props:any) {
-    // console.log('whichcomponent', props)
+export default function OhWhat(props:any) {
     switch(props.profileFetchStatus){
         case 'none':
             return <Spinner />;

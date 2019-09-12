@@ -1,14 +1,15 @@
 import React, { CSSProperties } from 'react';
-import { Row, Col, Card, Input, Tooltip, Form, Checkbox, Modal, Button } from 'antd';
+import { Row, Col, Card, Input, Tooltip, Form, Checkbox, Modal, Select, Button, Empty } from 'antd';
 import { FormItemProps } from 'antd/es/form';
-
 import { UserName, ProfileData } from '../../redux/interfaces';
 import nouserpic from '../../assets/nouserpic.png';
 import OrgsContainer from '../Orgs/OrgsContainer';
-import { maxInputLength, researchInterestsList } from '../../profileConfig';
+import { maxInputLength, researchInterestsList, jobTitles } from '../../profileConfig';
 
 const { Meta } = Card;
 const { TextArea } = Input;
+const { Option } = Select;
+
 
 interface Props {
     userName: UserName;
@@ -19,10 +20,15 @@ interface Props {
     updateProfile: (profileID: string, userdata:ProfileData) => void;
 };
 
-interface ProfileState{
+interface State{
     foo: string;
     profileDataKeySet: Set<string>
-    researchInterestsVisible: boolean;
+    researchInterestsModalVisible: boolean;
+    researchInterestsValue: Array<string>; // value returned by onChange
+    afflicationModalVisible: boolean;
+    jobTitleModalVisible:boolean;
+    jobTitleValue:string; // value returned by onChange
+    jobTitleOther:string;
 }
 interface Woo {
     woo:FormItemProps;
@@ -32,25 +38,35 @@ interface Woo {
  * Returns profile component.
  * @param props
  */
-class ProfileClass extends React.Component<Props, ProfileState> {
+class ProfileClass extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state ={ 
             foo: 'foo',
             profileDataKeySet: new Set(),
-            researchInterestsVisible: false
+            researchInterestsModalVisible: false,
+            researchInterestsValue: [],
+            afflicationModalVisible: false,
+            jobTitleModalVisible: false,
+            jobTitleValue: '',
+            jobTitleOther: ''
         };
-        this.setAffiliations = this.setAffiliations.bind(this);
-        this.tooltipVisibility = this.tooltipVisibility.bind(this);
-        this.setAffiliations = this.setAffiliations.bind(this);
-        this.gravaterSrc = this.gravaterSrc.bind(this);
-        this.setJobTitle = this.setJobTitle.bind(this);
-        this.setName = this.setName.bind(this);
+
+        this.tooltipVisibility = this.tooltipVisibility.bind(this); // tooltip is visible when auth user is using the profile
+        this.gravaterSrc = this.gravaterSrc.bind(this); // setting img src for gravater
+        this.setName = this.setName.bind(this); // creating html element including tooltip to fit in card header 
+        this.affiliations = this.affiliations.bind(this); // handles no-data or underfined data and populate data
+        this.researchInterests = this.researchInterests.bind(this); // handles no-data or underfined data and populate data
+        this.setJobTitle = this.setJobTitle.bind(this); // handles no-data or underfined data and populate data
         this.handleOnClick = this.handleOnClick.bind(this);
         this.showModal = this.showModal.bind(this);
+        this.closeModal = this.closeModal.bind(this);
         this.handleOnBlur = this.handleOnBlur.bind(this);
-        this.onChangeHanlder = this.onChangeHanlder.bind(this);
+        this.researchStatementChange = this.researchStatementChange.bind(this);
+        this.jobTitleOnChange = this.jobTitleOnChange.bind(this); // update/save value from pull down
         this.foo = this.foo.bind(this);
+        this.researchInterestSave = this.researchInterestSave.bind(this);
+        this.researchInterestOnChange = this.researchInterestOnChange.bind(this); // update/save value from checkbox group 
 
     }
     
@@ -59,11 +75,22 @@ class ProfileClass extends React.Component<Props, ProfileState> {
         let profile: ProfileData;
         profile = this.props.profileData;
         
-        let profileDataKeySet = new Set();
+        let newDataKeySet:Set<string> = new Set();
         for (let item in profile) {
-            profileDataKeySet.add(item);
+            newDataKeySet.add(item);
         };
-        
+        this.setState({ profileDataKeySet:  newDataKeySet })
+        if(typeof profile.researchInterests !== 'undefined' && 
+                Array.isArray(profile.researchInterests)){
+            this.setState({ researchInterestsValue: profile.researchInterests})
+        }
+        this.tooltipVisibility();
+    }
+    // if you're going ot use prevProps, prevState
+    // you need to put all these three for typescript to be happy.
+    componentDidUpdate(prevProps:Props, prevState: State, snapshot:any){
+        console.log('componentdidUpdate', this.state)
+        console.log('componentdidUpdate', prevState)
         this.tooltipVisibility();
     }
     
@@ -96,10 +123,10 @@ class ProfileClass extends React.Component<Props, ProfileState> {
     }
     
 
-    // set affiliations to an empty strings for undefined case.
-    setAffiliations(){
+    // populate afflications and handles case that afflication list prop is empty
+    affiliations(){
         if(typeof this.props.profileData.affiliations !== 'undefined' && Array.isArray(this.props.profileData.affiliations)){
-            return(
+                return(
                 <ul style={{ textAlign: 'left' }}>
                     {this.props.profileData.affiliations.map((position, index) => (
                         <li key={index}>
@@ -112,11 +139,24 @@ class ProfileClass extends React.Component<Props, ProfileState> {
             )
         } else {
             return (
-                <div></div>
+                <div><Empty image={Empty.PRESENTED_IMAGE_SIMPLE} /></div>
             )
         };
     };
 
+
+    // populate jobTitle
+    setJobTitle():string {
+        if (this.props.profileData.jobTitle === 'Other' && typeof this.props.profileData.jobTitle !== 'undefined') {
+            return this.props.profileData.jobTitleOther;
+        } else if (typeof this.props.profileData.jobTitle !== 'undefined') {
+            return this.props.profileData.jobTitle;
+        } else {
+            return '';
+        };
+    };
+    
+    // populate research interest and handles case that prop is empty
     researchInterests() {
         let researchInterests: Array<string> = [];
         if (typeof this.props.profileData.researchInterests !== 'undefined' && Array.isArray(this.props.profileData.researchInterests)) {
@@ -137,40 +177,79 @@ class ProfileClass extends React.Component<Props, ProfileState> {
         };
     }
     
-
-    // Set jobTitle
-    setJobTitle():string {
-        if (this.props.profileData.jobTitle === 'Other' && typeof this.props.profileData.jobTitle !== 'undefined') {
-            return this.props.profileData.jobTitleOther;
-        } else if (typeof this.props.profileData.jobTitle !== 'undefined') {
-            return this.props.profileData.jobTitle;
-        } else {
-            return '';
-        };
-    };
-    
     handleOnClick(event:any) {
         console.log('on click',  event.target)
-        event.target.stopPropagation(); // <-- not working!! 
         if(event.target.hasAttribute('readonly')) {
             event.target.removeAttribute('readonly');
         };
     };
 
+    /**
+     * I'll be looking forward to suggestions for better ways to do this.
+     * @param event 
+     */
     showModal(event:any) {
         console.log('showModal',  event.currentTarget)
-        // let foo:Array<HTMLElement> = event.target.children;
-        // for( let i = 0; i< foo.length; i++) {
-        //     foo[i].addEventListener('click', showModal)    
-        // };
-        // event.stopProagation();
-    
+        switch(event.currentTarget.id){
+            case 'researchInterests':
+                this.setState({researchInterestsModalVisible: true});
+                break;
+            case 'affiliations':
+                this.setState({afflicationModalVisible: true});
+                break;
+            case 'jobTitle':
+                this.setState({jobTitleModalVisible: true});
+                break;
+            default:
+                break;
+        }
     };
 
     closeModal(event:any) {
-        console.log('closeModal',  event.target)
-    
+        console.log('closeModal',  event.target, event);
+        switch(event.target.id){
+            case 'researchInterests':
+                this.setState({researchInterestsModalVisible: false});
+                break;
+            case 'affiliations':
+                this.setState({afflicationModalVisible: false});
+                break;
+            case 'jobTitle':
+                this.setState({jobTitleModalVisible: false});
+                break;
+            default:
+                break;
+        }
     }
+
+    handleOnSubmit(event:any) {
+        event.preventDefault();
+        console.log('handleOnSubmit',  event.target, event);
+        switch(event.target.id){
+            case 'researchInterests':
+                this.setState({researchInterestsModalVisible: false});
+                if(this.state.researchInterestsValue === this.props.profileData.researchInterests){
+                    console.log('this need to be updated')
+                } else {
+                    console.log('keep the same thing')
+                }
+                break;
+            case 'affiliations':
+                this.setState({afflicationModalVisible: false});
+                break;
+            case 'jobTitle':
+                this.setState({jobTitleModalVisible: false});
+                if(this.state.jobTitleValue === this.props.profileData.jobTitle){
+                    console.log('this need to be updated')
+                } else {
+                    console.log('keep the same thing')
+                }
+                break;
+            default:
+                break;
+        }
+    }
+    
     
     handleOnBlur(event:any) {
         console.log('handleOnBlur',  event.target)
@@ -209,9 +288,35 @@ class ProfileClass extends React.Component<Props, ProfileState> {
         };
     };
     
-    onChangeHanlder(event:any){
+    jobTitleOnChange(event:any){
         // console.log(event.target.value.length);
-        console.log(event);
+        this.setState({ jobTitleValue: event })
+    }
+
+    researchInterestOnChange(event:any){
+        if(typeof event !== 'undefined'){
+            this.setState({ researchInterestsValue: event })
+        }
+    }
+
+    researchInterestSave(event:any){
+        this.setState({ researchInterestsModalVisible: false })
+        let profileData:any = this.props.profileData; 
+        let arrState = this.state.researchInterestsValue;
+        let arrProps = profileData.researchInterests;
+        // it does bother me that there ae two exact same 2 lines of code....
+        if( arrState.length !== arrProps.length ) {
+            profileData['researchInterests'] = arrState;
+            this.props.updateProfile(this.props.userName.userID, profileData);
+        } else {
+            for( let i=0; i < arrState.length; i++ ) {
+                if( arrState[i] !== arrProps[i] ){
+                    profileData['researchInterests'] = arrState;
+                    this.props.updateProfile(this.props.userName.userID, profileData);
+                    break;
+                }
+            } 
+        }
     }
 
     foo(boo:string) {
@@ -236,7 +341,7 @@ class ProfileClass extends React.Component<Props, ProfileState> {
                         </pre> */}
                         <Card
                             style={{ margin: '8px 0px', textAlign: 'left' }}
-                            title={this.setName()} // less than 100
+                            title={this.setName} // less than 100
                         >
                             <Meta title="User ID" />
                             <Tooltip overlayStyle={this.tooltipVisibility()} trigger={'click'} title='User ID cannot be changed'>
@@ -244,15 +349,53 @@ class ProfileClass extends React.Component<Props, ProfileState> {
                             </Tooltip>
                             <Meta title="Position" />
                             {/* job title less than 50 */}
-                            <Input className="clear-disabled" maxLength={maxInputLength.position} defaultValue={this.setJobTitle()}/> 
+                            <div id="jobTitle" onClick={this.showModal} >
+                                <Input className="clear-disabled" maxLength={maxInputLength.position} defaultValue={this.setJobTitle()}/> 
+                            </div>
+                            <Modal
+                                visible={this.state.jobTitleModalVisible}
+                                title="Job Title"
+                                okText="Save"
+                                onOk={this.closeModal}
+                                onCancel={this.closeModal}
+                                closable = {false}
+                                footer={[
+                                    // make sure button id match with the id for onclick={this.showModal}
+                                    <Button key="back" id="jobTitle" onClick={this.closeModal}>
+                                      Return
+                                    </Button>,
+                                    <Form.Item>
+                                    <Button key="submit" id="jobTitle" type="primary" onClick={this.handleOnSubmit}>
+                                      Submit
+                                    </Button>
+                                    </Form.Item>,
+                                ]}
+                            >
+                                <Form onSubmit={this.handleOnSubmit}>
+                                    <Form.Item>
+                                    <Select style={{ width: "100%" }} onChange={this.jobTitleOnChange}>
+                                        {jobTitles.map((item)=>{
+                                            return <Option value={item.value}>{item.label}</Option>
+                                        })}
+                                    </Select>
+                                    </Form.Item>
+                                </Form>
+                            </Modal>
                             <Meta title="Department" />
                             <Tooltip overlayStyle={this.tooltipVisibility()} trigger={'click'} title='must be more than 2 and less than 50 characters'>
-                                <Input className="clear-disabled department" readOnly maxLength={maxInputLength.department} onClick={this.handleOnClick} onBlur={this.handleOnBlur} defaultValue={this.props.profileData.department} />
+                                <Input 
+                                    className="clear-disabled department" 
+                                    readOnly maxLength={maxInputLength.department} 
+                                    onClick={this.handleOnClick} onBlur={this.handleOnBlur} 
+                                    defaultValue={this.props.profileData.department} 
+                                />
                             </Tooltip>
                             <Meta title="Organization" />
                             <Input className="clear-disabled" disabled defaultValue={this.props.profileData.organization}/>
                             <Meta title="Location" />
-                            <Tooltip overlayStyle={this.tooltipVisibility()}  trigger={'click'} title='must be less than 100 characters'><Input className="clear-disabled" disabled defaultValue={this.props.profileData.city}/></Tooltip>
+                            <Tooltip overlayStyle={this.tooltipVisibility()}  trigger={'click'} title='must be less than 100 characters'>
+                                <Input className="clear-disabled" disabled defaultValue={this.props.profileData.city}/>
+                            </Tooltip>
                             <Input className="clear-disabled" disabled defaultValue={this.props.profileData.state}/>
                             <Input className="clear-disabled" disabled defaultValue={this.props.profileData.country}/>
                             <Meta title="Primary Funding Source" />
@@ -263,22 +406,37 @@ class ProfileClass extends React.Component<Props, ProfileState> {
                         <Row gutter={8}>
                             <Col span={12}>
                                 <Card className="card-with-height researchInterests" style={{ margin: '8px 0px' }} title="Research Interests">
-                                    <div className="popup" title="researchInterests" onClick={this.showModal} >
-                                    {this.researchInterests}
+                                    <div id="researchInterests" onClick={this.showModal} >
+                                        {/* <List
+                                            // if dataSource - list of research interest is undefined, then use an empty array.
+                                            dataSource={this.props.profileData.researchInterests && Array.isArray(this.props.profileData.researchInterests) ? this.props.profileData.researchInterests : []}
+                                            renderItem={item => <List.Item className='profile-list'>{item}</List.Item>}
+                                        /> */}
+                                        <this.researchInterests />
+                                    </div>  
                                     <Modal
-                                        visible={this.state.researchInterestsVisible}
-                                        title="Title"
+                                        visible={this.state.researchInterestsModalVisible}
+                                        title="Research Interests"
                                         okText="Save"
-                                        onOk={this.handleOnBlur}
+                                        closable = {false}
+                                        onOk={this.closeModal}
                                         onCancel={this.closeModal}
+                                        footer={[
+                                            // make sure button id match with the id for onclick={this.showModal}
+                                            <Button key="back"id="researchInterests" onClick={this.closeModal}>
+                                              Return
+                                            </Button>,
+                                            <Button key="submit" id="researchInterests" type="primary" onClick={this.researchInterestSave}>
+                                              Submit
+                                            </Button>,
+                                        ]}
                                     >
                                         <Checkbox.Group
                                             options={researchInterestsList}
                                             defaultValue={this.props.profileData.researchInterests}
-                                            onChange={this.onChangeHanlder}
+                                            onChange={this.researchInterestOnChange}
                                         />
                                     </Modal>
-                                    </div>  
                                 </Card>
                             </Col>
                             <Col span={12}>
@@ -296,23 +454,43 @@ class ProfileClass extends React.Component<Props, ProfileState> {
                             {/* less than 1000 */}
                             <Form.Item>
                             <Tooltip overlayStyle={this.tooltipVisibility()} trigger={'click'} title='must be less than 1000 characters'>
-                                <TextArea autosize maxLength={maxInputLength.researchStatement} readOnly className='clear-disabled researchStatement' onClick={this.handleOnClick} onBlur={this.researchStatementChange} defaultValue={this.props.profileData.researchStatement} onChange={this.onChangeHanlder} /> 
+                                <TextArea 
+                                    autosize 
+                                    maxLength={maxInputLength.researchStatement} 
+                                    readOnly 
+                                    className='clear-disabled researchStatement' 
+                                    onClick={this.handleOnClick} 
+                                    onBlur={this.researchStatementChange} 
+                                    defaultValue={this.props.profileData.researchStatement} 
+                                /> 
                                 {/* <TextArea autosize maxLength={maxInputLength.researchStatement} readOnly className='clear-disabled researchStatement' onClick={handleOnClick} onBlur={researchStatementChange} value={props.profileData.researchStatement}/>  */}
                             </Tooltip>
                             </Form.Item>
                             </Card>
                             <Card style={{ margin: '8px 0px' }} title="Affiliations">
-                                <div className='affiliations' onClick={this.handleOnClick} onBlur={this.handleOnBlur} >
-                                {/* <ul style={{ textAlign: 'left' }}>
-                                    {this.setAffiliations().map((position, index) => (
-                                        <li key={index}>
-                                            {position.title} @ {position.organization}, {position.started} -{' '}
-                                            {position.ended}{' '}
-                                        </li>
-                                    ))}
-                                </ul> */}
-                                {this.setAffiliations}
+                                <div id='affiliations' onClick={this.showModal} onBlur={this.handleOnBlur} >
+                                    <this.affiliations />
                                 </div>
+                                <Modal
+                                    visible={this.state.afflicationModalVisible}
+                                    title="Research Interests"
+                                    okText="Save"
+                                    closable = {false}
+                                    onOk={this.closeModal}
+                                    onCancel={this.closeModal}
+                                    footer={[
+                                        // make sure button id match with the id for onclick={this.showModal}
+                                        <Button key="back" id="affiliations" onClick={this.closeModal}>
+                                          Return
+                                        </Button>,
+                                        <Button key="submit" id="affiliations" type="primary" onClick={this.closeModal}>
+                                          Submit
+                                        </Button>,
+                                    ]}
+                                >
+                                    sweet
+                                </Modal>
+                                    
                             </Card>
                         </Row>
                     </Col>
