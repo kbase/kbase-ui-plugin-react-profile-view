@@ -148,6 +148,7 @@ export interface ProfileData {
     jobTitle: string;
     jobTitleOther: string;
     researchInterests: Array<string>;
+    researchInterestsOther: string;
     fundingSource: string;
     gravatarDefault: string;
     avatarOption: string;

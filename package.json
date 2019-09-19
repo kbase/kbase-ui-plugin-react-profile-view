@@ -19,5 +19,6 @@
     "bugs": {
         "url": "https://github.com/kbase/kbase-ui-plugin-user-profile/issues"
     },
-    "homepage": "https://github.com/kbase/kbase-ui-plugin-user-profile#readme"
+    "homepage": "https://github.com/kbase/kbase-ui-plugin-user-profile#readme",
+    "dependencies": {}
 }

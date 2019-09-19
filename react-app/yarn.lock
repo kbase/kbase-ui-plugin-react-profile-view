@@ -1031,17 +1031,17 @@
     "@types/istanbul-reports" "^1.1.1"
     "@types/yargs" "^13.0.0"
 
-"@kbase/ui-lib@0.1.0-alpha.50":
-  version "0.1.0-alpha.50"
-  resolved "https://registry.yarnpkg.com/@kbase/ui-lib/-/ui-lib-0.1.0-alpha.50.tgz#21a717a956017108c70d51990791161e3c05ab06"
-  integrity sha512-QupuOgZnKD8sLeGqXUG6ytm9P15TQVnlSDvpVvJJYrUBNCor337pB+c2Ti7rEyb9e0JacZ4kjmkNV2omqFGtHA==
+"@kbase/ui-lib@0.1.0-alpha.58":
+  version "0.1.0-alpha.58"
+  resolved "https://registry.yarnpkg.com/@kbase/ui-lib/-/ui-lib-0.1.0-alpha.58.tgz#74f95608e90fb6604e5442fe4fd12596b7144fad"
+  integrity sha512-oAz1mF6KmZahrrjIhQQX7gB/zLmh0wsypo1OHJQoSPYSU7aUEs5gSX3h0gfvXwCnAaKLNp/SQHASTdm2N7qv/g==
   dependencies:
     "@types/bluebird" "^3.5.27"
     "@types/react" "^16.8.19"
-    "@types/react-dom" "^16.8.4"
+    "@types/react-dom" "^16.8.5"
     "@types/react-redux" "^7.0.9"
     "@types/uuid" "^3.4.4"
-    antd "^3.19.3"
+    antd "^3.20.7"
     bluebird "^3.5.5"
     es-cookie "^1.2.0"
     react "^16.8.6"
@@ -1050,6 +1050,7 @@
     redux "^4.0.1"
     redux-thunk "^2.3.0"
     typeface-oxygen "^0.0.72"
+    typeface-roboto "^0.0.75"
     uuid "^3.3.2"
 
 "@mrmlnc/readdir-enhanced@^2.2.1":
@@ -1349,7 +1350,7 @@
   resolved "https://registry.yarnpkg.com/@types/q/-/q-1.5.2.tgz#690a1475b84f2a884fd07cd797c00f5f31356ea8"
   integrity sha512-ce5d3q03Ex0sy4R14722Rmt6MT07Ua+k4FwDfdcToYJcMKNtRVQvJ6JCAPdAmAnbRb6CsX6aYb9m96NGod9uTw==
 
-"@types/react-dom@16.9.0", "@types/react-dom@^16.8.4":
+"@types/react-dom@16.9.0", "@types/react-dom@^16.8.5":
   version "16.9.0"
   resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-16.9.0.tgz#ba6ddb00bf5de700b0eb91daa452081ffccbfdea"
   integrity sha512-OL2lk7LYGjxn4b0efW3Pvf2KBVP0y1v3wip1Bp7nA79NkOpElH98q3WdCEdDj93b2b0zaeBG9DvriuKjIK5xDA==
@@ -1834,10 +1835,10 @@ antd@3.20.2:
     shallowequal "^1.1.0"
     warning "~4.0.3"
 
-antd@^3.19.3:
-  version "3.22.1"
-  resolved "https://registry.yarnpkg.com/antd/-/antd-3.22.1.tgz#fae8080bc12418e49a6a9ab047f5cd0a0864a710"
-  integrity sha512-gzjlbYUsrRR2SNF+pLelI1E547slNpFzyLVnkc8GQKQWS+JZDR2fkJ45sWu8XTIshW50KsDzNwFnTdksDnK/Bg==
+antd@^3.20.7:
+  version "3.23.2"
+  resolved "https://registry.yarnpkg.com/antd/-/antd-3.23.2.tgz#6fcbe5b22a932913a33dce0b6b76b4a60c30a403"
+  integrity sha512-S62EvyxPV0IoFR650qtCjUy2E7nY3JkxTP1t71LER09DTTK4fJGw4wWhalNCjkIHR2hPHWGfu0MSHocov3F4dw==
   dependencies:
     "@ant-design/create-react-context" "^0.2.4"
     "@ant-design/icons" "~2.1.1"
@@ -1865,7 +1866,7 @@ antd@^3.19.3:
     rc-dropdown "~2.4.1"
     rc-editor-mention "^1.1.13"
     rc-form "^2.4.5"
-    rc-input-number "~4.4.5"
+    rc-input-number "~4.5.0"
     rc-mentions "~0.4.0"
     rc-menu "~7.4.23"
     rc-notification "~3.3.1"
@@ -9152,6 +9153,17 @@ rc-input-number@~4.4.5:
     rc-util "^4.5.1"
     rmc-feedback "^2.0.0"
 
+rc-input-number@~4.5.0:
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/rc-input-number/-/rc-input-number-4.5.0.tgz#0e1728101fcec2ee0bce4e20bf84c669895c4fb9"
+  integrity sha512-0igTdXuxVykBB82jafUmhbRVmgtd0FuGSIX4SbrynGNrLDOyze3EUKsZl+LyQ4JMRXLrcuZKJg385880RVLA2w==
+  dependencies:
+    babel-runtime "6.x"
+    classnames "^2.2.0"
+    prop-types "^15.5.7"
+    rc-util "^4.5.1"
+    rmc-feedback "^2.0.0"
+
 rc-mentions@~0.3.1:
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/rc-mentions/-/rc-mentions-0.3.1.tgz#7c54f8fbd2e203c56ff4e0a0191ce4a2c9a88c86"
@@ -11160,6 +11172,11 @@ typeface-oxygen@^0.0.72:
   version "0.0.72"
   resolved "https://registry.yarnpkg.com/typeface-oxygen/-/typeface-oxygen-0.0.72.tgz#7c3a187b45bb112ca53d2953ba10018af1eb270f"
   integrity sha512-wDLMaWKrq/P6Y3dDfrgy8JEQXfminKhzkXeQsN5XeOo9TWMJIhetAggqZLM1H7/hkzy/j329c8imScgXefjudg==
+
+typeface-roboto@^0.0.75:
+  version "0.0.75"
+  resolved "https://registry.yarnpkg.com/typeface-roboto/-/typeface-roboto-0.0.75.tgz#98d5ba35ec234bbc7172374c8297277099cc712b"
+  integrity sha512-VrR/IiH00Z1tFP4vDGfwZ1esNqTiDMchBEXYY9kilT6wRGgFoCAlgkEUMHb1E3mB0FsfZhv756IF0+R+SFPfdg==
 
 typescript@3.2.x:
   version "3.2.4"

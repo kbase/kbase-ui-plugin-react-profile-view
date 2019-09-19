@@ -38,21 +38,24 @@ export async function getBFFServiceUrl(token: string, baseURL: string) {
 export async function fetchProfileAPI(id: string, token: string, baseURL: string) {
     const bffServiceUrl = await getBFFServiceUrl(token, baseURL);
     let url = bffServiceUrl + '/fetchUserProfile/' + id;
+    let errorStatus;
     const response = await fetch(url, {
         method: 'GET'
     });
     console.log("fetchProfileAPI", response)
     if (response.status === 404) {
         console.warn('404 response:', response);
+        return [response.status, response.statusText]
     } else if (response.status === 500) {
         console.error('500 response:', response);
-        return;
+        return [response.status, response.statusText]
     }
     try {
         const profile = await response.json();
         return profile;
     } catch (err) {
         console.error('profile fetch failed', response);
+        return [response.status, response.statusText]
     }
 }
 

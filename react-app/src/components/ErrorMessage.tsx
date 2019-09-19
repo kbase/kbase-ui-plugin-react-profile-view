@@ -1,8 +1,10 @@
 import React from 'react';
 
-
-export default function ErrorMessage(props:any) {
+interface Props {
+    errorMessage: Array<String>
+}
+export default function ErrorMessage(props:Props) {
     return(
-        <div style={{ textAlign: 'center' }}><p>Something went wrong... </p></div>
+        <div style={{ textAlign: 'center' }}><p>Something went wrong...{props.errorMessage[0]}, {props.errorMessage[1]} </p></div>
     )
 }

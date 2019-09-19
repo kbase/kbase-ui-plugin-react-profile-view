@@ -26,7 +26,9 @@ export default function WhichComponent(props:any) {
             break;
 
         case 'error':
-            return <ErrorMessage />;
+            return <ErrorMessage 
+            errorMessage={['status code', 'statusText']}
+            />;
             break;
 
         default: 

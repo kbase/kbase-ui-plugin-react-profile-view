@@ -20,9 +20,9 @@ export function getProfile(profileID:string) {
             const token = rootStore.auth.userAuthorization.token;
             const baseURL = rootStore.app.config.baseUrl;
             let payload:ProfileView;
-            let response:UserProfileService = await fetchProfileAPI(profileID, token, baseURL);
+            let response:UserProfileService  | Array<string> = await fetchProfileAPI(profileID, token, baseURL);
             console.log('getProfile', response);
-            if (typeof response !== 'undefined') {
+            if (typeof response !== 'undefined' && !Array.isArray(response)) {
                 if (response.user.username !== rootStore.auth.userAuthorization.username) {
                     dispatch(sendTitle('User Profile for ' + response.user.realname));
                 }
@@ -37,7 +37,7 @@ export function getProfile(profileID:string) {
                     profileFetchStatus: profileFetchStatuses.SUCCESS
                 }
                 dispatch(loadProfile(payload));
-            } else {
+            } else if (Array.isArray(response)){
                 //  set "profileIsFetching" to "error"
                 dispatch(fetchErrorProfile());
             }

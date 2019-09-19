@@ -24,7 +24,9 @@ export default function OhWhat(props:any) {
             break;
 
         case 'error':
-            return <ErrorMessage />;
+            return <ErrorMessage
+            errorMessage={['status code', 'statusText']}
+            />;
             break;
 
         default: 

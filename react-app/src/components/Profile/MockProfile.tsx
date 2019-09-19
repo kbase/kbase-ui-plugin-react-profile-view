@@ -212,6 +212,7 @@ class MockProfile extends React.Component<Props, State> {
                 postalCode: '94720',
                 researchStatement: event.target.value,
                 researchInterests: ['Genome Annotation', 'Genome Assembly', 'Microbial Communities', 'Comparative Genomics', 'Expression', 'Metabolic Modeling', 'Read Processing', 'Sequence Analysis', 'Utilities', 'Other'],
+                researchInterestsOther: 'cat',
                 state: 'California',
            }
         
