@@ -114,6 +114,7 @@ class ProfileClass extends React.Component<Props, State> {
     // if you're going ot use prevProps, prevState
     // you need to put all these three for typescript to be happy.
     componentDidUpdate(prevProps:Props, prevState: State, snapshot:any){
+        console.log('componenetupdate')
         this.tooltipVisibility();
     };
     
@@ -316,7 +317,7 @@ class ProfileClass extends React.Component<Props, State> {
             default:
                 break;
         }
-    }
+    };
 
 
 
@@ -424,14 +425,11 @@ class ProfileClass extends React.Component<Props, State> {
     fundingSourceOnChange(event:any){
         let profileData = this.props.profileData;
         profileData.fundingSource = event;
-        // this.setState({ fundingSourceValue: event});
-        // console.log(this.state.fundingSourceValue)
         this.props.updateProfile(this.props.userName.userID, profileData);
     };
 
     // handles country code pull down menu
     countryCodeOnChange(event: any) {
-        // during developement, "[Object object]" managed to get into the state
         if(typeof event !== 'undefined'){
             this.setState({ countryCode: event });
         };
@@ -455,9 +453,18 @@ class ProfileClass extends React.Component<Props, State> {
         let profileData:any = this.props.profileData; 
         let arrState = this.state.researchInterestsValue;
         let arrProps = profileData.researchInterests;
-        if( arrState.length !== arrProps.length || profileData.researchInterestsOther !== this.state.researchInterestsOther )  {
-            profileData.researchInterests = arrState;
+
+        // check if researchInterestOther needs to be in the profileData
+        if ( arrState.includes('Other') ) {
             profileData.researchInterestsOther = this.state.researchInterestsOther;
+        } else if ( !arrState.includes('Other') ) {
+            // if "other" is not included then clear the state
+            
+            this.setState({ researchInterestsOther: '' })
+        };
+        
+        if ( arrState.length !== arrProps.length ) {
+            profileData.researchInterests = arrState;
             this.props.updateProfile(this.props.userName.userID, profileData);
         } else {
             for( let i=0; i < arrState.length; i++ ) {
@@ -467,8 +474,9 @@ class ProfileClass extends React.Component<Props, State> {
                     this.props.updateProfile(this.props.userName.userID, profileData);
                     break;
                 };
-            }; 
+            };
         };
+
     };
     
 
