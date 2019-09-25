@@ -131,6 +131,7 @@ export interface ProfileFetchStatus{
 
 export interface ProfileView {
     userName: UserName,
+    editEnable: boolean,
     profileData: ProfileData,
     gravatarHash: string,
     profileFetchStatus: profileFetchStatuses.SUCCESS

@@ -37,7 +37,9 @@
     border-bottom: 0px !important;
 }
 
-
+input.ant-input {
+    border: 0px !important;
+}
 #root {
     overflow: auto;
 }

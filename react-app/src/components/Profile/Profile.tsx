@@ -12,7 +12,7 @@ const { TextArea } = Input;
 
 interface Props {
     userName: UserName;
-    editEnable: Boolean;
+    editEnable: boolean;
     profileData: ProfileData;
     gravatarHash: string;
     profileFetchStatus: string;

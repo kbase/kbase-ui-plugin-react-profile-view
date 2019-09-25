@@ -19,7 +19,6 @@ const TabPane = Tabs.TabPane;
 // add Narrative_detail if needed. Currently, data in the object is not used - Akiyo.
 interface HomeState {
     userName: UserName;
-    editEnable: Boolean; // profile edit enable 
     narrativesLoaded: Boolean;
     organizations: Array<OrgProp>;
     organizationsLoaded: Boolean;
@@ -46,7 +45,6 @@ class Home extends React.Component<HomeProps, HomeState> {
                 name: '',
                 userID: ''
             },
-            editEnable: false,
             narrativesLoaded: false,
             organizations: [],
             organizationsLoaded: false,
@@ -63,14 +61,13 @@ class Home extends React.Component<HomeProps, HomeState> {
         } else {
             username = this.props.authUsername;
             this.props.setTitle('Your User Profile');
-            this.setState({ editEnable: true });
         }
 
-         /**
-         * fetch profile data for the diplayed profile
-         * and load it to the profile component.
-         *  @param {string} id  profile ID
-         */
+        /**
+        * fetch profile data for the diplayed profile
+        * and load it to the profile component.
+        *  @param {string} id  profile ID
+        */
         this.props.getProfile(username); // reduux
 
 
@@ -89,15 +86,15 @@ class Home extends React.Component<HomeProps, HomeState> {
          * if the viewing profile userid is not the logged in user,
          * then fetch all of shared and public narrative and filter with the viewing profile userid.
          */
-        if (typeof this.props.username === 'undefined'|| typeof this.props.authUsername === 'undefined') {
+        if (typeof this.props.username === 'undefined' || typeof this.props.authUsername === 'undefined') {
             // if there is no logged in user in run time config (redux app state)
             // returns an empty narrative list
             console.error('How did this even happened? Check error message from Kbase-UI.')
             return;
-        } else {            
+        } else {
             // when logged-in user is viewing own profile. 
             if (this.props.username === this.props.authUsername || this.props.username === null) {
-                    this.props.loadNarratives('mine', this.props.authUsername ); // redux 
+                this.props.loadNarratives('mine', this.props.authUsername); // redux 
             } else {
                 /**
                  * when logged in user is not viewing other user's profile
@@ -119,7 +116,7 @@ class Home extends React.Component<HomeProps, HomeState> {
     // in order to place search component/box on the navigation tab, 
     // make it into a variable and insert it as tab title. 
     searchOnATab = <div className="search-on-a-tab">Search other users <SearchUsersContainer /></div>
-    
+
     render() {
         return (
             <div className="profile-tabs">

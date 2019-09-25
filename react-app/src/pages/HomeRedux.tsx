@@ -4,9 +4,9 @@ import { Action, Dispatch } from 'redux';
 import Home from './Home';
 import { StoreState } from '../redux/interfaces';
 import { sendTitle } from '@kbase/ui-lib';
-import { loadNarratives, getProfile,  getOrgs } from '../redux/actions';
+import { loadNarratives, getProfile, getOrgs } from '../redux/actions';
 
-interface OwnProps {};
+interface OwnProps { };
 
 interface StateProps {
     token: string;
@@ -17,7 +17,7 @@ interface StateProps {
 
 interface DispatchProps {
     setTitle: (title: string) => void;
-    loadNarratives: (filter:string, profileID: string) => void;
+    loadNarratives: (filter: string, profileID: string) => void;
     getProfile: (profileID: string) => void;
     getOrgs: (profileID: string) => void;
 };

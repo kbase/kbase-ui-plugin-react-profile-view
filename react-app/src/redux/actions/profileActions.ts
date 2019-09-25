@@ -22,9 +22,14 @@ export function getProfile(profileID:string) {
             let payload:ProfileView;
             let response:UserProfileService  | Array<string> = await fetchProfileAPI(profileID, token, baseURL);
             console.log('getProfile', response);
+            let profileEdit:boolean;
+            
             if (typeof response !== 'undefined' && !Array.isArray(response)) {
                 if (response.user.username !== rootStore.auth.userAuthorization.username) {
                     dispatch(sendTitle('User Profile for ' + response.user.realname));
+                    profileEdit = false;
+                } else {
+                    profileEdit = true;
                 }
                 // shape response to profile before dispatch 
                 payload = {
@@ -32,6 +37,7 @@ export function getProfile(profileID:string) {
                         userID: response.user.username,
                         name: response.user.realname
                     },
+                    editEnable: profileEdit,
                     profileData: response.profile.userdata,
                     gravatarHash: response.profile.synced.gravatarHash,
                     profileFetchStatus: profileFetchStatuses.SUCCESS

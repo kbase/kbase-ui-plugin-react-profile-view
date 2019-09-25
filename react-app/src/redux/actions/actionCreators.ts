@@ -4,14 +4,14 @@ import { profileActionTypes, orgsActionTypes } from './actionTypes';
 
 
 // fetching profile data is initiated
-export function fetchProfile(){ // put type!
+export function fetchProfile() { // put type!
     return {
         type: profileActionTypes.FETCH_PROFILE
     };
 };
 
 // fetching profile data was successful 
-export function loadProfile(payload:ProfileView):loadProfileAction {
+export function loadProfile(payload: ProfileView): loadProfileAction {
     return {
         type: profileActionTypes.FETCH_PROFILE_SUCCESS,
         payload
@@ -26,7 +26,7 @@ export function fetchErrorProfile() {
 };
 
 // during mounting - render before componentDidMount
-export function initialRenderProfile() { 
+export function initialRenderProfile() {
     return {
         type: profileActionTypes.FETCH_PROFILE_NONE,
     };
@@ -34,7 +34,7 @@ export function initialRenderProfile() {
 
 
 // fetching Orgs was successful 
-export function loadOrgs(payload:OrgList):loadOrgAction {
+export function loadOrgs(payload: OrgList): loadOrgAction {
     return {
         type: orgsActionTypes.FETCH_ORGS_SUCCESS,
         payload
@@ -42,7 +42,7 @@ export function loadOrgs(payload:OrgList):loadOrgAction {
 };
 
 // fetching orgs is initiated
-export function fetchOrgs(){
+export function fetchOrgs() {
     return {
         type: orgsActionTypes.FETCH_ORGS
     };
@@ -56,7 +56,7 @@ export function fetchErrorOrgs() {
 };
 
 // during mounting - render before componentDidMount
-export function initialRenderOrgs() { 
+export function initialRenderOrgs() {
     return {
         type: orgsActionTypes.FETCH_ORGS_NONE,
     };

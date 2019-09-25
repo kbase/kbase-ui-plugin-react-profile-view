@@ -7,7 +7,7 @@ import { orgFetchStatuses } from '../../redux/fetchStatuses';
 
 function mapStateToProps(state: StoreState) {
     // console.log('orgs container', state);
-    switch( state.orgState.orgFetchStatus ){
+    switch (state.orgState.orgFetchStatus) {
         case orgFetchStatuses.NONE:
         case orgFetchStatuses.FETCHING:
             return {
@@ -29,11 +29,11 @@ function mapStateToProps(state: StoreState) {
                 orgFetchStatus: state.orgState.orgFetchStatus
             }
 
-        default: 
+        default:
             return {
                 orgFetchStatus: state.orgState.orgFetchStatus
             };
-        break;
+            break;
     }
 };
 
