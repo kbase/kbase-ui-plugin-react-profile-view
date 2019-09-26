@@ -87,7 +87,7 @@ class ProfileClass extends React.Component<Props, State> {
         this.countryOnChange = this.countryOnChange.bind(this);
         this.institutionSave = this.institutionSave.bind(this);
         this.institutionOnSearch = this.institutionOnSearch.bind(this);
-        this.onSelectChanged = this.onSelectChanged.bind(this);
+        this.setStateProperty = this.setStateProperty.bind(this);
     };
 
     componentDidMount() {
@@ -362,9 +362,10 @@ class ProfileClass extends React.Component<Props, State> {
         //     this.setState({ locationSuggestions: arr })
         // }
 
-    }
-    onSelectChanged(name: string, value: SelectValue) {
-        let newState: any = { [name]: value }
+    };
+    
+    setStateProperty(propertyName: string, value: any) {
+        let newState: any = { [propertyName]: value }
         this.setState(newState);
     };
     countryOnChange(event: any) {
@@ -682,8 +683,8 @@ class ProfileClass extends React.Component<Props, State> {
                                 disabled={!this.props.editEnable}
                                 allowClear
                                 placeholder="Country"
-                                onChange={(value)=>{this.onSelectChanged('country', value)}}
-                                onSelect={(value)=>{this.onSelectChanged('country', value)}}
+                                onChange={(value)=>{this.setStateProperty('country', value)}}
+                                onSelect={(value)=>{this.setStateProperty('country', value)}}
                                 filterOption={(inputValue, option) => {
                                     if (typeof option.props.children === 'string') {
                                         let item = option.props.children;
