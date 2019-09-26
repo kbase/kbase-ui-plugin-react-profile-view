@@ -6,9 +6,9 @@ import Narratives from './Narratives';
 
 
 
-function mapStateToProps (state: StoreState) { 
+function mapStateToProps(state: StoreState) {
     console.log('narrativeState', state);
-    return {narratives: state.narrativeState.narrativeList, loading: state.narrativeState.loading};
+    return { narratives: state.narrativeState.narrativeList, loading: state.narrativeState.loading };
 };
 
 

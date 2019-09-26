@@ -2,76 +2,90 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
 
-import { UserName, ProfileData, StoreState } from '../../redux/interfaces';
+import { UserName, ProfileData, StoreState, ProfileView, ProfileFetchStatus } from '../../redux/interfaces';
 import {  updateProfile } from '../../redux/actions';
-import Profile from './Profile';
+import whichcomponent from './WhichComponent';
 
+import { profileFetchStatuses } from '../../redux/fetchStatuses';
 
-interface Props {
-    baseURL: string;
-    token: string;
+interface PropsWithProfileData {
     userName: UserName;
     editEnable: Boolean;
     profileData: ProfileData;
     gravatarHash: string;
-    profileloaded: Boolean;
+    profileFetchStatus: string;
+};
+interface PropsWithoutProfileData {
+    profileFetchStatus: string;
 };
 
+type Props = PropsWithoutProfileData | PropsWithProfileData;
+
 interface DispatchProps {
-    updateProfile: (profileID: string) => void;
+    updateProfile: (profileID: string, profileData: ProfileData) => void;
 };
 
 
 interface OwnProps {};
-
+let component: JSX.Element;
 function mapStateToProps(state: StoreState): Props {
-
+    // console.log('profile state container', state)
     // token can be null
     let userAuthToken;
     if( state.auth.userAuthorization !== null ) {
         userAuthToken = state.auth.userAuthorization.token
+    } else {
+        userAuthToken = '';
     }
-    return {
-        baseURL: state.app.config.baseUrl,
-        token: userAuthToken ? userAuthToken : '', 
-        userName: {
-            userID: state.profileView.userName.userID,
-            name: state.profileView.userName.name
-        },
-        editEnable: false,
-        profileData: {
-            organization: state.profileView.profileData.organization,
-            department: state.profileView.profileData.department,
-            city: state.profileView.profileData.city,
-            state: state.profileView.profileData.state,
-            postalCode: state.profileView.profileData.postalCode,
-            country: state.profileView.profileData.country,
-            affiliations: state.profileView.profileData.affiliations,
-            researchStatement: state.profileView.profileData.researchStatement,
-            jobTitle: state.profileView.profileData.jobTitle,
-            jobTitleOther: state.profileView.profileData.jobTitleOther,
-            researchInterests: state.profileView.profileData.researchInterests,
-            fundingSource: state.profileView.profileData.fundingSource,
-            gravatarDefault: state.profileView.profileData.gravatarDefault,
-            avatarOption: state.profileView.profileData.avatarOption
-        },
-        gravatarHash: state.profileView.gravatarHash,
-        profileloaded: state.profileView.profileloaded
+    switch(state.profileView.profileFetchStatus) {
+        case profileFetchStatuses.NONE:
+        case profileFetchStatuses.FETCHING:
+            return {
+                    profileFetchStatus: state.profileView.profileFetchStatus
+                }
+                break;
+
+        case profileFetchStatuses.ERROR:
+            return {
+                    profileFetchStatus: state.profileView.profileFetchStatus
+                }
+                break;
+
+        case profileFetchStatuses.SUCCESS:
+            // typescript isn't good at switch case yet... 
+            let profileData = state.profileView as ProfileView;
+            return {
+                userName: profileData.userName,
+                editEnable: false,
+                profileData: profileData.profileData,
+                gravatarHash: profileData.gravatarHash,
+                profileFetchStatus: profileData.profileFetchStatus
+            }
+            break;
+
+        default:
+            // if you don't return Props type, it will complain. 
+            // but if you try to return state.profileView.profileFetchStatus
+            // its type is "never" 
+            // hacky way to fix that. 
+            return {
+                profileFetchStatus: profileFetchStatuses.NONE
+            }
+            break;    
     }
-    
+
 };
 
 
 function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
     return {
-        updateProfile: (profileID: string) => {
-            return dispatch(updateProfile(profileID) as any);
+        updateProfile: (profileID: string, profileData: ProfileData) => {
+            return dispatch(updateProfile(profileID, profileData) as any);
         }
     };
 };
 
-
 export default connect<Props, DispatchProps, OwnProps, StoreState>(
     mapStateToProps, 
     mapDispatchToProps
-)(Profile);
+)(whichcomponent);

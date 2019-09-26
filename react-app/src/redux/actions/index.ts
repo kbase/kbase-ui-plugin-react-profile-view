@@ -1,3 +1,3 @@
 export { loadNarratives } from './narrativeActions';
-export { loadProfile, updateProfile } from './profileActions';
-export { loadOrgs } from './orgActions';
+export { getProfile, updateProfile } from './profileActions';
+export { getOrgs } from './orgActions';

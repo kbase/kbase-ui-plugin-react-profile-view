@@ -1,9 +1,4 @@
 
-
-.App {
-  font-family: 'Oxygen', sans-serif;
-}
-
 .card-with-height {
   height: 245px;
   overflow: auto;
@@ -22,13 +17,42 @@
   float: right;
   border: 0px !important;
 }
-.clear-disabled {
+.clear-disabled
+.clear-disabled[disabled] {
   color:rgba(0, 0, 0, 0.65) !important;
   background-color: white !important;
-  border: 0px !important;
+  border: 1px !important;
   cursor: text !important;
 }
 
 .profile-tabs {
   margin: 0 0.5em;
+}
+
+/* overwrite <List.Item> style */
+.profile-list {
+    list-style: inside !important;
+    list-style-type: disc !important;
+    padding: 0px !important;
+    display: list-item !important;
+    border-bottom: 0px !important;
+}
+
+input.ant-input {
+    border: 0px !important;
+
+    /* border-top: 0px !important;
+    border-right: 0px !important;
+    border-left: 0px !important;
+    border-radius: 0px !important; */
+}
+.ant-select-disabled {
+    background: white !important;
+}
+.margin10px {
+    margin: 10px !important;
+}
+
+#root {
+    overflow: auto;
 }

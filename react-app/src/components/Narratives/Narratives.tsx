@@ -5,7 +5,7 @@
 import React from 'react';
 import { dateDisplay } from '../../util/dateDisplay'; // date format
 import { Table, Popover } from 'antd';
-import { Narrative_detail, NarrativeData } from '../../redux/interfaces'; //interface
+import { NarrativeData } from '../../redux/interfaces'; //interface
 
 interface TableData {
     key: string;
@@ -99,7 +99,7 @@ function Narratives(props: Props) {
                 });
             }
         } else {
-            const narrativeDetail: Narrative_detail = narrative['narrative_detail'];
+            const narrativeDetail = narrative['narrative_detail'];
             let users = '';
             for (let user in narrative.users) {
                 if (user !== narrativeDetail.creator) users = users + user + ', ';

@@ -1,6 +1,6 @@
 import { BaseStoreState } from "@kbase/ui-lib";
 export interface StoreState extends BaseStoreState,  NarrativeState, ProfileState, OrgState {}
-
+import { profileFetchStatuses, orgFetchStatuses } from '../redux/fetchStatuses';
 export interface UserAuthorization {
     realname: string;
     role?: Array<string>;
@@ -8,34 +8,26 @@ export interface UserAuthorization {
     username: string;
 }
 
-export interface Narrative_detail {
-    creator: string;
-}
-
+/**
+ * Narrative 
+ */
 export interface NarrativeData {
     wsID: string;
     permission: string;
     name: string;
     last_saved: number;
     users: object;
-    narrative_detail: Narrative_detail;
+    narrative_detail: {
+        creator: string;
+    };
 }
 
 // used in reducer 
-export interface NarrativeActionType {
+export interface NarrativeAction {
     type: string;
     payload: {
         narrativeList: Array<NarrativeData>;
         loading: boolean;
-    }
-}
-
-// used in reducer 
-export interface OrgsActionType {
-    type: string;
-    payload: {
-        orgList: Array<OrgProp>,
-        loading: boolean
     }
 }
 
@@ -47,17 +39,31 @@ export interface NarrativeState {
     }
 }
 
-// need this for adding type to StoreState - see store.ts
-export interface  ProfileState {
-    profileView: ProfileView
+
+/**
+ * Orgs  
+ */
+
+// used in reducer 
+export interface OrgsAction {
+    type: string;
+    payload: OrgState;
 }
+
 
 // need this for adding type to StoreState - see store.ts
 export interface  OrgState {
-    orgState: {
-        orgList: Array<OrgProp>,
-        loading: boolean
-    }
+    orgState: OrgList | OrgFetchStatus
+}
+
+
+export interface OrgList {
+    orgList: Array<OrgProp>,
+    orgFetchStatus: orgFetchStatuses.NONE | orgFetchStatuses.SUCCESS | orgFetchStatuses.ERROR | orgFetchStatuses.FETCHING
+}
+
+export interface OrgFetchStatus {
+    orgFetchStatus: orgFetchStatuses.NONE | orgFetchStatuses.SUCCESS | orgFetchStatuses.ERROR | orgFetchStatuses.FETCHING
 }
 
 // Used for org list 
@@ -73,49 +79,16 @@ export interface Org {
     id: string;
 }
 
-export interface Affiliation {
-    title: string;
-    organization: string;
-    started: string;
-    ended: string;
-}
-
-export interface ProfileData {
-    organization: string;
-    department: string;
-    city: string;
-    state: string;
-    postalCode: string;
-    country: string;
-    affiliations: Array<Affiliation>;
-    researchStatement: string;
-    jobTitle: string;
-    jobTitleOther: string;
-    researchInterests: Array<string>;
-    fundingSource: string;
-    gravatarDefault: string;
-    avatarOption: string;
-}
-
-// used in reducer 
-export interface ProfileActionType {
+export interface loadOrgAction {
     type: string;
-    payload: ProfileView;
+    payload: OrgList;
 }
 
 
-export interface ProfileView {
-    userName: UserName,
-    profileData: ProfileData,
-    gravatarHash: string,
-    profileloaded: boolean
-}
 
-// used in Profile View app
-export interface UserName {
-    name: string;
-    userID: string;
-}
+/**
+ * Profile 
+ */
 
 /**
  * user profile service uses this type
@@ -144,3 +117,62 @@ export interface UsernameRealname {
     username: string;
     realname: string;
 }
+
+
+// need this for adding type to StoreState - see store.ts
+export interface  ProfileState {
+    profileView: ProfileView | ProfileFetchStatus
+}
+
+export interface ProfileFetchStatus{
+    profileFetchStatus: profileFetchStatuses.NONE | profileFetchStatuses.ERROR | profileFetchStatuses.SUCCESS | profileFetchStatuses.FETCHING;
+}
+
+
+export interface ProfileView {
+    userName: UserName,
+    editEnable: boolean,
+    profileData: ProfileData,
+    gravatarHash: string,
+    profileFetchStatus: profileFetchStatuses.SUCCESS
+}
+
+export interface ProfileData {
+    organization: string;
+    department: string;
+    city: string;
+    state: string;
+    postalCode: string;
+    country: string;
+    affiliations: Array<Affiliation>;
+    researchStatement: string;
+    jobTitle: string;
+    jobTitleOther: string;
+    researchInterests: Array<string>;
+    researchInterestsOther: string;
+    fundingSource: string;
+    gravatarDefault: string;
+    avatarOption: string;
+}
+
+export interface Affiliation {
+    title: string;
+    organization: string;
+    started: string;
+    ended: string;
+}
+
+// used in Profile View app
+export interface UserName {
+    name: string;
+    userID: string;
+}
+
+// used in reducer 
+export interface loadProfileAction {
+    type: string;
+    payload: ProfileView;
+}
+
+
+

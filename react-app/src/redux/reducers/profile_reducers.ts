@@ -1,18 +1,37 @@
-import { StoreState, ProfileActionType } from "../interfaces";
+import { StoreState, loadProfileAction } from "../interfaces";
+import { profileActionTypes } from "../actions/actionTypes";
+import { profileFetchStatuses } from '../fetchStatuses';
 
-
-
-export default function profileReducer(state:StoreState, action: ProfileActionType): StoreState {
+export default function profileReducer(state:StoreState, action: loadProfileAction): StoreState {
     const payload = action.payload;
+    // console.log('in profile reducer ', action)
     switch (action.type) {
-        case 'LOAD_PROFILE':
+        case profileActionTypes.FETCH_PROFILE_SUCCESS:
             return (
                 {
                     ...state,
                     profileView: payload
                 }
-            )
+            );
             break;
+                
+        case profileActionTypes.FETCH_PROFILE_ERROR:
+            return {
+                ... state,
+                profileView: { profileFetchStatus: profileFetchStatuses.ERROR}
+            };
+
+        case profileActionTypes.FETCH_PROFILE:
+            return {
+                ... state,
+                profileView: { profileFetchStatus: profileFetchStatuses.FETCHING }
+            };
+
+        case profileActionTypes.FETCH_PROFILE_NONE:
+            return {
+                ...state,
+                profileView: { profileFetchStatus: profileFetchStatuses.NONE }
+            };
 
         default:
             return state;

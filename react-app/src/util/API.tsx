@@ -1,4 +1,4 @@
-import { UserProfileService, ProfileData} from "../redux/interfaces";
+import { ProfileData } from "../redux/interfaces";
 
 export async function getBFFServiceUrl(token: string, baseURL: string) {
     // TODO: for dev, the baseUrl will be whatever works for the CRA workflow, which is ''.
@@ -25,6 +25,7 @@ export async function getBFFServiceUrl(token: string, baseURL: string) {
         body: stringBody
     });
     const responseJson = await response.json();
+    console.log("getBFFServiceUrl", responseJson)
     return responseJson.result[0]['url'];
 }
 
@@ -37,20 +38,24 @@ export async function getBFFServiceUrl(token: string, baseURL: string) {
 export async function fetchProfileAPI(id: string, token: string, baseURL: string) {
     const bffServiceUrl = await getBFFServiceUrl(token, baseURL);
     let url = bffServiceUrl + '/fetchUserProfile/' + id;
+    let errorStatus;
     const response = await fetch(url, {
         method: 'GET'
     });
+    console.log("fetchProfileAPI", response)
     if (response.status === 404) {
         console.warn('404 response:', response);
+        return [response.status, response.statusText]
     } else if (response.status === 500) {
         console.error('500 response:', response);
-        return;
+        return [response.status, response.statusText]
     }
     try {
         const profile = await response.json();
         return profile;
     } catch (err) {
         console.error('profile fetch failed', response);
+        return [response.status, response.statusText]
     }
 }
 
@@ -62,12 +67,14 @@ export async function fetchProfileAPI(id: string, token: string, baseURL: string
  * @param userdata 
  */
 export async function updateProfileAPI(token: string, baseURL: string, userdata:ProfileData) {
-    
+    // console.log(userdata)
+
 // export async function updateProfileAPI(token: string, baseURL: string, updatedUserProfleString:string) {
     const body = {
         version: '1.1',
         method: 'UserProfile.update_user_profile',
-        params: [ {profile: {user: {realname: "Akiyo Marukawa", username: "amarukawa"}, userdata: {userdata}}}]
+        params: [ { profile: { user: { realname: "Akiyo Marukawa", username: "amarukawa" }, profile: {userdata: userdata}}}]
+        // params: [ { profile: { user: { realname: "Akiyo Marukawa", username: "amarukawa" }, userdata: userdata}}]
     };
     const stringBody = JSON.stringify(body);
     //TODO: Akiyo - remove this after testing
@@ -82,10 +89,7 @@ export async function updateProfileAPI(token: string, baseURL: string, userdata:
         },
         body: stringBody
     });
-    if( response.status === 500) {
-        console.error('500 response:', response);
-        return;
-    }
+    return(response.status);
 }
 
 /**
