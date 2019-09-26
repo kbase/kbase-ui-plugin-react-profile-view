@@ -5,12 +5,18 @@ import { UserName, ProfileData, Affiliation } from '../../redux/interfaces';
 import nouserpic from '../../assets/nouserpic.png';
 import OrgsContainer from '../Orgs/OrgsContainer';
 import { maxInputLength, researchInterestsList, jobTitles } from '../../profileConfig';
-import { fundingSources, countryCodes, institution } from '../../dataSources';
+import { fundingSources, countryCodes, institution, states } from '../../dataSources';
+import { SelectValue } from 'antd/lib/select';
 
 const { Meta } = Card;
 const { TextArea } = Input;
 const { Option } = Select;
 
+
+enum ModalName {
+    ResearchInterests,
+    AvatarOption,
+}
 
 interface Props {
     userName: UserName;
@@ -23,14 +29,17 @@ interface Props {
 
 interface State {
     profileDataKeySet: Set<string>
-    researchInterestsModalVisible: boolean;
+    visibleModal: ModalName | undefined;
     researchInterestsValue: Array<string>; // value returned by onChange
     researchInterestsOther: string | undefined;
     jobTitleValue: string; // value returned by onChange
     jobTitleOther: string | undefined;
     fundingSourceValue: string; // value returned from pulldown
     locationSuggestions: Array<string>;
-    countryCode: string;
+    country: string;
+    city: string;
+    postalCode: string;
+    state: string;
     institutionFiltered: Array<string>;
     affiliations: Array<Affiliation>;
 }
@@ -44,14 +53,17 @@ class ProfileClass extends React.Component<Props, State> {
         super(props);
         this.state = {
             profileDataKeySet: new Set(),
-            researchInterestsModalVisible: false,
+            visibleModal: undefined,
             researchInterestsValue: [],
             researchInterestsOther: undefined,
             jobTitleValue: '',
             jobTitleOther: undefined,
             fundingSourceValue: '',
             locationSuggestions: [],
-            countryCode: '',
+            country: '',
+            city: '',
+            postalCode: '',
+            state: '',
             institutionFiltered: [],
             affiliations: [],
         };
@@ -72,10 +84,10 @@ class ProfileClass extends React.Component<Props, State> {
         this.researchInterestOnChange = this.researchInterestOnChange.bind(this); // update/save value from checkbox group 
         this.locationOnSearch = this.locationOnSearch.bind(this)
         this.fundingSourceOnChange = this.fundingSourceOnChange.bind(this);
-        this.countryCodeOnChange = this.countryCodeOnChange.bind(this);
-        this.institutionOnChange = this.institutionOnChange.bind(this);
+        this.countryOnChange = this.countryOnChange.bind(this);
+        this.institutionSave = this.institutionSave.bind(this);
         this.institutionOnSearch = this.institutionOnSearch.bind(this);
-        this.hoo = this.hoo.bind(this);
+        this.onSelectChanged = this.onSelectChanged.bind(this);
     };
 
     componentDidMount() {
@@ -91,18 +103,21 @@ class ProfileClass extends React.Component<Props, State> {
             researchInterestsOther: profile.researchInterestsOther,
             jobTitleValue: profile.jobTitle,
             jobTitleOther: profile.jobTitleOther,
-            profileDataKeySet: newDataKeySet
+            profileDataKeySet: newDataKeySet,
+            country: profile.country,
+            city: profile.city,
+            postalCode: profile.postalCode,
+            state: profile.state
         })
-        if (typeof profile.researchInterests !== 'undefined' &&
-            Array.isArray(profile.researchInterests)) {
+        if (Array.isArray(profile.researchInterests)) {
             this.setState({ researchInterestsValue: profile.researchInterests })
         };
-        if (typeof profile.affiliations !== 'undefined' &&
-            Array.isArray(profile.affiliations)) {
+        if (Array.isArray(profile.affiliations)) {
             this.setState({ affiliations: profile.affiliations });
         };
 
         this.tooltipVisibility();
+        
     };
 
     // if you're going ot use prevProps, prevState
@@ -111,10 +126,6 @@ class ProfileClass extends React.Component<Props, State> {
         console.log('componenetupdate', this.state)
     };
 
-    hoo(event: any) {
-        event.preventDefault();
-        console.log(event, event.target)
-    }
 
     /**
      * if profile is auth user's profile, then edit is enabled, then make tool tips visible
@@ -126,6 +137,15 @@ class ProfileClass extends React.Component<Props, State> {
             return { visibility: 'visible' };
         };
     };
+
+    // set visitbility after initial mounting
+    USStateVisibility(){
+        if(this.state.country === 'United States'){
+            return { display: 'inherit'};
+        } else {
+            return {display: 'none'};
+        };
+    }
 
     // Set gravatarURL
     gravaterSrc() {
@@ -147,14 +167,14 @@ class ProfileClass extends React.Component<Props, State> {
                 className="clear-disabled"
                 readOnly={this.props.editEnable}
                 maxLength={maxInputLength.name}
-                onBlur={this.handleOnBlur}
+                onBlur={this.handleOnBlur}//NEED to change
                 onPressEnter={this.handleOnBlur}
                 defaultValue={this.props.userName.name}
             />
         </Tooltip>);
     };
 
-    // Create Tooltop for Organization auto complete
+    // Create tootip for Organization auto complete
     institutionToolTip() {
         return (
             <div>
@@ -169,7 +189,7 @@ class ProfileClass extends React.Component<Props, State> {
 
     // populate affiliations and handles case that affiliations list prop is empty
     affiliations() {
-        if (typeof this.state.affiliations !== 'undefined' && Array.isArray(this.state.affiliations)) {
+        if (Array.isArray(this.state.affiliations)) {
             return (
                 <div id='affiliations'>
                     {this.state.affiliations.map((position, index) => (
@@ -183,14 +203,14 @@ class ProfileClass extends React.Component<Props, State> {
                                 maxLength={maxInputLength.position}
                                 defaultValue={position.title}
                                 placeholder={'Job title'}
-                                onChange={(item) => { this.affiliationJobTitleOnChange(item, index) }}
+                                onChange={(event) => { this.affiliationJobTitleOnChange(event, index) }}
                             />
                             <AutoComplete
                                 className='clear-disabled'
                                 style={{ width: '50%' }}
                                 allowClear
                                 disabled={!this.props.editEnable}
-                                placeholder='Search or enter your organization.'
+                                placeholder='Organization'
                                 onSelect={(item) => { this.affiliationOnSelect(item, index) }}
                                 onSearch={this.institutionOnSearch}
                                 filterOption={(inputValue, option) => {
@@ -213,27 +233,27 @@ class ProfileClass extends React.Component<Props, State> {
                                     );
                                 })}
                             </AutoComplete>
+                            <Tooltip overlayStyle={this.tooltipVisibility()} title='Enter 4 digits start year and end year'>
                             <Input
                                 readOnly={!this.props.editEnable}
                                 style={{ width: '60px', display: 'inline' }}
-                                name={index.toString(10)}
-                                onChange={(item) => { this.affiliationStartOnChange(item, index, 'start') }}
+                                onChange={(item) => { this.affiliationStartOnChange(item, index) }}
                                 type='string' maxLength={4}
                                 className='clear-disabled'
-                                placeholder='Year started'
+                                placeholder='Start'
                                 defaultValue={position.started}
                             />
                             <Input
                                 readOnly={!this.props.editEnable}
                                 style={{ width: '60px', display: 'inline' }}
-                                name={index.toString(10)}
                                 onChange={(item) => { this.affiliationEndOnChange(item, index) }}
                                 type='string' maxLength={4}
                                 className='clear-disabled'
-                                placeholder='Year ended'
+                                placeholder='End'
                                 defaultValue={position.ended}
                             />
-                            <Button hidden={this.showEditButtons()} style={{ margin: '10px' }} type="primary" onClick={() => this.deleteAffiliation(index)}>
+                            </Tooltip>
+                            <Button  style={{ margin: '10px', display: this.showEditButtons() }} type="primary" onClick={() => this.deleteAffiliation(index)}>
                                 delete
                             </Button>
                         </form>
@@ -252,7 +272,7 @@ class ProfileClass extends React.Component<Props, State> {
     // populate research interest and handles case that prop is empty
     researchInterests() {
         let researchInterests: Array<string> = [];
-        if (typeof this.props.profileData.researchInterests !== 'undefined' && Array.isArray(this.props.profileData.researchInterests)) {
+        if (Array.isArray(this.props.profileData.researchInterests)) {
             researchInterests = this.props.profileData.researchInterests;
             if (researchInterests.includes("Other")) {
                 return (
@@ -286,14 +306,10 @@ class ProfileClass extends React.Component<Props, State> {
 
 
     // Modal Control  
-    showModal(event: any) {
+    showModal(event: any, modal: ModalName | undefined) {
         if (this.props.editEnable == true) {
-            this.setState({ researchInterestsModalVisible: true })
+            this.setState({ visibleModal: modal })
         };
-    };
-
-    closeModal(event: any) {
-        this.setState({ researchInterestsModalVisible: false });
     };
 
     /// event handlers //// 
@@ -320,39 +336,64 @@ class ProfileClass extends React.Component<Props, State> {
      * 
      */
     async locationOnSearch(value: string) {
-        if (value.length > 3) {
-            let suggestionsArr = [];
-            let url = 'https://autocomplete.geocoder.api.here.com/6.2/suggest.json?app_id=OsLgmo5czpVQ8Ofqvn7M&app_code=KR4vdU7nGqr_PRriINGH9Q&query=';
-            let fetchURL = url + value + "&=" + this.state.countryCode + "callback=mycallbackFunction";
-            let result = await fetch(fetchURL, {
-                method: 'GET',
-                mode: 'cors',
-                headers: {
-                    'content-type': 'application/json'
-                }
-            });
-            console.log(result)
-            try {
-                let suggestions = await result.json();
-                console.log(suggestions)
-                suggestionsArr = suggestions['suggestions']
-            } catch (error) {
-                console.error('humm')
-            }
-            let arr = [];
-            for (let i = 0; i < suggestionsArr.length; i++) {
-                arr.push(suggestionsArr[i].label)
-            }
-            this.setState({ locationSuggestions: arr })
-        };
+        // if (value.length > 10000) {
+        //     let suggestionsArr = [];
+        //     let url = 'https://autocomplete.geocoder.api.here.com/6.2/suggest.json?app_id=OsLgmo5czpVQ8Ofqvn7M&app_code=KR4vdU7nGqr_PRriINGH9Q&query=';
+        //     let fetchURL = url + value + "&=" + this.state.country + "callback=mycallbackFunction";
+        //     let result = await fetch(fetchURL, {
+        //         method: 'GET',
+        //         mode: 'cors',
+        //         headers: {
+        //             'content-type': 'application/json'
+        //         }
+        //     });
+        //     console.log(result)
+        //     try {
+        //         let suggestions = await result.json();
+        //         console.log(suggestions)
+        //         suggestionsArr = suggestions['suggestions']
+        //     } catch (error) {
+        //         console.error('humm')
+        //     }
+        //     let arr = [];
+        //     for (let i = 0; i < suggestionsArr.length; i++) {
+        //         arr.push(suggestionsArr[i].label)
+        //     }
+        //     this.setState({ locationSuggestions: arr })
+        // }
 
     }
-
-    // handles country code pull down menu
-    countryCodeOnChange(event: any) {
-        if (typeof event !== 'undefined') {
-            this.setState({ countryCode: event });
+    onSelectChanged(name: string, value: SelectValue) {
+        let newState: any = { [name]: value }
+        this.setState(newState);
+    };
+    countryOnChange(event: any) {
+        if (typeof event === 'string') { 
+            this.setState({ country: event });
         };
+    };
+    cityOnChange(event:any) {
+        if (typeof event === 'string') {
+            this.setState({ city: event });
+        };
+    };
+    stateOnSelect(event:any) {
+        if (typeof event === 'string') {
+            this.setState({ state: event });
+        };
+    };
+    postalCodeOnChange(event:any) {
+        if (typeof event === 'string') {
+            this.setState({ postalCode: event });
+        };
+    };
+    locationOnSave(event:any) {
+        let profileData = this.props.profileData;
+        profileData.state = this.state.state;
+        profileData.city = this.state.city;
+        profileData.country = this.state.country;
+        profileData.postalCode = this.state.postalCode;
+        this.props.updateProfile(this.props.userName.userID, profileData);
     };
 
 
@@ -361,8 +402,7 @@ class ProfileClass extends React.Component<Props, State> {
      * research interests
      */
     researchInterestsOtherOnChange(event: any) {
-        // during developement, "[Object object]" managed to get into the state
-        if (typeof event.target.value !== 'object' || typeof event.target.value !== 'undefined') {
+        if (typeof event.target.value === 'string' ) {
             this.setState({ researchInterestsOther: event.target.value })
         }
     }
@@ -374,7 +414,7 @@ class ProfileClass extends React.Component<Props, State> {
 
     // handles researchInterest onSubmit 
     researchInterestOnSumbit(event: any) {
-        this.setState({ researchInterestsModalVisible: false }) // close modal
+        this.setState({ visibleModal: undefined }) // close modal
         let profileData: any = this.props.profileData;
         let arrState = this.state.researchInterestsValue;
         let arrProps = profileData.researchInterests;
@@ -422,27 +462,26 @@ class ProfileClass extends React.Component<Props, State> {
 
     showEditButtons() {
         if(this.props.editEnable === true) {
-            return false;
+            return 'unset';
         } else {
-            return true;
+            return 'none';
         };
     };
 
-    affiliationJobTitleOnChange(item: any, index: number) {
+    affiliationJobTitleOnChange(event:any, index:number) {
         let affiliations = this.state.affiliations;
-        affiliations[index].title = item;
+        affiliations[index].title = event.target.value;
         this.setState({ affiliations: affiliations })
         console.log(affiliations)
     };
-    affiliationStartOnChange(item: any, index: number, param: string) {
-        let affiliations: Array<Affiliation> = this.state.affiliations;
-        let what = param as Affiliation['started']
-        affiliations[index].started = item;
+    affiliationStartOnChange(event: any, index: number) {
+        let affiliations = this.state.affiliations;
+        affiliations[index].started = event.target.value;
         this.setState({ affiliations: affiliations })
     };
-    affiliationEndOnChange(item: any, index: number) {
+    affiliationEndOnChange(event: any, index: number) {
         let affiliations = this.state.affiliations;
-        affiliations[index].ended = item;
+        affiliations[index].ended = event.target.value;
         this.setState({ affiliations: affiliations })
     };
     affiliationOnSelect(item: any, index: number) {
@@ -453,15 +492,15 @@ class ProfileClass extends React.Component<Props, State> {
     affiliationOnSave() {
         let profileData = this.props.profileData;
         profileData.affiliations = this.state.affiliations;
-        console.log(profileData.affiliations)
+        console.log('save', profileData.affiliations)
         this.props.updateProfile(this.props.userName.userID, profileData)
-    }
+    };
 
     /**
      * 
      * Organization 
      */
-    institutionOnChange(event: any) {
+    institutionSave(event: any) {
         let profileData = this.props.profileData;
         if (typeof event !== 'undefined' && event !== profileData.organization) {
             profileData.organization = event;
@@ -470,20 +509,18 @@ class ProfileClass extends React.Component<Props, State> {
     }
     institutionOnSearch(event: any) {
         console.log(event)
-        if (event.length > 3) {
+        if (event.length > 2) {
             let arr = [];
             arr = institution.filter(item =>
                 item.toLowerCase().includes(event.toLowerCase())
             )
-            console.log(arr)
-            if (arr.length >= 20) {
-                this.setState({ institutionFiltered: ['Too many matches -- please enter more characters to narrow your results.'] })
-            } else {
+            console.log(arr.length)
+            if (arr.length <= 30) {
                 console.log(arr)
                 this.setState({ institutionFiltered: arr })
-            }
-        }
-    }
+            };
+        };
+    };
 
     /**
      * 
@@ -504,11 +541,11 @@ class ProfileClass extends React.Component<Props, State> {
     };
 
     jobTitleOtherOnChange(event: any) {
-        // during developement, "[Object object]" managed to get into the state
-        if (typeof event.target.value !== 'object' || typeof event.target.value !== 'undefined') {
+        if (typeof event.target.value == 'string') {
             this.setState({ jobTitleOther: event.target.value })
         }
     };
+    
     jobTitleOnSubmit(event: any) {
         let profileData = this.props.profileData;
         console.log(this.state.jobTitleOther)
@@ -542,9 +579,23 @@ class ProfileClass extends React.Component<Props, State> {
                     <Col span={8}>
                         <Card style={{ margin: '8px 0px', textAlign: 'center' }}>
                             <Tooltip overlayStyle={this.tooltipVisibility()} title='click to edit Avatar Options'>
-                                <img style={{ maxWidth: '100%', margin: '8px 0px' }} alt='avatar' src={this.gravaterSrc()} />
+                                <img style={{ maxWidth: '100%', margin: '8px 0px' }} alt='avatar' src={this.gravaterSrc()} onClick={(event)=>{this.showModal(event, ModalName.AvatarOption)}} />
                                 {/* {gravatar} */}
                             </Tooltip>
+                            <Modal
+                                visible={this.state.visibleModal === ModalName.AvatarOption}
+                                title="Avatar Options"
+                                closable={false}
+                                onCancel={(event)=>{this.showModal(event, undefined)}}
+                                footer={[
+                                    <Button key="back" onClick={(event)=>{this.showModal(event, undefined)}}>
+                                        Return
+                                    </Button>,
+                                    <Button key="submit" id="researchInterests" type="primary" onClick={this.researchInterestOnSumbit}>
+                                        Submit
+                                    </Button>,
+                                ]}
+                            >new modal</Modal>
                         </Card>
                         <Card
                             style={{ margin: '8px 0px', textAlign: 'left' }}
@@ -553,13 +604,14 @@ class ProfileClass extends React.Component<Props, State> {
                             <Meta title="User ID" />
                             <Tooltip overlayStyle={this.tooltipVisibility()} title='User ID cannot be changed'>
                                 {/* this might null or undefined or empty string */}
-                                <Input readOnly={this.props.userName? true : false } className="clear-disabled userID" placeholder='User ID' defaultValue={this.props.userName.userID} />
+                                <Input readOnly={this.props.userName? true : false } className="clear-disabled margin10px userID" placeholder='User ID' defaultValue={this.props.userName.userID} />
                             </Tooltip>
                             <Meta title="Position" />
-                            <Form>
                                 <Select
+                                    className='clear-diabled'
+                                    placeholder='Job title'
                                     disabled={!this.props.editEnable}
-                                    style={{ width: "100%" }}
+                                    style={{ width: "100%", marginTop: '10px'}}
                                     defaultValue={this.props.profileData.jobTitle}
                                     onChange={this.jobTitleOnChange}
                                 >
@@ -567,10 +619,12 @@ class ProfileClass extends React.Component<Props, State> {
                                         return <Option key={item.label} value={item.value}>{item.label}</Option>
                                     })}
                                 </Select>
+                                <Form>
                                 <Form.Item validateStatus={this.foo('boo')}>
                                     <Input
                                         readOnly={!this.props.editEnable}
-                                        style={{ minHeight: "40px" }}
+                                        className="margin10px"
+                                        style={{ minHeight: "40px"}}
                                         maxLength={maxInputLength.position}
                                         onBlur={this.jobTitleOnSubmit}
                                         onChange={this.jobTitleOtherOnChange}
@@ -580,12 +634,13 @@ class ProfileClass extends React.Component<Props, State> {
                                         value={this.state.jobTitleOther}
                                     />
                                 </Form.Item>
-                            </Form>
+                                </Form>
                             <Meta title="Department" />
                             <Tooltip overlayStyle={this.tooltipVisibility()} title='must be more than 2 and less than 50 characters'>
                                 <Input
+                                    placeholder='Department'
                                     readOnly={!this.props.editEnable}
-                                    className="clear-disabled department"
+                                    className="department clear-disabled margin10px"
                                     maxLength={maxInputLength.department}
                                     onBlur={this.handleOnBlur}
                                     onPressEnter={this.handleOnBlur}
@@ -596,37 +651,40 @@ class ProfileClass extends React.Component<Props, State> {
                             <Tooltip overlayStyle={this.tooltipVisibility()} placement="top" title={<this.institutionToolTip />}>
                                 <div></div> {/* i don't know why this empty div has to be here for tooltip to showup  */}
                                 <AutoComplete
-                                    className="clear-disabled"
+                                    className="clear-disabled margin10px"
                                     style={{ width: "100%" }}
                                     disabled={!this.props.editEnable}
                                     allowClear
                                     dataSource={this.state.institutionFiltered}
-                                    placeholder="Search or enter your organization."
-                                    onSelect={this.institutionOnChange}
+                                    placeholder="Organization"
                                     onSearch={this.institutionOnSearch}
+                                    onSelect={this.institutionSave}
+                                    onBlur={this.institutionSave}
                                     filterOption={(inputValue, option) => {
-                                        // return true;
                                         if (typeof option.props.children === 'string') {
+                                            console.log(this.state.institutionFiltered.length)
                                             let item = option.props.children;
                                             return item.toLowerCase().indexOf(inputValue.toLowerCase()) >= 0
                                         } else {
                                             return false
                                         }
-
                                     }}
                                     defaultValue={this.props.profileData.organization}
                                 >
+                                    <Input onPressEnter={this.institutionSave}/>
                                 </AutoComplete>
                             </Tooltip>
                             <Meta title="Location" />
+                            <Tooltip overlayStyle={this.tooltipVisibility()} title='Search Country'>
                             <AutoComplete
+                                className='clear-diabled margin10px'
                                 style={{ width: "100%" }}
                                 disabled={!this.props.editEnable}
                                 allowClear
-                                placeholder="Search country."
-                                onChange={this.countryCodeOnChange}
+                                placeholder="Country"
+                                onChange={(value)=>{this.onSelectChanged('country', value)}}
+                                onSelect={(value)=>{this.onSelectChanged('country', value)}}
                                 filterOption={(inputValue, option) => {
-                                    // return true;
                                     if (typeof option.props.children === 'string') {
                                         let item = option.props.children;
                                         return item.toLowerCase().indexOf(inputValue.toLowerCase()) >= 0
@@ -639,24 +697,23 @@ class ProfileClass extends React.Component<Props, State> {
                             >
                                 {Array.from(countryCodes).map((item => {
                                     return (
-                                        <Option key={item[1]} value={item[1]}>
+                                        <Option key={item[1]} value={item[0]}>
                                             {item[0]}
                                         </Option>
                                     )
                                 }))}
                             </AutoComplete>
-                            <Select
-                                mode="single"
-                                style={{ width: "100%" }}
-                                showSearch
+                            </Tooltip>
+                            <Tooltip overlayStyle={this.tooltipVisibility()} title='Search US States'>
+                            <AutoComplete
+                                className='clear-diabled margin10px'
+                                style={this.USStateVisibility()}
                                 disabled={!this.props.editEnable}
-                                maxTagCount={20}
-                                placeholder="enter more than 3 characters"
-                                showArrow={false}
-                                onSearch={this.locationOnSearch}
-                                optionFilterProp="children"
+                                allowClear
+                                dataSource={states}
+                                placeholder='State'
+                                onSelect={this.stateOnSelect.bind(this)}
                                 filterOption={(inputValue, option) => {
-                                    // return true;
                                     if (typeof option.props.children === 'string') {
                                         let item = option.props.children;
                                         return item.toLowerCase().indexOf(inputValue.toLowerCase()) >= 0
@@ -665,26 +722,28 @@ class ProfileClass extends React.Component<Props, State> {
                                     }
 
                                 }}
-                                defaultValue={this.props.profileData.city}
-                            >
-                                {this.state.locationSuggestions.map((item) => {
-                                    return (
-                                        <Option value={item}>
-                                            {item}
-                                        </Option>
-                                    );
-                                })}
-                            </Select>
-                            <Tooltip overlayStyle={this.tooltipVisibility()} title='must be less than 100 characters'>
-                                <Input readOnly={!this.props.editEnable} className="clear-disabled" defaultValue={this.props.profileData.city} />
+                                defaultValue={this.props.profileData.state}
+                            />
                             </Tooltip>
-                            <Input className="clear-disabled" readOnly={!this.props.editEnable} defaultValue={this.props.profileData.state} />
-                            <Input className='clear-disabled' type='number' readOnly={!this.props.editEnable} defaultValue={this.props.profileData.postalCode} />
+                            <Tooltip overlayStyle={this.tooltipVisibility()} title='must be less than 100 characters'>
+                                <Input 
+                                    placeholder='City' 
+                                    readOnly={!this.props.editEnable} 
+                                    className="clear-disabled margin10px" 
+                                    defaultValue={this.props.profileData.city}
+                                    onChange={(event)=>this.cityOnChange(event)}
+                                />
+                            </Tooltip>
+                            <Input placeholder='Postal code' className='clear-disabled margin10px' readOnly={!this.props.editEnable} defaultValue={this.props.profileData.postalCode} onChange={this.postalCodeOnChange.bind(this)} />
+                            <Button style={{ margin: '10px', display: this.showEditButtons() }} key="submit" type="primary" onClick={this.locationOnSave.bind(this)}>
+                                save
+                            </Button>
                             <Meta title="Primary Funding Source" />
                             {/* <Input className="clear-disabled" disabled defaultValue={this.props.profileData.fundingSource}/> */}
                             <Select
+                                className='clear-diabled margin10px'
                                 mode="single"
-                                style={{ width: "100%" }}
+                                style={{ width: "100%", marginTop: '10px'}}
                                 showSearch
                                 disabled={!this.props.editEnable}
                                 maxTagCount={20}
@@ -719,19 +778,17 @@ class ProfileClass extends React.Component<Props, State> {
                             <Col span={12}>
                                 <Card className="card-with-height researchInterests" style={{ margin: '8px 0px' }} title="Research Interests">
                                     <Tooltip overlayStyle={this.tooltipVisibility()} title='Click to select research interests'>
-                                    <div id="researchInterests" onClick={this.showModal.bind(this)} >
+                                    <div id="researchInterests" onClick={(event)=>{this.showModal(event, ModalName.ResearchInterests)}} >
                                         <this.researchInterests />
                                     </div>
                                     </Tooltip>
                                     <Modal
-                                        visible={this.state.researchInterestsModalVisible}
+                                        visible={this.state.visibleModal === ModalName.ResearchInterests}
                                         title="Research Interests"
-                                        okText="Save"
                                         closable={false}
-                                        onOk={this.closeModal.bind(this)}
-                                        onCancel={this.closeModal.bind(this)}
+                                        onCancel={(event)=>{this.showModal(event, undefined)}}
                                         footer={[
-                                            <Button key="back" onClick={this.closeModal.bind(this)}>
+                                            <Button key="back" onClick={(event)=>{this.showModal(event, undefined)}}>
                                                 Return
                                             </Button>,
                                             <Button key="submit" id="researchInterests" type="primary" onClick={this.researchInterestOnSumbit}>
@@ -745,6 +802,7 @@ class ProfileClass extends React.Component<Props, State> {
                                             onChange={this.researchInterestOnChange}
                                         />
                                         <Input
+                                            className="margin10px"
                                             maxLength={maxInputLength.position}
                                             onChange={this.researchInterestsOtherOnChange}
                                             hidden={this.state.researchInterestsValue.includes("Other") ? false : true}
@@ -782,12 +840,12 @@ class ProfileClass extends React.Component<Props, State> {
                             </Card>
                             <Card style={{ margin: '8px 0px' }} title="Affiliations">
                                 {this.affiliations()}
-                                <Button hidden={this.showEditButtons()} style={{ margin: '10px' }} key="submit" type="primary" onClick={this.affiliationOnSave.bind(this)}>
-                                    save
-                                    </Button>
-                                <Button hidden={this.showEditButtons()}  style={{ margin: '10px' }} key="add" type="primary" onClick={this.addAffiliation.bind(this)}>
+                                <Button style={{ margin: '10px', display: this.showEditButtons() }} key="add" type="primary" onClick={this.addAffiliation.bind(this)}>
                                     add
-                                    </Button>
+                                </Button>
+                                <Button style={{ margin: '10px', display: this.showEditButtons() }} key="submit" type="primary" onClick={this.affiliationOnSave.bind(this)}>
+                                    save
+                                </Button>
                             </Card>
                         </Row>
                     </Col>
