@@ -6,7 +6,6 @@ import nouserpic from '../../assets/nouserpic.png';
 import OrgsContainer from '../Orgs/OrgsContainer';
 import { maxInputLength, researchInterestsList, jobTitles } from '../../profileConfig';
 import { fundingSources, countryCodes, institution, states } from '../../dataSources';
-import { SelectValue } from 'antd/lib/select';
 
 const { Meta } = Card;
 const { TextArea } = Input;
@@ -84,7 +83,6 @@ class ProfileClass extends React.Component<Props, State> {
         this.researchInterestOnChange = this.researchInterestOnChange.bind(this); // update/save value from checkbox group 
         this.locationOnSearch = this.locationOnSearch.bind(this)
         this.fundingSourceOnChange = this.fundingSourceOnChange.bind(this);
-        this.countryOnChange = this.countryOnChange.bind(this);
         this.institutionSave = this.institutionSave.bind(this);
         this.institutionOnSearch = this.institutionOnSearch.bind(this);
         this.setStateProperty = this.setStateProperty.bind(this);
@@ -236,7 +234,7 @@ class ProfileClass extends React.Component<Props, State> {
                             <Tooltip overlayStyle={this.tooltipVisibility()} title='Enter 4 digits start year and end year'>
                             <Input
                                 readOnly={!this.props.editEnable}
-                                style={{ width: '60px', display: 'inline' }}
+                                style={{ width: '80px', display: 'inline' }}
                                 onChange={(item) => { this.affiliationStartOnChange(item, index) }}
                                 type='string' maxLength={4}
                                 className='clear-disabled'
@@ -245,7 +243,7 @@ class ProfileClass extends React.Component<Props, State> {
                             />
                             <Input
                                 readOnly={!this.props.editEnable}
-                                style={{ width: '60px', display: 'inline' }}
+                                style={{ width: '80px', display: 'inline' }}
                                 onChange={(item) => { this.affiliationEndOnChange(item, index) }}
                                 type='string' maxLength={4}
                                 className='clear-disabled'
@@ -307,7 +305,7 @@ class ProfileClass extends React.Component<Props, State> {
 
     // Modal Control  
     showModal(event: any, modal: ModalName | undefined) {
-        if (this.props.editEnable == true) {
+        if (this.props.editEnable === true) {
             this.setState({ visibleModal: modal })
         };
     };
@@ -331,6 +329,9 @@ class ProfileClass extends React.Component<Props, State> {
         };
     };
 
+    updateStoreState(event: any, propertyName: string){
+
+    }
     /**
      * Location 
      * 
@@ -363,31 +364,12 @@ class ProfileClass extends React.Component<Props, State> {
         // }
 
     };
-    
+
     setStateProperty(propertyName: string, value: any) {
         let newState: any = { [propertyName]: value }
         this.setState(newState);
     };
-    countryOnChange(event: any) {
-        if (typeof event === 'string') { 
-            this.setState({ country: event });
-        };
-    };
-    cityOnChange(event:any) {
-        if (typeof event === 'string') {
-            this.setState({ city: event });
-        };
-    };
-    stateOnSelect(event:any) {
-        if (typeof event === 'string') {
-            this.setState({ state: event });
-        };
-    };
-    postalCodeOnChange(event:any) {
-        if (typeof event === 'string') {
-            this.setState({ postalCode: event });
-        };
-    };
+
     locationOnSave(event:any) {
         let profileData = this.props.profileData;
         profileData.state = this.state.state;
@@ -596,7 +578,11 @@ class ProfileClass extends React.Component<Props, State> {
                                         Submit
                                     </Button>,
                                 ]}
-                            >new modal</Modal>
+                            >
+                                <Select
+
+                                />
+                            </Modal>
                         </Card>
                         <Card
                             style={{ margin: '8px 0px', textAlign: 'left' }}
@@ -713,7 +699,7 @@ class ProfileClass extends React.Component<Props, State> {
                                 allowClear
                                 dataSource={states}
                                 placeholder='State'
-                                onSelect={this.stateOnSelect.bind(this)}
+                                onSelect={(value)=>{this.setStateProperty('state', value)}}
                                 filterOption={(inputValue, option) => {
                                     if (typeof option.props.children === 'string') {
                                         let item = option.props.children;
@@ -732,10 +718,10 @@ class ProfileClass extends React.Component<Props, State> {
                                     readOnly={!this.props.editEnable} 
                                     className="clear-disabled margin10px" 
                                     defaultValue={this.props.profileData.city}
-                                    onChange={(event)=>this.cityOnChange(event)}
+                                    onChange={(value)=>{this.setStateProperty('city', value)}}
                                 />
                             </Tooltip>
-                            <Input placeholder='Postal code' className='clear-disabled margin10px' readOnly={!this.props.editEnable} defaultValue={this.props.profileData.postalCode} onChange={this.postalCodeOnChange.bind(this)} />
+                            <Input placeholder='Postal code' className='clear-disabled margin10px' readOnly={!this.props.editEnable} defaultValue={this.props.profileData.postalCode} onChange={(value)=>{this.setStateProperty('state', value)}} />
                             <Button style={{ margin: '10px', display: this.showEditButtons() }} key="submit" type="primary" onClick={this.locationOnSave.bind(this)}>
                                 save
                             </Button>

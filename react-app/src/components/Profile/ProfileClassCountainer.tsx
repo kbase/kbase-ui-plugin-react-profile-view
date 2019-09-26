@@ -7,7 +7,6 @@ import { updateProfile } from '../../redux/actions';
 import OhWhat from './ohwhattodo';
 
 import { profileFetchStatuses } from '../../redux/fetchStatuses';
-import { stat } from 'fs';
 
 interface PropsWithProfileData {
     userName: UserName;
