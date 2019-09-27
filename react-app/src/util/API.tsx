@@ -70,8 +70,6 @@ export async function updateProfileAPI(token: string, baseURL: string, userdata:
         params: [ {profile: {user: {realname: "Akiyo Marukawa", username: "amarukawa"}, userdata: {userdata}}}]
     };
     const stringBody = JSON.stringify(body);
-    //TODO: Akiyo - remove this after testing
-    baseURL = 'https://ci.kbase.us';
     const url = baseURL + '/services/user_profile/rpc';
     const response = await fetch(url, {
         method: 'POST',
