@@ -11,6 +11,7 @@ import { profileFetchStatuses } from '../fetchStatuses';
  *  @param {string} id  profile ID
  */
 export function getProfile(profileID:string) {
+    console.log('in getProfile')
     return async function (dispatch:ThunkDispatch<StoreState, void, AnyAction>, getState:() => StoreState ) {
         // set the life cycle state to "fetching"
         dispatch(fetchProfile())
@@ -19,6 +20,7 @@ export function getProfile(profileID:string) {
         if(rootStore.auth.userAuthorization !== null) {
             const token = rootStore.auth.userAuthorization.token;
             const baseURL = rootStore.app.config.baseUrl;
+            console.log('getProfile baseURL', baseURL)
             let payload:ProfileView;
             let response:UserProfileService  | Array<string> = await fetchProfileAPI(profileID, token, baseURL);
             console.log('getProfile', response);
@@ -31,6 +33,7 @@ export function getProfile(profileID:string) {
                 } else {
                     profileEdit = true;
                 }
+                console.log('profileEdit',profileEdit)
                 // shape response to profile before dispatch 
                 payload = {
                     userName: {
@@ -47,6 +50,8 @@ export function getProfile(profileID:string) {
                 //  set "profileIsFetching" to "error"
                 dispatch(fetchErrorProfile());
             }
+        } else {
+            console.log('auth is null ', rootStore.auth.userAuthorization)
         }
     }
 }
@@ -60,15 +65,14 @@ export function getProfile(profileID:string) {
  * @param userdata 
  */
 
-//TODO: change baseURL back to const
 export function updateProfile(profileID:string, userdata:ProfileData) {
+    console.log('in updateProfile')
     return async function (dispatch:ThunkDispatch<StoreState, void, AnyAction>, getState:() => StoreState ) {
         dispatch(fetchProfile())
         const rootStore = getState();
         if(rootStore.auth.userAuthorization !== null) {
             const token = rootStore.auth.userAuthorization.token;
             let baseURL = rootStore.app.config.baseUrl;
-            baseURL = 'https://ci.kbase.us';
             let response = await updateProfileAPI(token, baseURL, userdata);
             console.log("update response", response)
             if(response === 200) {

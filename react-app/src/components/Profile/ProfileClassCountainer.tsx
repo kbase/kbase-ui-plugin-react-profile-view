@@ -25,11 +25,10 @@ interface DispatchProps {
     updateProfile: (profileID: string, profileData: ProfileData) => void;
 };
 
-
 interface OwnProps { };
 let component: JSX.Element;
 function mapStateToProps(state: StoreState): Props {
-    // console.log('profile state container', state)
+    console.log('profile state container', state)
     // token can be null
     let userAuthToken;
     if (state.auth.userAuthorization !== null) {

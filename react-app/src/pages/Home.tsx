@@ -7,6 +7,7 @@ import ProfileClassContainer from '../components/Profile/ProfileClassCountainer'
 import NarrativeContainer from '../components/Narratives';
 import { OrgProp, UserName } from '../redux/interfaces';
 import SearchUsersContainer from '../components/SearchUsers/SearchUsersContainer';
+import { connect } from 'net';
 
 
 const TabPane = Tabs.TabPane;
@@ -54,6 +55,7 @@ class Home extends React.Component<HomeProps, HomeState> {
 
 
     componentDidMount() {
+        console.log('homepage')
         let username;
         if (this.props.username) {
             username = this.props.username;

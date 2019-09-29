@@ -68,6 +68,7 @@ class ProfileClass extends React.Component<Props, State> {
         };
 
         this.tooltipVisibility = this.tooltipVisibility.bind(this); // tooltip is visible when auth user is using the profile
+        this.USStateVisibility = this.USStateVisibility.bind(this);
         this.gravaterSrc = this.gravaterSrc.bind(this); // setting img src for gravater
         this.setName = this.setName.bind(this); // creating html element including tooltip to fit in card header 
         this.affiliations = this.affiliations.bind(this); // handles no-data or underfined data and populate data
@@ -113,8 +114,6 @@ class ProfileClass extends React.Component<Props, State> {
         if (Array.isArray(profile.affiliations)) {
             this.setState({ affiliations: profile.affiliations });
         };
-
-        this.tooltipVisibility();
         
     };
 
@@ -122,6 +121,10 @@ class ProfileClass extends React.Component<Props, State> {
     // you need to put all these three for typescript to be happy.
     componentDidUpdate(prevProps: Props, prevState: State, snapshot: any) {
         console.log('componenetupdate', this.state)
+        if(prevState === this.state){
+            console.log('do nothing')
+            return;
+        }
     };
 
 
@@ -134,6 +137,7 @@ class ProfileClass extends React.Component<Props, State> {
         } else {
             return { visibility: 'visible' };
         };
+        // return { visibility: 'hidden' };
     };
 
     // set visitbility after initial mounting
@@ -167,7 +171,7 @@ class ProfileClass extends React.Component<Props, State> {
                 maxLength={maxInputLength.name}
                 onBlur={this.handleOnBlur}//NEED to change
                 onPressEnter={this.handleOnBlur}
-                defaultValue={this.props.userName.name}
+                defaultValue={this.props.userName.name ?  this.props.userName.name : ''}
             />
         </Tooltip>);
     };
@@ -199,7 +203,7 @@ class ProfileClass extends React.Component<Props, State> {
                                 type='text'
                                 className='clear-disabled'
                                 maxLength={maxInputLength.position}
-                                defaultValue={position.title}
+                                defaultValue={position.title ? position.title : ''}
                                 placeholder={'Job title'}
                                 onChange={(event) => { this.affiliationJobTitleOnChange(event, index) }}
                             />
@@ -221,7 +225,7 @@ class ProfileClass extends React.Component<Props, State> {
                                     }
 
                                 }}
-                                defaultValue={position.organization}
+                                defaultValue={position.organization ? position.organization : ''}
                             >
                                 {this.state.institutionFiltered.map((item) => {
                                     return (
@@ -239,7 +243,7 @@ class ProfileClass extends React.Component<Props, State> {
                                 type='string' maxLength={4}
                                 className='clear-disabled'
                                 placeholder='Start'
-                                defaultValue={position.started}
+                                defaultValue={position.started ? position.started : ''}
                             />
                             <Input
                                 readOnly={!this.props.editEnable}
@@ -248,7 +252,7 @@ class ProfileClass extends React.Component<Props, State> {
                                 type='string' maxLength={4}
                                 className='clear-disabled'
                                 placeholder='End'
-                                defaultValue={position.ended}
+                                defaultValue={position.ended ? position.ended : ''}
                             />
                             </Tooltip>
                             <Button  style={{ margin: '10px', display: this.showEditButtons() }} type="primary" onClick={() => this.deleteAffiliation(index)}>
@@ -369,6 +373,11 @@ class ProfileClass extends React.Component<Props, State> {
         let newState: any = { [propertyName]: value }
         this.setState(newState);
     };
+
+    setUSState(value:any){
+        let profileData = this.props.profileData;
+        this.setState( {state: value});
+    }
 
     locationOnSave(event:any) {
         let profileData = this.props.profileData;
@@ -591,7 +600,7 @@ class ProfileClass extends React.Component<Props, State> {
                             <Meta title="User ID" />
                             <Tooltip overlayStyle={this.tooltipVisibility()} title='User ID cannot be changed'>
                                 {/* this might null or undefined or empty string */}
-                                <Input readOnly={this.props.userName? true : false } className="clear-disabled margin10px userID" placeholder='User ID' defaultValue={this.props.userName.userID} />
+                                <Input readOnly={this.props.userName? true : false } className="clear-disabled margin10px userID" placeholder='User ID' defaultValue={this.props.userName.userID ? this.props.userName.userID : ''} />
                             </Tooltip>
                             <Meta title="Position" />
                                 <Select
@@ -599,7 +608,7 @@ class ProfileClass extends React.Component<Props, State> {
                                     placeholder='Job title'
                                     disabled={!this.props.editEnable}
                                     style={{ width: "100%", marginTop: '10px'}}
-                                    defaultValue={this.props.profileData.jobTitle}
+                                    defaultValue={this.props.profileData.jobTitle ? this.props.profileData.jobTitle : ''}
                                     onChange={this.jobTitleOnChange}
                                 >
                                     {jobTitles.map((item) => {
@@ -617,7 +626,7 @@ class ProfileClass extends React.Component<Props, State> {
                                         onChange={this.jobTitleOtherOnChange}
                                         onPressEnter={this.jobTitleOnSubmit}
                                         hidden={this.state.jobTitleValue === 'Other' ? false : true}
-                                        defaultValue={this.props.profileData.jobTitleOther}
+                                        defaultValue={this.props.profileData.jobTitleOther ? this.props.profileData.jobTitleOther : ''}
                                         value={this.state.jobTitleOther}
                                     />
                                 </Form.Item>
@@ -631,11 +640,12 @@ class ProfileClass extends React.Component<Props, State> {
                                     maxLength={maxInputLength.department}
                                     onBlur={this.handleOnBlur}
                                     onPressEnter={this.handleOnBlur}
-                                    defaultValue={this.props.profileData.department}
+                                    defaultValue={this.props.profileData.department ? this.props.profileData.department : ''}
                                 />
                             </Tooltip>
                             <Meta title="Organization" />
-                            <Tooltip overlayStyle={this.tooltipVisibility()} placement="top" title={<this.institutionToolTip />}>
+                            {/* <Tooltip overlayStyle={this.tooltipVisibility()} placement="top" title={<this.institutionToolTip />}> */}
+                            <Tooltip overlayStyle={this.tooltipVisibility()} placement="top" title='for now'>
                                 <div></div> {/* i don't know why this empty div has to be here for tooltip to showup  */}
                                 <AutoComplete
                                     className="clear-disabled margin10px"
@@ -656,9 +666,9 @@ class ProfileClass extends React.Component<Props, State> {
                                             return false
                                         }
                                     }}
-                                    defaultValue={this.props.profileData.organization}
+                                    defaultValue={this.props.profileData.organization ? this.props.profileData.organization : ''}
                                 >
-                                    <Input onPressEnter={this.institutionSave}/>
+                                    {/* <Input onPressEnter={this.institutionSave}/> */}
                                 </AutoComplete>
                             </Tooltip>
                             <Meta title="Location" />
@@ -680,7 +690,7 @@ class ProfileClass extends React.Component<Props, State> {
                                     }
 
                                 }}
-                                defaultValue={this.props.profileData.country}
+                                defaultValue={this.props.profileData.country ? this.props.profileData.country : ''}
                             >
                                 {Array.from(countryCodes).map((item => {
                                     return (
@@ -691,7 +701,8 @@ class ProfileClass extends React.Component<Props, State> {
                                 }))}
                             </AutoComplete>
                             </Tooltip>
-                            <Tooltip overlayStyle={this.tooltipVisibility()} title='Search US States'>
+                            {/* <Tooltip trigger='hover' overlayStyle={this.tooltipVisibility()} title='Search US States'> */}
+                            <Tooltip trigger='hover' title='Search US States'>
                             <AutoComplete
                                 className='clear-diabled margin10px'
                                 style={this.USStateVisibility()}
@@ -699,7 +710,8 @@ class ProfileClass extends React.Component<Props, State> {
                                 allowClear
                                 dataSource={states}
                                 placeholder='State'
-                                onSelect={(value)=>{this.setStateProperty('state', value)}}
+                                // onSelect={(value)=>{this.setStateProperty('state', value)}}
+                                onSelect={this.setUSState.bind(this)}
                                 filterOption={(inputValue, option) => {
                                     if (typeof option.props.children === 'string') {
                                         let item = option.props.children;
@@ -709,7 +721,7 @@ class ProfileClass extends React.Component<Props, State> {
                                     }
 
                                 }}
-                                defaultValue={this.props.profileData.state}
+                                defaultValue={typeof this.props.profileData.state==='string' ? this.props.profileData.state : 'how that happened' }
                             />
                             </Tooltip>
                             <Tooltip overlayStyle={this.tooltipVisibility()} title='must be less than 100 characters'>
@@ -717,11 +729,11 @@ class ProfileClass extends React.Component<Props, State> {
                                     placeholder='City' 
                                     readOnly={!this.props.editEnable} 
                                     className="clear-disabled margin10px" 
-                                    defaultValue={this.props.profileData.city}
+                                    defaultValue={this.props.profileData.city ? this.props.profileData.city : ''}
                                     onChange={(value)=>{this.setStateProperty('city', value)}}
                                 />
                             </Tooltip>
-                            <Input placeholder='Postal code' className='clear-disabled margin10px' readOnly={!this.props.editEnable} defaultValue={this.props.profileData.postalCode} onChange={(value)=>{this.setStateProperty('state', value)}} />
+                            <Input placeholder='Postal code' className='clear-disabled margin10px' readOnly={!this.props.editEnable} defaultValue={this.props.profileData.postalCode ? this.props.profileData.postalCode : ''} onChange={(value)=>{this.setStateProperty('state', value)}} />
                             <Button style={{ margin: '10px', display: this.showEditButtons() }} key="submit" type="primary" onClick={this.locationOnSave.bind(this)}>
                                 save
                             </Button>
@@ -748,7 +760,7 @@ class ProfileClass extends React.Component<Props, State> {
                                     }
 
                                 }}
-                                defaultValue={this.props.profileData.fundingSource}
+                                defaultValue={this.props.profileData.fundingSource ? this.props.profileData.fundingSource : ''}
                             >
                                 {fundingSources.map((item) => {
                                     return (
@@ -785,7 +797,7 @@ class ProfileClass extends React.Component<Props, State> {
                                     >
                                         <Checkbox.Group
                                             options={researchInterestsList}
-                                            defaultValue={this.props.profileData.researchInterests}
+                                            defaultValue={this.props.profileData.researchInterests ? this.props.profileData.researchInterests : []}
                                             onChange={this.researchInterestOnChange}
                                         />
                                         <Input
@@ -793,7 +805,7 @@ class ProfileClass extends React.Component<Props, State> {
                                             maxLength={maxInputLength.position}
                                             onChange={this.researchInterestsOtherOnChange}
                                             hidden={this.state.researchInterestsValue.includes("Other") ? false : true}
-                                            defaultValue={this.props.profileData.researchInterestsOther}
+                                            defaultValue={this.props.profileData.researchInterestsOther ?  this.props.profileData.researchInterestsOther : ''}
                                             value={this.state.researchInterestsOther}
                                         />
                                     </Modal>
@@ -820,7 +832,7 @@ class ProfileClass extends React.Component<Props, State> {
                                             className='clear-disabled researchStatement'
                                             onBlur={this.handleOnBlur}
                                             onPressEnter={this.handleOnBlur}
-                                            defaultValue={this.props.profileData.researchStatement}
+                                            defaultValue={this.props.profileData.researchStatement ? this.props.profileData.researchStatement : ''}
                                         />
                                     </Tooltip>
                                 </Form.Item>

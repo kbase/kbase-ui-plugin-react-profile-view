@@ -52,6 +52,7 @@ export async function fetchProfileAPI(id: string, token: string, baseURL: string
     }
     try {
         const profile = await response.json();
+        console.log('profile fetch success', profile);
         return profile;
     } catch (err) {
         console.error('profile fetch failed', response);
@@ -78,7 +79,6 @@ export async function updateProfileAPI(token: string, baseURL: string, userdata:
     };
     const stringBody = JSON.stringify(body);
     //TODO: Akiyo - remove this after testing
-    baseURL = 'https://ci.kbase.us';
     const url = baseURL + '/services/user_profile/rpc';
     const response = await fetch(url, {
         method: 'POST',

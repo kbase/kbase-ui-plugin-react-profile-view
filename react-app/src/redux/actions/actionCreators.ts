@@ -5,6 +5,7 @@ import { profileActionTypes, orgsActionTypes } from './actionTypes';
 
 // fetching profile data is initiated
 export function fetchProfile() { // put type!
+    console.log("fetch profile?")
     return {
         type: profileActionTypes.FETCH_PROFILE
     };
@@ -12,6 +13,8 @@ export function fetchProfile() { // put type!
 
 // fetching profile data was successful 
 export function loadProfile(payload: ProfileView): loadProfileAction {
+    console.log("loadProfile profile? payload", payload)
+
     return {
         type: profileActionTypes.FETCH_PROFILE_SUCCESS,
         payload
