@@ -101,7 +101,6 @@ function Profile(props: Props) {
     }
 
     function handleOnClick(event:any) {
-        console.log('on click',  event.target)
         event.target.stopPropagation(); // <-- not working!! 
         if(event.target.hasAttribute('readonly')) {
             event.target.removeAttribute('readonly');
@@ -191,7 +190,7 @@ function Profile(props: Props) {
                         </Tooltip>
                         <Meta title="Position" />
                         {/* job title less than 50 */}
-                        <Input className="clear-disabled" maxLength={maxInputLength.position} defaultValue={setJobTitle()}/> 
+                        <Input className="clear-disabled" maxLength={maxInputLength['50']} defaultValue={setJobTitle()}/> 
                         <Meta title="Department" />
                         <Tooltip overlayStyle={tooltipVisibility()} trigger={'click'} title='must be more than 2 and less than 50 characters'>
                             <Input className="clear-disabled department" readOnly maxLength={maxInputLength.department} onClick={handleOnClick} onBlur={handleOnBlur} defaultValue={profile.department} />

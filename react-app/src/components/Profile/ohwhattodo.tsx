@@ -3,7 +3,6 @@ import React from 'react';
 import ProfileClass from './ProfileClass';
 import Spinner from '../Spinner';
 import ErrorMessage from '../ErrorMessage'
-console.log('typeof ProfileClass', typeof ProfileClass)
 export default function OhWhat(props: any) {
     switch (props.profileFetchStatus) {
         case 'none':

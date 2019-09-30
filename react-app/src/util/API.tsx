@@ -25,7 +25,6 @@ export async function getBFFServiceUrl(token: string, baseURL: string) {
         body: stringBody
     });
     const responseJson = await response.json();
-    console.log("getBFFServiceUrl", responseJson)
     return responseJson.result[0]['url'];
 }
 
@@ -42,7 +41,6 @@ export async function fetchProfileAPI(id: string, token: string, baseURL: string
     const response = await fetch(url, {
         method: 'GET'
     });
-    console.log("fetchProfileAPI", response)
     if (response.status === 404) {
         console.warn('404 response:', response);
         return [response.status, response.statusText]
@@ -52,7 +50,6 @@ export async function fetchProfileAPI(id: string, token: string, baseURL: string
     }
     try {
         const profile = await response.json();
-        console.log('profile fetch success', profile);
         return profile;
     } catch (err) {
         console.error('profile fetch failed', response);

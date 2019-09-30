@@ -11,7 +11,6 @@ import { profileFetchStatuses } from '../fetchStatuses';
  *  @param {string} id  profile ID
  */
 export function getProfile(profileID:string) {
-    console.log('in getProfile')
     return async function (dispatch:ThunkDispatch<StoreState, void, AnyAction>, getState:() => StoreState ) {
         // set the life cycle state to "fetching"
         dispatch(fetchProfile())
@@ -20,10 +19,8 @@ export function getProfile(profileID:string) {
         if(rootStore.auth.userAuthorization !== null) {
             const token = rootStore.auth.userAuthorization.token;
             const baseURL = rootStore.app.config.baseUrl;
-            console.log('getProfile baseURL', baseURL)
             let payload:ProfileView;
             let response:UserProfileService  | Array<string> = await fetchProfileAPI(profileID, token, baseURL);
-            console.log('getProfile', response);
             let profileEdit:boolean;
             
             if (typeof response !== 'undefined' && !Array.isArray(response)) {
@@ -33,7 +30,6 @@ export function getProfile(profileID:string) {
                 } else {
                     profileEdit = true;
                 }
-                console.log('profileEdit',profileEdit)
                 // shape response to profile before dispatch 
                 payload = {
                     userName: {
@@ -66,7 +62,6 @@ export function getProfile(profileID:string) {
  */
 
 export function updateProfile(profileID:string, userdata:ProfileData) {
-    console.log('in updateProfile')
     return async function (dispatch:ThunkDispatch<StoreState, void, AnyAction>, getState:() => StoreState ) {
         dispatch(fetchProfile())
         const rootStore = getState();
@@ -74,7 +69,6 @@ export function updateProfile(profileID:string, userdata:ProfileData) {
             const token = rootStore.auth.userAuthorization.token;
             let baseURL = rootStore.app.config.baseUrl;
             let response = await updateProfileAPI(token, baseURL, userdata);
-            console.log("update response", response)
             if(response === 200) {
                 dispatch(getProfile(profileID))
             } else {

@@ -8,7 +8,6 @@ const reducer: Reducer<StoreState | undefined, Action> = (state: StoreState | un
   // if (baseState) {
   //   return baseState as StoreState;
   // }
-  console.log('baseState', baseState)
   return baseState as StoreState;
 };
 

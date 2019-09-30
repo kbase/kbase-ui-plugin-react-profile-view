@@ -55,7 +55,6 @@ class Home extends React.Component<HomeProps, HomeState> {
 
 
     componentDidMount() {
-        console.log('homepage')
         let username;
         if (this.props.username) {
             username = this.props.username;

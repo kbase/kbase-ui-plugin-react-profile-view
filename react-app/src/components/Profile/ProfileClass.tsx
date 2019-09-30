@@ -4,6 +4,7 @@ import { FormItemProps } from 'antd/es/form';
 import { UserName, ProfileData, Affiliation } from '../../redux/interfaces';
 import nouserpic from '../../assets/nouserpic.png';
 import OrgsContainer from '../Orgs/OrgsContainer';
+import InputField from './ProfileForms/InputField';
 import { maxInputLength, researchInterestsList, jobTitles } from '../../profileConfig';
 import { fundingSources, countryCodes, institution, states } from '../../dataSources';
 
@@ -27,7 +28,6 @@ interface Props {
 };
 
 interface State {
-    profileDataKeySet: Set<string>
     visibleModal: ModalName | undefined;
     researchInterestsValue: Array<string>; // value returned by onChange
     researchInterestsOther: string | undefined;
@@ -41,7 +41,7 @@ interface State {
     state: string;
     institutionFiltered: Array<string>;
     affiliations: Array<Affiliation>;
-}
+};
 
 /**
  * Returns profile component.
@@ -51,7 +51,6 @@ class ProfileClass extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            profileDataKeySet: new Set(),
             visibleModal: undefined,
             researchInterestsValue: [],
             researchInterestsOther: undefined,
@@ -74,9 +73,7 @@ class ProfileClass extends React.Component<Props, State> {
         this.affiliations = this.affiliations.bind(this); // handles no-data or underfined data and populate data
         this.researchInterests = this.researchInterests.bind(this); // handles no-data or underfined data and populate data
         this.institutionToolTip = this.institutionToolTip.bind(this);
-        this.handleOnBlur = this.handleOnBlur.bind(this);
         this.jobTitleOnChange = this.jobTitleOnChange.bind(this); // update/save value from pull down
-        this.jobTitleOtherOnChange = this.jobTitleOtherOnChange.bind(this); // update/save value from input field 
         this.jobTitleOnSubmit = this.jobTitleOnSubmit.bind(this) // handles on sumbit job titles
         this.foo = this.foo.bind(this);
         this.researchInterestOnSumbit = this.researchInterestOnSumbit.bind(this);
@@ -94,15 +91,10 @@ class ProfileClass extends React.Component<Props, State> {
         let profile: ProfileData;
         profile = this.props.profileData;
 
-        let newDataKeySet: Set<string> = new Set();
-        for (let item in profile) {
-            newDataKeySet.add(item);
-        };
         this.setState({
             researchInterestsOther: profile.researchInterestsOther,
             jobTitleValue: profile.jobTitle,
             jobTitleOther: profile.jobTitleOther,
-            profileDataKeySet: newDataKeySet,
             country: profile.country,
             city: profile.city,
             postalCode: profile.postalCode,
@@ -122,7 +114,6 @@ class ProfileClass extends React.Component<Props, State> {
     componentDidUpdate(prevProps: Props, prevState: State, snapshot: any) {
         console.log('componenetupdate', this.state)
         if(prevState === this.state){
-            console.log('do nothing')
             return;
         }
     };
@@ -169,8 +160,8 @@ class ProfileClass extends React.Component<Props, State> {
                 className="clear-disabled"
                 readOnly={this.props.editEnable}
                 maxLength={maxInputLength.name}
-                onBlur={this.handleOnBlur}//NEED to change
-                onPressEnter={this.handleOnBlur}
+                // onBlur={(event)=>this.updateStoreStateProperty('userName.name', event)}//NEED to change
+                // onPressEnter={(event)=>this.updateStoreStateProperty('userName.name', event)}
                 defaultValue={this.props.userName.name ?  this.props.userName.name : ''}
             />
         </Tooltip>);
@@ -196,17 +187,18 @@ class ProfileClass extends React.Component<Props, State> {
                 <div id='affiliations'>
                     {this.state.affiliations.map((position, index) => (
                         <form key={index} className='affiliations' name={index.toString(10)} autoComplete="on">
+                            <Form.Item validateStatus={this.foo()}>
                             <Input
                                 readOnly={!this.props.editEnable}
                                 style={{ width: '20%', display: 'inline' }}
                                 autoComplete='organization-title'
                                 type='text'
                                 className='clear-disabled'
-                                maxLength={maxInputLength.position}
-                                defaultValue={position.title ? position.title : ''}
+                                maxLength={maxInputLength['50']}
+                                defaultValue={position.title}
                                 placeholder={'Job title'}
                                 onChange={(event) => { this.affiliationJobTitleOnChange(event, index) }}
-                            />
+                            /></Form.Item>
                             <AutoComplete
                                 className='clear-disabled'
                                 style={{ width: '50%' }}
@@ -225,7 +217,7 @@ class ProfileClass extends React.Component<Props, State> {
                                     }
 
                                 }}
-                                defaultValue={position.organization ? position.organization : ''}
+                                defaultValue={position.organization}
                             >
                                 {this.state.institutionFiltered.map((item) => {
                                     return (
@@ -243,7 +235,7 @@ class ProfileClass extends React.Component<Props, State> {
                                 type='string' maxLength={4}
                                 className='clear-disabled'
                                 placeholder='Start'
-                                defaultValue={position.started ? position.started : ''}
+                                defaultValue={position.started}
                             />
                             <Input
                                 readOnly={!this.props.editEnable}
@@ -252,7 +244,7 @@ class ProfileClass extends React.Component<Props, State> {
                                 type='string' maxLength={4}
                                 className='clear-disabled'
                                 placeholder='End'
-                                defaultValue={position.ended ? position.ended : ''}
+                                defaultValue={position.ended}
                             />
                             </Tooltip>
                             <Button  style={{ margin: '10px', display: this.showEditButtons() }} type="primary" onClick={() => this.deleteAffiliation(index)}>
@@ -306,6 +298,15 @@ class ProfileClass extends React.Component<Props, State> {
         };
     }
 
+    // show/hide edit/save buttons
+    showEditButtons() {
+        if(this.props.editEnable === true) {
+            return 'unset';
+        } else {
+            return 'none';
+        };
+    };
+
 
     // Modal Control  
     showModal(event: any, modal: ModalName | undefined) {
@@ -314,28 +315,26 @@ class ProfileClass extends React.Component<Props, State> {
         };
     };
 
+
     /// event handlers //// 
 
-    /**
-     * Handles onBlur or onPressEnter event
-     * saves and update the profile data
-     * @param event 
-     */
-    handleOnBlur(event: any) {
-        let elem = event.target;
+    
+    updateStoreStateProperty(propertyName: string, event: any, ) {
         let profileData: any = this.props.profileData;
-        for (let i = 0; i < elem.classList.length; i++) {
-            let targetClass = elem.classList[i];
-            if (this.state.profileDataKeySet.has(targetClass) && profileData[targetClass] !== elem.value) {
-                profileData[targetClass] = elem.value.trim();
-                this.props.updateProfile(this.props.userName.userID, profileData);
-            };
+        if( typeof event.target.value === 'string'){
+            profileData[propertyName] = event.target.value.trim();
+            this.props.updateProfile(this.props.userName.userID, profileData);
         };
     };
 
-    updateStoreState(event: any, propertyName: string){
+    setStateProperty(propertyName: string, value: any, ) {
+        if( typeof value === 'string'){
+            let newState: any = { [propertyName]: value.trim() }
+            this.setState(newState);
+        }
+    };
 
-    }
+
     /**
      * Location 
      * 
@@ -369,15 +368,6 @@ class ProfileClass extends React.Component<Props, State> {
 
     };
 
-    setStateProperty(propertyName: string, value: any) {
-        let newState: any = { [propertyName]: value }
-        this.setState(newState);
-    };
-
-    setUSState(value:any){
-        let profileData = this.props.profileData;
-        this.setState( {state: value});
-    }
 
     locationOnSave(event:any) {
         let profileData = this.props.profileData;
@@ -433,7 +423,7 @@ class ProfileClass extends React.Component<Props, State> {
 
     /**
      * 
-     * affilication 
+     * affiliation 
      */
     addAffiliation(event: any) {
         let affiliations: Array<Affiliation> = this.state.affiliations;
@@ -452,25 +442,18 @@ class ProfileClass extends React.Component<Props, State> {
         this.setState({ affiliations: arr });
     };
 
-    showEditButtons() {
-        if(this.props.editEnable === true) {
-            return 'unset';
-        } else {
-            return 'none';
-        };
-    };
-
     affiliationJobTitleOnChange(event:any, index:number) {
         let affiliations = this.state.affiliations;
         affiliations[index].title = event.target.value;
         this.setState({ affiliations: affiliations })
-        console.log(affiliations)
     };
+
     affiliationStartOnChange(event: any, index: number) {
         let affiliations = this.state.affiliations;
         affiliations[index].started = event.target.value;
         this.setState({ affiliations: affiliations })
     };
+
     affiliationEndOnChange(event: any, index: number) {
         let affiliations = this.state.affiliations;
         affiliations[index].ended = event.target.value;
@@ -484,7 +467,6 @@ class ProfileClass extends React.Component<Props, State> {
     affiliationOnSave() {
         let profileData = this.props.profileData;
         profileData.affiliations = this.state.affiliations;
-        console.log('save', profileData.affiliations)
         this.props.updateProfile(this.props.userName.userID, profileData)
     };
 
@@ -500,15 +482,12 @@ class ProfileClass extends React.Component<Props, State> {
         }
     }
     institutionOnSearch(event: any) {
-        console.log(event)
         if (event.length > 2) {
             let arr = [];
             arr = institution.filter(item =>
                 item.toLowerCase().includes(event.toLowerCase())
             )
-            console.log(arr.length)
             if (arr.length <= 30) {
-                console.log(arr)
                 this.setState({ institutionFiltered: arr })
             };
         };
@@ -532,15 +511,8 @@ class ProfileClass extends React.Component<Props, State> {
         }
     };
 
-    jobTitleOtherOnChange(event: any) {
-        if (typeof event.target.value == 'string') {
-            this.setState({ jobTitleOther: event.target.value })
-        }
-    };
-    
     jobTitleOnSubmit(event: any) {
         let profileData = this.props.profileData;
-        console.log(this.state.jobTitleOther)
         if (event === "Other") {
             this.setState({ jobTitleValue: event });
         } else if (profileData.jobTitle !== this.state.jobTitleValue || profileData.jobTitleOther !== this.state.jobTitleOther) {
@@ -558,12 +530,24 @@ class ProfileClass extends React.Component<Props, State> {
         this.props.updateProfile(this.props.userName.userID, profileData);
     };
 
-    foo(boo: string) {
-        let moo: FormItemProps["validateStatus"] = 'success';
+    foo(){
+        // let moo: FormItemProps["validateStatus"] = 'success';
+        let moo: FormItemProps["validateStatus"] = 'error';
         return moo
     }
 
-
+    validateJobTitleOther(){
+        if(typeof this.state.jobTitleOther !== 'undefined') {
+            let stringlength = this.state.jobTitleOther.length;
+            if(stringlength = 50 || stringlength < 3) {
+                let status:FormItemProps["validateStatus"]='error';
+                return status;
+            } else {
+                let status:FormItemProps["validateStatus"]='success';
+                return status;
+            }
+        };
+    }
     render() {
         return (
             <Row style={{ padding: 16 }}>
@@ -608,7 +592,7 @@ class ProfileClass extends React.Component<Props, State> {
                                     placeholder='Job title'
                                     disabled={!this.props.editEnable}
                                     style={{ width: "100%", marginTop: '10px'}}
-                                    defaultValue={this.props.profileData.jobTitle ? this.props.profileData.jobTitle : ''}
+                                    defaultValue={this.props.profileData.jobTitle}
                                     onChange={this.jobTitleOnChange}
                                 >
                                     {jobTitles.map((item) => {
@@ -616,17 +600,17 @@ class ProfileClass extends React.Component<Props, State> {
                                     })}
                                 </Select>
                                 <Form>
-                                <Form.Item validateStatus={this.foo('boo')}>
+                                <Form.Item validateStatus={this.validateJobTitleOther()}>
                                     <Input
                                         readOnly={!this.props.editEnable}
                                         className="margin10px"
                                         style={{ minHeight: "40px"}}
-                                        maxLength={maxInputLength.position}
+                                        maxLength={maxInputLength['50']}
                                         onBlur={this.jobTitleOnSubmit}
-                                        onChange={this.jobTitleOtherOnChange}
+                                        onChange={(event)=>this.setStateProperty('jobTitleOther', event.target.value)}
                                         onPressEnter={this.jobTitleOnSubmit}
                                         hidden={this.state.jobTitleValue === 'Other' ? false : true}
-                                        defaultValue={this.props.profileData.jobTitleOther ? this.props.profileData.jobTitleOther : ''}
+                                        defaultValue={this.props.profileData.jobTitleOther}
                                         value={this.state.jobTitleOther}
                                     />
                                 </Form.Item>
@@ -636,16 +620,15 @@ class ProfileClass extends React.Component<Props, State> {
                                 <Input
                                     placeholder='Department'
                                     readOnly={!this.props.editEnable}
-                                    className="department clear-disabled margin10px"
+                                    className="clear-disabled margin10px"
                                     maxLength={maxInputLength.department}
-                                    onBlur={this.handleOnBlur}
-                                    onPressEnter={this.handleOnBlur}
-                                    defaultValue={this.props.profileData.department ? this.props.profileData.department : ''}
+                                    onBlur={(event)=>this.updateStoreStateProperty('department', event)}
+                                    onPressEnter={(event)=>this.updateStoreStateProperty('department', event)}
+                                    defaultValue={this.props.profileData.department}
                                 />
                             </Tooltip>
                             <Meta title="Organization" />
-                            {/* <Tooltip overlayStyle={this.tooltipVisibility()} placement="top" title={<this.institutionToolTip />}> */}
-                            <Tooltip overlayStyle={this.tooltipVisibility()} placement="top" title='for now'>
+                            <Tooltip overlayStyle={this.tooltipVisibility()} placement="top" title={<this.institutionToolTip />}>
                                 <div></div> {/* i don't know why this empty div has to be here for tooltip to showup  */}
                                 <AutoComplete
                                     className="clear-disabled margin10px"
@@ -659,14 +642,13 @@ class ProfileClass extends React.Component<Props, State> {
                                     onBlur={this.institutionSave}
                                     filterOption={(inputValue, option) => {
                                         if (typeof option.props.children === 'string') {
-                                            console.log(this.state.institutionFiltered.length)
                                             let item = option.props.children;
                                             return item.toLowerCase().indexOf(inputValue.toLowerCase()) >= 0
                                         } else {
                                             return false
                                         }
                                     }}
-                                    defaultValue={this.props.profileData.organization ? this.props.profileData.organization : ''}
+                                    defaultValue={this.props.profileData.organization}
                                 >
                                     {/* <Input onPressEnter={this.institutionSave}/> */}
                                 </AutoComplete>
@@ -690,7 +672,7 @@ class ProfileClass extends React.Component<Props, State> {
                                     }
 
                                 }}
-                                defaultValue={this.props.profileData.country ? this.props.profileData.country : ''}
+                                defaultValue={this.props.profileData.country}
                             >
                                 {Array.from(countryCodes).map((item => {
                                     return (
@@ -703,15 +685,16 @@ class ProfileClass extends React.Component<Props, State> {
                             </Tooltip>
                             {/* <Tooltip trigger='hover' overlayStyle={this.tooltipVisibility()} title='Search US States'> */}
                             <Tooltip trigger='hover' title='Search US States'>
-                            <AutoComplete
+                            <Select
                                 className='clear-diabled margin10px'
+                                mode="single"
                                 style={this.USStateVisibility()}
                                 disabled={!this.props.editEnable}
                                 allowClear
-                                dataSource={states}
                                 placeholder='State'
-                                // onSelect={(value)=>{this.setStateProperty('state', value)}}
-                                onSelect={this.setUSState.bind(this)}
+                                showArrow={true}
+                                onSelect={(value:string)=>{this.setStateProperty('state', value)}}
+                                optionFilterProp="children"
                                 filterOption={(inputValue, option) => {
                                     if (typeof option.props.children === 'string') {
                                         let item = option.props.children;
@@ -721,24 +704,46 @@ class ProfileClass extends React.Component<Props, State> {
                                     }
 
                                 }}
-                                defaultValue={typeof this.props.profileData.state==='string' ? this.props.profileData.state : 'how that happened' }
-                            />
+                                defaultValue={this.props.profileData.state}
+                            >
+                                {states.map((item, index)=>{
+                                    return <Option key={index} value={item}>{item}</Option>
+                                })}
+                            </Select>
                             </Tooltip>
                             <Tooltip overlayStyle={this.tooltipVisibility()} title='must be less than 100 characters'>
                                 <Input 
                                     placeholder='City' 
                                     readOnly={!this.props.editEnable} 
                                     className="clear-disabled margin10px" 
-                                    defaultValue={this.props.profileData.city ? this.props.profileData.city : ''}
-                                    onChange={(value)=>{this.setStateProperty('city', value)}}
+                                    defaultValue={this.props.profileData.city}
+                                    onChange={(event)=>{this.setStateProperty('city', event.target.value)}}
                                 />
                             </Tooltip>
-                            <Input placeholder='Postal code' className='clear-disabled margin10px' readOnly={!this.props.editEnable} defaultValue={this.props.profileData.postalCode ? this.props.profileData.postalCode : ''} onChange={(value)=>{this.setStateProperty('state', value)}} />
+                            <Input 
+                                placeholder='Postal code' 
+                                className='clear-disabled margin10px' 
+                                readOnly={!this.props.editEnable} 
+                                defaultValue={this.props.profileData.postalCode} 
+                                onChange={(event)=>{this.setStateProperty('postalCode ', event.target.value)}} 
+                            />
+                            < InputField
+                                userID={this.props.userName.userID}
+                                updateStoreState={this.props.updateProfile}
+                                data={this.props.profileData}
+                                stateProperty={'postalCode'} 
+                                placeHolder='Postal Code' 
+                                defaultValue={this.props.profileData.postalCode}
+                                readOnly={!this.props.editEnable}
+                                maxLength={50}
+                                onBlur={true}
+                                onPressEnter={true}
+                            />
                             <Button style={{ margin: '10px', display: this.showEditButtons() }} key="submit" type="primary" onClick={this.locationOnSave.bind(this)}>
                                 save
                             </Button>
                             <Meta title="Primary Funding Source" />
-                            {/* <Input className="clear-disabled" disabled defaultValue={this.props.profileData.fundingSource}/> */}
+                                className='clear-diabled margin10px'
                             <Select
                                 className='clear-diabled margin10px'
                                 mode="single"
@@ -747,7 +752,7 @@ class ProfileClass extends React.Component<Props, State> {
                                 disabled={!this.props.editEnable}
                                 maxTagCount={20}
                                 placeholder="enter more than 3 characters"
-                                showArrow={false}
+                                showArrow={true}
                                 onChange={this.fundingSourceOnChange}
                                 optionFilterProp="children"
                                 filterOption={(inputValue, option) => {
@@ -760,7 +765,7 @@ class ProfileClass extends React.Component<Props, State> {
                                     }
 
                                 }}
-                                defaultValue={this.props.profileData.fundingSource ? this.props.profileData.fundingSource : ''}
+                                defaultValue={this.props.profileData.fundingSource}
                             >
                                 {fundingSources.map((item) => {
                                     return (
@@ -797,15 +802,15 @@ class ProfileClass extends React.Component<Props, State> {
                                     >
                                         <Checkbox.Group
                                             options={researchInterestsList}
-                                            defaultValue={this.props.profileData.researchInterests ? this.props.profileData.researchInterests : []}
+                                            defaultValue={this.props.profileData.researchInterests}
                                             onChange={this.researchInterestOnChange}
                                         />
                                         <Input
                                             className="margin10px"
-                                            maxLength={maxInputLength.position}
+                                            maxLength={maxInputLength['50']}
                                             onChange={this.researchInterestsOtherOnChange}
                                             hidden={this.state.researchInterestsValue.includes("Other") ? false : true}
-                                            defaultValue={this.props.profileData.researchInterestsOther ?  this.props.profileData.researchInterestsOther : ''}
+                                            defaultValue={this.props.profileData.researchInterestsOther}
                                             value={this.state.researchInterestsOther}
                                         />
                                     </Modal>
@@ -829,10 +834,10 @@ class ProfileClass extends React.Component<Props, State> {
                                             autosize
                                             readOnly={!this.props.editEnable}
                                             maxLength={maxInputLength.researchStatement}
-                                            className='clear-disabled researchStatement'
-                                            onBlur={this.handleOnBlur}
-                                            onPressEnter={this.handleOnBlur}
-                                            defaultValue={this.props.profileData.researchStatement ? this.props.profileData.researchStatement : ''}
+                                            className='clear-disabled'
+                                            onBlur={(event)=> this.updateStoreStateProperty('researchStatement', event)}
+                                            onPressEnter={(event)=> this.updateStoreStateProperty('researchStatement', event)}
+                                            defaultValue={this.props.profileData.researchStatement}
                                         />
                                     </Tooltip>
                                 </Form.Item>

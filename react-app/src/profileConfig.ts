@@ -7,7 +7,7 @@
 export const maxInputLength = {
     researchStatement: 1000,
     department: 50,
-    position: 50,
+    '50': 50,
     name: 100
 }
 
