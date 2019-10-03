@@ -49,10 +49,22 @@ input.ant-input {
 .ant-select-disabled {
     background: white !important;
 }
+
 .margin10px {
     margin: 10px !important;
 }
 
+.marginTop10px {
+    margin-top: 10px !important;
+}
+
+.margin-bottom-24px {
+    margin-bottom: 24px !important;
+}
+
 #root {
     overflow: auto;
+}
+.profile-input-form > .ant-form-item-label > label::after {
+    content: none !important;
 }

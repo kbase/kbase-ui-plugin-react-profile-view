@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
 
-import { UserName, ProfileData, StoreState, ProfileView } from '../../redux/interfaces';
+import { UserName, ProfileData, StoreState, ProfileView, ErrorMessages } from '../../redux/interfaces';
 import { updateProfile } from '../../redux/actions';
 import OhWhat from './ohwhattodo';
 
@@ -19,7 +19,11 @@ interface PropsWithoutProfileData {
     profileFetchStatus: string;
 };
 
-type Props = PropsWithoutProfileData | PropsWithProfileData;
+interface PropsWithErrorMessages {
+    errorMessages: ErrorMessages
+};
+
+type Props = PropsWithoutProfileData | PropsWithProfileData | ErrorMessages;
 
 interface DispatchProps {
     updateProfile: (profileID: string, profileData: ProfileData) => void;
@@ -28,11 +32,11 @@ interface DispatchProps {
 interface OwnProps { };
 let component: JSX.Element;
 function mapStateToProps(state: StoreState): Props {
-    console.log('profile state container', state)
+    console.log('profile state container', state, state.profileView.profileFetchStatus)
     // token can be null
     let userAuthToken;
     if (state.auth.userAuthorization !== null) {
-        userAuthToken = state.auth.userAuthorization.token
+        userAuthToken = state.auth.userAuthorization.token;
     } else {
         userAuthToken = '';
     };
@@ -42,11 +46,13 @@ function mapStateToProps(state: StoreState): Props {
         case profileFetchStatuses.FETCHING:
             return {
                 profileFetchStatus: state.profileView.profileFetchStatus
-            }
+            };
             break;
 
         case profileFetchStatuses.ERROR:
+            let newProps = state.profileView as ErrorMessages
             return {
+                errorMessages: newProps.errorMessages,
                 profileFetchStatus: state.profileView.profileFetchStatus
             }
             break;
@@ -60,7 +66,7 @@ function mapStateToProps(state: StoreState): Props {
                 profileData: profileData.profileData,
                 gravatarHash: profileData.gravatarHash,
                 profileFetchStatus: profileData.profileFetchStatus
-            }
+            };
             break;
 
         default:
@@ -69,8 +75,8 @@ function mapStateToProps(state: StoreState): Props {
             // its type is "never" 
             // hacky way to fix that. 
             return {
-                profileFetchStatus: profileFetchStatuses.NONE
-            }
+                profileFetchStatus: profileFetchStatuses.ERROR
+            };
             break;
     };
 

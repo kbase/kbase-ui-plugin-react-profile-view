@@ -1,5 +1,5 @@
 import React from 'react';
-import { loadOrgAction, OrgList, loadProfileAction, ProfileView, ProfileState } from '../interfaces';
+import { loadOrgAction, OrgList, loadProfileAction, ProfileView, ProfileState, ErrorMessages } from '../interfaces';
 import { profileActionTypes, orgsActionTypes } from './actionTypes';
 
 
@@ -19,9 +19,10 @@ export function loadProfile(payload: ProfileView): loadProfileAction {
 };
 
 // fetch profile failed
-export function fetchErrorProfile() {
+export function fetchErrorProfile(payload: ErrorMessages) {
     return {
         type: profileActionTypes.FETCH_PROFILE_ERROR,
+        payload
     };
 };
 

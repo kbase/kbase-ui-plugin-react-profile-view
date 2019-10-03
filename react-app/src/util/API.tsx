@@ -1,4 +1,4 @@
-import { ProfileData } from "../redux/interfaces";
+import { ProfileData, UserName } from "../redux/interfaces";
 
 export async function getBFFServiceUrl(token: string, baseURL: string) {
     // TODO: for dev, the baseUrl will be whatever works for the CRA workflow, which is ''.
@@ -37,7 +37,6 @@ export async function getBFFServiceUrl(token: string, baseURL: string) {
 export async function fetchProfileAPI(id: string, token: string, baseURL: string) {
     const bffServiceUrl = await getBFFServiceUrl(token, baseURL);
     let url = bffServiceUrl + '/fetchUserProfile/' + id;
-    let errorStatus;
     const response = await fetch(url, {
         method: 'GET'
     });
@@ -50,6 +49,7 @@ export async function fetchProfileAPI(id: string, token: string, baseURL: string
     }
     try {
         const profile = await response.json();
+        console.log("API", profile)
         return profile;
     } catch (err) {
         console.error('profile fetch failed', response);
@@ -63,20 +63,20 @@ export async function fetchProfileAPI(id: string, token: string, baseURL: string
  * @param token 
  * @param baseURL 
  * @param userdata 
+ * @param user
  */
-export async function updateProfileAPI(token: string, baseURL: string, userdata:ProfileData) {
+export async function updateProfileAPI(token: string, baseURL: string, userdata:ProfileData, user:UserName) {
     // console.log(userdata)
-
-// export async function updateProfileAPI(token: string, baseURL: string, updatedUserProfleString:string) {
+    
+    let newParam = [ { profile: { user: { realname: user.name, username: user.userID }, profile: {userdata: userdata}}}]
     const body = {
         version: '1.1',
         method: 'UserProfile.update_user_profile',
-        params: [ { profile: { user: { realname: "Akiyo Marukawa", username: "amarukawa" }, profile: {userdata: userdata}}}]
-        // params: [ { profile: { user: { realname: "Akiyo Marukawa", username: "amarukawa" }, userdata: userdata}}]
+        params: newParam
     };
     const stringBody = JSON.stringify(body);
-    //TODO: Akiyo - remove this after testing
     const url = baseURL + '/services/user_profile/rpc';
+    console.log("updateProfileAPI", url)
     const response = await fetch(url, {
         method: 'POST',
         mode: 'cors',
@@ -86,7 +86,17 @@ export async function updateProfileAPI(token: string, baseURL: string, userdata:
         },
         body: stringBody
     });
-    return(response.status);
+    if(response.status === 200) {
+        return(response.status);
+    } else {
+        let responseJSON = await response.json();
+        console.log(responseJSON.error.message);
+        let responseArray:Array<number|string> = [
+                response.status, 
+                responseJSON.error.message
+            ]
+        return responseArray;
+    }
 }
 
 /**

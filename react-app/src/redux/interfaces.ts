@@ -121,13 +121,17 @@ export interface UsernameRealname {
 
 // need this for adding type to StoreState - see store.ts
 export interface  ProfileState {
-    profileView: ProfileView | ProfileFetchStatus
+    profileView: ProfileView | ProfileFetchStatus | ErrorMessages;
+};
+
+export interface ErrorMessages {
+    errorMessages: Array<number|string>;
+    profileFetchStatus: profileFetchStatuses.ERROR;
 }
 
 export interface ProfileFetchStatus{
     profileFetchStatus: profileFetchStatuses.NONE | profileFetchStatuses.ERROR | profileFetchStatuses.SUCCESS | profileFetchStatuses.FETCHING;
 }
-
 
 export interface ProfileView {
     userName: UserName,
@@ -171,7 +175,7 @@ export interface UserName {
 // used in reducer 
 export interface loadProfileAction {
     type: string;
-    payload: ProfileView;
+    payload: ProfileView | ProfileFetchStatus | ErrorMessages;
 }
 
 
