@@ -5,13 +5,12 @@ import { SelectValue } from 'antd/es/select';
 import { UserName, ProfileData, Affiliation } from '../../redux/interfaces';
 import nouserpic from '../../assets/nouserpic.png';
 import OrgsContainer from '../Orgs/OrgsContainer';
-import InputForm from './ProfileForms/InputForm';
-import TextAreaForm from './ProfileForms/TextAreaForm';
+import { InputForm,  TextAreaForm, AffiliationForm } from './ProfileForms';
+
 import { maxInputLength, researchInterestsList, jobTitles } from '../../profileConfig';
-import { fundingSources, countryCodes, institution, states } from '../../dataSources';
+import { fundingSources, countryCodes, institution, states, avatarOptions, gravatarDefaults } from '../../dataSources';
 
 const { Meta } = Card;
-const { TextArea } = Input;
 const { Option } = Select;
 
 
@@ -26,7 +25,7 @@ interface Props {
     profileData: ProfileData;
     gravatarHash: string;
     profileFetchStatus: string;
-    updateProfile: (profileID: string, userdata: ProfileData) => void;
+    updateProfile: (userdata: ProfileData, userName: UserName) => void;
 };
 
 interface State {
@@ -43,6 +42,8 @@ interface State {
     state: string;
     institutionFiltered: Array<string>;
     affiliations: Array<Affiliation>;
+    gravatarDefault: string | undefined;
+    avatarOption: string | undefined;
 };
 
 /**
@@ -66,6 +67,8 @@ class ProfileClass extends React.Component<Props, State> {
             state: '',
             institutionFiltered: [],
             affiliations: [],
+            gravatarDefault: undefined,
+            avatarOption: undefined,
         };
 
         this.tooltipVisibility = this.tooltipVisibility.bind(this); // tooltip is visible when auth user is using the profile
@@ -85,6 +88,7 @@ class ProfileClass extends React.Component<Props, State> {
         this.institutionSave = this.institutionSave.bind(this);
         this.institutionOnSearch = this.institutionOnSearch.bind(this);
         this.setStateProperty = this.setStateProperty.bind(this);
+        this.avatarOptionOnSumbit = this.avatarOptionOnSumbit.bind(this)
     };
 
     componentDidMount() {
@@ -99,7 +103,9 @@ class ProfileClass extends React.Component<Props, State> {
             country: profile.country,
             city: profile.city,
             postalCode: profile.postalCode,
-            state: profile.state
+            state: profile.state,
+            gravatarDefault: profile.gravatarDefault,
+            avatarOption: profile.avatarOption
         })
         if (Array.isArray(profile.researchInterests)) {
             this.setState({ researchInterestsValue: profile.researchInterests })
@@ -129,7 +135,6 @@ class ProfileClass extends React.Component<Props, State> {
         } else {
             return { visibility: 'visible' };
         };
-        // return { visibility: 'hidden' };
     };
 
     // set visitbility after initial mounting
@@ -317,17 +322,30 @@ class ProfileClass extends React.Component<Props, State> {
     };
 
 
-    /// event handlers //// 
+   /**
+    *   event Handlers
+    *
+    * 
+    */
 
+    /**
+     * updates app Store State
+     * @param propertyName 
+     * @param value 
+     */
     updateStoreStateProperty(propertyName: string, value: string) {
         // any is used here for creating gereric property 
         let profileData: any = this.props.profileData;
         if (profileData[propertyName] !==  value.trim()) {
             profileData[propertyName] = value.trim();
-            this.props.updateProfile(this.props.userName.userID, profileData);
+            this.props.updateProfile(profileData, this.props.userName);
         };
     };
-
+    /**
+     * updates/saves local state
+     * @param propertyName 
+     * @param value 
+     */
     setStateProperty(propertyName: string, value: string) {
         // any is used here for creating gereric property 
         let newState: any = { [propertyName]: value.trim() }
@@ -368,16 +386,21 @@ class ProfileClass extends React.Component<Props, State> {
 
     };
 
-
-    // locationOnSave(event:any) {
-    //     let profileData = this.props.profileData;
-    //     profileData.state = this.state.state;
-    //     profileData.city = this.state.city;
-    //     profileData.country = this.state.country;
-    //     profileData.postalCode = this.state.postalCode;
-    //     this.props.updateProfile(this.props.userName.userID, profileData);
-    // };
-
+    /**
+     *  Updates store state with local avatarOption state 
+     *  and gravatarDefault state
+     * @param event 
+     */
+    avatarOptionOnSumbit(){
+        // any is used here for creating gereric property 
+        let profileData = this.props.profileData;
+        if (profileData.gravatarDefault !== this.state.gravatarDefault || 
+            profileData.avatarOption !== this.state.avatarOption) {
+                if (typeof this.state.gravatarDefault !== 'undefined' ) profileData.gravatarDefault = this.state.gravatarDefault;
+                if (typeof this.state.avatarOption !== 'undefined' ) profileData.avatarOption = this.state.avatarOption;
+                this.props.updateProfile(profileData, this.props.userName);
+        };
+    }
 
     /**
      * 
@@ -407,13 +430,13 @@ class ProfileClass extends React.Component<Props, State> {
         if (arrState.length !== arrProps.length || profileData.researchInterestsOther !== this.state.researchInterestsOther) {
             profileData.researchInterests = arrState;
             profileData.researchInterestsOther = this.state.researchInterestsOther;
-            this.props.updateProfile(this.props.userName.userID, profileData);
+            this.props.updateProfile(profileData, this.props.userName);
         } else {
             for (let i = 0; i < arrState.length; i++) {
                 if (arrState[i] !== arrProps[i]) {
                     profileData.researchInterests = arrState;
                     profileData.researchInterestsOther = this.state.researchInterestsOther;
-                    this.props.updateProfile(this.props.userName.userID, profileData);
+                    this.props.updateProfile(profileData, this.props.userName);
                     break;
                 };
             };
@@ -467,7 +490,7 @@ class ProfileClass extends React.Component<Props, State> {
     affiliationOnSave() {
         let profileData = this.props.profileData;
         profileData.affiliations = this.state.affiliations;
-        this.props.updateProfile(this.props.userName.userID, profileData)
+        this.props.updateProfile(profileData, this.props.userName)
     };
 
     /**
@@ -478,7 +501,7 @@ class ProfileClass extends React.Component<Props, State> {
         let profileData = this.props.profileData;
         if (typeof event !== 'undefined' && event !== profileData.organization) {
             profileData.organization = event;
-            this.props.updateProfile(this.props.userName.userID, profileData);
+            this.props.updateProfile(profileData, this.props.userName);
         }
     }
     institutionOnSearch(event: any) {
@@ -502,7 +525,7 @@ class ProfileClass extends React.Component<Props, State> {
         let profileData = this.props.profileData;
         if (profileData.jobTitle !== value) {
             profileData.jobTitle = value;
-            this.props.updateProfile(this.props.userName.userID, profileData);
+            this.props.updateProfile(profileData, this.props.userName);
         };
     };
 
@@ -510,7 +533,7 @@ class ProfileClass extends React.Component<Props, State> {
     fundingSourceOnChange(event: any) {
         let profileData = this.props.profileData;
         profileData.fundingSource = event;
-        this.props.updateProfile(this.props.userName.userID, profileData);
+        this.props.updateProfile(profileData, this.props.userName);
     };
 
     foo(){
@@ -538,14 +561,50 @@ class ProfileClass extends React.Component<Props, State> {
                                     <Button key="back" onClick={(event)=>{this.showModal(event, undefined)}}>
                                         Return
                                     </Button>,
-                                    <Button key="submit" id="researchInterests" type="primary" onClick={this.researchInterestOnSumbit}>
+                                    <Button key="submit" id="researchInterests" type="primary" onClick={this.avatarOptionOnSumbit}>
                                         Submit
                                     </Button>,
+                                    <div style={{ width: "100%", marginTop: '2em', textAlign:'left'}}>
+                                        <p>If you do not have a custom gravatar, this generated or generic image will be used.</p>
+                                        <p>Note that if you have a gravatar image set up, this option will have no effect on your gravatar display.</p>
+                                        <p>Your gravatar is based on an image you have associated with your email address at <a href='https://www.gravatar.com'>Gravatar</a>, a 
+                                        free public profile service from Automattic, the same people who brought us Wordpress. 
+                                            If you have a personal gravatar associated with the email address in this profile, 
+                                            it will be displayed within KBase.
+                                        </p>
+                                        <p>If you don't have a personal gravator, you may select one of the default auto-generated gravatars provided below. 
+                                            Note that generated gravatars will use your email address to create a unique gravatar for you, 
+                                            which may be used to identify you in the ui. If you do not wish to have a unique gravatar, you may select "mystery man" or "blank".
+                                        </p>
+                                    </div>,
                                 ]}
                             >
+                                <p>Avatar Options</p>
                                 <Select
-
-                                />
+                                    className='clear-diabled'
+                                    placeholder='Choose to use gravatar, or the KBase anonymous silhouette.'
+                                    disabled={!this.props.editEnable}
+                                    style={{ width: "100%", marginBottom: '2em'}}
+                                    defaultValue={this.props.profileData.avatarOption}
+                                    onSelect={(value:string)=>{this.setStateProperty('avatarOption', value)}}
+                                >
+                                        {avatarOptions.map((option)=>{
+                                           return <Option key={option.value}>{option.label}</Option>
+                                        })}
+                                </Select>
+                                <p>Gravator Default Image</p>                             
+                                <Select
+                                    className='clear-diabled'
+                                    placeholder='Choose to use gravatar, or the KBase anonymous silhouette.'
+                                    disabled={!this.props.editEnable}
+                                    style={{ width: "100%", marginBottom: '2em' }}
+                                    defaultValue={this.props.profileData.gravatarDefault}
+                                    onSelect={(value:string)=>{this.setStateProperty('gravatarDefault', value)}}
+                                >
+                                    {gravatarDefaults.map((option)=>{
+                                            return <Option key={option.value}>{option.label}</Option>
+                                        })}
+                                </Select>
                             </Modal>
                         </Card>
                         <Card
@@ -574,8 +633,8 @@ class ProfileClass extends React.Component<Props, State> {
                                     hidden={this.state.jobTitleValue === 'Other' ? false : true}
                                     type={'string'}
                                     required={false}
-                                    userID={this.props.userName.userID}
-                                    updateStoreState={this.props.updateProfile}
+                                    userName={this.props.userName}
+                                    updateStoreState={this.props.updateProfile} // updates StoreState
                                     data={this.props.profileData}
                                     stateProperty={'jobTitleOther'}
                                     placeHolder='Job Title'
@@ -591,8 +650,8 @@ class ProfileClass extends React.Component<Props, State> {
                                     hidden={false}
                                     type={'string'}
                                     required={false}
-                                    userID={this.props.userName.userID}
-                                    updateStoreState={this.props.updateProfile}
+                                    userName={this.props.userName}
+                                    updateStoreState={this.props.updateProfile} // updates StoreState
                                     data={this.props.profileData}
                                     stateProperty={'department'}
                                     placeHolder='Department'
@@ -691,8 +750,8 @@ class ProfileClass extends React.Component<Props, State> {
                                 hidden={false}
                                 type='string'
                                 required={true}
-                                userID={this.props.userName.userID}
-                                updateStoreState={this.props.updateProfile}
+                                userName={this.props.userName}
+                                updateStoreState={this.props.updateProfile} // updates StoreState
                                 data={this.props.profileData}
                                 stateProperty={'city'} 
                                 placeHolder='City'
@@ -706,8 +765,8 @@ class ProfileClass extends React.Component<Props, State> {
                                 hidden={false}
                                 type={this.state.country==='United States' ? 'number' : 'string'}
                                 required={true}
-                                userID={this.props.userName.userID}
-                                updateStoreState={this.props.updateProfile}
+                                userName={this.props.userName}
+                                updateStoreState={this.props.updateProfile} // updates StoreState
                                 data={this.props.profileData}
                                 stateProperty={'postalCode'}
                                 placeHolder='Postal Code'
@@ -812,7 +871,7 @@ class ProfileClass extends React.Component<Props, State> {
                                     hidden={false}
                                     type='string'
                                     required={false}
-                                    userID={this.props.userName.userID}
+                                    userName={this.props.userName}
                                     updateStoreState={this.props.updateProfile}
                                     data={this.props.profileData}
                                     stateProperty='researchStatement'
@@ -834,6 +893,16 @@ class ProfileClass extends React.Component<Props, State> {
                                     save
                                 </Button>
                             </Card>
+                            <Card
+                                style={{ margin: '8px 0px' }}
+                                title="Research or Personal Statement"
+                            ><AffiliationForm 
+                                userName={this.props.userName} 
+                                profileData={this.props.profileData}
+                                editEnable={this.props.editEnable}
+                                affiliations={this.props.profileData.affiliations}
+                                updateStoreState={this.props.updateProfile}
+                            /></Card>
                         </Row>
                     </Col>
                 </Row>

@@ -128,7 +128,7 @@ class Home extends React.Component<HomeProps, HomeState> {
                     <TabPane tab="Narratives" key="3">
                         <NarrativeContainer />
                     </TabPane>
-                    <TabPane tab="Profile with class" key="5">
+                    <TabPane tab="Profile" key="5">
                         <ProfileClassContainer />
                     </TabPane>
                     {/* Insert search user component div as a title to place it on the navigation tab  */}

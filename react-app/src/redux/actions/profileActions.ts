@@ -2,7 +2,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { AnyAction } from 'redux';
 import { sendTitle } from '@kbase/ui-lib';
 import { fetchProfileAPI, updateProfileAPI } from '../../util/API';
-import { StoreState, UserProfileService, ProfileView,  ProfileData, ErrorMessages} from "../interfaces";
+import { StoreState, UserProfileService, ProfileView,  ProfileData, ErrorMessages, UserName} from "../interfaces";
 import { fetchProfile, loadProfile, fetchErrorProfile } from './actionCreators';
 import { profileFetchStatuses } from '../fetchStatuses';
 
@@ -64,21 +64,21 @@ export function getProfile(profileID:string) {
  * set the spinner with fetchProfile action,
  * then call updateProfileAPI.
  * when the repose is good, update the profile with getProfile 
- * @param profileID 
+ * @param userName 
  * @param userdata 
  */
 
-export function updateProfile(profileID:string, name: string, userdata:ProfileData) {
+export function updateProfile(userdata:ProfileData, userName:UserName) {
     return async function (dispatch:ThunkDispatch<StoreState, void, AnyAction>, getState:() => StoreState ) {
         dispatch(fetchProfile())
         const rootStore = getState();
         if(rootStore.auth.userAuthorization !== null) {
             const token = rootStore.auth.userAuthorization.token;
             let baseURL = rootStore.app.config.baseUrl;
-            let user = {name: name, userID: profileID}
-            let response = await updateProfileAPI(token, baseURL, userdata, user);
+            // let user = {name: name, userID: profileID}
+            let response = await updateProfileAPI(token, baseURL, userdata, userName);
             if(response === 200) {
-                dispatch(getProfile(profileID))
+                dispatch(getProfile(userName.userID))
             } else {
                 if (Array.isArray(response)) {
                     let errorPayload: ErrorMessages = {

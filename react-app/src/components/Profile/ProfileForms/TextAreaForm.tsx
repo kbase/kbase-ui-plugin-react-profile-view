@@ -1,5 +1,6 @@
 import React from 'react';
 import { Form, Input } from 'antd';
+import { UserName } from '../../../redux/interfaces';
 
 const { TextArea } = Input;
 
@@ -7,8 +8,8 @@ interface Props {
     hidden: boolean;
     type: string;
     required: boolean;
-    userID: string;
-    updateStoreState: (userID: string, data: any) => void;
+    userName: UserName;
+    updateStoreState: (data: any, userName: UserName) => void;
     data: any;
     stateProperty: string;
     placeHolder?: string
@@ -65,8 +66,6 @@ class TextAreaForm extends React.Component<Props, State> {
      * @param inputValue 
      */
     validateInput(inputValue: string) {
-        // console.log(parseInt(inputValue, 10))
-
         // When type is number, then check if it's a number first
         if (this.props.type === "number" && isNaN(parseInt(inputValue, 10))) {
             this.setState({ validateStatus: 'error', helpText: 'Expecting numbers' });
@@ -115,7 +114,7 @@ class TextAreaForm extends React.Component<Props, State> {
         let data: any = this.props.data;
         if (this.state.validateStatus === 'success' && data[this.props.stateProperty] !== this.state.inputValue) {
             data[this.props.stateProperty] = this.state.inputValue;
-            this.props.updateStoreState(this.props.userID, data);
+            this.props.updateStoreState(data, this.props.userName);
         };
     };
 

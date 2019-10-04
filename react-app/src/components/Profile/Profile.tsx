@@ -16,7 +16,7 @@ interface Props {
     profileData: ProfileData;
     gravatarHash: string;
     profileFetchStatus: string;
-    updateProfile: (profileID: string, userdata:ProfileData) => void;
+    updateProfile: (profileID: string, userdata:ProfileData, userName:UserName) => void;
 };
 interface Woo {
     woo:FormItemProps;
@@ -128,7 +128,7 @@ function Profile(props: Props) {
             let targetClass = elem.classList[i];
             if ( profileDataKeySet.has(targetClass) && profileData[targetClass] !== elem.value ){
                 profileData[targetClass] = elem.value.trim();
-                props.updateProfile(props.userName.userID, profileData);
+                props.updateProfile(props.userName.userID, profileData, props.userName);
             };
         };
     };
@@ -152,7 +152,7 @@ function Profile(props: Props) {
             let targetClass = elem.classList[i];
             if ( profileDataKeySet.has(targetClass) && profileData[targetClass] !== elem.value ){
                 profileData[targetClass] = elem.value.trim();
-                props.updateProfile(props.userName.userID, profileData);
+                props.updateProfile(props.userName.userID, profileData, props.userName);
             };
         };
     };

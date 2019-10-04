@@ -26,7 +26,7 @@ interface PropsWithErrorMessages {
 type Props = PropsWithoutProfileData | PropsWithProfileData | ErrorMessages;
 
 interface DispatchProps {
-    updateProfile: (profileID: string, profileData: ProfileData) => void;
+    updateProfile: (profileData: ProfileData, userName:UserName) => void;
 };
 
 interface OwnProps { };
@@ -85,8 +85,8 @@ function mapStateToProps(state: StoreState): Props {
 
 function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
     return {
-        updateProfile: (profileID: string, profileData: ProfileData) => {
-            return dispatch(updateProfile(profileID, profileData) as any);
+        updateProfile: (profileData: ProfileData, userName:UserName) => {
+            return dispatch(updateProfile(profileData, userName) as any);
         }
     };
 };
