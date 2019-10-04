@@ -17,6 +17,17 @@ enum ModalName {
     AvatarOption,
 };
 
+const formItemLayout = {
+    labelCol: {
+        xs: { span: 24 },
+        sm: { span: 1 },
+    },
+    wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 23 },
+    },
+};
+
 interface Props {
     userName: UserName;
     editEnable: boolean; //true when auth user and userID is equal
@@ -508,8 +519,9 @@ class ProfileClass extends React.Component<Props, State> {
                             </Tooltip>
                             <Meta title='Location' />
                             <Tooltip overlayStyle={this.tooltipVisibility()} title='Search Country'>
-                                <AutoComplete
-                                    className='clear-diabled marginTop10px margin-bottom-24px'
+                                <Form.Item required {...formItemLayout} label=' '>
+                                    <AutoComplete
+                                    className='clear-diabled marginTop10px'
                                     style={{ width: '100%' }}
                                     disabled={!this.props.editEnable}
                                     allowClear
@@ -534,10 +546,11 @@ class ProfileClass extends React.Component<Props, State> {
                                             </Option>
                                         );
                                     }))}
-                                </AutoComplete>
+                                </AutoComplete></Form.Item>
                             </Tooltip>
                             {/* <Tooltip trigger='hover' overlayStyle={this.tooltipVisibility()} title='Search US States'> */}
                             <Tooltip trigger='hover' title='Search US States'>
+                            <Form.Item required {...formItemLayout} label=' '>
                             <Select
                                 className='clear-diabled marginTop10px margin-bottom-24px'
                                 mode='single'
@@ -562,7 +575,7 @@ class ProfileClass extends React.Component<Props, State> {
                                 {states.map((item, index)=>{
                                     return <Option key={index} value={item}>{item}</Option>
                                 })}
-                            </Select>
+                            </Select></Form.Item>
                             </Tooltip>
                             <InputForm
                                 hidden={false}
