@@ -6,7 +6,6 @@ import WhichComponent from './WhichComponent';
 import { orgFetchStatuses } from '../../redux/fetchStatuses';
 
 function mapStateToProps(state: StoreState) {
-    // console.log('orgs container', state);
     switch (state.orgState.orgFetchStatus) {
         case orgFetchStatuses.NONE:
         case orgFetchStatuses.FETCHING:
@@ -22,7 +21,6 @@ function mapStateToProps(state: StoreState) {
             break;
 
         case orgFetchStatuses.SUCCESS:
-            // typescript isn't good at switch case yet... 
             let orgList = state.orgState as OrgList
             return {
                 orgList: orgList.orgList,
@@ -34,7 +32,7 @@ function mapStateToProps(state: StoreState) {
                 orgFetchStatus: state.orgState.orgFetchStatus
             };
             break;
-    }
+    };
 };
 
 export default connect(mapStateToProps)(WhichComponent);

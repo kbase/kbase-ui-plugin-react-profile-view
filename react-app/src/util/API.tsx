@@ -1,4 +1,4 @@
-import { ProfileData } from "../redux/interfaces";
+import { ProfileData, UserName } from '../redux/interfaces';
 
 export async function getBFFServiceUrl(token: string, baseURL: string) {
     // TODO: for dev, the baseUrl will be whatever works for the CRA workflow, which is ''.
@@ -25,7 +25,6 @@ export async function getBFFServiceUrl(token: string, baseURL: string) {
         body: stringBody
     });
     const responseJson = await response.json();
-    console.log("getBFFServiceUrl", responseJson)
     return responseJson.result[0]['url'];
 }
 
@@ -38,47 +37,44 @@ export async function getBFFServiceUrl(token: string, baseURL: string) {
 export async function fetchProfileAPI(id: string, token: string, baseURL: string) {
     const bffServiceUrl = await getBFFServiceUrl(token, baseURL);
     let url = bffServiceUrl + '/fetchUserProfile/' + id;
-    let errorStatus;
     const response = await fetch(url, {
         method: 'GET'
     });
-    console.log("fetchProfileAPI", response)
     if (response.status === 404) {
         console.warn('404 response:', response);
-        return [response.status, response.statusText]
+        return [response.status, response.statusText];
     } else if (response.status === 500) {
         console.error('500 response:', response);
-        return [response.status, response.statusText]
-    }
+        return [response.status, response.statusText];
+    };
     try {
         const profile = await response.json();
         return profile;
     } catch (err) {
         console.error('profile fetch failed', response);
-        return [response.status, response.statusText]
-    }
-}
+        return [response.status, response.statusText];
+    };
+};
 
 /**
  * update profile 
- * method "UserProfile.update_user_profile" takes top level key of profile object. 
+ * method 'UserProfile.update_user_profile' takes top level key of profile object. 
  * @param token 
  * @param baseURL 
  * @param userdata 
+ * @param user
  */
-export async function updateProfileAPI(token: string, baseURL: string, userdata:ProfileData) {
+export async function updateProfileAPI(token: string, baseURL: string, userdata:ProfileData, user:UserName) {
     // console.log(userdata)
-
-// export async function updateProfileAPI(token: string, baseURL: string, updatedUserProfleString:string) {
+    
+    // let newParam = [ { profile: { user: { realname: 'Akiyo Marukawa', username: 'amarukawa' }, profile: {userdata: userdata}}}]
+    let newParam = [ { profile: { user: { realname: user.name, username: user.userID }, profile: {userdata: userdata}}}]
     const body = {
         version: '1.1',
         method: 'UserProfile.update_user_profile',
-        params: [ { profile: { user: { realname: "Akiyo Marukawa", username: "amarukawa" }, profile: {userdata: userdata}}}]
-        // params: [ { profile: { user: { realname: "Akiyo Marukawa", username: "amarukawa" }, userdata: userdata}}]
+        params: newParam
     };
     const stringBody = JSON.stringify(body);
-    //TODO: Akiyo - remove this after testing
-    baseURL = 'https://ci.kbase.us';
     const url = baseURL + '/services/user_profile/rpc';
     const response = await fetch(url, {
         method: 'POST',
@@ -89,8 +85,17 @@ export async function updateProfileAPI(token: string, baseURL: string, userdata:
         },
         body: stringBody
     });
-    return(response.status);
-}
+    if(response.status === 200) {
+        return(response.status);
+    } else {
+        let responseJSON = await response.json();
+        let responseArray:Array<number|string> = [
+                response.status, 
+                responseJSON.error.message
+            ];
+        return responseArray;
+    };
+};
 
 /**
  * Return list of narratives
@@ -108,15 +113,16 @@ export async function fetchNarrativesAPI(param: string, token: string, baseURL: 
     });
     if (response.status === 500) {
         console.error('Fetch Narratives 500 response:', response);
-        return;
-    }
+        return [response.status, response.statusText];
+    };
     try {
         const narratives = await response.json();
         return narratives;
     } catch (err) {
         console.error('fetch narratives failed', response);
-    }
-}
+        return [response.status, response.statusText];
+    };
+};
 
 /**
  * returns list of orgs that profile and logged in user are both associated with.
@@ -134,15 +140,16 @@ export async function fetchOrgsOfProfileAPI(id: string, token: string, baseURL: 
     });
     if (response.status === 500) {
         console.error('500 response:', response);
-        return;
-    }
+        return [response.status, response.statusText];
+    };
     try {
         const orgs = await response.json();
         return orgs;
     } catch (err) {
         console.error('fetch org failed', response);
-    }
-}
+        return [response.status, response.statusText];
+    };
+};
 
 /**
  * returns list of users that are filtered by search values
@@ -168,8 +175,8 @@ export async function filteredUserAPI(searchValue: string, token: string, baseUR
     });
     if (response.status === 500) {
         console.error('500 response:', response);
-        return;
-    }
+        return [response.status, response.statusText];
+    };
     try {
         const res = await response.json();
         // if you try to: return response.json, it will get error below
@@ -178,5 +185,6 @@ export async function filteredUserAPI(searchValue: string, token: string, baseUR
         return res;
     } catch (err) {
         console.error('fetch search users failed', response);
-    }
-}
+        return [response.status, response.statusText];
+    };
+};

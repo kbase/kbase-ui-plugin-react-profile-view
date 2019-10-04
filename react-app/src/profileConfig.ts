@@ -4,13 +4,6 @@
  * modified some of them to make dealing with ant design a bit easier.
  */
 
-export const maxInputLength = {
-    researchStatement: 1000,
-    department: 50,
-    position: 50,
-    name: 100
-}
-
 
 export const researchInterestsList = [
     { "value": "Genome Annotation", "label": "Genome Annotation" },

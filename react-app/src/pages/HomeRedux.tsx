@@ -28,6 +28,7 @@ interface UserProfileViewParams {
 };
 
 function mapStateToProps(state: StoreState, ownProps: OwnProps): StateProps {
+    
     const {
         auth: { userAuthorization },
         app: {

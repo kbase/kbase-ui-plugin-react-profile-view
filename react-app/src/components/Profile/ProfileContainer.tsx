@@ -1,8 +1,14 @@
+/**
+ * 
+ * NOT IN USE
+ * 
+ */
+
 import React from 'react';
 import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
 
-import { UserName, ProfileData, StoreState, ProfileView, ProfileFetchStatus } from '../../redux/interfaces';
+import { UserName, ProfileData, StoreState, ProfileView } from '../../redux/interfaces';
 import {  updateProfile } from '../../redux/actions';
 import whichcomponent from './WhichComponent';
 
@@ -22,12 +28,11 @@ interface PropsWithoutProfileData {
 type Props = PropsWithoutProfileData | PropsWithProfileData;
 
 interface DispatchProps {
-    updateProfile: (profileID: string, profileData: ProfileData) => void;
+    updateProfile: (profileData: ProfileData, userName:UserName) => void;
 };
 
 
 interface OwnProps {};
-let component: JSX.Element;
 function mapStateToProps(state: StoreState): Props {
     // console.log('profile state container', state)
     // token can be null
@@ -79,8 +84,8 @@ function mapStateToProps(state: StoreState): Props {
 
 function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
     return {
-        updateProfile: (profileID: string, profileData: ProfileData) => {
-            return dispatch(updateProfile(profileID, profileData) as any);
+        updateProfile: (profileData: ProfileData, userName:UserName) => {
+            return dispatch(updateProfile(profileData, userName) as any);
         }
     };
 };

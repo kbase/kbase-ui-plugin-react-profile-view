@@ -4,13 +4,11 @@ import Adapter from 'enzyme-adapter-react-16';
 import Home from './Home';
 configure({ adapter: new Adapter() });
 
-function setTitle(title: string) {
-    // does nothing
-}
 let loadNarratives = (filter: string, profileID: string) => {};
-let loadProfile = (profileID: string) => {};
-let updateProfile = (profileID: string) => {};
-let loadOrgs = (profileID: string) => {};
+let getProfile = (profileID: string) => {};
+let getOrgs=(profileID: string) => {};
+let setTitle= (title: string) => {};
+
 it('Home loads without crashing', () => {
     // TODO: shouldn't check tokens into github
     const token = 'xxx';
@@ -18,13 +16,12 @@ it('Home loads without crashing', () => {
     const loggedInUser = 'amarukawa';
     shallow(<Home 
                 token={token} 
-                baseURL={baseURL} 
+                authUsername={loggedInUser}
                 username={null} 
-                authUsername={loggedInUser} 
+                baseURL={baseURL} 
                 setTitle={setTitle}
                 loadNarratives={loadNarratives}
-                loadProfile={loadProfile}
-                updateProfile={updateProfile}
-                loadOrgs={loadOrgs}
+                getProfile={getProfile}
+                getOrgs={getOrgs}
             />);
 });

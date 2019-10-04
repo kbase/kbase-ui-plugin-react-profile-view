@@ -19,11 +19,10 @@ export function loadNarratives (filter:string, profileID: string) {
             const token = rootStore.auth.userAuthorization.token;
             const baseURL = rootStore.app.config.baseUrl;
 
-            //TODO: AKIYO replace ci.kbase with baseURL
             switch(filter) {
                 case "they":
-                    const publicNarratives = fetchNarrativesAPI('public', token, 'https://ci.kbase.us/');
-                    const sharedNarratives = fetchNarrativesAPI('shared', token, 'https://ci.kbase.us/');
+                    const publicNarratives = fetchNarrativesAPI('public', token, baseURL);
+                    const sharedNarratives = fetchNarrativesAPI('shared', token, baseURL);
                     let allNarratives:Array<NarrativeData> = [];
                     let narrativeList:Array<NarrativeData> = [];
                     Promise.all([publicNarratives, sharedNarratives]).then((response) => {
@@ -66,7 +65,7 @@ export function loadNarratives (filter:string, profileID: string) {
                 case 'mine':
                 case 'shared':
                 case 'public':
-                    const response = await fetchNarrativesAPI(filter, token, 'https://ci.kbase.us/');
+                    const response = await fetchNarrativesAPI(filter, token, baseURL);
 
                     if(typeof response !== 'undefined') {
                         // console.log("rootstore", rootStore)

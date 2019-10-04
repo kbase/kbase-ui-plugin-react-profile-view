@@ -25,5 +25,5 @@ export function dateDisplay(date: number): Array<string> {
         return [dayAndTime, ((delta)*10).toFixed(0) + ' min ago'];
     } else {
         return [dayAndTime, 'less than a min ago']
-    }
+    };
 };

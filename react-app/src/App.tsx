@@ -16,7 +16,7 @@ const App: React.FC = () => {
         <Provider store={store}>
             <AppBase>
                 <AuthGate required={true}>
-                    <div className="App">
+                    <div className='App'>
                         <Layout style={{ minHeight: '100vh' }}>
                             <Content style={{ backgroundColor: 'white' }}>
                                 <HomeRedux />

@@ -12,7 +12,6 @@ import orgsReducer from './org_reducers';
 
 
 const rootReducer: Reducer<StoreState | undefined, Action> = (state: StoreState | undefined, action: Action) => {
-
   // Inital combine state created by store is loaded first 
   const kbaseUIStore = reducer(state as StoreState, action);
   // if state doesn't load for whatever the reason possibly could be 
@@ -45,9 +44,9 @@ const rootReducer: Reducer<StoreState | undefined, Action> = (state: StoreState 
         
       default:
         return state;
-    }
-  }
-}
+    };
+  };
+};
 
 
 export default rootReducer;

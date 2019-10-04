@@ -1,8 +1,8 @@
 import React from 'react';
 
 import Orgs from './Orgs';
-import Spinner from '../Spinner';
-import ErrorMessage from '../ErrorMessage';
+import Spinner from '../../pages/Spinner';
+import ErrorMessage from '../../pages/ErrorMessage';
 
 export default function WhichComponent(props: any) {
     switch (props.orgFetchStatus) {
@@ -19,8 +19,13 @@ export default function WhichComponent(props: any) {
             break;
 
         case 'error':
+            let newProps = {
+                fetchStatus: 'error',
+                errorMessages: [props[0], props[1]]
+            }
             return <ErrorMessage
-                errorMessage={['status code', 'statusText']} />;
+                    errorMessageProps={newProps}
+            />;
             break;
 
         default:

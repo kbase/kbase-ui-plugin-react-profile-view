@@ -2,7 +2,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { AnyAction } from 'redux';
 import { sendTitle } from '@kbase/ui-lib';
 import { fetchProfileAPI, updateProfileAPI } from '../../util/API';
-import { StoreState, UserProfileService, ProfileView,  ProfileData} from "../interfaces";
+import { StoreState, UserProfileService, ProfileView,  ProfileData, ErrorMessages, UserName} from "../interfaces";
 import { fetchProfile, loadProfile, fetchErrorProfile } from './actionCreators';
 import { profileFetchStatuses } from '../fetchStatuses';
 
@@ -20,13 +20,13 @@ export function getProfile(profileID:string) {
             const token = rootStore.auth.userAuthorization.token;
             const baseURL = rootStore.app.config.baseUrl;
             let payload:ProfileView;
-            let response:UserProfileService  | Array<string> = await fetchProfileAPI(profileID, token, baseURL);
-            console.log('getProfile', response);
+            let response:UserProfileService  | Array<number|string> = await fetchProfileAPI(profileID, token, baseURL);
             let profileEdit:boolean;
-            
+            console.log(response)
             if (typeof response !== 'undefined' && !Array.isArray(response)) {
-                if (response.user.username !== rootStore.auth.userAuthorization.username) {
-                    dispatch(sendTitle('User Profile for ' + response.user.realname));
+                let responseData = response as UserProfileService;
+                if (responseData.user.username !== rootStore.auth.userAuthorization.username) {
+                    dispatch(sendTitle('User Profile for ' + responseData.user.realname));
                     profileEdit = false;
                 } else {
                     profileEdit = true;
@@ -34,19 +34,27 @@ export function getProfile(profileID:string) {
                 // shape response to profile before dispatch 
                 payload = {
                     userName: {
-                        userID: response.user.username,
-                        name: response.user.realname
+                        userID: responseData.user.username,
+                        name: responseData.user.realname
                     },
                     editEnable: profileEdit,
-                    profileData: response.profile.userdata,
-                    gravatarHash: response.profile.synced.gravatarHash,
+                    profileData: responseData.profile.userdata,
+                    gravatarHash: responseData.profile.synced.gravatarHash,
                     profileFetchStatus: profileFetchStatuses.SUCCESS
                 }
                 dispatch(loadProfile(payload));
             } else if (Array.isArray(response)){
                 //  set "profileIsFetching" to "error"
-                dispatch(fetchErrorProfile());
+                let errorPayload: ErrorMessages = {
+                    errorMessages: response,
+                    profileFetchStatus: profileFetchStatuses.ERROR
+                }
+                dispatch(fetchErrorProfile(errorPayload));
+            } else {
+                 console.log(response)  
             }
+        } else {
+            console.log('auth is null ', rootStore.auth.userAuthorization)
         }
     }
 }
@@ -56,25 +64,29 @@ export function getProfile(profileID:string) {
  * set the spinner with fetchProfile action,
  * then call updateProfileAPI.
  * when the repose is good, update the profile with getProfile 
- * @param profileID 
+ * @param userName 
  * @param userdata 
  */
 
-//TODO: change baseURL back to const
-export function updateProfile(profileID:string, userdata:ProfileData) {
+export function updateProfile(userdata:ProfileData, userName:UserName) {
     return async function (dispatch:ThunkDispatch<StoreState, void, AnyAction>, getState:() => StoreState ) {
         dispatch(fetchProfile())
         const rootStore = getState();
         if(rootStore.auth.userAuthorization !== null) {
             const token = rootStore.auth.userAuthorization.token;
             let baseURL = rootStore.app.config.baseUrl;
-            baseURL = 'https://ci.kbase.us';
-            let response = await updateProfileAPI(token, baseURL, userdata);
-            console.log("update response", response)
+            // let user = {name: name, userID: profileID}
+            let response = await updateProfileAPI(token, baseURL, userdata, userName);
             if(response === 200) {
-                dispatch(getProfile(profileID))
+                dispatch(getProfile(userName.userID))
             } else {
-                dispatch(fetchErrorProfile());
+                if (Array.isArray(response)) {
+                    let errorPayload: ErrorMessages = {
+                        errorMessages: response,
+                        profileFetchStatus: profileFetchStatuses.ERROR
+                    }
+                    dispatch(fetchErrorProfile(errorPayload));
+                }
             }
         }
 

@@ -1,10 +1,12 @@
 import React from 'react';
 
 import ProfileClass from './ProfileClass';
-import Spinner from '../Spinner';
-import ErrorMessage from '../ErrorMessage'
+import Spinner from '../../pages/Spinner';
+import ErrorMessage from '../../pages/ErrorMessage'
+
 
 export default function OhWhat(props: any) {
+    console.log('ohwhattodo', props)
     switch (props.profileFetchStatus) {
         case 'none':
             return <Spinner />;
@@ -24,8 +26,12 @@ export default function OhWhat(props: any) {
             break;
 
         case 'error':
+            let newErrorMessageProps = {
+                errorMessages: props.errorMessages,
+                fetchStatus: props.profileFetchStatus
+            };
             return <ErrorMessage
-                errorMessage={['status code', 'statusText']}
+                errorMessageProps={newErrorMessageProps}
             />;
             break;
 
@@ -33,6 +39,6 @@ export default function OhWhat(props: any) {
             return (<div>hello</div>);
             break;
 
-    }
+    };
 
-}
+};
