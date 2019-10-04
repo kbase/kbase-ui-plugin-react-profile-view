@@ -34,7 +34,7 @@ interface Props {
     updateStoreState: (data: any, userName: UserName) => void;
 };
 
-const formItemLayout1 = {
+const formItemLayout = {
     labelCol: {
         xs: { span: 24 },
         sm: { span: 1 },
@@ -279,7 +279,7 @@ class AffiliationForm extends React.Component<Props, State> {
                 <div id='affiliations'>
                     {this.state.affiliations.map((position, index) => (
                         <form key={index} className='affiliations ant-form ant-form-inline' name={index.toString(10)} autoComplete="on">
-                            <Form.Item {...formItemLayout1}
+                            <Form.Item {...formItemLayout}
                                 className="profile-input-form"
                                 required
                                 label=' '
@@ -297,7 +297,7 @@ class AffiliationForm extends React.Component<Props, State> {
                                     placeholder={'Job title'}
                                     onChange={(event) => { this.affiliationJobTitleOnChange(event, index) }}
                                 /></Form.Item>
-                            <Form.Item {...formItemLayout1}
+                            <Form.Item {...formItemLayout}
                                 className="profile-input-form"
                                 required
                                 label=' '
@@ -333,7 +333,7 @@ class AffiliationForm extends React.Component<Props, State> {
                                     })}
                                 </AutoComplete></Form.Item>
                             <Tooltip overlayStyle={this.tooltipVisibility()} title='Enter 4 digits start year and end year'>
-                                <Form.Item {...formItemLayout1}
+                                <Form.Item {...formItemLayout}
                                     className="profile-input-form"
                                     required
                                     label=' '
@@ -350,7 +350,7 @@ class AffiliationForm extends React.Component<Props, State> {
                                         placeholder='Start'
                                         defaultValue={position.started}
                                     /></Form.Item>
-                                <Form.Item {...formItemLayout1}
+                                <Form.Item {...formItemLayout}
                                     className="profile-input-form"
                                     required
                                     label=' '
