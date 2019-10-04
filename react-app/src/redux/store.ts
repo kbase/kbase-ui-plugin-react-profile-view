@@ -1,9 +1,9 @@
-import { createStore, compose, applyMiddleware } from "redux";
-import thunk from "redux-thunk";
+import { createStore, compose, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
 
-import { makeBaseStoreState } from "@kbase/ui-lib";
+import { makeBaseStoreState } from '@kbase/ui-lib';
 import { StoreState } from './interfaces';
-import rootReducer from "./reducers/index";
+import rootReducer from './reducers/index';
 import { profileFetchStatuses, orgFetchStatuses } from './fetchStatuses';
 
 // I think i need to use action creator initialRenderOrgs & initialRenderProfile instead

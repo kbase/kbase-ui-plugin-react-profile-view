@@ -12,7 +12,6 @@ interface Props {
  * @param props 
  */
 function Orgs(props: Props) {
-    console.log(props)
     let orgList = props.orgList;
     return(
             <ul style={{ textAlign: 'left' }}>
@@ -24,8 +23,8 @@ function Orgs(props: Props) {
                     </li>
                 ))}
             </ul>
-    )
+    );
     
-}
+};
 
 export default Orgs;

@@ -1,12 +1,15 @@
+/**
+ * 
+ * NOT IN USE
+ * 
+ */
 import React from 'react';
 
 import Profile from './Profile';
-import ProfileClass from './Profile';
 import Spinner from '../../pages/Spinner';
 import ErrorMessage from '../../pages/ErrorMessage'
 
 export default function WhichComponent(props: any) {
-    // console.log('whichcomponent', props)
     switch (props.profileFetchStatus) {
         case 'none':
             return <Spinner />;
@@ -39,6 +42,6 @@ export default function WhichComponent(props: any) {
             return (<div>hello</div>);
             break;
 
-    }
+    };
 
-}
+};

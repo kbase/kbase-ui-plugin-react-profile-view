@@ -116,7 +116,7 @@ export interface UserProfileService {
 export interface UsernameRealname {
     username: string;
     realname: string;
-}
+};
 
 
 // need this for adding type to StoreState - see store.ts
@@ -127,11 +127,11 @@ export interface  ProfileState {
 export interface ErrorMessages {
     errorMessages: Array<number|string>;
     profileFetchStatus: profileFetchStatuses.ERROR;
-}
+};
 
 export interface ProfileFetchStatus{
     profileFetchStatus: profileFetchStatuses.NONE | profileFetchStatuses.ERROR | profileFetchStatuses.SUCCESS | profileFetchStatuses.FETCHING;
-}
+};
 
 export interface ProfileView {
     userName: UserName,
@@ -139,7 +139,7 @@ export interface ProfileView {
     profileData: ProfileData,
     gravatarHash: string,
     profileFetchStatus: profileFetchStatuses.SUCCESS
-}
+};
 
 export interface ProfileData {
     organization: string;
@@ -157,26 +157,26 @@ export interface ProfileData {
     fundingSource: string;
     gravatarDefault: string;
     avatarOption: string;
-}
+};
 
 export interface Affiliation {
     title: string;
     organization: string;
     started: string;
     ended: string;
-}
+};
 
 // used in Profile View app
 export interface UserName {
     name: string;
     userID: string;
-}
+};
 
 // used in reducer 
 export interface loadProfileAction {
     type: string;
     payload: ProfileView | ProfileFetchStatus | ErrorMessages;
-}
+};
 
 
 

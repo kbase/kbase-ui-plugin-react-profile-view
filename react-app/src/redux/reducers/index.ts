@@ -44,9 +44,9 @@ const rootReducer: Reducer<StoreState | undefined, Action> = (state: StoreState 
         
       default:
         return state;
-    }
-  }
-}
+    };
+  };
+};
 
 
 export default rootReducer;

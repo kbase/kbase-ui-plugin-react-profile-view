@@ -63,7 +63,6 @@ class InputForm extends React.Component<Props, State> {
     };
 
     componentDidMount() {
-        console.log(this.state)
         this.setState({requiredNotification : this.props.required})
     };
 

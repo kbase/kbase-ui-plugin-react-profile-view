@@ -42,7 +42,6 @@ function mapStateToProps(state: StoreState, ownProps: OwnProps): StateProps {
         throw new Error('This plugin only operates with authentication; no KBase token in store');
     }
     const params = (rawParams as unknown) as UserProfileViewParams;
-    console.log('baseUrl', baseUrl)
     return {
         token: userAuthorization.token,
         authUsername: userAuthorization.username,

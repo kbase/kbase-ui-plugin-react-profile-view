@@ -70,7 +70,7 @@ class TextAreaForm extends React.Component<Props, State> {
         if (this.props.type === "number" && isNaN(parseInt(inputValue, 10))) {
             this.setState({ validateStatus: 'error', helpText: 'Expecting numbers' });
             return;
-        }
+        };
         // check against min and max length
         if (typeof this.props.maxLength !== 'undefined') {
             let foo: State['validateStatus'];
@@ -108,7 +108,7 @@ class TextAreaForm extends React.Component<Props, State> {
     updateStoreStateProperty(event: React.FocusEvent<HTMLTextAreaElement> | React.KeyboardEvent<HTMLTextAreaElement>) {
         // console.log(data)
         if (!this.props.required) {
-            this.setState({ helpText: undefined })
+            this.setState({ helpText: undefined });
         };
         // any is used to use generic property 
         let data: any = this.props.data;
@@ -136,12 +136,11 @@ class TextAreaForm extends React.Component<Props, State> {
         if (typeof inputValue === 'string') {
             this.saveLocalState(inputValue);
             this.validateInput(inputValue);
-        }
-    }
+        };
+    };
 
     render() {
         return (
-            // <Form hidden={this.props.hidden}>
                 <Form.Item hasFeedback help={this.state.helpText} validateStatus={this.state.validateStatus}>
                     <TextArea
                         autosize
@@ -159,7 +158,6 @@ class TextAreaForm extends React.Component<Props, State> {
                         defaultValue={this.props.defaultValue}
                     />
                 </Form.Item>
-            // </Form>
         );
     };
 };

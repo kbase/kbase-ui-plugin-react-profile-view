@@ -4,7 +4,6 @@ import { profileFetchStatuses } from '../fetchStatuses';
 
 export default function profileReducer(state:StoreState, action: loadProfileAction): StoreState {
     const payload = action.payload;
-    console.log('profile reducers', payload, action.type)
     switch (action.type) {
         case profileActionTypes.FETCH_PROFILE_SUCCESS:
             return (
@@ -34,6 +33,6 @@ export default function profileReducer(state:StoreState, action: loadProfileActi
 
         default:
             return state;
-    }
+    };
 
-}
+};

@@ -1,11 +1,15 @@
+/**
+ * 
+ * NOT IN USE
+ */
+
 import React, { CSSProperties } from 'react';
-import { Row, Col, Card, Input, Tooltip, Form, Checkbox, Modal, Button } from 'antd';
+import { Row, Col, Card, Input, Tooltip, Form, Modal } from 'antd';
 import { FormItemProps } from 'antd/es/form';
 
 import { UserName, ProfileData } from '../../redux/interfaces';
 import nouserpic from '../../assets/nouserpic.png';
 import OrgsContainer from '../Orgs/OrgsContainer';
-import { maxInputLength, researchInterestsList } from '../../profileConfig';
 
 const { Meta } = Card;
 const { TextArea } = Input;
@@ -97,7 +101,7 @@ function Profile(props: Props) {
     
     // Set name and tooltip 
     function setName(){
-        return <Tooltip title='must be less than 100 characters'><Input className="clear-disabled" maxLength={maxInputLength.name} defaultValue={props.userName.name}/> </Tooltip>
+        return <Tooltip title='must be less than 100 characters'><Input className="clear-disabled" maxLength={100} defaultValue={props.userName.name}/> </Tooltip>
     }
 
     function handleOnClick(event:any) {
@@ -190,10 +194,10 @@ function Profile(props: Props) {
                         </Tooltip>
                         <Meta title="Position" />
                         {/* job title less than 50 */}
-                        <Input className="clear-disabled" maxLength={maxInputLength['50']} defaultValue={setJobTitle()}/> 
+                        <Input className="clear-disabled" maxLength={50} defaultValue={setJobTitle()}/> 
                         <Meta title="Department" />
                         <Tooltip overlayStyle={tooltipVisibility()} trigger={'click'} title='must be more than 2 and less than 50 characters'>
-                            <Input className="clear-disabled department" readOnly maxLength={maxInputLength.department} onClick={handleOnClick} onBlur={handleOnBlur} defaultValue={profile.department} />
+                            <Input className="clear-disabled department" readOnly maxLength={50} onClick={handleOnClick} onBlur={handleOnBlur} defaultValue={profile.department} />
                         </Tooltip>
                         <Meta title="Organization" />
                         <Input className="clear-disabled" disabled defaultValue={profile.organization}/>
@@ -246,8 +250,8 @@ function Profile(props: Props) {
                         {/* less than 1000 */}
                         <Form.Item>
                         <Tooltip overlayStyle={tooltipVisibility()} trigger={'click'} title='must be less than 1000 characters'>
-                            <TextArea autosize maxLength={maxInputLength.researchStatement} readOnly className='clear-disabled researchStatement' onClick={handleOnClick} onBlur={researchStatementChange} defaultValue={props.profileData.researchStatement} onChange={onChangeHanlder} /> 
-                            {/* <TextArea autosize maxLength={maxInputLength.researchStatement} readOnly className='clear-disabled researchStatement' onClick={handleOnClick} onBlur={researchStatementChange} value={props.profileData.researchStatement}/>  */}
+                            <TextArea autosize maxLength={1000} readOnly className='clear-disabled researchStatement' onClick={handleOnClick} onBlur={researchStatementChange} defaultValue={props.profileData.researchStatement} onChange={onChangeHanlder} /> 
+                            {/* <TextArea autosize maxLength={1000} readOnly className='clear-disabled researchStatement' onClick={handleOnClick} onBlur={researchStatementChange} value={props.profileData.researchStatement}/>  */}
                         </Tooltip>
                         </Form.Item>
                         </Card>

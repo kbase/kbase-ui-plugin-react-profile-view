@@ -19,10 +19,6 @@ interface PropsWithoutProfileData {
     profileFetchStatus: string;
 };
 
-interface PropsWithErrorMessages {
-    errorMessages: ErrorMessages
-};
-
 type Props = PropsWithoutProfileData | PropsWithProfileData | ErrorMessages;
 
 interface DispatchProps {
@@ -30,9 +26,8 @@ interface DispatchProps {
 };
 
 interface OwnProps { };
-let component: JSX.Element;
+
 function mapStateToProps(state: StoreState): Props {
-    console.log('profile state container', state, state.profileView.profileFetchStatus)
     // token can be null
     let userAuthToken;
     if (state.auth.userAuthorization !== null) {

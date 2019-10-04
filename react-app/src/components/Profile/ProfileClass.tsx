@@ -1,13 +1,11 @@
 import React, { CSSProperties } from 'react';
 import { Row, Col, Card, Input, Tooltip, Form, Checkbox, Modal, Select, Button, Empty, AutoComplete} from 'antd';
-import { FormItemProps } from 'antd/es/form';
-import { SelectValue } from 'antd/es/select';
 import { UserName, ProfileData, Affiliation } from '../../redux/interfaces';
 import nouserpic from '../../assets/nouserpic.png';
 import OrgsContainer from '../Orgs/OrgsContainer';
 import { InputForm,  TextAreaForm, AffiliationForm } from './ProfileForms';
 
-import { maxInputLength, researchInterestsList, jobTitles } from '../../profileConfig';
+import {researchInterestsList, jobTitles } from '../../profileConfig';
 import { fundingSources, countryCodes, institution, states, avatarOptions, gravatarDefaults } from '../../dataSources';
 
 const { Meta } = Card;
@@ -17,7 +15,7 @@ const { Option } = Select;
 enum ModalName {
     ResearchInterests,
     AvatarOption,
-}
+};
 
 interface Props {
     userName: UserName;
@@ -35,7 +33,6 @@ interface State {
     jobTitleValue: string; // value returned by onChange
     jobTitleOther: string | undefined;
     fundingSourceValue: string; // value returned from pulldown
-    locationSuggestions: Array<string>;
     country: string;
     city: string;
     postalCode: string;
@@ -60,7 +57,6 @@ class ProfileClass extends React.Component<Props, State> {
             jobTitleValue: '',
             jobTitleOther: undefined,
             fundingSourceValue: '',
-            locationSuggestions: [],
             country: '',
             city: '',
             postalCode: '',
@@ -75,15 +71,12 @@ class ProfileClass extends React.Component<Props, State> {
         this.USStateVisibility = this.USStateVisibility.bind(this);
         this.gravaterSrc = this.gravaterSrc.bind(this); // setting img src for gravater
         this.setName = this.setName.bind(this); // creating html element including tooltip to fit in card header 
-        this.affiliations = this.affiliations.bind(this); // handles no-data or underfined data and populate data
         this.researchInterests = this.researchInterests.bind(this); // handles no-data or underfined data and populate data
         this.institutionToolTip = this.institutionToolTip.bind(this);
         this.jobTitleOnChange = this.jobTitleOnChange.bind(this); // update/save value from pull down
-        this.foo = this.foo.bind(this);
         this.researchInterestOnSumbit = this.researchInterestOnSumbit.bind(this);
         this.researchInterestsOtherOnChange = this.researchInterestsOtherOnChange.bind(this);
         this.researchInterestOnChange = this.researchInterestOnChange.bind(this); // update/save value from checkbox group 
-        this.locationOnSearch = this.locationOnSearch.bind(this)
         this.fundingSourceOnChange = this.fundingSourceOnChange.bind(this);
         this.institutionSave = this.institutionSave.bind(this);
         this.institutionOnSearch = this.institutionOnSearch.bind(this);
@@ -92,7 +85,6 @@ class ProfileClass extends React.Component<Props, State> {
     };
 
     componentDidMount() {
-        console.log('profile props', this.props)
         let profile: ProfileData;
         profile = this.props.profileData;
 
@@ -106,9 +98,9 @@ class ProfileClass extends React.Component<Props, State> {
             state: profile.state,
             gravatarDefault: profile.gravatarDefault,
             avatarOption: profile.avatarOption
-        })
+        });
         if (Array.isArray(profile.researchInterests)) {
-            this.setState({ researchInterestsValue: profile.researchInterests })
+            this.setState({ researchInterestsValue: profile.researchInterests });
         };
         if (Array.isArray(profile.affiliations)) {
             this.setState({ affiliations: profile.affiliations });
@@ -119,10 +111,9 @@ class ProfileClass extends React.Component<Props, State> {
     // if you're going ot use prevProps, prevState
     // you need to put all these three for typescript to be happy.
     componentDidUpdate(prevProps: Props, prevState: State, snapshot: any) {
-        console.log('componenetupdate', this.state)
         if(prevState === this.state){
             return;
-        }
+        };
     };
 
 
@@ -144,18 +135,17 @@ class ProfileClass extends React.Component<Props, State> {
         } else {
             return {display: 'none'};
         };
-    }
+    };
 
     // Set gravatarURL
     gravaterSrc() {
         if (this.props.profileData['avatarOption'] === 'silhoutte' || !this.props.gravatarHash) {
-            // let gravatar = <img style={{ maxWidth: '100%', margin: '8px 0px' }} alt="avatar" src={nouserpic} />;
-            return nouserpic
+            // let gravatar = <img style={{ maxWidth: '100%', margin: '8px 0px' }} alt='avatar' src={nouserpic} />;
+            return nouserpic;
         } else if (this.props.gravatarHash) {
             return 'https://www.gravatar.com/avatar/' + this.props.gravatarHash + '?s=300&amp;r=pg&d=' + this.props.profileData.gravatarDefault;
-            // let gravatar = <img style={{ maxWidth: '100%', margin: '8px 0px' }} alt="avatar" src={gravaterSrc} />;
-        }
-        return 'https://www.gravatar.com/avatar/' + this.props.gravatarHash + '?s=300&amp;r=pg&d=' + this.props.profileData.gravatarDefault;
+            // let gravatar = <img style={{ maxWidth: '100%', margin: '8px 0px' }} alt='avatar' src={gravaterSrc} />;
+        };
     };
 
     // Set name and tooltip 
@@ -163,11 +153,9 @@ class ProfileClass extends React.Component<Props, State> {
         return (
         <Tooltip overlayStyle={this.tooltipVisibility()} title='must be less than 100 characters'>
             <Input
-                className="clear-disabled"
+                className='clear-disabled'
                 readOnly={this.props.editEnable}
-                maxLength={maxInputLength.name}
-                // onBlur={(event)=>this.updateStoreStateProperty('userName.name', event)}//NEED to change
-                // onPressEnter={(event)=>this.updateStoreStateProperty('userName.name', event)}
+                maxLength={100}
                 defaultValue={this.props.userName.name ?  this.props.userName.name : ''}
             />
         </Tooltip>);
@@ -179,102 +167,19 @@ class ProfileClass extends React.Component<Props, State> {
             <div>
                 <p>Your primary association - organization, institution, business.<br />
                     You may enter your own value or chose from the option fileted by your entry.<br />
-                    National Labs derived from: <a href="https://science.energy.gov/laboratories/" target="_blank">DOE Web Site - Laboratories</a><br />
-                    US higher education institutions derived from: <a href="http://carnegieclassifications.iu.edu/index.php" target="_blank">Carnegie Classification of Institutions of Higher Education </a>
+                    National Labs derived from: <a href='https://science.energy.gov/laboratories/' target='_blank'>DOE Web Site - Laboratories</a><br />
+                    US higher education institutions derived from: <a href='http://carnegieclassifications.iu.edu/index.php' target='_blank'>Carnegie Classification of Institutions of Higher Education </a>
                 </p>
             </div>
         );
     };
-
-    // populate affiliations and handles case that affiliations list prop is empty
-    affiliations() {
-        if (Array.isArray(this.state.affiliations)) {
-            return (
-                <div id='affiliations'>
-                    {this.state.affiliations.map((position, index) => (
-                        <form key={index} className='affiliations' name={index.toString(10)} autoComplete="on">
-                            <Form.Item validateStatus={this.foo()}>
-                            <Input
-                                readOnly={!this.props.editEnable}
-                                style={{ width: '20%', display: 'inline' }}
-                                autoComplete='organization-title'
-                                type='text'
-                                className='clear-disabled'
-                                maxLength={maxInputLength['50']}
-                                defaultValue={position.title}
-                                placeholder={'Job title'}
-                                onChange={(event) => { this.affiliationJobTitleOnChange(event, index) }}
-                            /></Form.Item>
-                            <AutoComplete
-                                className='clear-disabled'
-                                style={{ width: '50%' }}
-                                allowClear
-                                disabled={!this.props.editEnable}
-                                placeholder='Organization'
-                                onSelect={(item) => { this.affiliationOnSelect(item, index) }}
-                                onSearch={this.institutionOnSearch}
-                                filterOption={(inputValue, option) => {
-                                    // return true;
-                                    if (typeof option.props.children === 'string') {
-                                        let item = option.props.children;
-                                        return item.toLowerCase().indexOf(inputValue.toLowerCase()) >= 0
-                                    } else {
-                                        return false
-                                    }
-
-                                }}
-                                defaultValue={position.organization}
-                            >
-                                {this.state.institutionFiltered.map((item) => {
-                                    return (
-                                        <Option className='clear-disabled' value={item} >
-                                            {item}
-                                        </Option>
-                                    );
-                                })}
-                            </AutoComplete>
-                            <Tooltip overlayStyle={this.tooltipVisibility()} title='Enter 4 digits start year and end year'>
-                            <Input
-                                readOnly={!this.props.editEnable}
-                                style={{ width: '80px', display: 'inline' }}
-                                onChange={(item) => { this.affiliationStartOnChange(item, index) }}
-                                type='string' maxLength={4}
-                                className='clear-disabled'
-                                placeholder='Start'
-                                defaultValue={position.started}
-                            />
-                            <Input
-                                readOnly={!this.props.editEnable}
-                                style={{ width: '80px', display: 'inline' }}
-                                onChange={(item) => { this.affiliationEndOnChange(item, index) }}
-                                type='string' maxLength={4}
-                                className='clear-disabled'
-                                placeholder='End'
-                                defaultValue={position.ended}
-                            />
-                            </Tooltip>
-                            <Button  style={{ margin: '10px', display: this.showEditButtons() }} type="primary" onClick={() => this.deleteAffiliation(index)}>
-                                delete
-                            </Button>
-                        </form>
-                    ))}
-                </div>
-            )
-        } else {
-            return (
-                <div><Empty image={Empty.PRESENTED_IMAGE_SIMPLE} /></div>
-            );
-        };
-    };
-
-
 
     // populate research interest and handles case that prop is empty
     researchInterests() {
         let researchInterests: Array<string> = [];
         if (Array.isArray(this.props.profileData.researchInterests)) {
             researchInterests = this.props.profileData.researchInterests;
-            if (researchInterests.includes("Other")) {
+            if (researchInterests.includes('Other')) {
                 return (
                     <ul style={{ textAlign: 'left' }}>
                         {researchInterests.map((interest) => (
@@ -302,7 +207,7 @@ class ProfileClass extends React.Component<Props, State> {
                 <div><Empty image={Empty.PRESENTED_IMAGE_SIMPLE} /></div>
             );
         };
-    }
+    };
 
     // show/hide edit/save buttons
     showEditButtons() {
@@ -317,7 +222,7 @@ class ProfileClass extends React.Component<Props, State> {
     // Modal Control  
     showModal(event: any, modal: ModalName | undefined) {
         if (this.props.editEnable === true) {
-            this.setState({ visibleModal: modal })
+            this.setState({ visibleModal: modal });
         };
     };
 
@@ -341,6 +246,7 @@ class ProfileClass extends React.Component<Props, State> {
             this.props.updateProfile(profileData, this.props.userName);
         };
     };
+
     /**
      * updates/saves local state
      * @param propertyName 
@@ -348,43 +254,10 @@ class ProfileClass extends React.Component<Props, State> {
      */
     setStateProperty(propertyName: string, value: string) {
         // any is used here for creating gereric property 
-        let newState: any = { [propertyName]: value.trim() }
+        let newState: any = { [propertyName]: value.trim() };
         this.setState(newState);
     };
 
-
-    /**
-     * Location 
-     * 
-     */
-    async locationOnSearch(value: string) {
-        // if (value.length > 10000) {
-        //     let suggestionsArr = [];
-        //     let url = 'https://autocomplete.geocoder.api.here.com/6.2/suggest.json?app_id=OsLgmo5czpVQ8Ofqvn7M&app_code=KR4vdU7nGqr_PRriINGH9Q&query=';
-        //     let fetchURL = url + value + "&=" + this.state.country + "callback=mycallbackFunction";
-        //     let result = await fetch(fetchURL, {
-        //         method: 'GET',
-        //         mode: 'cors',
-        //         headers: {
-        //             'content-type': 'application/json'
-        //         }
-        //     });
-        //     console.log(result)
-        //     try {
-        //         let suggestions = await result.json();
-        //         console.log(suggestions)
-        //         suggestionsArr = suggestions['suggestions']
-        //     } catch (error) {
-        //         console.error('humm')
-        //     }
-        //     let arr = [];
-        //     for (let i = 0; i < suggestionsArr.length; i++) {
-        //         arr.push(suggestionsArr[i].label)
-        //     }
-        //     this.setState({ locationSuggestions: arr })
-        // }
-
-    };
 
     /**
      *  Updates store state with local avatarOption state 
@@ -400,7 +273,7 @@ class ProfileClass extends React.Component<Props, State> {
                 if (typeof this.state.avatarOption !== 'undefined' ) profileData.avatarOption = this.state.avatarOption;
                 this.props.updateProfile(profileData, this.props.userName);
         };
-    }
+    };
 
     /**
      * 
@@ -408,12 +281,13 @@ class ProfileClass extends React.Component<Props, State> {
      */
     researchInterestsOtherOnChange(event: any) {
         if (typeof event.target.value === 'string' ) {
-            this.setState({ researchInterestsOther: event.target.value })
-        }
-    }
+            this.setState({ researchInterestsOther: event.target.value });
+        };
+    };
+
     // handles researchInterest check box onChange 
     researchInterestOnChange(event: any) {
-        if (!event.includes('Other')) { this.setState({ researchInterestsOther: undefined }) }
+        if (!event.includes('Other')) { this.setState({ researchInterestsOther: undefined }) };
         this.setState({ researchInterestsValue: event });
     };
 
@@ -441,56 +315,6 @@ class ProfileClass extends React.Component<Props, State> {
                 };
             };
         };
-
-    };
-
-    /**
-     * 
-     * affiliation 
-     */
-    addAffiliation(event: any) {
-        let affiliations: Array<Affiliation> = this.state.affiliations;
-        let newAffiliation: Array<Affiliation> = [{
-            title: '',
-            organization: '',
-            started: '',
-            ended: ''
-        }];
-        this.setState({ affiliations: affiliations.concat(newAffiliation) });
-    };
-
-    deleteAffiliation(index: number) {
-        let arr = this.state.affiliations;
-        arr.splice(index, 1);
-        this.setState({ affiliations: arr });
-    };
-
-    affiliationJobTitleOnChange(event:any, index:number) {
-        let affiliations = this.state.affiliations;
-        affiliations[index].title = event.target.value;
-        this.setState({ affiliations: affiliations })
-    };
-
-    affiliationStartOnChange(event: any, index: number) {
-        let affiliations = this.state.affiliations;
-        affiliations[index].started = event.target.value;
-        this.setState({ affiliations: affiliations })
-    };
-
-    affiliationEndOnChange(event: any, index: number) {
-        let affiliations = this.state.affiliations;
-        affiliations[index].ended = event.target.value;
-        this.setState({ affiliations: affiliations })
-    };
-    affiliationOnSelect(item: any, index: number) {
-        let affiliations = this.state.affiliations;
-        affiliations[index].organization = item;
-        this.setState({ affiliations: affiliations })
-    };
-    affiliationOnSave() {
-        let profileData = this.props.profileData;
-        profileData.affiliations = this.state.affiliations;
-        this.props.updateProfile(profileData, this.props.userName)
     };
 
     /**
@@ -502,16 +326,17 @@ class ProfileClass extends React.Component<Props, State> {
         if (typeof event !== 'undefined' && event !== profileData.organization) {
             profileData.organization = event;
             this.props.updateProfile(profileData, this.props.userName);
-        }
-    }
+        };
+    };
+
     institutionOnSearch(event: any) {
         if (event.length > 2) {
             let arr = [];
             arr = institution.filter(item =>
                 item.toLowerCase().includes(event.toLowerCase())
-            )
+            );
             if (arr.length <= 30) {
-                this.setState({ institutionFiltered: arr })
+                this.setState({ institutionFiltered: arr });
             };
         };
     };
@@ -536,12 +361,6 @@ class ProfileClass extends React.Component<Props, State> {
         this.props.updateProfile(profileData, this.props.userName);
     };
 
-    foo(){
-        // let moo: FormItemProps["validateStatus"] = 'success';
-        let moo: FormItemProps["validateStatus"] = 'error';
-        return moo
-    }
-
     render() {
         return (
             <Row style={{ padding: 16 }}>
@@ -554,27 +373,26 @@ class ProfileClass extends React.Component<Props, State> {
                             </Tooltip>
                             <Modal
                                 visible={this.state.visibleModal === ModalName.AvatarOption}
-                                title="Avatar Options"
+                                title='Avatar Options'
                                 closable={false}
                                 onCancel={(event)=>{this.showModal(event, undefined)}}
                                 footer={[
-                                    <Button key="back" onClick={(event)=>{this.showModal(event, undefined)}}>
+                                    <Button key='back' onClick={(event)=>{this.showModal(event, undefined)}}>
                                         Return
                                     </Button>,
-                                    <Button key="submit" id="researchInterests" type="primary" onClick={this.avatarOptionOnSumbit}>
-                                        Submit
+                                    <Button key='submit' id='researchInterests' type='primary' onClick={this.avatarOptionOnSumbit}>
+                                        Save
                                     </Button>,
-                                    <div style={{ width: "100%", marginTop: '2em', textAlign:'left'}}>
-                                        <p>If you do not have a custom gravatar, this generated or generic image will be used.</p>
-                                        <p>Note that if you have a gravatar image set up, this option will have no effect on your gravatar display.</p>
-                                        <p>Your gravatar is based on an image you have associated with your email address at <a href='https://www.gravatar.com'>Gravatar</a>, a 
+                                    <div key='tooltop' style={{ width: '100%', marginTop: '2em', textAlign:'left'}}>
+                                        <p>If you do not have a custom gravatar, this generated or generic image will be used.<br />
+                                        Note that if you have a gravatar image set up, this option will have no effect on your gravatar display.<br />
+                                        Your gravatar is based on an image you have associated with your email address at <a href='https://www.gravatar.com'>Gravatar</a>, a 
                                         free public profile service from Automattic, the same people who brought us Wordpress. 
-                                            If you have a personal gravatar associated with the email address in this profile, 
-                                            it will be displayed within KBase.
-                                        </p>
-                                        <p>If you don't have a personal gravator, you may select one of the default auto-generated gravatars provided below. 
+                                        If you have a personal gravatar associated with the email address in this profile, it will be displayed within KBase.
+                                        <br />
+                                        If you don't have a personal gravator, you may select one of the default auto-generated gravatars provided below. 
                                             Note that generated gravatars will use your email address to create a unique gravatar for you, 
-                                            which may be used to identify you in the ui. If you do not wish to have a unique gravatar, you may select "mystery man" or "blank".
+                                            which may be used to identify you in the ui. If you do not wish to have a unique gravatar, you may select 'mystery man' or 'blank'.
                                         </p>
                                     </div>,
                                 ]}
@@ -584,12 +402,12 @@ class ProfileClass extends React.Component<Props, State> {
                                     className='clear-diabled'
                                     placeholder='Choose to use gravatar, or the KBase anonymous silhouette.'
                                     disabled={!this.props.editEnable}
-                                    style={{ width: "100%", marginBottom: '2em'}}
+                                    style={{ width: '100%', marginBottom: '2em'}}
                                     defaultValue={this.props.profileData.avatarOption}
                                     onSelect={(value:string)=>{this.setStateProperty('avatarOption', value)}}
                                 >
-                                        {avatarOptions.map((option)=>{
-                                           return <Option key={option.value}>{option.label}</Option>
+                                        {avatarOptions.map((option, index)=>{
+                                           return <Option key={index}>{option.label}</Option>
                                         })}
                                 </Select>
                                 <p>Gravator Default Image</p>                             
@@ -597,12 +415,12 @@ class ProfileClass extends React.Component<Props, State> {
                                     className='clear-diabled'
                                     placeholder='Choose to use gravatar, or the KBase anonymous silhouette.'
                                     disabled={!this.props.editEnable}
-                                    style={{ width: "100%", marginBottom: '2em' }}
+                                    style={{ width: '100%', marginBottom: '2em' }}
                                     defaultValue={this.props.profileData.gravatarDefault}
                                     onSelect={(value:string)=>{this.setStateProperty('gravatarDefault', value)}}
                                 >
-                                    {gravatarDefaults.map((option)=>{
-                                            return <Option key={option.value}>{option.label}</Option>
+                                    {gravatarDefaults.map((option, index)=>{
+                                            return <Option key={index}>{option.label}</Option>
                                         })}
                                 </Select>
                             </Modal>
@@ -611,17 +429,17 @@ class ProfileClass extends React.Component<Props, State> {
                             style={{ margin: '8px 0px', textAlign: 'left' }}
                             title={this.setName()} // less than 100
                         >
-                            <Meta title="User ID" />
+                            <Meta title='User ID' />
                             <Tooltip overlayStyle={this.tooltipVisibility()} title='User ID cannot be changed'>
                                 {/* this might null or undefined or empty string */}
-                                <Input readOnly={this.props.userName? true : false } className="clear-disabled marginTop10px margin-bottom-24px userID" placeholder='User ID' defaultValue={this.props.userName.userID ? this.props.userName.userID : ''} />
+                                <Input readOnly={this.props.userName? true : false } className='clear-disabled marginTop10px margin-bottom-24px userID' placeholder='User ID' defaultValue={this.props.userName.userID ? this.props.userName.userID : ''} />
                             </Tooltip>
-                            <Meta title="Position" />
+                            <Meta title='Position' />
                                 <Select
                                     className='clear-diabled'
                                     placeholder='Job title'
                                     disabled={!this.props.editEnable}
-                                    style={{ width: "100%", marginTop: '10px'}}
+                                    style={{ width: '100%', marginTop: '10px'}}
                                     defaultValue={this.props.profileData.jobTitle}
                                     onChange={this.jobTitleOnChange}
                                 >
@@ -644,7 +462,7 @@ class ProfileClass extends React.Component<Props, State> {
                                     onBlur={true}
                                     onPressEnter={true}
                                 />
-                            <Meta title="Department" />
+                            <Meta title='Department' />
                             <Tooltip overlayStyle={this.tooltipVisibility()} title='must be more than 2 and less than 50 characters'>
                                 <InputForm
                                     hidden={false}
@@ -662,40 +480,40 @@ class ProfileClass extends React.Component<Props, State> {
                                     onPressEnter={true}
                                 />
                             </Tooltip>
-                            <Meta title="Organization" />
-                            <Tooltip overlayStyle={this.tooltipVisibility()} placement="top" title={<this.institutionToolTip />}>
+                            <Meta title='Organization' />
+                            <Tooltip overlayStyle={this.tooltipVisibility()} placement='top' title={<this.institutionToolTip />}>
                                 <div></div> {/* i don't know why this empty div has to be here for tooltip to showup  */}
                                 <AutoComplete
-                                    className="clear-disabled marginTop10px margin-bottom-24px"
-                                    style={{ width: "100%" }}
+                                    className='clear-disabled marginTop10px margin-bottom-24px'
+                                    style={{ width: '100%' }}
                                     disabled={!this.props.editEnable}
                                     allowClear
                                     dataSource={this.state.institutionFiltered}
-                                    placeholder="Organization"
+                                    placeholder='Organization'
                                     onSearch={this.institutionOnSearch}
                                     onSelect={this.institutionSave}
                                     onBlur={this.institutionSave}
                                     filterOption={(inputValue, option) => {
                                         if (typeof option.props.children === 'string') {
                                             let item = option.props.children;
-                                            return item.toLowerCase().indexOf(inputValue.toLowerCase()) >= 0
+                                            return item.toLowerCase().indexOf(inputValue.toLowerCase()) >= 0;
                                         } else {
-                                            return false
-                                        }
+                                            return false;
+                                        };
                                     }}
                                     defaultValue={this.props.profileData.organization}
                                 >
                                     <Input />
                                 </AutoComplete>
                             </Tooltip>
-                            <Meta title="Location" />
+                            <Meta title='Location' />
                             <Tooltip overlayStyle={this.tooltipVisibility()} title='Search Country'>
                                 <AutoComplete
                                     className='clear-diabled marginTop10px margin-bottom-24px'
-                                    style={{ width: "100%" }}
+                                    style={{ width: '100%' }}
                                     disabled={!this.props.editEnable}
                                     allowClear
-                                    placeholder="Country"
+                                    placeholder='Country'
                                     onChange={(value)=>{this.setStateProperty('country', value as string)}}
                                     onSelect={(value)=>{this.setStateProperty('country', value as string)}}
                                     filterOption={(inputValue, option) => {
@@ -714,7 +532,7 @@ class ProfileClass extends React.Component<Props, State> {
                                             <Option key={item[1]} value={item[0]}>
                                                 {item[0]}
                                             </Option>
-                                        )
+                                        );
                                     }))}
                                 </AutoComplete>
                             </Tooltip>
@@ -722,14 +540,14 @@ class ProfileClass extends React.Component<Props, State> {
                             <Tooltip trigger='hover' title='Search US States'>
                             <Select
                                 className='clear-diabled marginTop10px margin-bottom-24px'
-                                mode="single"
+                                mode='single'
                                 style={this.USStateVisibility()}
                                 disabled={!this.props.editEnable}
                                 allowClear
                                 placeholder='State'
                                 showArrow={true}
                                 onSelect={(value:string)=>{this.setStateProperty('state', value)}}
-                                optionFilterProp="children"
+                                optionFilterProp='children'
                                 filterOption={(inputValue, option) => {
                                     if (typeof option.props.children === 'string') {
                                         let item = option.props.children;
@@ -777,21 +595,21 @@ class ProfileClass extends React.Component<Props, State> {
                                 onBlur={true}
                                 onPressEnter={true}
                             />
-                            {/* <Button style={{ margin: '10px', display: this.showEditButtons() }} key="submit" type="primary" onClick={this.locationOnSave.bind(this)}>
+                            {/* <Button style={{ margin: '10px', display: this.showEditButtons() }} key='submit' type='primary' onClick={this.locationOnSave.bind(this)}>
                                 save
                             </Button> */}
-                            <Meta title="Primary Funding Source" />
+                            <Meta title='Primary Funding Source' />
                             <Select
                                 className='clear-diabled marginTop10px'
-                                mode="single"
-                                style={{ width: "100%", marginTop: '10px'}}
+                                mode='single'
+                                style={{ width: '100%', marginTop: '10px'}}
                                 showSearch
                                 disabled={!this.props.editEnable}
                                 maxTagCount={20}
-                                placeholder="enter more than 3 characters"
+                                placeholder='enter more than 3 characters'
                                 showArrow={true}
                                 onChange={this.fundingSourceOnChange}
-                                optionFilterProp="children"
+                                optionFilterProp='children'
                                 filterOption={(inputValue, option) => {
                                     // return true;
                                     if (typeof option.props.children === 'string') {
@@ -817,22 +635,22 @@ class ProfileClass extends React.Component<Props, State> {
                     <Col span={16}>
                         <Row gutter={8}>
                             <Col span={12}>
-                                <Card className="card-with-height researchInterests" style={{ margin: '8px 0px' }} title="Research Interests">
+                                <Card className='card-with-height researchInterests' style={{ margin: '8px 0px' }} title='Research Interests'>
                                     <Tooltip overlayStyle={this.tooltipVisibility()} title='Click to select research interests'>
-                                    <div id="researchInterests" onClick={(event)=>{this.showModal(event, ModalName.ResearchInterests)}} >
-                                        <this.researchInterests />
+                                    <div id='researchInterests' onClick={(event)=>{this.showModal(event, ModalName.ResearchInterests)}} >
+                                        {this.researchInterests()}
                                     </div>
                                     </Tooltip>
                                     <Modal
                                         visible={this.state.visibleModal === ModalName.ResearchInterests}
-                                        title="Research Interests"
+                                        title='Research Interests'
                                         closable={false}
                                         onCancel={(event)=>{this.showModal(event, undefined)}}
                                         footer={[
-                                            <Button key="back" onClick={(event)=>{this.showModal(event, undefined)}}>
+                                            <Button key='back' onClick={(event)=>{this.showModal(event, undefined)}}>
                                                 Return
                                             </Button>,
-                                            <Button key="submit" id="researchInterests" type="primary" onClick={this.researchInterestOnSumbit}>
+                                            <Button key='submit' id='researchInterests' type='primary' onClick={this.researchInterestOnSumbit}>
                                                 Submit
                                             </Button>,
                                         ]}
@@ -844,10 +662,10 @@ class ProfileClass extends React.Component<Props, State> {
                                         />
                                         <Input
                                             placeholder='Other research interests'
-                                            className="marginTop10px"
-                                            maxLength={maxInputLength['50']}
+                                            className='marginTop10px'
+                                            maxLength={50}
                                             onChange={this.researchInterestsOtherOnChange}
-                                            hidden={this.state.researchInterestsValue.includes("Other") ? false : true}
+                                            hidden={this.state.researchInterestsValue.includes('Other') ? false : true}
                                             defaultValue={this.props.profileData.researchInterestsOther}
                                             value={this.state.researchInterestsOther}
                                         />
@@ -855,7 +673,7 @@ class ProfileClass extends React.Component<Props, State> {
                                 </Card>
                             </Col>
                             <Col span={12}>
-                                <Card className="card-with-height" style={{ margin: '8px 0px' }} title="Organizations">
+                                <Card className='card-with-height' style={{ margin: '8px 0px' }} title='Organizations'>
                                     <OrgsContainer />
                                 </Card>
                             </Col>
@@ -864,7 +682,7 @@ class ProfileClass extends React.Component<Props, State> {
                             {/* TODO:AKIYO FIX - when the box is very small it doesn't break or hide word */}
                             <Card
                                 style={{ margin: '8px 0px' }}
-                                title="Research or Personal Statement"
+                                title='Research or Personal Statement'
                             >
                                 <Tooltip overlayStyle={this.tooltipVisibility()} title='must be less than 1000 characters'>
                                 <TextAreaForm
@@ -884,19 +702,8 @@ class ProfileClass extends React.Component<Props, State> {
                                 />
                                 </Tooltip>
                             </Card>
-                            <Card style={{ margin: '8px 0px' }} title="Affiliations">
-                                {this.affiliations()}
-                                <Button style={{ margin: '10px', display: this.showEditButtons() }} key="add" type="primary" onClick={this.addAffiliation.bind(this)}>
-                                    add
-                                </Button>
-                                <Button style={{ margin: '10px', display: this.showEditButtons() }} key="submit" type="primary" onClick={this.affiliationOnSave.bind(this)}>
-                                    save
-                                </Button>
-                            </Card>
-                            <Card
-                                style={{ margin: '8px 0px' }}
-                                title="Research or Personal Statement"
-                            ><AffiliationForm 
+                            <Card style={{ margin: '8px 0px' }} title='Affiliations'>
+                            <AffiliationForm 
                                 userName={this.props.userName} 
                                 profileData={this.props.profileData}
                                 editEnable={this.props.editEnable}

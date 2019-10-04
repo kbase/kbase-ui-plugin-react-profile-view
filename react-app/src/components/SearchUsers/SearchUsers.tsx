@@ -2,6 +2,7 @@ import React from 'react';
 import { Select } from 'antd';
 import { filteredUserAPI } from '../../util/API';
 import { UsernameRealname } from '../../redux/interfaces';
+
 const { Option } = Select;
 
 
@@ -35,7 +36,7 @@ class SearchUsers extends React.Component<Props, State> {
         this.onSearchHandler = this.onSearchHandler.bind(this);
         this.onMouseLeaveHandler = this.onMouseLeaveHandler.bind(this);
         this.onMouseEnterHandler = this.onMouseEnterHandler.bind(this);
-    }
+    };
     /**
      * when search value is more than 2 charactors, 
      * it makes API call and returns filtered list of users 
@@ -55,36 +56,39 @@ class SearchUsers extends React.Component<Props, State> {
             });
         } else {
             return;
-        }
-    }
+        };
+    };
+
     onMouseLeaveHandler(): void {
         this.setState({ mouseLeave: true });
-    }
+    };
+
     onMouseEnterHandler(): void {
         this.setState({ mouseLeave: false });
-    }
+    };
+
     onChangeHandler(value: string): void {
         if (value !== 'error' && typeof value !== 'undefined') {
             let url = '/#user/' + value;
             window.open(url, '_blank');
-        }
-    }
+        };
+    };
 
     render() {
         let data = this.state.data;
         return (
             <Select
-                mode="single"
+                mode='single'
                 style={{ width: 250 }}
                 allowClear
                 showSearch
-                placeholder="enter more than 3 characters"
+                placeholder='enter more than 3 characters'
                 showArrow={false}
                 onSearch={this.onSearchHandler}
                 onChange={this.onChangeHandler}
                 onMouseLeave={this.onMouseLeaveHandler}
                 onMouseEnter={this.onMouseEnterHandler}
-                optionFilterProp="children"
+                optionFilterProp='children'
                 filterOption={(inputValue, option) => {
                     return true;
                 }}
@@ -98,7 +102,7 @@ class SearchUsers extends React.Component<Props, State> {
                 })}
             </Select>
         );
-    }
-}
+    };
+};
 
 export default SearchUsers;

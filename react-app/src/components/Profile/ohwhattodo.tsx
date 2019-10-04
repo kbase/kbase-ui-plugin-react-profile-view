@@ -29,7 +29,7 @@ export default function OhWhat(props: any) {
             let newErrorMessageProps = {
                 errorMessages: props.errorMessages,
                 fetchStatus: props.profileFetchStatus
-            }
+            };
             return <ErrorMessage
                 errorMessageProps={newErrorMessageProps}
             />;
