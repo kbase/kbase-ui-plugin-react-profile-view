@@ -92,7 +92,8 @@ class ProfileClass extends React.Component<Props, State> {
         this.institutionSave = this.institutionSave.bind(this);
         this.institutionOnSearch = this.institutionOnSearch.bind(this);
         this.setStateProperty = this.setStateProperty.bind(this);
-        this.avatarOptionOnSumbit = this.avatarOptionOnSumbit.bind(this)
+        this.avatarOptionOnSumbit = this.avatarOptionOnSumbit.bind(this);
+        this.requiredFieldNotification = this.requiredFieldNotification.bind(this);
     };
 
     componentDidMount() {
@@ -128,14 +129,20 @@ class ProfileClass extends React.Component<Props, State> {
     };
 
 
-    /**
-     * if profile is auth user's profile, then edit is enabled, then make tool tips visible
-     */
+    //if profile is auth user's profile, then make tool tips visible
     tooltipVisibility(): CSSProperties {
         if (this.props.editEnable === false) {
             return { visibility: 'hidden' };
         } else {
             return { visibility: 'visible' };
+        };
+    };
+    //if profile is auth user's profile, then remove required field indication 
+    requiredFieldNotification() {
+        if(this.props.editEnable === false) {
+            return false;
+        } else {
+            return true;
         };
     };
 
@@ -519,7 +526,7 @@ class ProfileClass extends React.Component<Props, State> {
                             </Tooltip>
                             <Meta title='Location' />
                             <Tooltip overlayStyle={this.tooltipVisibility()} title='Search Country'>
-                                <Form.Item required {...formItemLayout} label=' '>
+                                <Form.Item required={this.requiredFieldNotification()} {...formItemLayout} label=' '>
                                     <AutoComplete
                                     className='clear-diabled marginTop10px'
                                     style={{ width: '100%' }}
@@ -550,7 +557,7 @@ class ProfileClass extends React.Component<Props, State> {
                             </Tooltip>
                             {/* <Tooltip trigger='hover' overlayStyle={this.tooltipVisibility()} title='Search US States'> */}
                             <Tooltip trigger='hover' title='Search US States'>
-                            <Form.Item required {...formItemLayout} label=' '>
+                            <Form.Item required={this.requiredFieldNotification()} {...formItemLayout} label=' '>
                             <Select
                                 className='clear-diabled marginTop10px margin-bottom-24px'
                                 mode='single'
@@ -580,7 +587,7 @@ class ProfileClass extends React.Component<Props, State> {
                             <InputForm
                                 hidden={false}
                                 type='string'
-                                required={true}
+                                required={this.requiredFieldNotification()}
                                 userName={this.props.userName}
                                 updateStoreState={this.props.updateProfile} // updates StoreState
                                 data={this.props.profileData}
@@ -595,7 +602,7 @@ class ProfileClass extends React.Component<Props, State> {
                             <InputForm
                                 hidden={false}
                                 type={this.state.country==='United States' ? 'number' : 'string'}
-                                required={true}
+                                required={this.requiredFieldNotification()}
                                 userName={this.props.userName}
                                 updateStoreState={this.props.updateProfile} // updates StoreState
                                 data={this.props.profileData}
