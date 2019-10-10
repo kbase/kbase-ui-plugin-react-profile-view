@@ -11,7 +11,7 @@ import { profileFetchStatuses, orgFetchStatuses } from './fetchStatuses';
 // When app starts, this runs first to set the initial state.
 export function makeInitialStoreState(): StoreState {
     const baseStoreState = makeBaseStoreState();
-    
+    console.log(baseStoreState)
     return {
         ...baseStoreState,  
         narrativeState: {
