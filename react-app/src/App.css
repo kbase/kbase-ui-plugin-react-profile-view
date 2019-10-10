@@ -46,9 +46,6 @@ input.ant-input {
     border-left: 0px !important;
     border-radius: 0px !important; */
 }
-.ant-select-disabled {
-    background: white !important;
-}
 
 .margin10px {
     margin: 10px !important;
@@ -67,4 +64,41 @@ input.ant-input {
 }
 .profile-input-form > .ant-form-item-label > label::after {
     content: none !important;
+}
+
+.affiliations {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.profile-input-form > 
+.ant-form-item-control-wrapper > 
+.ant-form-item-control {
+    width: 100% !important;
+}
+ 
+.profile-input-form > 
+.ant-form-item-control-wrapper > 
+.ant-form-item-control > span > 
+.ant-select-disabled
+.ant-select-selection
+ {
+    background: white !important;
+}
+
+.clear-disabled >
+.ant-select-selection > 
+.ant-select-selection__rendered > 
+ul >
+li > 
+div > 
+.ant-input[disabled] {
+    color: rgba(0,0,0,.65) !important;
+}
+
+.clear-disabled
+.ant-select-selection {
+    background: white !important;
+    color: rgba(0,0,0,.65) !important;
 }

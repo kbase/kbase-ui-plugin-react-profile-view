@@ -1,7 +1,7 @@
 import { createStore, compose, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 
-import { makeBaseStoreState } from '@kbase/ui-lib';
+import { makeBaseStoreState } from '@kbase/ui-components';
 import { StoreState } from './interfaces';
 import rootReducer from './reducers/index';
 import { profileFetchStatuses, orgFetchStatuses } from './fetchStatuses';

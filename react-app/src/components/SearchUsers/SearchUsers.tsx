@@ -46,13 +46,18 @@ class SearchUsers extends React.Component<Props, State> {
     onSearchHandler(value: string): void {
         if (value.length > 2 && this.state.mouseLeave !== true) {
             filteredUserAPI(value, this.props.token, this.props.baseURL).then((response: Response) => {
-                if (typeof response !== 'undefined') {
+                if (typeof response !== 'undefined' && !Array.isArray(response)) {
                     this.setState({ data: response['result'][0] });
+                } else if (Array.isArray(response)) {
+                    // when status and status text are returned
+                    this.setState({
+                        data: [{ username: response[0], realname: response[1] }]
+                    });
                 } else {
                     this.setState({
                         data: [{ username: 'error', realname: 'Something went wrong. Try again later.' }]
                     });
-                }
+                };
             });
         } else {
             return;
@@ -68,7 +73,8 @@ class SearchUsers extends React.Component<Props, State> {
     };
 
     onChangeHandler(value: string): void {
-        if (value !== 'error' && typeof value !== 'undefined') {
+        if (value !== 'error' && typeof value !== 'undefined' && isNaN(parseInt(value))){
+
             let url = '/#user/' + value;
             window.open(url, '_blank');
         };

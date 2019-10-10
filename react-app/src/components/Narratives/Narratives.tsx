@@ -24,7 +24,7 @@ interface Props {
  * @param props
  */
 function Narratives(props: Props) {
-    console.log(props)
+    console.log('Narratives', props)
     let data: Array<TableData> = [];
     let loading = props.loading;
 

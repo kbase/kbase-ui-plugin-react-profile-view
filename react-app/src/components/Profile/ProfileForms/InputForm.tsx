@@ -35,14 +35,14 @@ interface State {
  */
 
 const formItemLayout = {
-     labelCol: {
-       xs: { span: 24 },
-       sm: { span: 1 },
-     },
-     wrapperCol: {
-       xs: { span: 24 },
-       sm: { span: 23 },
-     },
+    labelCol: {
+        xs: { span: 24 },
+        sm: { span: 1 },
+    },
+    wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 23 },
+    },
 };
 
 class InputForm extends React.Component<Props, State> {
@@ -63,16 +63,21 @@ class InputForm extends React.Component<Props, State> {
     };
 
     componentDidMount() {
-        this.setState({requiredNotification : this.props.required})
+        this.setState({ requiredNotification: this.props.required })
     };
 
     componentDidUpdate(prevProps: Props, prevState: State, snapshot: any) {
         // console.log(this.state)
     };
 
-    requiredNotificationControl(){
-
-        return true
+    requiredNotificationControl() {
+        if (this.props.required && !this.props.readOnly) {
+            return true;
+        } else if (this.state.validateStatus === 'success') {
+            return false;
+        } else {
+            return false;
+        }
     }
     /**
      * Validate value against 
@@ -89,32 +94,38 @@ class InputForm extends React.Component<Props, State> {
             return;
         }
         // check against min and max length
+        // this could be dobe by ternary operator, but typescript doesn't like it.
+        let maxLength: number;
         if (typeof this.props.maxLength !== 'undefined') {
+            maxLength = this.props.maxLength;
+        } else {
+            maxLength = 10000; // number is picked randomly. Number.MAX_SAFE_INTEGER seemed a bit overkill.
+        };
 
-            let maxLength = this.props.maxLength;
-            // this could be ternary operator, but typescript doesn't like it.
-            let minLength = 2;
-            if (typeof this.props.minLength !== 'undefined') minLength = this.props.minLength;
+        let minLength: number;
+        if (typeof this.props.minLength !== 'undefined') {
+            minLength = this.props.minLength;
+        } else {
+            minLength = 2;
+        };
+        if (inputValue.length <= maxLength && inputValue.length >= minLength) {
 
-            if (inputValue.length <= maxLength && inputValue.length >= minLength) {
+            this.setState({ validateStatus: 'success', helpText: undefined, requiredNotification: false });
 
-                this.setState({ validateStatus: 'success', helpText: undefined, requiredNotification: false});
-                
-            } else if (!this.props.required && inputValue.length === 0) {
-                
-                this.setState({ validateStatus: 'success', helpText: undefined, requiredNotification: false});
-                
-            } else if (inputValue.length < minLength) {
-                
-                this.setState({ validateStatus: 'error', helpText: 'input must be at least ' + minLength + ' characters' });
-                
-            } else if (inputValue.length > maxLength) {
-                // this shouldn't happen since input field max length is set
-                this.setState({ validateStatus: 'error', helpText: 'input must be less than ' + maxLength + ' characters' });
-                
-            };
+        } else if (!this.props.required && inputValue.length === 0) {
+
+            this.setState({ validateStatus: 'success', helpText: undefined, requiredNotification: false });
+
+        } else if (inputValue.length < minLength) {
+
+            this.setState({ validateStatus: 'error', helpText: 'input must be at least ' + minLength + ' characters' });
+
+        } else if (inputValue.length > maxLength) {
+            // this shouldn't happen since input field max length is set
+            this.setState({ validateStatus: 'error', helpText: 'input must be less than ' + maxLength + ' characters' });
 
         };
+
     };
 
     /**
@@ -159,30 +170,28 @@ class InputForm extends React.Component<Props, State> {
 
     render() {
         return (
-            // <Form layout='horizontal'>
-            <Form.Item {...formItemLayout} 
-            className="profile-input-form" 
-            required={this.state.requiredNotification} 
-            label=' ' 
-            hasFeedback help={this.state.helpText} 
-            validateStatus={this.state.validateStatus}
+            <Form.Item {...formItemLayout}
+                className="profile-input-form"
+                required={this.state.requiredNotification}
+                label=' '
+                hasFeedback help={this.state.helpText}
+                validateStatus={this.state.validateStatus}
             >
-                    <Input
-                        hidden={this.props.hidden}
-                        placeholder={this.props.placeHolder}
-                        readOnly={this.props.readOnly}
-                        className="clear-disabled"
-                        style={{ minHeight: "40px" }}
-                        maxLength={this.props.maxLength}
-                        minLength={this.props.minLength}
-                        onFocus={this.handleOnChange}
-                        onBlur={this.props.onBlur === true ? this.updateStoreStateProperty : this.handleOnChange}
-                        onPressEnter={this.props.onPressEnter === true ? this.updateStoreStateProperty : this.handleOnChange}
-                        onChange={this.handleOnChange}
-                        defaultValue={this.props.defaultValue}
-                    />
-                </Form.Item>
-            // </Form>
+                <Input
+                    hidden={this.props.hidden}
+                    placeholder={this.props.placeHolder}
+                    readOnly={this.props.readOnly}
+                    className="clear-disabled"
+                    style={{ minHeight: "40px" }}
+                    maxLength={this.props.maxLength}
+                    minLength={this.props.minLength}
+                    onFocus={this.handleOnChange}
+                    onBlur={this.props.onBlur === true ? this.updateStoreStateProperty : this.handleOnChange}
+                    onPressEnter={this.props.onPressEnter === true ? this.updateStoreStateProperty : this.handleOnChange}
+                    onChange={this.handleOnChange}
+                    defaultValue={this.props.defaultValue}
+                />
+            </Form.Item>
         );
     };
 };

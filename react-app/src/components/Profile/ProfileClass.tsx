@@ -454,7 +454,7 @@ class ProfileClass extends React.Component<Props, State> {
                             </Tooltip>
                             <Meta title='Position' />
                                 <Select
-                                    className='clear-diabled'
+                                    className='clear-disabled'
                                     placeholder='Job title'
                                     disabled={!this.props.editEnable}
                                     style={{ width: '100%', marginTop: '10px'}}
@@ -526,7 +526,7 @@ class ProfileClass extends React.Component<Props, State> {
                             </Tooltip>
                             <Meta title='Location' />
                             <Tooltip overlayStyle={this.tooltipVisibility()} title='Search Country'>
-                                <Form.Item required={this.requiredFieldNotification()} {...formItemLayout} label=' '>
+                                <Form.Item className='profile-input-form' required={this.requiredFieldNotification()} {...formItemLayout} label=' '>
                                     <AutoComplete
                                     className='clear-diabled marginTop10px'
                                     style={{ width: '100%' }}
@@ -542,7 +542,6 @@ class ProfileClass extends React.Component<Props, State> {
                                         } else {
                                             return false
                                         }
-
                                     }}
                                     defaultValue={this.props.profileData.country}
                                 >
@@ -557,7 +556,7 @@ class ProfileClass extends React.Component<Props, State> {
                             </Tooltip>
                             {/* <Tooltip trigger='hover' overlayStyle={this.tooltipVisibility()} title='Search US States'> */}
                             <Tooltip trigger='hover' title='Search US States'>
-                            <Form.Item required={this.requiredFieldNotification()} {...formItemLayout} label=' '>
+                            <Form.Item className='profile-input-form' required={this.requiredFieldNotification()} {...formItemLayout} label=' '>
                             <Select
                                 className='clear-diabled marginTop10px margin-bottom-24px'
                                 mode='single'
@@ -596,6 +595,7 @@ class ProfileClass extends React.Component<Props, State> {
                                 defaultValue={this.props.profileData.city}
                                 readOnly={!this.props.editEnable}
                                 maxLength={85}
+                                minLength={0}
                                 onBlur={true}
                                 onPressEnter={true}
                             />    
@@ -611,7 +611,7 @@ class ProfileClass extends React.Component<Props, State> {
                                 defaultValue={this.props.profileData.postalCode}
                                 readOnly={!this.props.editEnable}
                                 maxLength={this.state.country==='United States' ? 5 : 16}
-                                minLength={this.state.country==='United States' ? 5 : 2}
+                                minLength={this.state.country==='United States' ? 5 : 0}
                                 onBlur={true}
                                 onPressEnter={true}
                             />
@@ -620,11 +620,11 @@ class ProfileClass extends React.Component<Props, State> {
                             </Button> */}
                             <Meta title='Primary Funding Source' />
                             <Select
-                                className='clear-diabled marginTop10px'
+                                className='.clear-disabled marginTop10px'
                                 mode='single'
                                 style={{ width: '100%', marginTop: '10px'}}
                                 showSearch
-                                disabled={!this.props.editEnable}
+                                disabled={this.props.editEnable}
                                 maxTagCount={20}
                                 placeholder='enter more than 3 characters'
                                 showArrow={true}
@@ -704,7 +704,7 @@ class ProfileClass extends React.Component<Props, State> {
                                 style={{ margin: '8px 0px' }}
                                 title='Research or Personal Statement'
                             >
-                                <Tooltip overlayStyle={this.tooltipVisibility()} title='must be less than 1000 characters'>
+                                <Tooltip overlayStyle={this.tooltipVisibility()} title='A little bit about yourself and your research'>
                                 <TextAreaForm
                                     hidden={false}
                                     type='string'
@@ -713,7 +713,7 @@ class ProfileClass extends React.Component<Props, State> {
                                     updateStoreState={this.props.updateProfile}
                                     data={this.props.profileData}
                                     stateProperty='researchStatement'
-                                    placeHolder='A little bit about yourself and your research.'
+                                    placeHolder=''
                                     defaultValue={this.props.profileData.researchStatement}
                                     readOnly={!this.props.editEnable}
                                     maxLength={1000}

@@ -6,7 +6,6 @@ import ErrorMessage from '../../pages/ErrorMessage'
 
 
 export default function OhWhat(props: any) {
-    console.log('ohwhattodo', props)
     switch (props.profileFetchStatus) {
         case 'none':
             return <Spinner />;

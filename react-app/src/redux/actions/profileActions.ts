@@ -1,6 +1,6 @@
 import { ThunkDispatch } from 'redux-thunk';
 import { AnyAction } from 'redux';
-import { sendTitle } from '@kbase/ui-lib';
+import { sendTitle } from '@kbase/ui-components';
 import { fetchProfileAPI, updateProfileAPI } from '../../util/API';
 import { StoreState, UserProfileService, ProfileView,  ProfileData, ErrorMessages, UserName} from "../interfaces";
 import { fetchProfile, loadProfile, fetchErrorProfile } from './actionCreators';
@@ -22,7 +22,6 @@ export function getProfile(profileID:string) {
             let payload:ProfileView;
             let response:UserProfileService  | Array<number|string> = await fetchProfileAPI(profileID, token, baseURL);
             let profileEdit:boolean;
-            console.log(response)
             if (typeof response !== 'undefined' && !Array.isArray(response)) {
                 let responseData = response as UserProfileService;
                 if (responseData.user.username !== rootStore.auth.userAuthorization.username) {

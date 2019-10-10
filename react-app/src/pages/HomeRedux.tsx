@@ -3,7 +3,7 @@ import { Action, Dispatch } from 'redux';
 
 import Home from './Home';
 import { StoreState } from '../redux/interfaces';
-import { sendTitle } from '@kbase/ui-lib';
+import { sendTitle } from '@kbase/ui-components';
 import { loadNarratives, getProfile, getOrgs } from '../redux/actions';
 
 interface OwnProps { };
@@ -28,7 +28,6 @@ interface UserProfileViewParams {
 };
 
 function mapStateToProps(state: StoreState, ownProps: OwnProps): StateProps {
-    
     const {
         auth: { userAuthorization },
         app: {

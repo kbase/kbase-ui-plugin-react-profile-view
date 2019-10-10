@@ -133,9 +133,12 @@ class TextAreaForm extends React.Component<Props, State> {
      */
     handleOnChange(event: React.ChangeEvent<HTMLTextAreaElement> | React.FocusEvent<HTMLTextAreaElement> | React.KeyboardEvent<HTMLTextAreaElement>) {
         let inputValue = event.currentTarget.value;
+        // validate input only when it's not readOnly
+        if(!this.props.readOnly){
+            this.validateInput(inputValue);
+        };
         if (typeof inputValue === 'string') {
             this.saveLocalState(inputValue);
-            this.validateInput(inputValue);
         };
     };
 

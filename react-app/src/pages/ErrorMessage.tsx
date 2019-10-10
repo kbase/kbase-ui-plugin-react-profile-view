@@ -1,5 +1,5 @@
 import React from 'react';
-import Octopus from '../assets/Octopus.png'
+import flapjack1 from '../assets/flapjack1.png'
 
 interface Props {
     errorMessageProps: {
@@ -8,14 +8,16 @@ interface Props {
     }
 }
 export default function ErrorMessage(props: Props) {
-    console.log(props)
     let messageArray = props.errorMessageProps.errorMessages;
     return (
         <div style={{ textAlign: 'center' }}>
             <h2>Something went wrong...</h2>
             <h3>Error Status Code:<span style={{ color: 'red' }}> {messageArray[0]}</span></h3>
             <h3>Error Message:<span style={{ color: 'red' }}>  {messageArray[1]}</span></h3>
-            <img src={Octopus} />
+            <img src={flapjack1} />
+            <p></p>
+            <h3>Please contact KBase via  <a href='http://kbase.us/contact-us/' target='_blank'>Help Board</a>.</h3>
+           
         </div>
     )
-}
+};

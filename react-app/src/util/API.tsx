@@ -24,9 +24,15 @@ export async function getBFFServiceUrl(token: string, baseURL: string) {
         },
         body: stringBody
     });
-    const responseJson = await response.json();
-    return responseJson.result[0]['url'];
-}
+    if(response.status !== 200){
+        // return empty string so that the fetch API called this function
+        // can generate error messages. 
+        return  '';
+    } else {
+        const responseJson = await response.json();
+        return responseJson.result[0]['url'];
+    };
+};
 
 /**
  * Return profile data

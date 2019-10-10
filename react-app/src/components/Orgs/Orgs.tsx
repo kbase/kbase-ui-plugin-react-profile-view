@@ -1,4 +1,5 @@
 import React from'react';
+import { Empty } from 'antd';
 import {OrgProp} from '../../redux/interfaces';
 
 
@@ -13,17 +14,25 @@ interface Props {
  */
 function Orgs(props: Props) {
     let orgList = props.orgList;
-    return(
-            <ul style={{ textAlign: 'left' }}>
-                {orgList.map((org, index) => (
-                    <li key={index}>
-                        <a href={org.url} target="_blank" rel="noopener noreferrer">
-                            {org.name}
-                        </a>
-                    </li>
-                ))}
-            </ul>
-    );
+    
+    if(props.orgList.length === 0) {
+        return (
+            <div><Empty image={Empty.PRESENTED_IMAGE_SIMPLE} /></div>
+        )
+    } else {
+
+        return(
+                <ul style={{ textAlign: 'left' }}>
+                    {orgList.map((org, index) => (
+                        <li key={index}>
+                            <a href={org.url} target="_blank" rel="noopener noreferrer">
+                                {org.name}
+                            </a>
+                        </li>
+                    ))}
+                </ul>
+        );
+    };
     
 };
 

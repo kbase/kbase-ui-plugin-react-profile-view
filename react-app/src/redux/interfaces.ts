@@ -1,4 +1,4 @@
-import { BaseStoreState } from "@kbase/ui-lib";
+import { BaseStoreState } from "@kbase/ui-components";
 export interface StoreState extends BaseStoreState,  NarrativeState, ProfileState, OrgState {}
 import { profileFetchStatuses, orgFetchStatuses } from '../redux/fetchStatuses';
 export interface UserAuthorization {
