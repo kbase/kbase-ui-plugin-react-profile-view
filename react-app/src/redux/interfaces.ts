@@ -1,12 +1,13 @@
 import { BaseStoreState } from "@kbase/ui-components";
 export interface StoreState extends BaseStoreState,  NarrativeState, ProfileState, OrgState {}
 import { profileFetchStatuses, orgFetchStatuses } from '../redux/fetchStatuses';
+
 export interface UserAuthorization {
     realname: string;
     role?: Array<string>;
     token: string;
     username: string;
-}
+};
 
 /**
  * Narrative 
@@ -20,7 +21,7 @@ export interface NarrativeData {
     narrative_detail: {
         creator: string;
     };
-}
+};
 
 // used in reducer 
 export interface NarrativeAction {
@@ -29,7 +30,7 @@ export interface NarrativeAction {
         narrativeList: Array<NarrativeData>;
         loading: boolean;
     }
-}
+};
 
 // need this for adding type to StoreState - see store.ts
 export interface NarrativeState {
@@ -37,7 +38,7 @@ export interface NarrativeState {
         narrativeList: Array<NarrativeData>;
         loading: boolean;
     }
-}
+};
 
 
 /**
@@ -45,44 +46,43 @@ export interface NarrativeState {
  */
 
 // used in reducer 
-export interface OrgsAction {
+export interface OrgAction {
     type: string;
-    payload: OrgState;
-}
-
+    payload: OrgList | OrgFetchError;
+};
 
 // need this for adding type to StoreState - see store.ts
 export interface  OrgState {
     orgState: OrgList | OrgFetchStatus
-}
-
+};
 
 export interface OrgList {
     orgList: Array<OrgProp>,
     orgFetchStatus: orgFetchStatuses.NONE | orgFetchStatuses.SUCCESS | orgFetchStatuses.ERROR | orgFetchStatuses.FETCHING
-}
+};
+
+export interface OrgFetchError {
+    orgError: Array<number|string>,
+    orgFetchStatus: orgFetchStatuses.NONE | orgFetchStatuses.SUCCESS | orgFetchStatuses.ERROR | orgFetchStatuses.FETCHING
+};
 
 export interface OrgFetchStatus {
     orgFetchStatus: orgFetchStatuses.NONE | orgFetchStatuses.SUCCESS | orgFetchStatuses.ERROR | orgFetchStatuses.FETCHING
-}
+};
 
 // Used for org list 
 export interface OrgProp {
     name: string;
     url: string;
-}
+};
 
 // fetchOrgsOfProfile returns a full group info,
 // but only name and id is needed to make OrgProp
 export interface Org {
     name: string;
     id: string;
-}
+};
 
-export interface loadOrgAction {
-    type: string;
-    payload: OrgList;
-}
 
 
 
@@ -108,7 +108,7 @@ export interface UserProfileService {
         }
     };
     
-}
+};
 
 // user profile servie resturns
 // converted to UserName 

@@ -50,11 +50,9 @@ class TextAreaForm extends React.Component<Props, State> {
     };
 
     componentDidMount() {
-        console.log(this.state)
     };
 
     componentDidUpdate(prevProps: Props, prevState: State, snapshot: any) {
-        // console.log(this.state)
     };
 
     /**

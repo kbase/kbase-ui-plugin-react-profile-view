@@ -620,11 +620,11 @@ class ProfileClass extends React.Component<Props, State> {
                             </Button> */}
                             <Meta title='Primary Funding Source' />
                             <Select
-                                className='.clear-disabled marginTop10px'
+                                className='clear-disabled marginTop10px'
                                 mode='single'
                                 style={{ width: '100%', marginTop: '10px'}}
                                 showSearch
-                                disabled={this.props.editEnable}
+                                disabled={!this.props.editEnable}
                                 maxTagCount={20}
                                 placeholder='enter more than 3 characters'
                                 showArrow={true}

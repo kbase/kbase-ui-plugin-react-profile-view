@@ -19,12 +19,9 @@ export default function WhichComponent(props: any) {
             break;
 
         case 'error':
-            let newProps = {
-                fetchStatus: 'error',
-                errorMessages: [props[0], props[1]]
-            }
+
             return <ErrorMessage
-                    errorMessageProps={newProps}
+                    errorMessageProps={props}
             />;
             break;
 

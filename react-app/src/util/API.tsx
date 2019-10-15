@@ -1,4 +1,4 @@
-import { ProfileData, UserName } from '../redux/interfaces';
+import { ProfileData, UserName, Org } from '../redux/interfaces';
 
 export async function getBFFServiceUrl(token: string, baseURL: string) {
     // TODO: for dev, the baseUrl will be whatever works for the CRA workflow, which is ''.
@@ -144,17 +144,22 @@ export async function fetchOrgsOfProfileAPI(id: string, token: string, baseURL: 
             Authorization: token
         }
     });
-    if (response.status === 500) {
-        console.error('500 response:', response);
-        return [response.status, response.statusText];
-    };
-    try {
-        const orgs = await response.json();
-        return orgs;
-    } catch (err) {
-        console.error('fetch org failed', response);
-        return [response.status, response.statusText];
-    };
+    // if (response.status !== 200) {
+    //     console.error('Org Fetch Error:', response);
+    //     let res = {
+    //         status: response.status,
+    //         statusText: response.statusText
+    //     }
+    //     return [response.status, response.statusText];
+    // };
+    // try {
+    //     const orgs = await response.json();
+    //     return orgs;
+    // } catch (err) {
+    //     console.error('fetch org failed', response);
+    //     return [response.status, response.statusText];
+    // };
+    return [404, "fetch error text"];
 };
 
 /**

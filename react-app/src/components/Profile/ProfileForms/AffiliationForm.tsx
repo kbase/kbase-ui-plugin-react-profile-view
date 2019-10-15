@@ -9,7 +9,7 @@ const { Option } = Select;
 interface AffiliationValidated {
     title: string;
     organization: string;
-    started: string;
+    started: string | undefined;
     ended: string | undefined;
     validatedStatusJobTitle: "" | "error" | "success" | "warning" | "validating" | undefined;
     validatedStatusOrganization: "" | "error" | "success" | "warning" | "validating" | undefined;
@@ -182,8 +182,8 @@ class AffiliationForm extends React.Component<Props, State> {
         let newAffiliation: Array<AffiliationValidated> = [{
             title: '',
             organization: '',
-            started: '',
-            ended: '',
+            started: undefined,
+            ended: undefined,
             validatedStatusJobTitle: 'error',
             validatedStatusOrganization: 'error',
             validatedStatusStartYear: 'error',
@@ -227,13 +227,22 @@ class AffiliationForm extends React.Component<Props, State> {
     affiliationStartOnChange(event: any, index: number) {
         let value = event.target.value;
         let endYear =  this.state.affiliations[index]['ended'];
+        // check if the entered start year is less than end year if it is already entered.
         if(typeof endYear !== 'undefined') {
+            let affiliationArray = this.state.affiliations;
+            // while entered start year is less than end year, other validations are not required.
+            // update validated status to error and set helpt text. 
             if (value > endYear) {
-                let affiliationArray = this.state.affiliations;
                 affiliationArray[index]['validatedStatusStartYear'] = 'error';
                 affiliationArray[index]['helpTextStartYear'] = 'must be less than end year';
                 this.setState({ affiliations: affiliationArray });
                 return;
+            } else {
+                // other wise set validated state and helpText to undefined 
+                /// and let the validate input function set the validated state.
+                affiliationArray[index]['validatedStatusStartYear'] = undefined;
+                affiliationArray[index]['helpTextStartYear'] = undefined;
+                this.setState({ affiliations: affiliationArray });
             };   
         }
         this.saveLocalState(value, index, 'started');
@@ -249,11 +258,16 @@ class AffiliationForm extends React.Component<Props, State> {
     affiliationEndOnChange(event: any, index: number) {
         let value = event.target.value;
         let affiliationArray = this.state.affiliations;
-        if (value < this.state.affiliations[index]['started']) {
-            affiliationArray[index]['validatedStatusEndYear'] = 'error';
-            affiliationArray[index]['helpTextEndYear'] = 'must be larger than start year';
-            this.setState({ affiliations: affiliationArray });
-            return;
+        // if the start date is already entered and is larger than the entered value, 
+        // set the valudated status to error and set help text. 
+        let startDate = this.state.affiliations[index]['started'];
+        if (startDate!== undefined) {
+            if (value < startDate ) {
+                affiliationArray[index]['validatedStatusEndYear'] = 'error';
+                affiliationArray[index]['helpTextEndYear'] = 'must be larger than start year';
+                this.setState({ affiliations: affiliationArray });
+                return;
+            };
         };
         this.saveLocalState(value, index, 'ended');
         // if the entry is empty, then set the state to undefined. 

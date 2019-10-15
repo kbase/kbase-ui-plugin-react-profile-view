@@ -5,7 +5,6 @@ import { StoreState } from '../interfaces';
 
 const reducer: Reducer<StoreState | undefined, Action> = (state: StoreState | undefined, action: Action) => {
   const baseState = baseReducer(state as BaseStoreState, action);
-  console.log(baseState)
   // if (baseState) {
   //   return baseState as StoreState;
   // }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { StoreState, OrgList } from '../../redux/interfaces';
+import { StoreState, OrgList, OrgFetchError } from '../../redux/interfaces';
 import WhichComponent from './WhichComponent';
 import { orgFetchStatuses } from '../../redux/fetchStatuses';
 
@@ -12,13 +12,13 @@ function mapStateToProps(state: StoreState) {
             return {
                 orgFetchStatus: state.orgState.orgFetchStatus
             };
-            break;
 
         case orgFetchStatuses.ERROR:
+            let orgError = state.orgState as OrgFetchError
             return {
-                orgFetchStatus: state.orgState.orgFetchStatus
+                errorMessages: orgError.orgError,
+                orgFetchStatus: state.orgState.orgFetchStatus,
             };
-            break;
 
         case orgFetchStatuses.SUCCESS:
             let orgList = state.orgState as OrgList
@@ -31,7 +31,6 @@ function mapStateToProps(state: StoreState) {
             return {
                 orgFetchStatus: state.orgState.orgFetchStatus
             };
-            break;
     };
 };
 

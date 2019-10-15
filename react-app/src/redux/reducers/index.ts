@@ -2,7 +2,7 @@ import { Action, Reducer } from 'redux';
 import narrativeReducer from './narrative_reducers';
 import profileReducer from './profile_reducers';
 import reducer from './reducer';
-import { StoreState, NarrativeAction, loadProfileAction, loadOrgAction } from  "../interfaces";
+import { StoreState, NarrativeAction, loadProfileAction, OrgAction } from  "../interfaces";
 import { profileActionTypes, orgsActionTypes, narrativeActionTypes } from '../actions/actionTypes';
 import orgsReducer from './org_reducers';
 
@@ -14,7 +14,6 @@ import orgsReducer from './org_reducers';
 const rootReducer: Reducer<StoreState | undefined, Action> = (state: StoreState | undefined, action: Action) => {
   // Inital combine state created by store is loaded first 
   const kbaseUIStore = reducer(state as StoreState, action);
-  console.log(kbaseUIStore)
   // if state doesn't load for whatever the reason possibly could be 
   if (!state) {
     // TODO: AKIYO - return intial state 
@@ -41,7 +40,7 @@ const rootReducer: Reducer<StoreState | undefined, Action> = (state: StoreState 
         case orgsActionTypes.FETCH_ORGS_NONE:
         case orgsActionTypes.FETCH_ORGS_SUCCESS:
         case orgsActionTypes.FETCH_ORGS_ERROR:
-            return orgsReducer(state, action as loadOrgAction);
+            return orgsReducer(state, action as OrgAction);
         
       default:
         return state;

@@ -102,3 +102,9 @@ div >
     background: white !important;
     color: rgba(0,0,0,.65) !important;
 }
+
+.clear-disabled > 
+.ant-select-selection {
+    background: white !important;
+    color: rgba(0,0,0,.65) !important;
+}
