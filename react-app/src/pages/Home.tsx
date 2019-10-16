@@ -21,7 +21,7 @@ interface HomeState {
     organizations: Array<OrgProp>;
     organizationsLoaded: Boolean;
     gravatarHash: string;
-}
+};
 
 
 export interface HomeProps {
@@ -33,7 +33,7 @@ export interface HomeProps {
     loadNarratives: (filter: string, profileID: string) => void;
     getProfile: (profileID: string) => void;
     getOrgs: (profileID: string) => void;
-}
+};
 
 class Home extends React.Component<HomeProps, HomeState> {
     constructor(props: HomeProps) {
@@ -59,7 +59,7 @@ class Home extends React.Component<HomeProps, HomeState> {
         } else {
             username = this.props.authUsername;
             this.props.setTitle('Your User Profile');
-        }
+        };
 
         /**
         * fetch profile data for the diplayed profile

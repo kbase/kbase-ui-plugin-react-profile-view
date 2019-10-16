@@ -367,7 +367,7 @@ class AffiliationForm extends React.Component<Props, State> {
      * builds affiliation card
      */
     affiliations() {
-        // TODOL change BFF so that it will return an empty array when there is no data
+        // TODO: change BFF so that it will return an empty array when there is no data
         // so instead of using this -> affiliations[0]['title'], affiliations.length > 0
         if ( this.props.affiliations[0]['title'] !== '') {
             return (

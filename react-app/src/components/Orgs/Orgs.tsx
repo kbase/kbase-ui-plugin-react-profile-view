@@ -5,7 +5,7 @@ import {OrgProp} from '../../redux/interfaces';
 
 interface Props {
     orgList: Array<OrgProp>;
-}
+};
 
 /**
  * render org component 
@@ -18,22 +18,20 @@ function Orgs(props: Props) {
     if(props.orgList.length === 0) {
         return (
             <div><Empty image={Empty.PRESENTED_IMAGE_SIMPLE} /></div>
-        )
+        );
     } else {
-
         return(
-                <ul style={{ textAlign: 'left' }}>
-                    {orgList.map((org, index) => (
-                        <li key={index}>
-                            <a href={org.url} target="_blank" rel="noopener noreferrer">
-                                {org.name}
-                            </a>
-                        </li>
-                    ))}
-                </ul>
+            <ul style={{ textAlign: 'left' }}>
+                {orgList.map((org, index) => (
+                    <li key={index}>
+                        <a href={org.url} target="_blank" rel="noopener noreferrer">
+                            {org.name}
+                        </a>
+                    </li>
+                ))}
+            </ul>
         );
     };
-    
 };
 
 export default Orgs;

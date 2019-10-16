@@ -6,7 +6,7 @@ import { StoreState } from './interfaces';
 import rootReducer from './reducers/index';
 import { profileFetchStatuses, orgFetchStatuses } from './fetchStatuses';
 
-// I think i need to use action creator initialRenderOrgs & initialRenderProfile instead
+// TODO: need to use action creator initialRenderOrgs & initialRenderProfile instead
 
 // When app starts, this runs first to set the initial state.
 export function makeInitialStoreState(): StoreState {

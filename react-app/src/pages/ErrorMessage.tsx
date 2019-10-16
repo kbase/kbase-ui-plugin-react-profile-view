@@ -6,7 +6,14 @@ interface Props {
         errorMessages: Array<number| string>;
         fetchStatus: string;
     }
-}
+};
+
+/**
+ * Error message page
+ *  - it takes an array of [status(number), statusText(string)] as props
+ *  - and fetchStatus as string 
+ * @param props 
+ */
 export default function ErrorMessage(props: Props) {
     let messageArray = props.errorMessageProps.errorMessages;
     return (
@@ -19,5 +26,5 @@ export default function ErrorMessage(props: Props) {
             <h3>Please contact KBase via  <a href='http://kbase.us/contact-us/' target='_blank'>Help Board</a>.</h3>
            
         </div>
-    )
+    );
 };

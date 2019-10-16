@@ -15,6 +15,6 @@ export default function narrativeReducer(state: StoreState, action: NarrativeAct
             );
                     
         default: 
-                return state;
+            return state;
     };
 };

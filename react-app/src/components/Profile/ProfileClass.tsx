@@ -1,11 +1,11 @@
 import React, { CSSProperties } from 'react';
-import { Row, Col, Card, Input, Tooltip, Form, Checkbox, Modal, Select, Button, Empty, AutoComplete} from 'antd';
+import { Row, Col, Card, Input, Tooltip, Form, Checkbox, Modal, Select, Button, Empty, AutoComplete } from 'antd';
 import { UserName, ProfileData, Affiliation } from '../../redux/interfaces';
 import nouserpic from '../../assets/nouserpic.png';
 import OrgsContainer from '../Orgs/OrgsContainer';
-import { InputForm,  TextAreaForm, AffiliationForm } from './ProfileForms';
+import { InputForm, TextAreaForm, AffiliationForm } from './ProfileForms';
 
-import {researchInterestsList, jobTitles } from '../../profileConfig';
+import { researchInterestsList, jobTitles } from '../../profileConfig';
 import { fundingSources, countryCodes, institution, states, avatarOptions, gravatarDefaults } from '../../dataSources';
 
 const { Meta } = Card;
@@ -39,11 +39,11 @@ interface Props {
 
 interface State {
     visibleModal: ModalName | undefined;
-    researchInterestsValue: Array<string>; // value returned by onChange
+    researchInterestsValue: Array<string>;
     researchInterestsOther: string | undefined;
-    jobTitleValue: string; // value returned by onChange
+    jobTitleValue: string;
     jobTitleOther: string | undefined;
-    fundingSourceValue: string; // value returned from pulldown
+    fundingSourceValue: string;
     country: string;
     city: string;
     postalCode: string;
@@ -83,7 +83,7 @@ class ProfileClass extends React.Component<Props, State> {
         this.gravaterSrc = this.gravaterSrc.bind(this); // setting img src for gravater
         this.setName = this.setName.bind(this); // create html element including tooltip to fit in card header 
         this.institutionToolTip = this.institutionToolTip.bind(this);
-        this.buildResearchInterests = this.buildResearchInterests.bind(this); 
+        this.buildResearchInterests = this.buildResearchInterests.bind(this);
         this.buildUserNutsheel = this.buildUserNutsheel.bind(this);
         this.buildResearchStatement = this.buildResearchStatement.bind(this);
         this.buildAffliations = this.buildAffliations.bind(this);
@@ -120,13 +120,13 @@ class ProfileClass extends React.Component<Props, State> {
         if (Array.isArray(profile.affiliations)) {
             this.setState({ affiliations: profile.affiliations });
         };
-        
+
     };
 
     // if you're going ot use prevProps, prevState
     // you need to put all these three for typescript to be happy.
     componentDidUpdate(prevProps: Props, prevState: State, snapshot: any) {
-        if(prevState === this.state){
+        if (prevState === this.state) {
             return;
         };
     };
@@ -143,11 +143,11 @@ class ProfileClass extends React.Component<Props, State> {
 
 
     // set visitbility after initial mounting
-    USStateVisibility(){
-        if(this.state.country === 'United States'){
-            return { display: 'inherit'};
+    USStateVisibility() {
+        if (this.state.country === 'United States') {
+            return { display: 'inherit' };
         } else {
-            return {display: 'none'};
+            return { display: 'none' };
         };
     };
 
@@ -162,21 +162,24 @@ class ProfileClass extends React.Component<Props, State> {
         };
     };
 
-    // Set name and its tooltip 
+    /**
+     * set name field to either input field or 
+     * plain text depending on if auth-user is viewing or not
+     */
     setName() {
-        if(this.props.editEnable){
+        if (this.props.editEnable) {
             return (
                 <Tooltip title='must be less than 100 characters'>
                     <Input
                         className='clear-disabled ant-card-meta-title'
                         readOnly={this.props.editEnable}
                         maxLength={100}
-                        defaultValue={this.props.userName.name ?  this.props.userName.name : ''}
+                        defaultValue={this.props.userName.name ? this.props.userName.name : ''}
                     />
                 </Tooltip>
             );
         } else {
-            return (<div className='name ant-card-meta-title'>{this.props.userName.name}</div>)
+            return (<div className='name ant-card-meta-title'>{this.props.userName.name}</div>);
         };
     };
 
@@ -192,8 +195,10 @@ class ProfileClass extends React.Component<Props, State> {
             </div>
         );
     };
-
-    // populate research interest and handles case that prop is empty
+    
+    /**
+     * populate research interest and handles case that prop is empty
+     */
     buildResearchInterests() {
         let researchInterests: Array<string> = [];
         if (Array.isArray(this.props.profileData.researchInterests)) {
@@ -232,10 +237,11 @@ class ProfileClass extends React.Component<Props, State> {
      * builds User Nutshell card
      *  - Choose between the non-auth user profile  
      *    vs. editable user profile 
+     *  - Return either form or plain text
      */
-    buildUserNutsheel(){
-        if(this.props.editEnable){
-            return(
+    buildUserNutsheel() {
+        if (this.props.editEnable) {
+            return (
                 <Card
                     style={{ margin: '8px 0px', textAlign: 'left' }}
                     title={this.setName()}
@@ -243,36 +249,36 @@ class ProfileClass extends React.Component<Props, State> {
                     <Meta title='User ID' />
                     <Tooltip title='User ID cannot be changed'>
                         {/* this might null or undefined or empty string */}
-                        <Input readOnly={this.props.userName? true : false } className='clear-disabled marginTop10px margin-bottom-24px userID' placeholder='User ID' defaultValue={this.props.userName.userID ? this.props.userName.userID : ''} />
+                        <Input readOnly={this.props.userName ? true : false} className='clear-disabled marginTop10px margin-bottom-24px userID' placeholder='User ID' defaultValue={this.props.userName.userID ? this.props.userName.userID : ''} />
                     </Tooltip>
                     <Meta title='Position' />
-                        <Select
-                            className='clear-disabled'
-                            placeholder='Job title'
-                            disabled={!this.props.editEnable}
-                            style={{ width: '100%', marginTop: '10px'}}
-                            defaultValue={this.props.profileData.jobTitle}
-                            onChange={this.jobTitleOnChange}
-                        >
-                            {jobTitles.map((item) => {
-                                return <Option key={item.label} value={item.value}>{item.label}</Option>
-                            })}
-                        </Select>
-                        <InputForm
-                            hidden={this.state.jobTitleValue === 'Other' ? false : true}
-                            type={'string'}
-                            required={false}
-                            userName={this.props.userName}
-                            updateStoreState={this.props.updateProfile} // updates StoreState
-                            data={this.props.profileData}
-                            stateProperty={'jobTitleOther'}
-                            placeHolder='Job Title'
-                            defaultValue={this.props.profileData.jobTitleOther}
-                            readOnly={this.props.editEnable} //TODO: PUT THIS BACK
-                            maxLength={50}
-                            onBlur={true}
-                            onPressEnter={true}
-                        />
+                    <Select
+                        className='clear-disabled'
+                        placeholder='Job title'
+                        disabled={!this.props.editEnable}
+                        style={{ width: '100%', marginTop: '10px' }}
+                        defaultValue={this.props.profileData.jobTitle}
+                        onChange={this.jobTitleOnChange}
+                    >
+                        {jobTitles.map((item) => {
+                            return <Option key={item.label} value={item.value}>{item.label}</Option>
+                        })}
+                    </Select>
+                    <InputForm
+                        hidden={this.state.jobTitleValue === 'Other' ? false : true}
+                        type={'string'}
+                        required={false}
+                        userName={this.props.userName}
+                        updateStoreState={this.props.updateProfile} // updates StoreState
+                        data={this.props.profileData}
+                        stateProperty={'jobTitleOther'}
+                        placeHolder='Job Title'
+                        defaultValue={this.props.profileData.jobTitleOther}
+                        readOnly={this.props.editEnable} //TODO: PUT THIS BACK
+                        maxLength={50}
+                        onBlur={true}
+                        onPressEnter={true}
+                    />
                     <Meta title='Department' />
                     <Tooltip title='must be more than 2 and less than 50 characters'>
                         <InputForm
@@ -321,59 +327,59 @@ class ProfileClass extends React.Component<Props, State> {
                     <Tooltip title='Search Country'>
                         <Form.Item className='profile-input-form' required={true} {...formItemLayout} label=' '>
                             <AutoComplete
-                            className='clear-disabled marginTop10px'
-                            style={{ width: '100%' }}
-                            disabled={!this.props.editEnable}
-                            allowClear
-                            placeholder='Country'
-                            onChange={(value)=>{this.setStateProperty('country', value as string)}}
-                            onSelect={(value)=>{this.setStateProperty('country', value as string)}}
-                            filterOption={(inputValue, option) => {
-                                if (typeof option.props.children === 'string') {
-                                    let item = option.props.children;
-                                    return item.toLowerCase().indexOf(inputValue.toLowerCase()) >= 0
-                                } else {
-                                    return false
-                                }
-                            }}
-                            defaultValue={this.props.profileData.country}
-                        >
-                            {Array.from(countryCodes).map((item => {
-                                return (
-                                    <Option key={item[1]} value={item[0]}>
-                                        {item[0]}
-                                    </Option>
-                                );
-                            }))}
-                        </AutoComplete></Form.Item>
+                                className='clear-disabled marginTop10px'
+                                style={{ width: '100%' }}
+                                disabled={!this.props.editEnable}
+                                allowClear
+                                placeholder='Country'
+                                onChange={(value) => { this.setStateProperty('country', value as string) }}
+                                onSelect={(value) => { this.setStateProperty('country', value as string) }}
+                                filterOption={(inputValue, option) => {
+                                    if (typeof option.props.children === 'string') {
+                                        let item = option.props.children;
+                                        return item.toLowerCase().indexOf(inputValue.toLowerCase()) >= 0
+                                    } else {
+                                        return false
+                                    }
+                                }}
+                                defaultValue={this.props.profileData.country}
+                            >
+                                {Array.from(countryCodes).map((item => {
+                                    return (
+                                        <Option key={item[1]} value={item[0]}>
+                                            {item[0]}
+                                        </Option>
+                                    );
+                                }))}
+                            </AutoComplete></Form.Item>
                     </Tooltip>
                     <Tooltip trigger='hover' title='Search US States'>
-                    <Form.Item className='profile-input-form' required={true} {...formItemLayout} label=' '>
-                    <Select
-                        className='clear-disabled marginTop10px margin-bottom-24px'
-                        mode='single'
-                        style={this.USStateVisibility()}
-                        disabled={!this.props.editEnable}
-                        allowClear
-                        placeholder='State'
-                        showArrow={true}
-                        onSelect={(value:string)=>{this.setStateProperty('state', value)}}
-                        optionFilterProp='children'
-                        filterOption={(inputValue, option) => {
-                            if (typeof option.props.children === 'string') {
-                                let item = option.props.children;
-                                return item.toLowerCase().indexOf(inputValue.toLowerCase()) >= 0
-                            } else {
-                                return false
-                            }
+                        <Form.Item className='profile-input-form' required={true} {...formItemLayout} label=' '>
+                            <Select
+                                className='clear-disabled marginTop10px margin-bottom-24px'
+                                mode='single'
+                                style={this.USStateVisibility()}
+                                disabled={!this.props.editEnable}
+                                allowClear
+                                placeholder='State'
+                                showArrow={true}
+                                onSelect={(value: string) => { this.setStateProperty('state', value) }}
+                                optionFilterProp='children'
+                                filterOption={(inputValue, option) => {
+                                    if (typeof option.props.children === 'string') {
+                                        let item = option.props.children;
+                                        return item.toLowerCase().indexOf(inputValue.toLowerCase()) >= 0
+                                    } else {
+                                        return false
+                                    }
 
-                        }}
-                        defaultValue={this.props.profileData.state}
-                    >
-                        {states.map((item, index)=>{
-                            return <Option key={index} value={item}>{item}</Option>
-                        })}
-                    </Select></Form.Item>
+                                }}
+                                defaultValue={this.props.profileData.state}
+                            >
+                                {states.map((item, index) => {
+                                    return <Option key={index} value={item}>{item}</Option>
+                                })}
+                            </Select></Form.Item>
                     </Tooltip>
                     <InputForm
                         hidden={false}
@@ -382,7 +388,7 @@ class ProfileClass extends React.Component<Props, State> {
                         userName={this.props.userName}
                         updateStoreState={this.props.updateProfile} // updates StoreState
                         data={this.props.profileData}
-                        stateProperty={'city'} 
+                        stateProperty={'city'}
                         placeHolder='City'
                         defaultValue={this.props.profileData.city}
                         readOnly={!this.props.editEnable}
@@ -390,10 +396,10 @@ class ProfileClass extends React.Component<Props, State> {
                         minLength={0}
                         onBlur={true}
                         onPressEnter={true}
-                    />    
+                    />
                     <InputForm
                         hidden={false}
-                        type={this.state.country==='United States' ? 'number' : 'string'}
+                        type={this.state.country === 'United States' ? 'number' : 'string'}
                         required={true}
                         userName={this.props.userName}
                         updateStoreState={this.props.updateProfile} // updates StoreState
@@ -402,8 +408,8 @@ class ProfileClass extends React.Component<Props, State> {
                         placeHolder='Postal Code'
                         defaultValue={this.props.profileData.postalCode}
                         readOnly={!this.props.editEnable}
-                        maxLength={this.state.country==='United States' ? 5 : 16}
-                        minLength={this.state.country==='United States' ? 5 : 0}
+                        maxLength={this.state.country === 'United States' ? 5 : 16}
+                        minLength={this.state.country === 'United States' ? 5 : 0}
                         onBlur={true}
                         onPressEnter={true}
                     />
@@ -411,7 +417,7 @@ class ProfileClass extends React.Component<Props, State> {
                     <Select
                         className='clear-disabled marginTop10px'
                         mode='single'
-                        style={{ width: '100%', marginTop: '10px'}}
+                        style={{ width: '100%', marginTop: '10px' }}
                         showSearch
                         disabled={!this.props.editEnable}
                         maxTagCount={20}
@@ -443,14 +449,14 @@ class ProfileClass extends React.Component<Props, State> {
             );
         } else {
             let profile = this.props.profileData;
-            let hasLocation = ()=>{
-                if(profile.country || profile.state || profile.city ) {
+            let hasLocation = () => {
+                if (profile.country || profile.state || profile.city) {
                     return true;
                 } else {
                     return false;
                 };
             };
-            return(
+            return (
                 <Card
                     style={{ margin: '8px 0px', textAlign: 'left' }}
                     title={this.setName()}
@@ -458,15 +464,15 @@ class ProfileClass extends React.Component<Props, State> {
                     <div>
                         <p>{this.props.userName.userID}</p>
                         <p style={{ fontStyle: "italic" }}>{profile.jobTitleOther ? profile.jobTitleOther : profile.jobTitle}</p>
-                        <p>{profile.organization}<br/>
-                        {profile.department}</p>
+                        <p>{profile.organization}<br />
+                            {profile.department}</p>
                     </div>
                     <div>
-                        { hasLocation() ? (<h4>Location</h4>) : null }
-                        <p>{profile.country ? profile.country + ', ' : null}{profile.state ? profile.state + ', ' : null}{profile.city ? profile.city: null}</p>
+                        {hasLocation() ? (<h4>Location</h4>) : null}
+                        <p>{profile.country ? profile.country + ', ' : null}{profile.state ? profile.state + ', ' : null}{profile.city ? profile.city : null}</p>
                     </div>
                     <div>
-                        { profile.fundingSource ? (<h4>Primary Funding Source</h4>) : null}
+                        {profile.fundingSource ? (<h4>Primary Funding Source</h4>) : null}
                         <p>{profile.fundingSource}</p>
                     </div>
                 </Card>
@@ -479,30 +485,31 @@ class ProfileClass extends React.Component<Props, State> {
      * builds research statement card
      *  - Choose between the non-auth user profile  
      *    vs. editable user profile 
+     *  - Return either form or plain text
      */
-    buildResearchStatement(){
-        if(this.props.editEnable) {
+    buildResearchStatement() {
+        if (this.props.editEnable) {
             return (
                 <Card
                     style={{ margin: '8px 0px' }}
                     title='Research or Personal Statement'
                 >
                     <Tooltip title='A little bit about yourself and your research'>
-                    <TextAreaForm
-                        hidden={false}
-                        type='string'
-                        required={false}
-                        userName={this.props.userName}
-                        updateStoreState={this.props.updateProfile}
-                        data={this.props.profileData}
-                        stateProperty='researchStatement'
-                        placeHolder=''
-                        defaultValue={this.props.profileData.researchStatement}
-                        readOnly={!this.props.editEnable}
-                        maxLength={1000}
-                        onBlur={true}
-                        onPressEnter={true}
-                    />
+                        <TextAreaForm
+                            hidden={false}
+                            type='string'
+                            required={false}
+                            userName={this.props.userName}
+                            updateStoreState={this.props.updateProfile}
+                            data={this.props.profileData}
+                            stateProperty='researchStatement'
+                            placeHolder=''
+                            defaultValue={this.props.profileData.researchStatement}
+                            readOnly={!this.props.editEnable}
+                            maxLength={1000}
+                            onBlur={true}
+                            onPressEnter={true}
+                        />
                     </Tooltip>
                 </Card>
             );
@@ -522,30 +529,31 @@ class ProfileClass extends React.Component<Props, State> {
      * builds affliations card
      *  - Choose between the non-auth user profile  
      *    vs. editable user profile 
+     *  - Return either form or plain text
      */
-    buildAffliations(){
-        if(this.props.editEnable) {
-            return ( 
+    buildAffliations() {
+        if (this.props.editEnable) {
+            return (
                 <Card style={{ margin: '8px 0px' }} title='Affiliations'>
-                <AffiliationForm 
-                    userName={this.props.userName} 
-                    profileData={this.props.profileData}
-                    editEnable={this.props.editEnable}
-                    affiliations={this.props.profileData.affiliations}
-                    updateStoreState={this.props.updateProfile}
-                /></Card> 
+                    <AffiliationForm
+                        userName={this.props.userName}
+                        profileData={this.props.profileData}
+                        editEnable={this.props.editEnable}
+                        affiliations={this.props.profileData.affiliations}
+                        updateStoreState={this.props.updateProfile}
+                    /></Card>
             );
         } else {
             let affiliations = this.props.profileData.affiliations;
             // TODOL change BFF so that it will return an empty array when there is no data
             // so instead of using this -> affiliations[0]['title'], affiliations.length > 0
-            
+
             // non-empty array
-            if(affiliations[0]['title'] !== ''){
+            if (affiliations[0]['title'] !== '') {
                 return (
                     <Card style={{ margin: '8px 0px' }} title='Affiliations'>
                         <div id='affiliations'>
-                            {affiliations.map((position)=>{
+                            {affiliations.map((position) => {
                                 return (
                                     <div className='affiliation-row'>
                                         <p style={{ width: '25%', marginRight: "1em" }}>{position.title}</p><p style={{ flexGrow: 1 }}>{position.organization}</p><p style={{ width: '90px' }}>{position.started} </p><p style={{ width: '90px' }}>{position.ended ? position.ended : 'present'}</p>
@@ -553,29 +561,29 @@ class ProfileClass extends React.Component<Props, State> {
                                 );
                             })}
                         </div>
-                    </Card> 
+                    </Card>
                 );
             } else {
-                return(
+                return (
                     <Card style={{ margin: '8px 0px' }} title='Affiliations'>
                         <div><Empty image={Empty.PRESENTED_IMAGE_SIMPLE} /></div>
-                    </Card> 
+                    </Card>
                 );
             };
         };
     };
 
-   /**
-    *   event Handlers
-    *
-    * 
-    */
+    /**
+     *   event Handlers
+     *
+     * 
+     */
 
     /**
     * Modal popup control
     * @param event 
     * @param modal 
-    */  
+    */
     showModal(event: any, modal: ModalName | undefined) {
         if (this.props.editEnable === true) {
             this.setState({ visibleModal: modal });
@@ -598,14 +606,14 @@ class ProfileClass extends React.Component<Props, State> {
      *  and gravatarDefault state
      * @param event 
      */
-    avatarOptionOnSumbit(){
+    avatarOptionOnSumbit() {
         // any is used here for creating gereric property 
         let profileData = this.props.profileData;
-        if (profileData.gravatarDefault !== this.state.gravatarDefault || 
+        if (profileData.gravatarDefault !== this.state.gravatarDefault ||
             profileData.avatarOption !== this.state.avatarOption) {
-                if (typeof this.state.gravatarDefault !== 'undefined' ) profileData.gravatarDefault = this.state.gravatarDefault;
-                if (typeof this.state.avatarOption !== 'undefined' ) profileData.avatarOption = this.state.avatarOption;
-                this.props.updateProfile(profileData, this.props.userName);
+            if (typeof this.state.gravatarDefault !== 'undefined') profileData.gravatarDefault = this.state.gravatarDefault;
+            if (typeof this.state.avatarOption !== 'undefined') profileData.avatarOption = this.state.avatarOption;
+            this.props.updateProfile(profileData, this.props.userName);
         };
     };
 
@@ -614,7 +622,7 @@ class ProfileClass extends React.Component<Props, State> {
      * research interests
      */
     researchInterestsOtherOnChange(event: any) {
-        if (typeof event.target.value === 'string' ) {
+        if (typeof event.target.value === 'string') {
             this.setState({ researchInterestsOther: event.target.value });
         };
     };
@@ -628,7 +636,7 @@ class ProfileClass extends React.Component<Props, State> {
     // handles researchInterest onSubmit 
     researchInterestOnSumbit(event: any) {
         this.setState({ visibleModal: undefined }) // close modal
-        let profileData:any = this.props.profileData;
+        let profileData: any = this.props.profileData;
         let arrState = this.state.researchInterestsValue;
         let arrProps = profileData.researchInterests;
 
@@ -698,31 +706,31 @@ class ProfileClass extends React.Component<Props, State> {
                     <Col span={8}>
                         <Card style={{ margin: '8px 0px', textAlign: 'center' }}>
                             <Tooltip overlayStyle={this.tooltipVisibility()} title='click to edit Avatar Options'>
-                                <img style={{ maxWidth: '100%', margin: '8px 0px' }} alt='avatar' src={this.gravaterSrc()} onClick={(event)=>{this.showModal(event, ModalName.AvatarOption)}} />
+                                <img style={{ maxWidth: '100%', margin: '8px 0px' }} alt='avatar' src={this.gravaterSrc()} onClick={(event) => { this.showModal(event, ModalName.AvatarOption) }} />
                                 {/* {gravatar} */}
                             </Tooltip>
                             <Modal
                                 visible={this.state.visibleModal === ModalName.AvatarOption}
                                 title='Avatar Options'
                                 closable={false}
-                                onCancel={(event)=>{this.showModal(event, undefined)}}
+                                onCancel={(event) => { this.showModal(event, undefined) }}
                                 footer={[
-                                    <Button key='back' onClick={(event)=>{this.showModal(event, undefined)}}>
+                                    <Button key='back' onClick={(event) => { this.showModal(event, undefined) }}>
                                         Return
                                     </Button>,
                                     <Button key='submit' id='researchInterests' type='primary' onClick={this.avatarOptionOnSumbit}>
                                         Save
                                     </Button>,
-                                    <div key='tooltop' style={{ width: '100%', marginTop: '2em', textAlign:'left'}}>
+                                    <div key='tooltop' style={{ width: '100%', marginTop: '2em', textAlign: 'left' }}>
                                         <p>If you do not have a custom gravatar, this generated or generic image will be used.<br />
-                                        Note that if you have a gravatar image set up, this option will have no effect on your gravatar display.<br />
-                                        Your gravatar is based on an image you have associated with your email address at <a href='https://www.gravatar.com'>Gravatar</a>, a 
-                                        free public profile service from Automattic, the same people who brought us Wordpress. 
-                                        If you have a personal gravatar associated with the email address in this profile, it will be displayed within KBase.
+                                            Note that if you have a gravatar image set up, this option will have no effect on your gravatar display.<br />
+                                            Your gravatar is based on an image you have associated with your email address at <a href='https://www.gravatar.com'>Gravatar</a>, a
+                                            free public profile service from Automattic, the same people who brought us Wordpress.
+                                            If you have a personal gravatar associated with the email address in this profile, it will be displayed within KBase.
                                         <br />
-                                        If you don't have a personal gravator, you may select one of the default auto-generated gravatars provided below. 
-                                            Note that generated gravatars will use your email address to create a unique gravatar for you, 
-                                            which may be used to identify you in the ui. If you do not wish to have a unique gravatar, you may select 'mystery man' or 'blank'.
+                                            If you don't have a personal gravator, you may select one of the default auto-generated gravatars provided below.
+                                                Note that generated gravatars will use your email address to create a unique gravatar for you,
+                                                which may be used to identify you in the ui. If you do not wish to have a unique gravatar, you may select 'mystery man' or 'blank'.
                                         </p>
                                     </div>,
                                 ]}
@@ -732,26 +740,26 @@ class ProfileClass extends React.Component<Props, State> {
                                     className='clear-disabled'
                                     placeholder='Choose to use gravatar, or the KBase anonymous silhouette.'
                                     disabled={!this.props.editEnable}
-                                    style={{ width: '100%', marginBottom: '2em'}}
+                                    style={{ width: '100%', marginBottom: '2em' }}
                                     defaultValue={this.props.profileData.avatarOption}
-                                    onSelect={(value:string)=>{this.setStateProperty('avatarOption', value)}}
+                                    onSelect={(value: string) => { this.setStateProperty('avatarOption', value) }}
                                 >
-                                        {avatarOptions.map((option, index)=>{
-                                           return <Option key={index}>{option.label}</Option>
-                                        })}
+                                    {avatarOptions.map((option, index) => {
+                                        return <Option key={index}>{option.label}</Option>
+                                    })}
                                 </Select>
-                                <p>Gravator Default Image</p>                             
+                                <p>Gravator Default Image</p>
                                 <Select
                                     className='clear-disabled'
                                     placeholder='Choose to use gravatar, or the KBase anonymous silhouette.'
                                     disabled={!this.props.editEnable}
                                     style={{ width: '100%', marginBottom: '2em' }}
                                     defaultValue={this.props.profileData.gravatarDefault}
-                                    onSelect={(value:string)=>{this.setStateProperty('gravatarDefault', value)}}
+                                    onSelect={(value: string) => { this.setStateProperty('gravatarDefault', value) }}
                                 >
-                                    {gravatarDefaults.map((option, index)=>{
-                                            return <Option key={index}>{option.label}</Option>
-                                        })}
+                                    {gravatarDefaults.map((option, index) => {
+                                        return <Option key={index}>{option.label}</Option>
+                                    })}
                                 </Select>
                             </Modal>
                         </Card>
@@ -762,17 +770,17 @@ class ProfileClass extends React.Component<Props, State> {
                             <Col span={12}>
                                 <Card className='card-with-height researchInterests' style={{ margin: '8px 0px' }} title='Research Interests'>
                                     <Tooltip overlayStyle={this.tooltipVisibility()} title='Click to select research interests'>
-                                    <div id='researchInterests' onClick={(event)=>{this.showModal(event, ModalName.ResearchInterests)}} >
-                                        {this.buildResearchInterests()}
-                                    </div>
+                                        <div id='researchInterests' onClick={(event) => { this.showModal(event, ModalName.ResearchInterests) }} >
+                                            {this.buildResearchInterests()}
+                                        </div>
                                     </Tooltip>
                                     <Modal
                                         visible={this.state.visibleModal === ModalName.ResearchInterests}
                                         title='Research Interests'
                                         closable={false}
-                                        onCancel={(event)=>{this.showModal(event, undefined)}}
+                                        onCancel={(event) => { this.showModal(event, undefined) }}
                                         footer={[
-                                            <Button key='back' onClick={(event)=>{this.showModal(event, undefined)}}>
+                                            <Button key='back' onClick={(event) => { this.showModal(event, undefined) }}>
                                                 Return
                                             </Button>,
                                             <Button key='submit' id='researchInterests' type='primary' onClick={this.researchInterestOnSumbit}>

@@ -13,7 +13,7 @@ import { profileFetchStatuses } from '../fetchStatuses';
 export function getProfile(profileID:string) {
     return async function (dispatch:ThunkDispatch<StoreState, void, AnyAction>, getState:() => StoreState ) {
         // set the life cycle state to "fetching"
-        dispatch(fetchProfile())
+        dispatch(fetchProfile());
         
         const rootStore = getState();
         if(rootStore.auth.userAuthorization !== null) {
@@ -29,7 +29,7 @@ export function getProfile(profileID:string) {
                     profileEdit = false;
                 } else {
                     profileEdit = true;
-                }
+                };
                 // shape response to profile before dispatch 
                 payload = {
                     userName: {
@@ -40,23 +40,23 @@ export function getProfile(profileID:string) {
                     profileData: responseData.profile.userdata,
                     gravatarHash: responseData.profile.synced.gravatarHash,
                     profileFetchStatus: profileFetchStatuses.SUCCESS
-                }
+                };
                 dispatch(loadProfile(payload));
             } else if (Array.isArray(response)){
                 //  set "profileIsFetching" to "error"
                 let errorPayload: ErrorMessages = {
                     errorMessages: response,
                     profileFetchStatus: profileFetchStatuses.ERROR
-                }
+                };
                 dispatch(fetchErrorProfile(errorPayload));
             } else {
-                 console.log(response)  
-            }
+                console.error(response);
+            };
         } else {
-            console.log('auth is null ', rootStore.auth.userAuthorization)
-        }
-    }
-}
+            console.error('auth is null ', rootStore.auth.userAuthorization);
+        };
+    };
+};
 
 
 /**
@@ -69,25 +69,23 @@ export function getProfile(profileID:string) {
 
 export function updateProfile(userdata:ProfileData, userName:UserName) {
     return async function (dispatch:ThunkDispatch<StoreState, void, AnyAction>, getState:() => StoreState ) {
-        dispatch(fetchProfile())
+        dispatch(fetchProfile());
         const rootStore = getState();
         if(rootStore.auth.userAuthorization !== null) {
             const token = rootStore.auth.userAuthorization.token;
             let baseURL = rootStore.app.config.baseUrl;
-            // let user = {name: name, userID: profileID}
             let response = await updateProfileAPI(token, baseURL, userdata, userName);
             if(response === 200) {
-                dispatch(getProfile(userName.userID))
+                dispatch(getProfile(userName.userID));
             } else {
                 if (Array.isArray(response)) {
                     let errorPayload: ErrorMessages = {
                         errorMessages: response,
                         profileFetchStatus: profileFetchStatuses.ERROR
-                    }
+                    };
                     dispatch(fetchErrorProfile(errorPayload));
-                }
-            }
-        }
-
-    }
-}
+                };
+            };
+        };
+    };
+};

@@ -24,7 +24,7 @@ function mapStateToProps(state: StoreState) {
             return {
                 orgList: orgList.orgList,
                 orgFetchStatus: state.orgState.orgFetchStatus
-            }
+            };
 
         default:
             return {

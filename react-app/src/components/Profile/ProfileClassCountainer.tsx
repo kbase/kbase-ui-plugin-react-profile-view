@@ -40,7 +40,7 @@ function mapStateToProps(state: StoreState): Props {
             return {
                 errorMessages: newProps.errorMessages,
                 profileFetchStatus: state.profileView.profileFetchStatus
-            }
+            };
 
         case profileFetchStatuses.SUCCESS:
             // typescript isn't good at switch case yet... 

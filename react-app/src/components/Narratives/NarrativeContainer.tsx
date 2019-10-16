@@ -6,7 +6,6 @@ import WhichComponent from './WhichComponent';
 
 
 function mapStateToProps(state: StoreState) {
-    console.log(state)
     return { narratives: state.narrativeState.narrativeList, loading: state.narrativeState.loading };
 };
 

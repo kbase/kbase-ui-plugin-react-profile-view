@@ -9,17 +9,17 @@ const { Option } = Select;
 interface State {
     data: Array<UsernameRealname>;
     mouseLeave: boolean;
-}
+};
 
 interface Props {
     token: string;
     baseURL: string;
-}
+};
 
 interface Response {
     version: string;
     result: Array<any>;
-}
+};
 
 /**
  * View component with user search feature.
@@ -39,7 +39,7 @@ class SearchUsers extends React.Component<Props, State> {
     };
     /**
      * when search value is more than 2 charactors, 
-     * it makes API call and returns filtered list of users 
+     * make API call and returns filtered list of users 
      * 
      * @param value 
      */

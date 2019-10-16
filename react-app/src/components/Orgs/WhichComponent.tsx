@@ -20,7 +20,7 @@ export default function WhichComponent(props: any) {
             return <ErrorMessage errorMessageProps={props} />;
 
         default:
-            return (<div>???</div>);
+            return <div>???</div>;
 
     };
 

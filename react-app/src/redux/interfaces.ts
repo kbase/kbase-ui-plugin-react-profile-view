@@ -37,7 +37,7 @@ export interface NarrativeState {
     narrativeState: {
         narrativeList: Array<NarrativeData>;
         loading: boolean;
-    }
+    };
 };
 
 

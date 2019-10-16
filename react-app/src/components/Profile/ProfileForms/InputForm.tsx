@@ -27,13 +27,6 @@ interface State {
     requiredNotification: boolean | undefined;
 };
 
-/**
- * Input field wrapped in Form, Form.item. 
- * Validation status will be shown.
- * If onBlur/onPressEnter updates storeState, set it to true.
- * minLength default = 2
- */
-
 const formItemLayout = {
     labelCol: {
         xs: { span: 24 },
@@ -45,6 +38,12 @@ const formItemLayout = {
     },
 };
 
+/**
+ * Input field wrapped in Form, Form.item. 
+ *  - Validation status will be shown.
+ *  - If onBlur/onPressEnter updates storeState, set it to true.
+ *  - minLength default = 2
+ */
 class InputForm extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
@@ -66,9 +65,8 @@ class InputForm extends React.Component<Props, State> {
         this.setState({ requiredNotification: this.props.required })
     };
 
-    componentDidUpdate(prevProps: Props, prevState: State, snapshot: any) {
-        // console.log(this.state)
-    };
+    // componentDidUpdate(prevProps: Props, prevState: State, snapshot: any) {
+    // };
 
     requiredNotificationControl() {
         if (this.props.required && !this.props.readOnly) {
@@ -82,8 +80,8 @@ class InputForm extends React.Component<Props, State> {
     /**
      * Validate value against 
      *  - max and min length
-     *  - if it's required field
-     *  - type 
+     *  - if it's a required field
+     *  - input type 
      * and set state per validation result.
      * @param inputValue 
      */
@@ -137,7 +135,7 @@ class InputForm extends React.Component<Props, State> {
     updateStoreStateProperty(event: React.FocusEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) {
         // console.log(data)
         if (!this.props.required) {
-            this.setState({ helpText: undefined })
+            this.setState({ helpText: undefined });
         };
         // any is used to use generic property 
         let data: any = this.props.data;
@@ -162,13 +160,13 @@ class InputForm extends React.Component<Props, State> {
      */
     handleOnChange(event: React.ChangeEvent<HTMLInputElement> | React.FocusEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) {
         let inputValue = event.currentTarget.value;
-        if(this.props.readOnly) {
+        if (this.props.readOnly) {
             return;
         } else {
             if (typeof inputValue === 'string') {
                 this.saveLocalState(inputValue);
                 this.validateInput(inputValue);
-            };  
+            };
         };
     };
 
