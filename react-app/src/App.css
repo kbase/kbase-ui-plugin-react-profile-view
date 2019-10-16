@@ -6,21 +6,15 @@
   margin-top: -8px;
 }
 
-.clear-disabled
-.clear-disabled[disabled] {
+input.ant-input.clear-disabled {
   color:rgba(0, 0, 0, 0.65) !important;
   background-color: white !important;
-  border: 1px !important;
+  border: 0px !important;
   cursor: text !important;
 }
 
 .profile-tabs {
   margin: 0 0.5em;
-}
-
-
-input.ant-input {
-    border: 0px !important;
 }
 
 .marginTop10px {
@@ -35,11 +29,13 @@ input.ant-input {
     overflow: auto;
 }
 
+/* this is to get rid of : after form item lable */
 .profile-input-form > 
 .ant-form-item-label > 
 label::after {
     content: none !important;
 }
+
 
 .affiliation-row {
     display: flex;
@@ -47,6 +43,8 @@ label::after {
     align-items: center;
 }
 
+/* this forces Organization AutoComplete input field to 100% in 
+ AfflicationForm */
 .profile-input-form > 
 .ant-form-item-control-wrapper > 
 .ant-form-item-control {
@@ -58,22 +56,22 @@ label::after {
 .ant-form-item-control > span > 
 .ant-select-disabled
 .ant-select-selection
- {
+{
     background: white !important;
 }
 
 .clear-disabled >
-.ant-select-selection > 
-.ant-select-selection__rendered > 
-ul >
-li > 
-div > 
-.ant-input[disabled] {
+.ant-select-auto-complete.ant-select >
+.ant-input-disabled {
     color: rgba(0,0,0,.65) !important;
 }
 
 .clear-disabled
 .ant-select-selection {
     background: white !important;
+    color: rgba(0,0,0,.65) !important;
+}
+
+.clear-disabled.ant-select-disabled {
     color: rgba(0,0,0,.65) !important;
 }

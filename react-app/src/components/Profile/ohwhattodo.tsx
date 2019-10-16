@@ -12,7 +12,6 @@ export default function OhWhat(props: any) {
 
         case 'fetching':
             return <Spinner />;
-            break;
 
         case 'success':
             return <ProfileClass userName={props.userName}

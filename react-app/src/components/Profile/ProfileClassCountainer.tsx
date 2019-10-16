@@ -27,13 +27,6 @@ interface DispatchProps {
 interface OwnProps { };
 
 function mapStateToProps(state: StoreState): Props {
-    // token can be null
-    let userAuthToken;
-    if (state.auth.userAuthorization !== null) {
-        userAuthToken = state.auth.userAuthorization.token;
-    } else {
-        userAuthToken = '';
-    };
 
     switch (state.profileView.profileFetchStatus) {
         case profileFetchStatuses.NONE:

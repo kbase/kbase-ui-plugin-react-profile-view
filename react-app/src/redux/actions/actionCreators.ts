@@ -1,10 +1,9 @@
-import React from 'react';
 import { OrgAction, OrgList, loadProfileAction, ProfileView, ErrorMessages, OrgFetchError } from '../interfaces';
 import { profileActionTypes, orgsActionTypes } from './actionTypes';
 
 
 // fetching profile data is initiated
-export function fetchProfile() { // put type!
+export function fetchProfile() { 
     return {
         type: profileActionTypes.FETCH_PROFILE
     };

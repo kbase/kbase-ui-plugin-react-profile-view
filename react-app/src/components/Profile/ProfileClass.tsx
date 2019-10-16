@@ -268,7 +268,7 @@ class ProfileClass extends React.Component<Props, State> {
                             stateProperty={'jobTitleOther'}
                             placeHolder='Job Title'
                             defaultValue={this.props.profileData.jobTitleOther}
-                            readOnly={!this.props.editEnable}
+                            readOnly={this.props.editEnable} //TODO: PUT THIS BACK
                             maxLength={50}
                             onBlur={true}
                             onPressEnter={true}
@@ -297,7 +297,7 @@ class ProfileClass extends React.Component<Props, State> {
                         <AutoComplete
                             className='clear-disabled marginTop10px margin-bottom-24px'
                             style={{ width: '100%' }}
-                            disabled={!this.props.editEnable}
+                            disabled={this.props.editEnable}//TODO: PUT THIS BACK~!
                             allowClear
                             dataSource={this.state.institutionFiltered}
                             placeholder='Organization'
@@ -321,7 +321,7 @@ class ProfileClass extends React.Component<Props, State> {
                     <Tooltip title='Search Country'>
                         <Form.Item className='profile-input-form' required={true} {...formItemLayout} label=' '>
                             <AutoComplete
-                            className='clear-diabled marginTop10px'
+                            className='clear-disabled marginTop10px'
                             style={{ width: '100%' }}
                             disabled={!this.props.editEnable}
                             allowClear
@@ -350,7 +350,7 @@ class ProfileClass extends React.Component<Props, State> {
                     <Tooltip trigger='hover' title='Search US States'>
                     <Form.Item className='profile-input-form' required={true} {...formItemLayout} label=' '>
                     <Select
-                        className='clear-diabled marginTop10px margin-bottom-24px'
+                        className='clear-disabled marginTop10px margin-bottom-24px'
                         mode='single'
                         style={this.USStateVisibility()}
                         disabled={!this.props.editEnable}
@@ -729,7 +729,7 @@ class ProfileClass extends React.Component<Props, State> {
                             >
                                 <p>Avatar Options</p>
                                 <Select
-                                    className='clear-diabled'
+                                    className='clear-disabled'
                                     placeholder='Choose to use gravatar, or the KBase anonymous silhouette.'
                                     disabled={!this.props.editEnable}
                                     style={{ width: '100%', marginBottom: '2em'}}
@@ -742,7 +742,7 @@ class ProfileClass extends React.Component<Props, State> {
                                 </Select>
                                 <p>Gravator Default Image</p>                             
                                 <Select
-                                    className='clear-diabled'
+                                    className='clear-disabled'
                                     placeholder='Choose to use gravatar, or the KBase anonymous silhouette.'
                                     disabled={!this.props.editEnable}
                                     style={{ width: '100%', marginBottom: '2em' }}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Input, Empty } from 'antd';
+import { Form, Input } from 'antd';
 import { UserName } from '../../../redux/interfaces';
 
 const { TextArea } = Input;
