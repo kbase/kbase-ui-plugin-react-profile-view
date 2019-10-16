@@ -13,9 +13,7 @@ export default function narrativeReducer(state: StoreState, action: NarrativeAct
                     narrativeState: payload
                 }
             );
-            
-        break;
-        
+                    
         default: 
                 return state;
     };

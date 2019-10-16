@@ -15,13 +15,13 @@ export default function profileReducer(state:StoreState, action: loadProfileActi
                 
         case profileActionTypes.FETCH_PROFILE_ERROR:
             return {
-                ... state,
+                ...state,
                 profileView: payload
             };
 
         case profileActionTypes.FETCH_PROFILE:
             return {
-                ... state,
+                ...state,
                 profileView: { profileFetchStatus: profileFetchStatuses.FETCHING }
             };
 

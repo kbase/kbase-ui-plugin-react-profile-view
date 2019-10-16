@@ -8,27 +8,20 @@ export default function WhichComponent(props: any) {
     switch (props.orgFetchStatus) {
         case 'none':
             return <Spinner />;
-            break;
 
         case 'fetching':
             return <Spinner />;
-            break;
 
         case 'success':
             return <Orgs orgList={props.orgList} />;
-            break;
 
         case 'error':
 
-            return <ErrorMessage
-                    errorMessageProps={props}
-            />;
-            break;
+            return <ErrorMessage errorMessageProps={props} />;
 
         default:
-            return (<div>hello</div>);
-            break;
+            return (<div>???</div>);
 
-    }
+    };
 
-}
+};

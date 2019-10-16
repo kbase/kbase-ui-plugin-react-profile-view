@@ -1,22 +1,11 @@
 
-.card-with-height {
-  height: 245px;
-  overflow: auto;
-}
 .search-on-a-tab {
   color: rgba(0, 0, 0, 0.65);
   position: absolute;
   right: -76vw;
   margin-top: -8px;
 }
-.edit-button-on-title {
-  float: right;
-  border: 0px !important;
-}
-.save-button-on-title {
-  float: right;
-  border: 0px !important;
-}
+
 .clear-disabled
 .clear-disabled[disabled] {
   color:rgba(0, 0, 0, 0.65) !important;
@@ -29,26 +18,9 @@
   margin: 0 0.5em;
 }
 
-/* overwrite <List.Item> style */
-.profile-list {
-    list-style: inside !important;
-    list-style-type: disc !important;
-    padding: 0px !important;
-    display: list-item !important;
-    border-bottom: 0px !important;
-}
 
 input.ant-input {
     border: 0px !important;
-
-    /* border-top: 0px !important;
-    border-right: 0px !important;
-    border-left: 0px !important;
-    border-radius: 0px !important; */
-}
-
-.margin10px {
-    margin: 10px !important;
 }
 
 .marginTop10px {
@@ -62,11 +34,14 @@ input.ant-input {
 #root {
     overflow: auto;
 }
-.profile-input-form > .ant-form-item-label > label::after {
+
+.profile-input-form > 
+.ant-form-item-label > 
+label::after {
     content: none !important;
 }
 
-.affiliations {
+.affiliation-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -98,12 +73,6 @@ div >
 }
 
 .clear-disabled
-.ant-select-selection {
-    background: white !important;
-    color: rgba(0,0,0,.65) !important;
-}
-
-.clear-disabled > 
 .ant-select-selection {
     background: white !important;
     color: rgba(0,0,0,.65) !important;

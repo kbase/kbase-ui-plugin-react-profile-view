@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Input } from 'antd';
+import { Form, Input, Empty } from 'antd';
 import { UserName } from '../../../redux/interfaces';
 
 const { TextArea } = Input;
@@ -29,11 +29,10 @@ interface State {
 
 /**
  * Input field wrapped in Form, Form.item. 
- * Validation status will be shown.
- * If onBlur/onPressEnter updates storeState, set it to true.
- * minLength default = 2
+ *  - Validation status will be shown.
+ *  - If onBlur/onPressEnter updates storeState, set it to true.
+ *  - minLength default = 2
  */
-
 class TextAreaForm extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
@@ -142,23 +141,23 @@ class TextAreaForm extends React.Component<Props, State> {
 
     render() {
         return (
-                <Form.Item hasFeedback help={this.state.helpText} validateStatus={this.state.validateStatus}>
-                    <TextArea
-                        autosize
-                        hidden={this.props.hidden}
-                        placeholder={this.props.placeHolder}
-                        readOnly={this.props.readOnly}
-                        className="clear-disabled"
-                        style={{ minHeight: "40px" }}
-                        maxLength={this.props.maxLength}
-                        minLength={this.props.minLength}
-                        onFocus={this.handleOnChange}
-                        onBlur={this.props.onBlur === true ? this.updateStoreStateProperty : this.handleOnChange}
-                        onPressEnter={this.props.onPressEnter === true ? this.updateStoreStateProperty : this.handleOnChange}
-                        onChange={this.handleOnChange}
-                        defaultValue={this.props.defaultValue}
-                    />
-                </Form.Item>
+            <Form.Item hasFeedback help={this.state.helpText} validateStatus={this.state.validateStatus}>
+                <TextArea
+                    autosize
+                    hidden={this.props.hidden}
+                    placeholder={this.props.placeHolder}
+                    readOnly={this.props.readOnly}
+                    className="clear-disabled"
+                    style={{ minHeight: "40px" }}
+                    maxLength={this.props.maxLength}
+                    minLength={this.props.minLength}
+                    onFocus={this.handleOnChange}
+                    onBlur={this.props.onBlur === true ? this.updateStoreStateProperty : this.handleOnChange}
+                    onPressEnter={this.props.onPressEnter === true ? this.updateStoreStateProperty : this.handleOnChange}
+                    onChange={this.handleOnChange}
+                    defaultValue={this.props.defaultValue}
+                />
+            </Form.Item>
         );
     };
 };

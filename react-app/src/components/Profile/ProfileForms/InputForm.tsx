@@ -162,9 +162,13 @@ class InputForm extends React.Component<Props, State> {
      */
     handleOnChange(event: React.ChangeEvent<HTMLInputElement> | React.FocusEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) {
         let inputValue = event.currentTarget.value;
-        if (typeof inputValue === 'string') {
-            this.saveLocalState(inputValue);
-            this.validateInput(inputValue);
+        if(this.props.readOnly) {
+            return;
+        } else {
+            if (typeof inputValue === 'string') {
+                this.saveLocalState(inputValue);
+                this.validateInput(inputValue);
+            };  
         };
     };
 

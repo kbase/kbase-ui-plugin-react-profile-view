@@ -21,15 +21,19 @@ export function getOrgs(profileID: string) {
             let response= await fetchOrgsOfProfileAPI(profileID, token, rootStore.app.config.baseUrl);
             if (typeof response !== 'undefined') {
                 if (typeof response[0] === 'number') {
+                    // response is error message array 
                     dispatch(fetchErrorOrgs({ orgError: response, orgFetchStatus: orgFetchStatuses.ERROR} ));
                 } else if (typeof response[0] === 'object') {
+                    // typescript!
                     let foo:any = response;
-                    let res = foo as Array<Org>; 
+                    let res = foo as Array<Org>;
                     res.forEach((org) => {
                         orgArr.push({ name: org.name, url: rootStore.app.config.baseUrl + '/#org/' + org.id });
                     });
-    
                     dispatch(loadOrgs({ orgList: orgArr, orgFetchStatus: orgFetchStatuses.SUCCESS }));
+                } else {
+                    // empty array is returned
+                    dispatch(loadOrgs({ orgList: response, orgFetchStatus: orgFetchStatuses.SUCCESS }));
                 }
             } else {
                 dispatch(fetchErrorOrgs({orgError:[418, 'Please check console errors.'], orgFetchStatus: orgFetchStatuses.ERROR} ));

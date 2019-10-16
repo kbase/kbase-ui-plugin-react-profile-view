@@ -302,7 +302,9 @@ class AffiliationForm extends React.Component<Props, State> {
     };
 
     /**
-     * 
+     * Update Store state 
+     *   - check if there is no error on the form
+     *   - create a new array of affliation
      */
     affiliationOnSave() {
         let update = false; // only when update is set to true, update store state.
@@ -320,7 +322,7 @@ class AffiliationForm extends React.Component<Props, State> {
             if (this.state.affiliations[i]['validatedStatusJobTitle'] === 'error' ||
                 this.state.affiliations[i]['validatedStatusOrganization'] === 'error' ||
                 this.state.affiliations[i]['validatedStatusStartYear'] === 'error' ||
-                this.state.affiliations[i]['validatedStatusEndYear'] == 'error') {
+                this.state.affiliations[i]['validatedStatusEndYear'] === 'error') {
                 break;
             };
 
@@ -330,7 +332,9 @@ class AffiliationForm extends React.Component<Props, State> {
             keys.forEach(element => {
                 if (affiliationsProps[i] !== undefined) {
                     // if any value is changed, update store state
-                    if (affiliationsState[i][element] !== affiliationsProps[i][element]) update = true;
+                    if (affiliationsState[i][element] !== affiliationsProps[i][element]) {
+                        update = true;
+                    };
                 };
 
                 let obj = { [element]: affiliationsState[i][element] };
@@ -360,14 +364,16 @@ class AffiliationForm extends React.Component<Props, State> {
     };
 
     /**
-     * 
+     * builds affiliation card
      */
     affiliations() {
-        if (Array.isArray(this.state.affiliations)) {
+        // TODOL change BFF so that it will return an empty array when there is no data
+        // so instead of using this -> affiliations[0]['title'], affiliations.length > 0
+        if ( this.props.affiliations[0]['title'] !== '') {
             return (
                 <div id='affiliations'>
                     {this.state.affiliations.map((position, index) => (
-                        <form key={index} className='affiliations ant-form ant-form-inline' name={index.toString(10)} autoComplete="on">
+                        <form key={index} className='affiliation-row ant-form ant-form-inline' name={index.toString(10)} autoComplete="on">
                             <Form.Item {...formItemLayout}
                                 className="profile-input-form"
                                 required={this.requiredNotificationControl()}
@@ -376,16 +382,16 @@ class AffiliationForm extends React.Component<Props, State> {
                                 help={this.state.affiliations[index]['helpTextJobTitle']}
                                 validateStatus={this.state.affiliations[index]['validatedStatusJobTitle']}
                             ><Input
-                                    readOnly={!this.props.editEnable}
-                                    style={{ width: '100%' }}
-                                    autoComplete='organization-title'
-                                    type='text'
-                                    className='clear-disabled'
-                                    maxLength={50}
-                                    defaultValue={position.title}
-                                    placeholder={'Job title'}
-                                    onChange={(event) => { this.affiliationJobTitleOnChange(event, index) }}
-                                /></Form.Item>
+                                readOnly={!this.props.editEnable}
+                                style={{ width: '100%' }}
+                                autoComplete='organization-title'
+                                type='text'
+                                className='clear-disabled'
+                                maxLength={50}
+                                defaultValue={position.title}
+                                placeholder={'Job title'}
+                                onChange={(event) => { this.affiliationJobTitleOnChange(event, index) }}
+                            /></Form.Item>
                             <Form.Item {...formItemLayout}
                                 style={{ flexGrow: 1 }}
                                 className="profile-input-form"
@@ -420,7 +426,7 @@ class AffiliationForm extends React.Component<Props, State> {
                                             </Option>
                                         );
                                     })}
-                                </AutoComplete></Form.Item>
+                            </AutoComplete></Form.Item>
                             <Tooltip overlayStyle={this.tooltipVisibility()} title='Enter 4 digits start year and end year'>
                                 <Form.Item {...formItemLayout}
                                     className="profile-input-form"
@@ -430,15 +436,15 @@ class AffiliationForm extends React.Component<Props, State> {
                                     help={this.state.affiliations[index]['helpTextStartYear']}
                                     validateStatus={this.state.affiliations[index]['validatedStatusStartYear']}
                                 ><Input
-                                        readOnly={!this.props.editEnable}
-                                        style={{ width: '90px', display: 'inline' }}
-                                        onChange={(item) => { this.affiliationStartOnChange(item, index) }}
-                                        type='number'
-                                        maxLength={4}
-                                        className='clear-disabled'
-                                        placeholder='Start'
-                                        defaultValue={position.started}
-                                    /></Form.Item>
+                                    readOnly={!this.props.editEnable}
+                                    style={{ width: '90px', display: 'inline' }}
+                                    onChange={(item) => { this.affiliationStartOnChange(item, index) }}
+                                    type='number'
+                                    maxLength={4}
+                                    className='clear-disabled'
+                                    placeholder='Start'
+                                    defaultValue={position.started}
+                                /></Form.Item>
                             </Tooltip>
                             <Tooltip overlayStyle={this.tooltipVisibility()} title='Enter 4 digits start year and end year'>
                                 <Form.Item {...formItemLayout}
@@ -449,15 +455,15 @@ class AffiliationForm extends React.Component<Props, State> {
                                     help={this.state.affiliations[index]['helpTextEndYear']}
                                     validateStatus={this.state.affiliations[index]['validatedStatusEndYear']}
                                 ><Input
-                                        readOnly={!this.props.editEnable}
-                                        style={{ width: '90px', display: 'inline' }}
-                                        onChange={(item) => { this.affiliationEndOnChange(item, index) }}
-                                        type='number'
-                                        maxLength={4}
-                                        className='clear-disabled'
-                                        placeholder='End'
-                                        defaultValue={position.ended}
-                                    /></Form.Item>
+                                    readOnly={!this.props.editEnable}
+                                    style={{ width: '90px', display: 'inline' }}
+                                    onChange={(item) => { this.affiliationEndOnChange(item, index) }}
+                                    type='number'
+                                    maxLength={4}
+                                    className='clear-disabled'
+                                    placeholder='End'
+                                    defaultValue={position.ended}
+                                /></Form.Item>
                             </Tooltip>
                             <Icon type="delete" style={{ display: this.showEditButtons() }} onClick={() => this.deleteAffiliation(index)} />
                             {/* <Button style={{ margin: '10px', display: this.showEditButtons() }} type="primary" onClick={() => this.deleteAffiliation(index)}>

@@ -2,13 +2,10 @@ import React from 'react';
 
 import { Tabs } from 'antd';
 
-import ProfileContainer from '../components/Profile/ProfileContainer';
 import ProfileClassContainer from '../components/Profile/ProfileClassCountainer';
 import NarrativeContainer from '../components/Narratives';
 import { OrgProp, UserName } from '../redux/interfaces';
 import SearchUsersContainer from '../components/SearchUsers/SearchUsersContainer';
-import { connect } from 'net';
-
 
 const TabPane = Tabs.TabPane;
 /**
