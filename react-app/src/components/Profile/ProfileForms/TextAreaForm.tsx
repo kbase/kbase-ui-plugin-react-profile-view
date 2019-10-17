@@ -1,6 +1,7 @@
 import React from 'react';
 import { Form, Input } from 'antd';
 import { UserName } from '../../../redux/interfaces';
+import { max } from 'moment';
 
 const { TextArea } = Input;
 
@@ -29,11 +30,10 @@ interface State {
 
 /**
  * Input field wrapped in Form, Form.item. 
- * Validation status will be shown.
- * If onBlur/onPressEnter updates storeState, set it to true.
- * minLength default = 2
+ *  - Validation status will be shown.
+ *  - If onBlur/onPressEnter updates storeState, set it to true.
+ *  - minLength default = 2
  */
-
 class TextAreaForm extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
@@ -49,19 +49,17 @@ class TextAreaForm extends React.Component<Props, State> {
         this.handleOnChange = this.handleOnChange.bind(this);
     };
 
-    componentDidMount() {
-        console.log(this.state)
-    };
+    // componentDidMount() {
+    // };
 
-    componentDidUpdate(prevProps: Props, prevState: State, snapshot: any) {
-        // console.log(this.state)
-    };
+    // componentDidUpdate(prevProps: Props, prevState: State, snapshot: any) {
+    // };
 
     /**
      * Validate value against 
      *  - max and min length
      *  - if it's required field
-     *  - type 
+     *  - input type 
      * and set state per validation result.
      * @param inputValue 
      */
@@ -73,29 +71,34 @@ class TextAreaForm extends React.Component<Props, State> {
         };
         // check against min and max length
         if (typeof this.props.maxLength !== 'undefined') {
-            let foo: State['validateStatus'];
+            let status: State['validateStatus'];
             let helper: string | undefined;
-            let maxLength = this.props.maxLength;
+            let maxLength;
+            if(this.props.maxLength){
+                maxLength = this.props.maxLength;
+            } else {
+                maxLength = 1000000 // number is picked randomly. Number.MAX_SAFE_INTEGER seemed a bit overkill.
+            }
             // this could be ternary operator, but typescript doesn't like it.
             let minLength = 2;
             if (typeof this.props.minLength !== 'undefined') minLength = this.props.minLength;
 
             if (inputValue.length <= maxLength && inputValue.length >= minLength) {
-                foo = 'success';
+                status = 'success';
                 helper = undefined;
             } else if (!this.props.required && inputValue.length === 0) {
-                foo = 'success';
+                status = 'success';
                 helper = undefined;
             } else if (inputValue.length < minLength) {
-                foo = 'error';
+                status = 'error';
                 helper = 'input must be at least ' + minLength + ' characters';
             } else if (inputValue.length > maxLength) {
                 // this shouldn't happen since input field max length is set
-                foo = 'error';
+                status = 'error';
                 helper = 'input must be less than ' + maxLength + ' characters';
             };
 
-            this.setState({ validateStatus: foo, helpText: helper });
+            this.setState({ validateStatus: status, helpText: helper });
         };
     };
 
@@ -133,31 +136,34 @@ class TextAreaForm extends React.Component<Props, State> {
      */
     handleOnChange(event: React.ChangeEvent<HTMLTextAreaElement> | React.FocusEvent<HTMLTextAreaElement> | React.KeyboardEvent<HTMLTextAreaElement>) {
         let inputValue = event.currentTarget.value;
+        // validate input only when it's not readOnly
+        if(!this.props.readOnly){
+            this.validateInput(inputValue);
+        };
         if (typeof inputValue === 'string') {
             this.saveLocalState(inputValue);
-            this.validateInput(inputValue);
         };
     };
 
     render() {
         return (
-                <Form.Item hasFeedback help={this.state.helpText} validateStatus={this.state.validateStatus}>
-                    <TextArea
-                        autosize
-                        hidden={this.props.hidden}
-                        placeholder={this.props.placeHolder}
-                        readOnly={this.props.readOnly}
-                        className="clear-disabled"
-                        style={{ minHeight: "40px" }}
-                        maxLength={this.props.maxLength}
-                        minLength={this.props.minLength}
-                        onFocus={this.handleOnChange}
-                        onBlur={this.props.onBlur === true ? this.updateStoreStateProperty : this.handleOnChange}
-                        onPressEnter={this.props.onPressEnter === true ? this.updateStoreStateProperty : this.handleOnChange}
-                        onChange={this.handleOnChange}
-                        defaultValue={this.props.defaultValue}
-                    />
-                </Form.Item>
+            <Form.Item hasFeedback help={this.state.helpText} validateStatus={this.state.validateStatus}>
+                <TextArea
+                    autosize
+                    hidden={this.props.hidden}
+                    placeholder={this.props.placeHolder}
+                    readOnly={this.props.readOnly}
+                    className="clear-disabled"
+                    style={{ minHeight: "40px" }}
+                    maxLength={this.props.maxLength}
+                    minLength={this.props.minLength}
+                    onFocus={this.handleOnChange}
+                    onBlur={this.props.onBlur === true ? this.updateStoreStateProperty : this.handleOnChange}
+                    onPressEnter={this.props.onPressEnter === true ? this.updateStoreStateProperty : this.handleOnChange}
+                    onChange={this.handleOnChange}
+                    defaultValue={this.props.defaultValue}
+                />
+            </Form.Item>
         );
     };
 };

@@ -1,5 +1,5 @@
 import React, { CSSProperties } from 'react';
-import { Form, Input, AutoComplete, Tooltip, Select, Empty, Button } from 'antd';
+import { Form, Input, AutoComplete, Tooltip, Select, Empty, Button, Icon } from 'antd';
 import { Affiliation, ProfileData, UserName } from '../../../redux/interfaces';
 import { institution } from '../../../dataSources';
 
@@ -9,8 +9,8 @@ const { Option } = Select;
 interface AffiliationValidated {
     title: string;
     organization: string;
-    started: string;
-    ended: string;
+    started: string | undefined;
+    ended: string | undefined;
     validatedStatusJobTitle: "" | "error" | "success" | "warning" | "validating" | undefined;
     validatedStatusOrganization: "" | "error" | "success" | "warning" | "validating" | undefined;
     validatedStatusStartYear: "" | "error" | "success" | "warning" | "validating" | undefined;
@@ -53,7 +53,10 @@ class AffiliationForm extends React.Component<Props, State> {
             institutionFiltered: [],
         };
 
-        this.affiliations = this.affiliations.bind(this);
+        this.showEditButtons = this.showEditButtons.bind(this);
+        this.tooltipVisibility = this.tooltipVisibility.bind(this);
+        this.requiredNotificationControl = this.requiredNotificationControl.bind(this);
+        this.saveDisabled = this.saveDisabled.bind(this);
         this.validateInput = this.validateInput.bind(this);
         this.saveLocalState = this.saveLocalState.bind(this);
         this.addAffiliation = this.addAffiliation.bind(this);
@@ -63,8 +66,7 @@ class AffiliationForm extends React.Component<Props, State> {
         this.affiliationEndOnChange = this.affiliationEndOnChange.bind(this);
         this.affiliationOnSave = this.affiliationOnSave.bind(this);
         this.institutionOnSearch = this.institutionOnSearch.bind(this);
-        this.showEditButtons = this.showEditButtons.bind(this);
-        this.tooltipVisibility = this.tooltipVisibility.bind(this);
+        this.affiliations = this.affiliations.bind(this);
     };
 
     componentDidMount() {
@@ -89,6 +91,35 @@ class AffiliationForm extends React.Component<Props, State> {
         this.setState({ affiliations: newAffiliations });
     };
 
+    // show/hide edit/save buttons
+    showEditButtons() {
+        if (this.props.editEnable === true) {
+            return 'unset';
+        } else {
+            return 'none';
+        };
+    };
+
+    // show/hide required notification 
+    requiredNotificationControl() {
+        if (this.props.editEnable) {
+            return true;
+        } else {
+            return false;
+        };
+    };
+    // disables save button while validated states is error.
+    saveDisabled() {
+        for (let i = 0; i < this.state.affiliations.length; i += 1) {
+            let affilicationObj = this.state.affiliations[i];
+            if(Object.values(affilicationObj).includes('error')) {
+                return true;
+            };
+        };
+    };
+
+
+    // event handlers//    
     /** 
     * Validate value against 
     *  - max and min length
@@ -143,16 +174,20 @@ class AffiliationForm extends React.Component<Props, State> {
         this.setState({ affiliations: affiliations });
     };
 
+    /**
+     * Add a new affiliation object to arrlication array
+     * @param event 
+     */
     addAffiliation(event: any) {
         let newAffiliation: Array<AffiliationValidated> = [{
             title: '',
             organization: '',
-            started: '',
-            ended: '',
+            started: undefined,
+            ended: undefined,
             validatedStatusJobTitle: 'error',
             validatedStatusOrganization: 'error',
             validatedStatusStartYear: 'error',
-            validatedStatusEndYear: 'error',
+            validatedStatusEndYear: undefined,
             helpTextJobTitle: undefined,
             helpTextOrganization: undefined,
             helpTextStartYear: undefined,
@@ -162,41 +197,118 @@ class AffiliationForm extends React.Component<Props, State> {
         this.setState({ affiliations: this.state.affiliations.concat(newAffiliation) });
     };
 
+    /**
+     * delete affiation object from an array using array index 
+     * @param index 
+     */
     deleteAffiliation(index: number) {
         let arr = this.state.affiliations;
         arr.splice(index, 1);
         this.setState({ affiliations: arr });
     };
 
+    /**
+     * Save/update local state and call input validation function
+     * @param event 
+     * @param index 
+     */
     affiliationJobTitleOnChange(event: any, index: number) {
         let value = event.target.value;
         this.saveLocalState(value, index, 'title');
         this.validateInput(value, index, 'validatedStatusJobTitle', 'helpTextJobTitle', 'string', 50);
     };
 
+    /**
+     * Save/update local state and call input validation function
+     * check if it's smaller than the corresponding end year
+     * @param event 
+     * @param index 
+     */
     affiliationStartOnChange(event: any, index: number) {
         let value = event.target.value;
+        let endYear =  this.state.affiliations[index]['ended'];
+        // check if the entered start year is less than end year if it is already entered.
+        if(typeof endYear !== 'undefined') {
+            let affiliationArray = this.state.affiliations;
+            // while entered start year is less than end year, other validations are not required.
+            // update validated status to error and set helpt text. 
+            if (value > endYear) {
+                affiliationArray[index]['validatedStatusStartYear'] = 'error';
+                affiliationArray[index]['helpTextStartYear'] = 'must be less than end year';
+                this.setState({ affiliations: affiliationArray });
+                return;
+            } else {
+                // other wise set validated state and helpText to undefined 
+                /// and let the validate input function set the validated state.
+                affiliationArray[index]['validatedStatusStartYear'] = undefined;
+                affiliationArray[index]['helpTextStartYear'] = undefined;
+                this.setState({ affiliations: affiliationArray });
+            };   
+        }
         this.saveLocalState(value, index, 'started');
         this.validateInput(value, index, 'validatedStatusStartYear', 'helpTextStartYear', 'number', 4, 4);
     };
 
+    /**
+     * Save/update local state and call input validation function
+     * check if it's later than the corresponding start year. 
+     * @param event 
+     * @param index 
+     */
     affiliationEndOnChange(event: any, index: number) {
         let value = event.target.value;
-        if (value < this.state.affiliations[index]['started']) {
-            let affiliationArray = this.state.affiliations;
-            affiliationArray[index]['ended'] = 'error';
-            affiliationArray[index]['helpTextEndYear'] = 'must be larger than start year';
-            this.setState({ affiliations: affiliationArray });
-            return;
-        }
+        let affiliationArray = this.state.affiliations;
+        // if the start date is already entered and is larger than the entered value, 
+        // set the valudated status to error and set help text. 
+        let startDate = this.state.affiliations[index]['started'];
+        if (startDate!== undefined) {
+            if (value < startDate ) {
+                affiliationArray[index]['validatedStatusEndYear'] = 'error';
+                affiliationArray[index]['helpTextEndYear'] = 'must be larger than start year';
+                this.setState({ affiliations: affiliationArray });
+                return;
+            };
+        };
         this.saveLocalState(value, index, 'ended');
-        this.validateInput(value, index, 'validatedStatusEndYear', 'helpTextEndYear', 'number', 4, 4);
+        // if the entry is empty, then set the state to undefined. 
+        if(value.length > 0) {
+            this.validateInput(value, index, 'validatedStatusEndYear', 'helpTextEndYear', 'number', 4, 4);
+        } else {
+            affiliationArray[index]['validatedStatusEndYear'] = undefined;
+            affiliationArray[index]['ended'] = undefined;
+            affiliationArray[index]['helpTextEndYear'] = undefined;
+            this.setState({ affiliations: affiliationArray });
+        };
+    };
+    
+    /**
+     * Save/update local state and call input validation function
+     * filters list of insitution before update state.
+     * @param value 
+     * @param index 
+     */
+    institutionOnSearch(value: string, index: number) {
+        this.validateInput(value, index, 'validatedStatusOrganization', 'helpTextOrganization', 'string', 100, 2);
+        this.saveLocalState(value, index, 'organization');
+        if (value.length > 2) {
+            let arr = [];
+            arr = institution.filter(item =>
+                item.toLowerCase().includes(value.toLowerCase())
+            );
+            if (arr.length <= 30) {
+                this.setState({ institutionFiltered: arr });
+            };
+        };
     };
 
+    /**
+     * Update Store state 
+     *   - check if there is no error on the form
+     *   - create a new array of affliation
+     */
     affiliationOnSave() {
         let update = false; // only when update is set to true, update store state.
         let keys = ['title', 'organization', 'started', 'ended'] // if there is a way to have this not hard coded, please let me know
-        // let keys = Object.keys(this.props.affiliations[0]); // extract keys that are only used for StoreState
         let profileData: any = this.props.profileData; // any is used in order to use generic properties
         let affiliationsProps: any = this.props.affiliations; // any is used in order to use generic properties
         let affiliationsState: any = this.state.affiliations; // any is used in order to use generic properties
@@ -210,7 +322,7 @@ class AffiliationForm extends React.Component<Props, State> {
             if (this.state.affiliations[i]['validatedStatusJobTitle'] === 'error' ||
                 this.state.affiliations[i]['validatedStatusOrganization'] === 'error' ||
                 this.state.affiliations[i]['validatedStatusStartYear'] === 'error' ||
-                this.state.affiliations[i]['validatedStatusEndYear'] == 'error') {
+                this.state.affiliations[i]['validatedStatusEndYear'] === 'error') {
                 break;
             };
 
@@ -220,9 +332,9 @@ class AffiliationForm extends React.Component<Props, State> {
             keys.forEach(element => {
                 if (affiliationsProps[i] !== undefined) {
                     // if any value is changed, update store state
-                    if (affiliationsState[i][element] !== affiliationsProps[i][element]) update = true;
-                } else {
-                    update = true;
+                    if (affiliationsState[i][element] !== affiliationsProps[i][element]) {
+                        update = true;
+                    };
                 };
 
                 let obj = { [element]: affiliationsState[i][element] };
@@ -238,32 +350,11 @@ class AffiliationForm extends React.Component<Props, State> {
         };
     };
 
-    institutionOnSearch(value: string, index: number) {
-        this.validateInput(value, index, 'validatedStatusOrganization', 'helpTextOrganization', 'string', 100, 2);
-        this.saveLocalState(value, index, 'organization');
-        if (value.length > 2) {
-            let arr = [];
-            arr = institution.filter(item =>
-                item.toLowerCase().includes(value.toLowerCase())
-            );
-            if (arr.length <= 30) {
-                this.setState({ institutionFiltered: arr });
-            };
-        };
-    };
 
-    // show/hide edit/save buttons
-    showEditButtons() {
-        if (this.props.editEnable === true) {
-            return 'unset';
-        } else {
-            return 'none';
-        };
-    };
 
     /**
- * if profile is auth user's profile, then edit is enabled, then make tool tips visible
- */
+     * if profile is auth user's profile, then edit is enabled, then make tool tips visible
+     */
     tooltipVisibility(): CSSProperties {
         if (this.props.editEnable === false) {
             return { visibility: 'hidden' };
@@ -272,41 +363,45 @@ class AffiliationForm extends React.Component<Props, State> {
         };
     };
 
-    // populate affiliations and handles case that affiliations list prop is empty
+    /**
+     * builds affiliation card
+     */
     affiliations() {
-        if (Array.isArray(this.state.affiliations)) {
+        // TODO: change BFF so that it will return an empty array when there is no data
+        // so instead of using this -> affiliations[0]['title'], affiliations.length > 0
+        if ( this.props.affiliations[0]['title'] !== '') {
             return (
                 <div id='affiliations'>
                     {this.state.affiliations.map((position, index) => (
-                        <form key={index} className='affiliations ant-form ant-form-inline' name={index.toString(10)} autoComplete="on">
+                        <form key={index} className='affiliation-row ant-form ant-form-inline' name={index.toString(10)} autoComplete="on">
                             <Form.Item {...formItemLayout}
                                 className="profile-input-form"
-                                required
+                                required={this.requiredNotificationControl()}
                                 label=' '
                                 hasFeedback
                                 help={this.state.affiliations[index]['helpTextJobTitle']}
                                 validateStatus={this.state.affiliations[index]['validatedStatusJobTitle']}
                             ><Input
-                                    readOnly={!this.props.editEnable}
-                                    style={{ width: '100%' }}
-                                    autoComplete='organization-title'
-                                    type='text'
-                                    className='clear-disabled'
-                                    maxLength={50}
-                                    defaultValue={position.title}
-                                    placeholder={'Job title'}
-                                    onChange={(event) => { this.affiliationJobTitleOnChange(event, index) }}
-                                /></Form.Item>
+                                readOnly={!this.props.editEnable}
+                                style={{ width: '100%' }}
+                                autoComplete='organization-title'
+                                type='text'
+                                className='clear-disabled'
+                                maxLength={50}
+                                defaultValue={position.title}
+                                placeholder={'Job title'}
+                                onChange={(event) => { this.affiliationJobTitleOnChange(event, index) }}
+                            /></Form.Item>
                             <Form.Item {...formItemLayout}
+                                style={{ flexGrow: 1 }}
                                 className="profile-input-form"
-                                required
+                                required={this.requiredNotificationControl()}
                                 label=' '
                                 hasFeedback
                                 help={this.state.affiliations[index]['helpTextOrganization']}
                                 validateStatus={this.state.affiliations[index]['validatedStatusOrganization']}
                             ><AutoComplete
                                 className='clear-disabled'
-                                style={{ width: '100%' }}
                                 allowClear
                                 disabled={!this.props.editEnable}
                                 placeholder='Organization'
@@ -326,58 +421,61 @@ class AffiliationForm extends React.Component<Props, State> {
                             >
                                     {this.state.institutionFiltered.map((item, index) => {
                                         return (
-                                            <Option className='clear-disabled' key={index} value={item} >
+                                            <Option style={{ width: '90%' }} className='clear-disabled' key={index} value={item} >
                                                 {item}
                                             </Option>
                                         );
                                     })}
-                                </AutoComplete></Form.Item>
+                            </AutoComplete></Form.Item>
                             <Tooltip overlayStyle={this.tooltipVisibility()} title='Enter 4 digits start year and end year'>
                                 <Form.Item {...formItemLayout}
                                     className="profile-input-form"
-                                    required
+                                    required={this.requiredNotificationControl()}
                                     label=' '
                                     hasFeedback
                                     help={this.state.affiliations[index]['helpTextStartYear']}
                                     validateStatus={this.state.affiliations[index]['validatedStatusStartYear']}
                                 ><Input
-                                        readOnly={!this.props.editEnable}
-                                        style={{ width: '90px', display: 'inline' }}
-                                        onChange={(item) => { this.affiliationStartOnChange(item, index) }}
-                                        type='number'
-                                        maxLength={4}
-                                        className='clear-disabled'
-                                        placeholder='Start'
-                                        defaultValue={position.started}
-                                    /></Form.Item>
+                                    readOnly={!this.props.editEnable}
+                                    style={{ width: '90px', display: 'inline' }}
+                                    onChange={(item) => { this.affiliationStartOnChange(item, index) }}
+                                    type='number'
+                                    maxLength={4}
+                                    className='clear-disabled'
+                                    placeholder='Start'
+                                    defaultValue={position.started}
+                                /></Form.Item>
+                            </Tooltip>
+                            <Tooltip overlayStyle={this.tooltipVisibility()} title='Enter 4 digits start year and end year'>
                                 <Form.Item {...formItemLayout}
                                     className="profile-input-form"
-                                    required
+                                    required={false}
                                     label=' '
                                     hasFeedback
                                     help={this.state.affiliations[index]['helpTextEndYear']}
                                     validateStatus={this.state.affiliations[index]['validatedStatusEndYear']}
                                 ><Input
-                                        readOnly={!this.props.editEnable}
-                                        style={{ width: '90px', display: 'inline' }}
-                                        onChange={(item) => { this.affiliationEndOnChange(item, index) }}
-                                        type='number'
-                                        maxLength={4}
-                                        className='clear-disabled'
-                                        placeholder='End'
-                                        defaultValue={position.ended}
-                                    /></Form.Item>
+                                    readOnly={!this.props.editEnable}
+                                    style={{ width: '90px', display: 'inline' }}
+                                    onChange={(item) => { this.affiliationEndOnChange(item, index) }}
+                                    type='number'
+                                    maxLength={4}
+                                    className='clear-disabled'
+                                    placeholder='End'
+                                    defaultValue={position.ended}
+                                /></Form.Item>
                             </Tooltip>
-                            <Button style={{ margin: '10px', display: this.showEditButtons() }} type="primary" onClick={() => this.deleteAffiliation(index)}>
+                            <Icon type="delete" style={{ display: this.showEditButtons() }} onClick={() => this.deleteAffiliation(index)} />
+                            {/* <Button style={{ margin: '10px', display: this.showEditButtons() }} type="primary" onClick={() => this.deleteAffiliation(index)}>
                                 delete
-                            </Button>
+                            </Button> */}
                         </form>
                     ))}
                     <Button style={{ margin: '10px', display: this.showEditButtons() }} key="add" type="primary" onClick={this.addAffiliation}>
-                        add
+                        Add
                     </Button>
-                    <Button style={{ margin: '10px', display: this.showEditButtons() }} key="submit" type="primary" onClick={this.affiliationOnSave}>
-                        save
+                    <Button disabled={this.saveDisabled()} style={{ margin: '10px', display: this.showEditButtons() }} key="submit" type="primary" onClick={this.affiliationOnSave}>
+                        Save
                     </Button>
                 </div>
             )

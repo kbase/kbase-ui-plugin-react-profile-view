@@ -1,4 +1,4 @@
-import { ProfileData, UserName } from '../redux/interfaces';
+import { ProfileData, UserName} from '../redux/interfaces';
 
 export async function getBFFServiceUrl(token: string, baseURL: string) {
     // TODO: for dev, the baseUrl will be whatever works for the CRA workflow, which is ''.
@@ -24,9 +24,15 @@ export async function getBFFServiceUrl(token: string, baseURL: string) {
         },
         body: stringBody
     });
-    const responseJson = await response.json();
-    return responseJson.result[0]['url'];
-}
+    if(response.status !== 200){
+        // return empty string so that the fetch API called this function
+        // can generate error messages. 
+        return  '';
+    } else {
+        const responseJson = await response.json();
+        return responseJson.result[0]['url'];
+    };
+};
 
 /**
  * Return profile data
@@ -40,19 +46,17 @@ export async function fetchProfileAPI(id: string, token: string, baseURL: string
     const response = await fetch(url, {
         method: 'GET'
     });
-    if (response.status === 404) {
-        console.warn('404 response:', response);
+    if (response.status !== 200) {
+        console.warn(response.status, response);
         return [response.status, response.statusText];
-    } else if (response.status === 500) {
-        console.error('500 response:', response);
-        return [response.status, response.statusText];
-    };
-    try {
-        const profile = await response.json();
-        return profile;
-    } catch (err) {
-        console.error('profile fetch failed', response);
-        return [response.status, response.statusText];
+    } else {
+        try {
+            const profile = await response.json();
+            return profile;
+        } catch (err) {
+            console.error('profile fetch failed', response);
+            return [response.status, response.statusText];
+        };
     };
 };
 
@@ -138,8 +142,8 @@ export async function fetchOrgsOfProfileAPI(id: string, token: string, baseURL: 
             Authorization: token
         }
     });
-    if (response.status === 500) {
-        console.error('500 response:', response);
+    if (response.status !== 200) {
+        console.error('Org Fetch Error:', response);
         return [response.status, response.statusText];
     };
     try {

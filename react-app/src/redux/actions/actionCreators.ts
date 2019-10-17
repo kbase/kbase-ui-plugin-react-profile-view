@@ -1,10 +1,9 @@
-import React from 'react';
-import { loadOrgAction, OrgList, loadProfileAction, ProfileView, ProfileState, ErrorMessages } from '../interfaces';
+import { OrgAction, OrgList, loadProfileAction, ProfileView, ErrorMessages, OrgFetchError } from '../interfaces';
 import { profileActionTypes, orgsActionTypes } from './actionTypes';
 
 
 // fetching profile data is initiated
-export function fetchProfile() { // put type!
+export function fetchProfile() { 
     return {
         type: profileActionTypes.FETCH_PROFILE
     };
@@ -19,7 +18,7 @@ export function loadProfile(payload: ProfileView): loadProfileAction {
 };
 
 // fetch profile failed
-export function fetchErrorProfile(payload: ErrorMessages) {
+export function fetchErrorProfile(payload: ErrorMessages){
     return {
         type: profileActionTypes.FETCH_PROFILE_ERROR,
         payload
@@ -35,7 +34,7 @@ export function initialRenderProfile() {
 
 
 // fetching Orgs was successful 
-export function loadOrgs(payload: OrgList): loadOrgAction {
+export function loadOrgs(payload: OrgList): OrgAction {
     return {
         type: orgsActionTypes.FETCH_ORGS_SUCCESS,
         payload
@@ -50,9 +49,11 @@ export function fetchOrgs() {
 };
 
 // fetch orgs failed
-export function fetchErrorOrgs() {
+export function fetchErrorOrgs(payload:OrgFetchError):OrgAction {
+
     return {
         type: orgsActionTypes.FETCH_ORGS_ERROR,
+        payload
     };
 };
 

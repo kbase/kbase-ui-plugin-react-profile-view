@@ -1,11 +1,11 @@
 import React, { CSSProperties } from 'react';
-import { Row, Col, Card, Input, Tooltip, Form, Checkbox, Modal, Select, Button, Empty, AutoComplete} from 'antd';
+import { Row, Col, Card, Input, Tooltip, Form, Checkbox, Modal, Select, Button, Empty, AutoComplete } from 'antd';
 import { UserName, ProfileData, Affiliation } from '../../redux/interfaces';
 import nouserpic from '../../assets/nouserpic.png';
 import OrgsContainer from '../Orgs/OrgsContainer';
-import { InputForm,  TextAreaForm, AffiliationForm } from './ProfileForms';
+import { InputForm, TextAreaForm, AffiliationForm } from './ProfileForms';
 
-import {researchInterestsList, jobTitles } from '../../profileConfig';
+import { researchInterestsList, jobTitles } from '../../profileConfig';
 import { fundingSources, countryCodes, institution, states, avatarOptions, gravatarDefaults } from '../../dataSources';
 
 const { Meta } = Card;
@@ -39,11 +39,11 @@ interface Props {
 
 interface State {
     visibleModal: ModalName | undefined;
-    researchInterestsValue: Array<string>; // value returned by onChange
+    researchInterestsValue: Array<string>;
     researchInterestsOther: string | undefined;
-    jobTitleValue: string; // value returned by onChange
+    jobTitleValue: string;
     jobTitleOther: string | undefined;
-    fundingSourceValue: string; // value returned from pulldown
+    fundingSourceValue: string;
     country: string;
     city: string;
     postalCode: string;
@@ -79,20 +79,24 @@ class ProfileClass extends React.Component<Props, State> {
         };
 
         this.tooltipVisibility = this.tooltipVisibility.bind(this); // tooltip is visible when auth user is using the profile
-        this.USStateVisibility = this.USStateVisibility.bind(this);
+        this.USStateVisibility = this.USStateVisibility.bind(this); // show/hide us sate select pull down
         this.gravaterSrc = this.gravaterSrc.bind(this); // setting img src for gravater
-        this.setName = this.setName.bind(this); // creating html element including tooltip to fit in card header 
-        this.researchInterests = this.researchInterests.bind(this); // handles no-data or underfined data and populate data
+        this.setName = this.setName.bind(this); // create html element including tooltip to fit in card header 
         this.institutionToolTip = this.institutionToolTip.bind(this);
-        this.jobTitleOnChange = this.jobTitleOnChange.bind(this); // update/save value from pull down
-        this.researchInterestOnSumbit = this.researchInterestOnSumbit.bind(this);
+        this.buildResearchInterests = this.buildResearchInterests.bind(this);
+        this.buildUserNutsheel = this.buildUserNutsheel.bind(this);
+        this.buildResearchStatement = this.buildResearchStatement.bind(this);
+        this.buildAffliations = this.buildAffliations.bind(this);
+        this.showModal = this.showModal.bind(this);
+        this.setStateProperty = this.setStateProperty.bind(this);
+        this.avatarOptionOnSumbit = this.avatarOptionOnSumbit.bind(this);
         this.researchInterestsOtherOnChange = this.researchInterestsOtherOnChange.bind(this);
         this.researchInterestOnChange = this.researchInterestOnChange.bind(this); // update/save value from checkbox group 
-        this.fundingSourceOnChange = this.fundingSourceOnChange.bind(this);
-        this.institutionSave = this.institutionSave.bind(this);
+        this.researchInterestOnSumbit = this.researchInterestOnSumbit.bind(this);
+        this.institutiOnSave = this.institutiOnSave.bind(this);
         this.institutionOnSearch = this.institutionOnSearch.bind(this);
-        this.setStateProperty = this.setStateProperty.bind(this);
-        this.avatarOptionOnSumbit = this.avatarOptionOnSumbit.bind(this)
+        this.jobTitleOnChange = this.jobTitleOnChange.bind(this); // update/save value from pull down
+        this.fundingSourceOnChange = this.fundingSourceOnChange.bind(this);
     };
 
     componentDidMount() {
@@ -116,21 +120,19 @@ class ProfileClass extends React.Component<Props, State> {
         if (Array.isArray(profile.affiliations)) {
             this.setState({ affiliations: profile.affiliations });
         };
-        
+
     };
 
     // if you're going ot use prevProps, prevState
     // you need to put all these three for typescript to be happy.
     componentDidUpdate(prevProps: Props, prevState: State, snapshot: any) {
-        if(prevState === this.state){
+        if (prevState === this.state) {
             return;
         };
     };
 
 
-    /**
-     * if profile is auth user's profile, then edit is enabled, then make tool tips visible
-     */
+    //if profile is auth user's profile, then make tool tips visible
     tooltipVisibility(): CSSProperties {
         if (this.props.editEnable === false) {
             return { visibility: 'hidden' };
@@ -139,12 +141,13 @@ class ProfileClass extends React.Component<Props, State> {
         };
     };
 
+
     // set visitbility after initial mounting
-    USStateVisibility(){
-        if(this.state.country === 'United States'){
-            return { display: 'inherit'};
+    USStateVisibility() {
+        if (this.state.country === 'United States') {
+            return { display: 'inherit' };
         } else {
-            return {display: 'none'};
+            return { display: 'none' };
         };
     };
 
@@ -159,20 +162,28 @@ class ProfileClass extends React.Component<Props, State> {
         };
     };
 
-    // Set name and tooltip 
+    /**
+     * set name field to either input field or 
+     * plain text depending on if auth-user is viewing or not
+     */
     setName() {
-        return (
-        <Tooltip overlayStyle={this.tooltipVisibility()} title='must be less than 100 characters'>
-            <Input
-                className='clear-disabled'
-                readOnly={this.props.editEnable}
-                maxLength={100}
-                defaultValue={this.props.userName.name ?  this.props.userName.name : ''}
-            />
-        </Tooltip>);
+        if (this.props.editEnable) {
+            return (
+                <Tooltip title='must be less than 100 characters'>
+                    <Input
+                        className='clear-disabled ant-card-meta-title'
+                        readOnly={this.props.editEnable}
+                        maxLength={100}
+                        defaultValue={this.props.userName.name ? this.props.userName.name : ''}
+                    />
+                </Tooltip>
+            );
+        } else {
+            return (<div className='name ant-card-meta-title'>{this.props.userName.name}</div>);
+        };
     };
 
-    // Create tootip for Organization auto complete
+    // Create tootip for Organization Auto Complete
     institutionToolTip() {
         return (
             <div>
@@ -184,9 +195,11 @@ class ProfileClass extends React.Component<Props, State> {
             </div>
         );
     };
-
-    // populate research interest and handles case that prop is empty
-    researchInterests() {
+    
+    /**
+     * populate research interest and handles case that prop is empty
+     */
+    buildResearchInterests() {
         let researchInterests: Array<string> = [];
         if (Array.isArray(this.props.profileData.researchInterests)) {
             researchInterests = this.props.profileData.researchInterests;
@@ -220,41 +233,360 @@ class ProfileClass extends React.Component<Props, State> {
         };
     };
 
-    // show/hide edit/save buttons
-    showEditButtons() {
-        if(this.props.editEnable === true) {
-            return 'unset';
+    /**
+     * builds User Nutshell card
+     *  - Choose between the non-auth user profile  
+     *    vs. editable user profile 
+     *  - Return either form or plain text
+     */
+    buildUserNutsheel() {
+        if (this.props.editEnable) {
+            return (
+                <Card
+                    style={{ margin: '8px 0px', textAlign: 'left' }}
+                    title={this.setName()}
+                >
+                    <Meta title='User ID' />
+                    <Tooltip title='User ID cannot be changed'>
+                        {/* this might null or undefined or empty string */}
+                        <Input readOnly={this.props.userName ? true : false} className='clear-disabled marginTop10px margin-bottom-24px userID' placeholder='User ID' defaultValue={this.props.userName.userID ? this.props.userName.userID : ''} />
+                    </Tooltip>
+                    <Meta title='Position' />
+                    <Select
+                        className='clear-disabled'
+                        placeholder='Job title'
+                        disabled={!this.props.editEnable}
+                        style={{ width: '100%', marginTop: '10px' }}
+                        defaultValue={this.props.profileData.jobTitle}
+                        onChange={this.jobTitleOnChange}
+                    >
+                        {jobTitles.map((item) => {
+                            return <Option key={item.label} value={item.value}>{item.label}</Option>
+                        })}
+                    </Select>
+                    <InputForm
+                        hidden={this.state.jobTitleValue === 'Other' ? false : true}
+                        type={'string'}
+                        required={false}
+                        userName={this.props.userName}
+                        updateStoreState={this.props.updateProfile} // updates StoreState
+                        data={this.props.profileData}
+                        stateProperty={'jobTitleOther'}
+                        placeHolder='Job Title'
+                        defaultValue={this.props.profileData.jobTitleOther}
+                        readOnly={this.props.editEnable} //TODO: PUT THIS BACK
+                        maxLength={50}
+                        onBlur={true}
+                        onPressEnter={true}
+                    />
+                    <Meta title='Department' />
+                    <Tooltip title='must be more than 2 and less than 50 characters'>
+                        <InputForm
+                            hidden={false}
+                            type={'string'}
+                            required={false}
+                            userName={this.props.userName}
+                            updateStoreState={this.props.updateProfile} // updates StoreState
+                            data={this.props.profileData}
+                            stateProperty={'department'}
+                            placeHolder='Department'
+                            defaultValue={this.props.profileData.department}
+                            readOnly={!this.props.editEnable}
+                            maxLength={50}
+                            onBlur={true}
+                            onPressEnter={true}
+                        />
+                    </Tooltip>
+                    <Meta title='Organization' />
+                    <Tooltip placement='top' title={<this.institutionToolTip />}>
+                        <div></div> {/* i don't know why this empty div has to be here for tooltip to showup  */}
+                        <AutoComplete
+                            className='clear-disabled marginTop10px margin-bottom-24px'
+                            style={{ width: '100%' }}
+                            disabled={this.props.editEnable}//TODO: PUT THIS BACK~!
+                            allowClear
+                            dataSource={this.state.institutionFiltered}
+                            placeholder='Organization'
+                            onSearch={this.institutionOnSearch}
+                            onSelect={this.institutiOnSave}
+                            onBlur={this.institutiOnSave}
+                            filterOption={(inputValue, option) => {
+                                if (typeof option.props.children === 'string') {
+                                    let item = option.props.children;
+                                    return item.toLowerCase().indexOf(inputValue.toLowerCase()) >= 0;
+                                } else {
+                                    return false;
+                                };
+                            }}
+                            defaultValue={this.props.profileData.organization}
+                        >
+                            <Input />
+                        </AutoComplete>
+                    </Tooltip>
+                    <Meta title='Location' />
+                    <Tooltip title='Search Country'>
+                        <Form.Item className='profile-input-form' required={true} {...formItemLayout} label=' '>
+                            <AutoComplete
+                                className='clear-disabled marginTop10px'
+                                style={{ width: '100%' }}
+                                disabled={!this.props.editEnable}
+                                allowClear
+                                placeholder='Country'
+                                onChange={(value) => { this.setStateProperty('country', value as string) }}
+                                onSelect={(value) => { this.setStateProperty('country', value as string) }}
+                                filterOption={(inputValue, option) => {
+                                    if (typeof option.props.children === 'string') {
+                                        let item = option.props.children;
+                                        return item.toLowerCase().indexOf(inputValue.toLowerCase()) >= 0
+                                    } else {
+                                        return false
+                                    }
+                                }}
+                                defaultValue={this.props.profileData.country}
+                            >
+                                {Array.from(countryCodes).map((item => {
+                                    return (
+                                        <Option key={item[1]} value={item[0]}>
+                                            {item[0]}
+                                        </Option>
+                                    );
+                                }))}
+                            </AutoComplete></Form.Item>
+                    </Tooltip>
+                    <Tooltip trigger='hover' title='Search US States'>
+                        <Form.Item className='profile-input-form' required={true} {...formItemLayout} label=' '>
+                            <Select
+                                className='clear-disabled marginTop10px margin-bottom-24px'
+                                mode='single'
+                                style={this.USStateVisibility()}
+                                disabled={!this.props.editEnable}
+                                allowClear
+                                placeholder='State'
+                                showArrow={true}
+                                onSelect={(value: string) => { this.setStateProperty('state', value) }}
+                                optionFilterProp='children'
+                                filterOption={(inputValue, option) => {
+                                    if (typeof option.props.children === 'string') {
+                                        let item = option.props.children;
+                                        return item.toLowerCase().indexOf(inputValue.toLowerCase()) >= 0
+                                    } else {
+                                        return false
+                                    }
+
+                                }}
+                                defaultValue={this.props.profileData.state}
+                            >
+                                {states.map((item, index) => {
+                                    return <Option key={index} value={item}>{item}</Option>
+                                })}
+                            </Select></Form.Item>
+                    </Tooltip>
+                    <InputForm
+                        hidden={false}
+                        type='string'
+                        required={true}
+                        userName={this.props.userName}
+                        updateStoreState={this.props.updateProfile} // updates StoreState
+                        data={this.props.profileData}
+                        stateProperty={'city'}
+                        placeHolder='City'
+                        defaultValue={this.props.profileData.city}
+                        readOnly={!this.props.editEnable}
+                        maxLength={85}
+                        minLength={0}
+                        onBlur={true}
+                        onPressEnter={true}
+                    />
+                    <InputForm
+                        hidden={false}
+                        type={this.state.country === 'United States' ? 'number' : 'string'}
+                        required={true}
+                        userName={this.props.userName}
+                        updateStoreState={this.props.updateProfile} // updates StoreState
+                        data={this.props.profileData}
+                        stateProperty={'postalCode'}
+                        placeHolder='Postal Code'
+                        defaultValue={this.props.profileData.postalCode}
+                        readOnly={!this.props.editEnable}
+                        maxLength={this.state.country === 'United States' ? 5 : 16}
+                        minLength={this.state.country === 'United States' ? 5 : 0}
+                        onBlur={true}
+                        onPressEnter={true}
+                    />
+                    <Meta title='Primary Funding Source' />
+                    <Select
+                        className='clear-disabled marginTop10px'
+                        mode='single'
+                        style={{ width: '100%', marginTop: '10px' }}
+                        showSearch
+                        disabled={!this.props.editEnable}
+                        maxTagCount={20}
+                        placeholder='enter more than 3 characters'
+                        showArrow={true}
+                        onChange={this.fundingSourceOnChange}
+                        optionFilterProp='children'
+                        filterOption={(inputValue, option) => {
+                            // return true;
+                            if (typeof option.props.children === 'string') {
+                                let str = option.props.children;
+                                return str.toLowerCase().indexOf(inputValue.toLowerCase()) >= 0
+                            } else {
+                                return false
+                            }
+
+                        }}
+                        defaultValue={this.props.profileData.fundingSource}
+                    >
+                        {fundingSources.map((item) => {
+                            return (
+                                <Option key={item['value']} value={item['value']}>
+                                    {item['value']}
+                                </Option>
+                            );
+                        })}
+                    </Select>
+                </Card>
+            );
         } else {
-            return 'none';
+            let profile = this.props.profileData;
+            let hasLocation = () => {
+                if (profile.country || profile.state || profile.city) {
+                    return true;
+                } else {
+                    return false;
+                };
+            };
+            return (
+                <Card
+                    style={{ margin: '8px 0px', textAlign: 'left' }}
+                    title={this.setName()}
+                >
+                    <div>
+                        <p>{this.props.userName.userID}</p>
+                        <p style={{ fontStyle: "italic" }}>{profile.jobTitleOther ? profile.jobTitleOther : profile.jobTitle}</p>
+                        <p>{profile.organization}<br />
+                            {profile.department}</p>
+                    </div>
+                    <div>
+                        {hasLocation() ? (<h4>Location</h4>) : null}
+                        <p>{profile.country ? profile.country + ', ' : null}{profile.state ? profile.state + ', ' : null}{profile.city ? profile.city : null}</p>
+                    </div>
+                    <div>
+                        {profile.fundingSource ? (<h4>Primary Funding Source</h4>) : null}
+                        <p>{profile.fundingSource}</p>
+                    </div>
+                </Card>
+            );
         };
     };
 
 
-    // Modal Control  
+    /**
+     * builds research statement card
+     *  - Choose between the non-auth user profile  
+     *    vs. editable user profile 
+     *  - Return either form or plain text
+     */
+    buildResearchStatement() {
+        if (this.props.editEnable) {
+            return (
+                <Card
+                    style={{ margin: '8px 0px' }}
+                    title='Research or Personal Statement'
+                >
+                    <Tooltip title='A little bit about yourself and your research'>
+                        <TextAreaForm
+                            hidden={false}
+                            type='string'
+                            required={false}
+                            userName={this.props.userName}
+                            updateStoreState={this.props.updateProfile}
+                            data={this.props.profileData}
+                            stateProperty='researchStatement'
+                            placeHolder=''
+                            defaultValue={this.props.profileData.researchStatement}
+                            readOnly={!this.props.editEnable}
+                            maxLength={1000}
+                            onBlur={true}
+                            onPressEnter={true}
+                        />
+                    </Tooltip>
+                </Card>
+            );
+        } else {
+            return (
+                <Card
+                    style={{ margin: '8px 0px' }}
+                    title='Research or Personal Statement'
+                >
+                    <p>{this.props.profileData.researchStatement}</p>
+                </Card>
+            );
+        };
+    };
+
+    /**
+     * builds affliations card
+     *  - Choose between the non-auth user profile  
+     *    vs. editable user profile 
+     *  - Return either form or plain text
+     */
+    buildAffliations() {
+        if (this.props.editEnable) {
+            return (
+                <Card style={{ margin: '8px 0px' }} title='Affiliations'>
+                    <AffiliationForm
+                        userName={this.props.userName}
+                        profileData={this.props.profileData}
+                        editEnable={this.props.editEnable}
+                        affiliations={this.props.profileData.affiliations}
+                        updateStoreState={this.props.updateProfile}
+                    /></Card>
+            );
+        } else {
+            let affiliations = this.props.profileData.affiliations;
+            // TODOL change BFF so that it will return an empty array when there is no data
+            // so instead of using this -> affiliations[0]['title'], affiliations.length > 0
+
+            // non-empty array
+            if (affiliations[0]['title'] !== '') {
+                return (
+                    <Card style={{ margin: '8px 0px' }} title='Affiliations'>
+                        <div id='affiliations'>
+                            {affiliations.map((position) => {
+                                return (
+                                    <div className='affiliation-row'>
+                                        <p style={{ width: '25%', marginRight: "1em" }}>{position.title}</p><p style={{ flexGrow: 1 }}>{position.organization}</p><p style={{ width: '90px' }}>{position.started} </p><p style={{ width: '90px' }}>{position.ended ? position.ended : 'present'}</p>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </Card>
+                );
+            } else {
+                return (
+                    <Card style={{ margin: '8px 0px' }} title='Affiliations'>
+                        <div><Empty image={Empty.PRESENTED_IMAGE_SIMPLE} /></div>
+                    </Card>
+                );
+            };
+        };
+    };
+
+    /**
+     *   event Handlers
+     *
+     * 
+     */
+
+    /**
+    * Modal popup control
+    * @param event 
+    * @param modal 
+    */
     showModal(event: any, modal: ModalName | undefined) {
         if (this.props.editEnable === true) {
             this.setState({ visibleModal: modal });
-        };
-    };
-
-
-   /**
-    *   event Handlers
-    *
-    * 
-    */
-
-    /**
-     * updates app Store State
-     * @param propertyName 
-     * @param value 
-     */
-    updateStoreStateProperty(propertyName: string, value: string) {
-        // any is used here for creating gereric property 
-        let profileData: any = this.props.profileData;
-        if (profileData[propertyName] !==  value.trim()) {
-            profileData[propertyName] = value.trim();
-            this.props.updateProfile(profileData, this.props.userName);
         };
     };
 
@@ -269,20 +601,19 @@ class ProfileClass extends React.Component<Props, State> {
         this.setState(newState);
     };
 
-
     /**
      *  Updates store state with local avatarOption state 
      *  and gravatarDefault state
      * @param event 
      */
-    avatarOptionOnSumbit(){
+    avatarOptionOnSumbit() {
         // any is used here for creating gereric property 
         let profileData = this.props.profileData;
-        if (profileData.gravatarDefault !== this.state.gravatarDefault || 
+        if (profileData.gravatarDefault !== this.state.gravatarDefault ||
             profileData.avatarOption !== this.state.avatarOption) {
-                if (typeof this.state.gravatarDefault !== 'undefined' ) profileData.gravatarDefault = this.state.gravatarDefault;
-                if (typeof this.state.avatarOption !== 'undefined' ) profileData.avatarOption = this.state.avatarOption;
-                this.props.updateProfile(profileData, this.props.userName);
+            if (typeof this.state.gravatarDefault !== 'undefined') profileData.gravatarDefault = this.state.gravatarDefault;
+            if (typeof this.state.avatarOption !== 'undefined') profileData.avatarOption = this.state.avatarOption;
+            this.props.updateProfile(profileData, this.props.userName);
         };
     };
 
@@ -291,7 +622,7 @@ class ProfileClass extends React.Component<Props, State> {
      * research interests
      */
     researchInterestsOtherOnChange(event: any) {
-        if (typeof event.target.value === 'string' ) {
+        if (typeof event.target.value === 'string') {
             this.setState({ researchInterestsOther: event.target.value });
         };
     };
@@ -305,7 +636,7 @@ class ProfileClass extends React.Component<Props, State> {
     // handles researchInterest onSubmit 
     researchInterestOnSumbit(event: any) {
         this.setState({ visibleModal: undefined }) // close modal
-        let profileData:any = this.props.profileData;
+        let profileData: any = this.props.profileData;
         let arrState = this.state.researchInterestsValue;
         let arrProps = profileData.researchInterests;
 
@@ -332,7 +663,7 @@ class ProfileClass extends React.Component<Props, State> {
      * 
      * Organization 
      */
-    institutionSave(event: any) {
+    institutiOnSave(event: any) {
         let profileData = this.props.profileData;
         if (typeof event !== 'undefined' && event !== profileData.organization) {
             profileData.organization = event;
@@ -352,10 +683,6 @@ class ProfileClass extends React.Component<Props, State> {
         };
     };
 
-    /**
-     * 
-     * Job Title
-     */
     // handles jobtitle pulldown menu onChange 
     jobTitleOnChange(value: string) {
         let profileData = this.props.profileData;
@@ -365,7 +692,7 @@ class ProfileClass extends React.Component<Props, State> {
         };
     };
 
-    // handles fundingSourcepulldown menu onChange 
+    // handles fundingSource pulldown menu onChange 
     fundingSourceOnChange(event: any) {
         let profileData = this.props.profileData;
         profileData.fundingSource = event;
@@ -379,288 +706,81 @@ class ProfileClass extends React.Component<Props, State> {
                     <Col span={8}>
                         <Card style={{ margin: '8px 0px', textAlign: 'center' }}>
                             <Tooltip overlayStyle={this.tooltipVisibility()} title='click to edit Avatar Options'>
-                                <img style={{ maxWidth: '100%', margin: '8px 0px' }} alt='avatar' src={this.gravaterSrc()} onClick={(event)=>{this.showModal(event, ModalName.AvatarOption)}} />
+                                <img style={{ maxWidth: '100%', margin: '8px 0px' }} alt='avatar' src={this.gravaterSrc()} onClick={(event) => { this.showModal(event, ModalName.AvatarOption) }} />
                                 {/* {gravatar} */}
                             </Tooltip>
                             <Modal
                                 visible={this.state.visibleModal === ModalName.AvatarOption}
                                 title='Avatar Options'
                                 closable={false}
-                                onCancel={(event)=>{this.showModal(event, undefined)}}
+                                onCancel={(event) => { this.showModal(event, undefined) }}
                                 footer={[
-                                    <Button key='back' onClick={(event)=>{this.showModal(event, undefined)}}>
+                                    <Button key='back' onClick={(event) => { this.showModal(event, undefined) }}>
                                         Return
                                     </Button>,
                                     <Button key='submit' id='researchInterests' type='primary' onClick={this.avatarOptionOnSumbit}>
                                         Save
                                     </Button>,
-                                    <div key='tooltop' style={{ width: '100%', marginTop: '2em', textAlign:'left'}}>
+                                    <div key='tooltop' style={{ width: '100%', marginTop: '2em', textAlign: 'left' }}>
                                         <p>If you do not have a custom gravatar, this generated or generic image will be used.<br />
-                                        Note that if you have a gravatar image set up, this option will have no effect on your gravatar display.<br />
-                                        Your gravatar is based on an image you have associated with your email address at <a href='https://www.gravatar.com'>Gravatar</a>, a 
-                                        free public profile service from Automattic, the same people who brought us Wordpress. 
-                                        If you have a personal gravatar associated with the email address in this profile, it will be displayed within KBase.
+                                            Note that if you have a gravatar image set up, this option will have no effect on your gravatar display.<br />
+                                            Your gravatar is based on an image you have associated with your email address at <a href='https://www.gravatar.com'>Gravatar</a>, a
+                                            free public profile service from Automattic, the same people who brought us Wordpress.
+                                            If you have a personal gravatar associated with the email address in this profile, it will be displayed within KBase.
                                         <br />
-                                        If you don't have a personal gravator, you may select one of the default auto-generated gravatars provided below. 
-                                            Note that generated gravatars will use your email address to create a unique gravatar for you, 
-                                            which may be used to identify you in the ui. If you do not wish to have a unique gravatar, you may select 'mystery man' or 'blank'.
+                                            If you don't have a personal gravator, you may select one of the default auto-generated gravatars provided below.
+                                                Note that generated gravatars will use your email address to create a unique gravatar for you,
+                                                which may be used to identify you in the ui. If you do not wish to have a unique gravatar, you may select 'mystery man' or 'blank'.
                                         </p>
                                     </div>,
                                 ]}
                             >
                                 <p>Avatar Options</p>
                                 <Select
-                                    className='clear-diabled'
+                                    className='clear-disabled'
                                     placeholder='Choose to use gravatar, or the KBase anonymous silhouette.'
                                     disabled={!this.props.editEnable}
-                                    style={{ width: '100%', marginBottom: '2em'}}
+                                    style={{ width: '100%', marginBottom: '2em' }}
                                     defaultValue={this.props.profileData.avatarOption}
-                                    onSelect={(value:string)=>{this.setStateProperty('avatarOption', value)}}
+                                    onSelect={(value: string) => { this.setStateProperty('avatarOption', value) }}
                                 >
-                                        {avatarOptions.map((option, index)=>{
-                                           return <Option key={index}>{option.label}</Option>
-                                        })}
+                                    {avatarOptions.map((option, index) => {
+                                        return <Option key={index}>{option.label}</Option>
+                                    })}
                                 </Select>
-                                <p>Gravator Default Image</p>                             
+                                <p>Gravator Default Image</p>
                                 <Select
-                                    className='clear-diabled'
+                                    className='clear-disabled'
                                     placeholder='Choose to use gravatar, or the KBase anonymous silhouette.'
                                     disabled={!this.props.editEnable}
                                     style={{ width: '100%', marginBottom: '2em' }}
                                     defaultValue={this.props.profileData.gravatarDefault}
-                                    onSelect={(value:string)=>{this.setStateProperty('gravatarDefault', value)}}
+                                    onSelect={(value: string) => { this.setStateProperty('gravatarDefault', value) }}
                                 >
-                                    {gravatarDefaults.map((option, index)=>{
-                                            return <Option key={index}>{option.label}</Option>
-                                        })}
+                                    {gravatarDefaults.map((option, index) => {
+                                        return <Option key={index}>{option.label}</Option>
+                                    })}
                                 </Select>
                             </Modal>
                         </Card>
-                        <Card
-                            style={{ margin: '8px 0px', textAlign: 'left' }}
-                            title={this.setName()} // less than 100
-                        >
-                            <Meta title='User ID' />
-                            <Tooltip overlayStyle={this.tooltipVisibility()} title='User ID cannot be changed'>
-                                {/* this might null or undefined or empty string */}
-                                <Input readOnly={this.props.userName? true : false } className='clear-disabled marginTop10px margin-bottom-24px userID' placeholder='User ID' defaultValue={this.props.userName.userID ? this.props.userName.userID : ''} />
-                            </Tooltip>
-                            <Meta title='Position' />
-                                <Select
-                                    className='clear-diabled'
-                                    placeholder='Job title'
-                                    disabled={!this.props.editEnable}
-                                    style={{ width: '100%', marginTop: '10px'}}
-                                    defaultValue={this.props.profileData.jobTitle}
-                                    onChange={this.jobTitleOnChange}
-                                >
-                                    {jobTitles.map((item) => {
-                                        return <Option key={item.label} value={item.value}>{item.label}</Option>
-                                    })}
-                                </Select>
-                                <InputForm
-                                    hidden={this.state.jobTitleValue === 'Other' ? false : true}
-                                    type={'string'}
-                                    required={false}
-                                    userName={this.props.userName}
-                                    updateStoreState={this.props.updateProfile} // updates StoreState
-                                    data={this.props.profileData}
-                                    stateProperty={'jobTitleOther'}
-                                    placeHolder='Job Title'
-                                    defaultValue={this.props.profileData.jobTitleOther}
-                                    readOnly={!this.props.editEnable}
-                                    maxLength={50}
-                                    onBlur={true}
-                                    onPressEnter={true}
-                                />
-                            <Meta title='Department' />
-                            <Tooltip overlayStyle={this.tooltipVisibility()} title='must be more than 2 and less than 50 characters'>
-                                <InputForm
-                                    hidden={false}
-                                    type={'string'}
-                                    required={false}
-                                    userName={this.props.userName}
-                                    updateStoreState={this.props.updateProfile} // updates StoreState
-                                    data={this.props.profileData}
-                                    stateProperty={'department'}
-                                    placeHolder='Department'
-                                    defaultValue={this.props.profileData.department}
-                                    readOnly={!this.props.editEnable}
-                                    maxLength={50}
-                                    onBlur={true}
-                                    onPressEnter={true}
-                                />
-                            </Tooltip>
-                            <Meta title='Organization' />
-                            <Tooltip overlayStyle={this.tooltipVisibility()} placement='top' title={<this.institutionToolTip />}>
-                                <div></div> {/* i don't know why this empty div has to be here for tooltip to showup  */}
-                                <AutoComplete
-                                    className='clear-disabled marginTop10px margin-bottom-24px'
-                                    style={{ width: '100%' }}
-                                    disabled={!this.props.editEnable}
-                                    allowClear
-                                    dataSource={this.state.institutionFiltered}
-                                    placeholder='Organization'
-                                    onSearch={this.institutionOnSearch}
-                                    onSelect={this.institutionSave}
-                                    onBlur={this.institutionSave}
-                                    filterOption={(inputValue, option) => {
-                                        if (typeof option.props.children === 'string') {
-                                            let item = option.props.children;
-                                            return item.toLowerCase().indexOf(inputValue.toLowerCase()) >= 0;
-                                        } else {
-                                            return false;
-                                        };
-                                    }}
-                                    defaultValue={this.props.profileData.organization}
-                                >
-                                    <Input />
-                                </AutoComplete>
-                            </Tooltip>
-                            <Meta title='Location' />
-                            <Tooltip overlayStyle={this.tooltipVisibility()} title='Search Country'>
-                                <Form.Item required {...formItemLayout} label=' '>
-                                    <AutoComplete
-                                    className='clear-diabled marginTop10px'
-                                    style={{ width: '100%' }}
-                                    disabled={!this.props.editEnable}
-                                    allowClear
-                                    placeholder='Country'
-                                    onChange={(value)=>{this.setStateProperty('country', value as string)}}
-                                    onSelect={(value)=>{this.setStateProperty('country', value as string)}}
-                                    filterOption={(inputValue, option) => {
-                                        if (typeof option.props.children === 'string') {
-                                            let item = option.props.children;
-                                            return item.toLowerCase().indexOf(inputValue.toLowerCase()) >= 0
-                                        } else {
-                                            return false
-                                        }
-
-                                    }}
-                                    defaultValue={this.props.profileData.country}
-                                >
-                                    {Array.from(countryCodes).map((item => {
-                                        return (
-                                            <Option key={item[1]} value={item[0]}>
-                                                {item[0]}
-                                            </Option>
-                                        );
-                                    }))}
-                                </AutoComplete></Form.Item>
-                            </Tooltip>
-                            {/* <Tooltip trigger='hover' overlayStyle={this.tooltipVisibility()} title='Search US States'> */}
-                            <Tooltip trigger='hover' title='Search US States'>
-                            <Form.Item required {...formItemLayout} label=' '>
-                            <Select
-                                className='clear-diabled marginTop10px margin-bottom-24px'
-                                mode='single'
-                                style={this.USStateVisibility()}
-                                disabled={!this.props.editEnable}
-                                allowClear
-                                placeholder='State'
-                                showArrow={true}
-                                onSelect={(value:string)=>{this.setStateProperty('state', value)}}
-                                optionFilterProp='children'
-                                filterOption={(inputValue, option) => {
-                                    if (typeof option.props.children === 'string') {
-                                        let item = option.props.children;
-                                        return item.toLowerCase().indexOf(inputValue.toLowerCase()) >= 0
-                                    } else {
-                                        return false
-                                    }
-
-                                }}
-                                defaultValue={this.props.profileData.state}
-                            >
-                                {states.map((item, index)=>{
-                                    return <Option key={index} value={item}>{item}</Option>
-                                })}
-                            </Select></Form.Item>
-                            </Tooltip>
-                            <InputForm
-                                hidden={false}
-                                type='string'
-                                required={true}
-                                userName={this.props.userName}
-                                updateStoreState={this.props.updateProfile} // updates StoreState
-                                data={this.props.profileData}
-                                stateProperty={'city'} 
-                                placeHolder='City'
-                                defaultValue={this.props.profileData.city}
-                                readOnly={!this.props.editEnable}
-                                maxLength={85}
-                                onBlur={true}
-                                onPressEnter={true}
-                            />    
-                            <InputForm
-                                hidden={false}
-                                type={this.state.country==='United States' ? 'number' : 'string'}
-                                required={true}
-                                userName={this.props.userName}
-                                updateStoreState={this.props.updateProfile} // updates StoreState
-                                data={this.props.profileData}
-                                stateProperty={'postalCode'}
-                                placeHolder='Postal Code'
-                                defaultValue={this.props.profileData.postalCode}
-                                readOnly={!this.props.editEnable}
-                                maxLength={this.state.country==='United States' ? 5 : 16}
-                                minLength={this.state.country==='United States' ? 5 : 2}
-                                onBlur={true}
-                                onPressEnter={true}
-                            />
-                            {/* <Button style={{ margin: '10px', display: this.showEditButtons() }} key='submit' type='primary' onClick={this.locationOnSave.bind(this)}>
-                                save
-                            </Button> */}
-                            <Meta title='Primary Funding Source' />
-                            <Select
-                                className='clear-diabled marginTop10px'
-                                mode='single'
-                                style={{ width: '100%', marginTop: '10px'}}
-                                showSearch
-                                disabled={!this.props.editEnable}
-                                maxTagCount={20}
-                                placeholder='enter more than 3 characters'
-                                showArrow={true}
-                                onChange={this.fundingSourceOnChange}
-                                optionFilterProp='children'
-                                filterOption={(inputValue, option) => {
-                                    // return true;
-                                    if (typeof option.props.children === 'string') {
-                                        let str = option.props.children;
-                                        return str.toLowerCase().indexOf(inputValue.toLowerCase()) >= 0
-                                    } else {
-                                        return false
-                                    }
-
-                                }}
-                                defaultValue={this.props.profileData.fundingSource}
-                            >
-                                {fundingSources.map((item) => {
-                                    return (
-                                        <Option key={item['value']} value={item['value']}>
-                                            {item['value']}
-                                        </Option>
-                                    );
-                                })}
-                            </Select>
-                        </Card>
+                        {this.buildUserNutsheel()}
                     </Col>
                     <Col span={16}>
                         <Row gutter={8}>
                             <Col span={12}>
                                 <Card className='card-with-height researchInterests' style={{ margin: '8px 0px' }} title='Research Interests'>
                                     <Tooltip overlayStyle={this.tooltipVisibility()} title='Click to select research interests'>
-                                    <div id='researchInterests' onClick={(event)=>{this.showModal(event, ModalName.ResearchInterests)}} >
-                                        {this.researchInterests()}
-                                    </div>
+                                        <div id='researchInterests' onClick={(event) => { this.showModal(event, ModalName.ResearchInterests) }} >
+                                            {this.buildResearchInterests()}
+                                        </div>
                                     </Tooltip>
                                     <Modal
                                         visible={this.state.visibleModal === ModalName.ResearchInterests}
                                         title='Research Interests'
                                         closable={false}
-                                        onCancel={(event)=>{this.showModal(event, undefined)}}
+                                        onCancel={(event) => { this.showModal(event, undefined) }}
                                         footer={[
-                                            <Button key='back' onClick={(event)=>{this.showModal(event, undefined)}}>
+                                            <Button key='back' onClick={(event) => { this.showModal(event, undefined) }}>
                                                 Return
                                             </Button>,
                                             <Button key='submit' id='researchInterests' type='primary' onClick={this.researchInterestOnSumbit}>
@@ -693,36 +813,8 @@ class ProfileClass extends React.Component<Props, State> {
                         </Row>
                         <Row>
                             {/* TODO:AKIYO FIX - when the box is very small it doesn't break or hide word */}
-                            <Card
-                                style={{ margin: '8px 0px' }}
-                                title='Research or Personal Statement'
-                            >
-                                <Tooltip overlayStyle={this.tooltipVisibility()} title='must be less than 1000 characters'>
-                                <TextAreaForm
-                                    hidden={false}
-                                    type='string'
-                                    required={false}
-                                    userName={this.props.userName}
-                                    updateStoreState={this.props.updateProfile}
-                                    data={this.props.profileData}
-                                    stateProperty='researchStatement'
-                                    placeHolder='A little bit about yourself and your research.'
-                                    defaultValue={this.props.profileData.researchStatement}
-                                    readOnly={!this.props.editEnable}
-                                    maxLength={1000}
-                                    onBlur={true}
-                                    onPressEnter={true}
-                                />
-                                </Tooltip>
-                            </Card>
-                            <Card style={{ margin: '8px 0px' }} title='Affiliations'>
-                            <AffiliationForm 
-                                userName={this.props.userName} 
-                                profileData={this.props.profileData}
-                                editEnable={this.props.editEnable}
-                                affiliations={this.props.profileData.affiliations}
-                                updateStoreState={this.props.updateProfile}
-                            /></Card>
+                            {this.buildResearchStatement()}
+                            {this.buildAffliations()}
                         </Row>
                     </Col>
                 </Row>

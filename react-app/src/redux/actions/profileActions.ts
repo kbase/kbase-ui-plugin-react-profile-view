@@ -1,6 +1,6 @@
 import { ThunkDispatch } from 'redux-thunk';
 import { AnyAction } from 'redux';
-import { sendTitle } from '@kbase/ui-lib';
+import { sendTitle } from '@kbase/ui-components';
 import { fetchProfileAPI, updateProfileAPI } from '../../util/API';
 import { StoreState, UserProfileService, ProfileView,  ProfileData, ErrorMessages, UserName} from "../interfaces";
 import { fetchProfile, loadProfile, fetchErrorProfile } from './actionCreators';
@@ -13,7 +13,7 @@ import { profileFetchStatuses } from '../fetchStatuses';
 export function getProfile(profileID:string) {
     return async function (dispatch:ThunkDispatch<StoreState, void, AnyAction>, getState:() => StoreState ) {
         // set the life cycle state to "fetching"
-        dispatch(fetchProfile())
+        dispatch(fetchProfile());
         
         const rootStore = getState();
         if(rootStore.auth.userAuthorization !== null) {
@@ -22,7 +22,6 @@ export function getProfile(profileID:string) {
             let payload:ProfileView;
             let response:UserProfileService  | Array<number|string> = await fetchProfileAPI(profileID, token, baseURL);
             let profileEdit:boolean;
-            console.log(response)
             if (typeof response !== 'undefined' && !Array.isArray(response)) {
                 let responseData = response as UserProfileService;
                 if (responseData.user.username !== rootStore.auth.userAuthorization.username) {
@@ -30,7 +29,7 @@ export function getProfile(profileID:string) {
                     profileEdit = false;
                 } else {
                     profileEdit = true;
-                }
+                };
                 // shape response to profile before dispatch 
                 payload = {
                     userName: {
@@ -41,23 +40,23 @@ export function getProfile(profileID:string) {
                     profileData: responseData.profile.userdata,
                     gravatarHash: responseData.profile.synced.gravatarHash,
                     profileFetchStatus: profileFetchStatuses.SUCCESS
-                }
+                };
                 dispatch(loadProfile(payload));
             } else if (Array.isArray(response)){
                 //  set "profileIsFetching" to "error"
                 let errorPayload: ErrorMessages = {
                     errorMessages: response,
                     profileFetchStatus: profileFetchStatuses.ERROR
-                }
+                };
                 dispatch(fetchErrorProfile(errorPayload));
             } else {
-                 console.log(response)  
-            }
+                console.error(response);
+            };
         } else {
-            console.log('auth is null ', rootStore.auth.userAuthorization)
-        }
-    }
-}
+            console.error('auth is null ', rootStore.auth.userAuthorization);
+        };
+    };
+};
 
 
 /**
@@ -70,25 +69,23 @@ export function getProfile(profileID:string) {
 
 export function updateProfile(userdata:ProfileData, userName:UserName) {
     return async function (dispatch:ThunkDispatch<StoreState, void, AnyAction>, getState:() => StoreState ) {
-        dispatch(fetchProfile())
+        dispatch(fetchProfile());
         const rootStore = getState();
         if(rootStore.auth.userAuthorization !== null) {
             const token = rootStore.auth.userAuthorization.token;
             let baseURL = rootStore.app.config.baseUrl;
-            // let user = {name: name, userID: profileID}
             let response = await updateProfileAPI(token, baseURL, userdata, userName);
             if(response === 200) {
-                dispatch(getProfile(userName.userID))
+                dispatch(getProfile(userName.userID));
             } else {
                 if (Array.isArray(response)) {
                     let errorPayload: ErrorMessages = {
                         errorMessages: response,
                         profileFetchStatus: profileFetchStatuses.ERROR
-                    }
+                    };
                     dispatch(fetchErrorProfile(errorPayload));
-                }
-            }
-        }
-
-    }
-}
+                };
+            };
+        };
+    };
+};

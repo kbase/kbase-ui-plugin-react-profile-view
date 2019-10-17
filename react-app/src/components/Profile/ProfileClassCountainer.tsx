@@ -1,4 +1,3 @@
-import React from 'react';
 import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
 
@@ -28,13 +27,6 @@ interface DispatchProps {
 interface OwnProps { };
 
 function mapStateToProps(state: StoreState): Props {
-    // token can be null
-    let userAuthToken;
-    if (state.auth.userAuthorization !== null) {
-        userAuthToken = state.auth.userAuthorization.token;
-    } else {
-        userAuthToken = '';
-    };
 
     switch (state.profileView.profileFetchStatus) {
         case profileFetchStatuses.NONE:
@@ -42,15 +34,13 @@ function mapStateToProps(state: StoreState): Props {
             return {
                 profileFetchStatus: state.profileView.profileFetchStatus
             };
-            break;
 
         case profileFetchStatuses.ERROR:
             let newProps = state.profileView as ErrorMessages
             return {
                 errorMessages: newProps.errorMessages,
                 profileFetchStatus: state.profileView.profileFetchStatus
-            }
-            break;
+            };
 
         case profileFetchStatuses.SUCCESS:
             // typescript isn't good at switch case yet... 
@@ -62,7 +52,6 @@ function mapStateToProps(state: StoreState): Props {
                 gravatarHash: profileData.gravatarHash,
                 profileFetchStatus: profileData.profileFetchStatus
             };
-            break;
 
         default:
             // if you don't return Props type, it will complain. 
@@ -72,7 +61,6 @@ function mapStateToProps(state: StoreState): Props {
             return {
                 profileFetchStatus: profileFetchStatuses.ERROR
             };
-            break;
     };
 
 };

@@ -6,15 +6,12 @@ import ErrorMessage from '../../pages/ErrorMessage'
 
 
 export default function OhWhat(props: any) {
-    console.log('ohwhattodo', props)
     switch (props.profileFetchStatus) {
         case 'none':
             return <Spinner />;
-            break;
 
         case 'fetching':
             return <Spinner />;
-            break;
 
         case 'success':
             return <ProfileClass userName={props.userName}
@@ -23,7 +20,6 @@ export default function OhWhat(props: any) {
                 gravatarHash={props.gravatarHash}
                 profileFetchStatus={props.profileFetchStatus}
                 updateProfile={props.updateProfile} />;
-            break;
 
         case 'error':
             let newErrorMessageProps = {
@@ -33,11 +29,9 @@ export default function OhWhat(props: any) {
             return <ErrorMessage
                 errorMessageProps={newErrorMessageProps}
             />;
-            break;
 
         default:
-            return (<div>hello</div>);
-            break;
+            return (<div>???</div>);
 
     };
 

@@ -2,7 +2,7 @@ import { StoreState, loadProfileAction } from "../interfaces";
 import { profileActionTypes } from "../actions/actionTypes";
 import { profileFetchStatuses } from '../fetchStatuses';
 
-export default function profileReducer(state:StoreState, action: loadProfileAction): StoreState {
+export default function profileReducer(state: StoreState, action: loadProfileAction): StoreState {
     const payload = action.payload;
     switch (action.type) {
         case profileActionTypes.FETCH_PROFILE_SUCCESS:
@@ -12,16 +12,16 @@ export default function profileReducer(state:StoreState, action: loadProfileActi
                     profileView: payload
                 }
             );
-                
+
         case profileActionTypes.FETCH_PROFILE_ERROR:
             return {
-                ... state,
+                ...state,
                 profileView: payload
             };
 
         case profileActionTypes.FETCH_PROFILE:
             return {
-                ... state,
+                ...state,
                 profileView: { profileFetchStatus: profileFetchStatuses.FETCHING }
             };
 
@@ -34,5 +34,4 @@ export default function profileReducer(state:StoreState, action: loadProfileActi
         default:
             return state;
     };
-
 };

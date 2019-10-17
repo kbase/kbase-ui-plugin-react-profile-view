@@ -29,6 +29,7 @@ const mapStateToProps = (state: AppState) => {
 };
 
 function SearchUsersRedux(mapStateToProps: AppState) {
+
     return (
         <SearchUsers token={mapStateToProps.auth.userAuthorization.token} baseURL={mapStateToProps.app.config.baseUrl} />
     );
