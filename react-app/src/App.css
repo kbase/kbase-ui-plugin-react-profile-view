@@ -6,12 +6,9 @@
   margin-top: -8px;
 }
 
-input.ant-input.clear-disabled {
-  color:rgba(0, 0, 0, 0.65) !important;
-  background-color: white !important;
-  border: 0px !important;
+/* input.ant-input.clear-disabled {
   cursor: text !important;
-}
+} */
 
 .profile-tabs {
   margin: 0 0.5em;
@@ -73,5 +70,14 @@ label::after {
 }
 
 .clear-disabled.ant-select-disabled {
+    color: rgba(0,0,0,.65) !important;
+}
+
+.clear-disabled >
+.ant-input-disabled {
+    color: rgba(0,0,0,.65) !important;
+}
+.clear-disabled.ant-select-auto-complete.ant-select 
+.ant-input-disabled {
     color: rgba(0,0,0,.65) !important;
 }

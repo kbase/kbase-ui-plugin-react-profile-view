@@ -90,6 +90,8 @@ class ProfileClass extends React.Component<Props, State> {
         this.showModal = this.showModal.bind(this);
         this.setStateProperty = this.setStateProperty.bind(this);
         this.avatarOptionOnSumbit = this.avatarOptionOnSumbit.bind(this);
+        this.countryOnSelect = this.countryOnSelect.bind(this);
+        this.stateOnSelect = this.stateOnSelect.bind(this);
         this.researchInterestsOtherOnChange = this.researchInterestsOtherOnChange.bind(this);
         this.researchInterestOnChange = this.researchInterestOnChange.bind(this); // update/save value from checkbox group 
         this.researchInterestOnSumbit = this.researchInterestOnSumbit.bind(this);
@@ -249,7 +251,7 @@ class ProfileClass extends React.Component<Props, State> {
                     <Meta title='User ID' />
                     <Tooltip title='User ID cannot be changed'>
                         {/* this might null or undefined or empty string */}
-                        <Input readOnly={this.props.userName ? true : false} className='clear-disabled marginTop10px margin-bottom-24px userID' placeholder='User ID' defaultValue={this.props.userName.userID ? this.props.userName.userID : ''} />
+                        <Input style={this.props.userName ? { border: '0px' } : { border: '1px' }} readOnly={this.props.userName ? true : false} className='clear-disabled marginTop10px margin-bottom-24px userID' placeholder='User ID' defaultValue={this.props.userName.userID ? this.props.userName.userID : ''} />
                     </Tooltip>
                     <Meta title='Position' />
                     <Select
@@ -274,7 +276,7 @@ class ProfileClass extends React.Component<Props, State> {
                         stateProperty={'jobTitleOther'}
                         placeHolder='Job Title'
                         defaultValue={this.props.profileData.jobTitleOther}
-                        readOnly={this.props.editEnable} //TODO: PUT THIS BACK
+                        readOnly={!this.props.editEnable}
                         maxLength={50}
                         onBlur={true}
                         onPressEnter={true}
@@ -303,7 +305,7 @@ class ProfileClass extends React.Component<Props, State> {
                         <AutoComplete
                             className='clear-disabled marginTop10px margin-bottom-24px'
                             style={{ width: '100%' }}
-                            disabled={this.props.editEnable}//TODO: PUT THIS BACK~!
+                            disabled={!this.props.editEnable}
                             allowClear
                             dataSource={this.state.institutionFiltered}
                             placeholder='Organization'
@@ -333,7 +335,7 @@ class ProfileClass extends React.Component<Props, State> {
                                 allowClear
                                 placeholder='Country'
                                 onChange={(value) => { this.setStateProperty('country', value as string) }}
-                                onSelect={(value) => { this.setStateProperty('country', value as string) }}
+                                onSelect={(value) => this.countryOnSelect(value as string)}
                                 filterOption={(inputValue, option) => {
                                     if (typeof option.props.children === 'string') {
                                         let item = option.props.children;
@@ -354,16 +356,16 @@ class ProfileClass extends React.Component<Props, State> {
                             </AutoComplete></Form.Item>
                     </Tooltip>
                     <Tooltip trigger='hover' title='Search US States'>
-                        <Form.Item className='profile-input-form' required={true} {...formItemLayout} label=' '>
+                        <Form.Item style={this.USStateVisibility()} className='profile-input-form' required={true} {...formItemLayout} label=' '>
                             <Select
-                                className='clear-disabled marginTop10px margin-bottom-24px'
+                                className='clear-disabled marginTop10px'
                                 mode='single'
-                                style={this.USStateVisibility()}
                                 disabled={!this.props.editEnable}
                                 allowClear
                                 placeholder='State'
                                 showArrow={true}
-                                onSelect={(value: string) => { this.setStateProperty('state', value) }}
+                                onChange={(value:string) => { this.setStateProperty('state', value as string) }}
+                                onSelect={(value:string) => { this.stateOnSelect(value) }}
                                 optionFilterProp='children'
                                 filterOption={(inputValue, option) => {
                                     if (typeof option.props.children === 'string') {
@@ -545,7 +547,7 @@ class ProfileClass extends React.Component<Props, State> {
             );
         } else {
             let affiliations = this.props.profileData.affiliations;
-            // TODOL change BFF so that it will return an empty array when there is no data
+            // TODO: change BFF so that it will return an empty array when there is no data
             // so instead of using this -> affiliations[0]['title'], affiliations.length > 0
 
             // non-empty array
@@ -615,6 +617,18 @@ class ProfileClass extends React.Component<Props, State> {
             if (typeof this.state.avatarOption !== 'undefined') profileData.avatarOption = this.state.avatarOption;
             this.props.updateProfile(profileData, this.props.userName);
         };
+    };
+
+    countryOnSelect(value:string){
+        let profileData = this.props.profileData;
+        profileData.country = value;
+        this.props.updateProfile(profileData, this.props.userName);
+    };
+
+    stateOnSelect(value:string){
+        let profileData = this.props.profileData;
+        profileData.state = value;
+        this.props.updateProfile(profileData, this.props.userName);
     };
 
     /**
