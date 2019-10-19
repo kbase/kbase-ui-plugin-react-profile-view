@@ -251,7 +251,7 @@ class ProfileClass extends React.Component<Props, State> {
                     <Meta title='User ID' />
                     <Tooltip title='User ID cannot be changed'>
                         {/* this might null or undefined or empty string */}
-                        <Input style={this.props.userName ? { border: '0px' } : { border: '1px' }} readOnly={this.props.userName ? true : false} className='clear-disabled marginTop10px margin-bottom-24px userID' placeholder='User ID' defaultValue={this.props.userName.userID ? this.props.userName.userID : ''} />
+                        <Input style={this.props.userName ? { border: '0px' } : { border: '1px' }} readOnly={this.props.userName ? true : false} className='clear-disabled margin-top-10px margin-bottom-24px userID' placeholder='User ID' defaultValue={this.props.userName.userID ? this.props.userName.userID : ''} />
                     </Tooltip>
                     <Meta title='Position' />
                     <Select
@@ -303,9 +303,9 @@ class ProfileClass extends React.Component<Props, State> {
                     <Tooltip placement='top' title={<this.institutionToolTip />}>
                         <div></div> {/* i don't know why this empty div has to be here for tooltip to showup  */}
                         <AutoComplete
-                            className='clear-disabled marginTop10px margin-bottom-24px'
+                            className='clear-disabled margin-top-10px margin-bottom-24px'
                             style={{ width: '100%' }}
-                            disabled={!this.props.editEnable}
+                            disabled={this.props.editEnable}//TODO FIX THIS
                             allowClear
                             dataSource={this.state.institutionFiltered}
                             placeholder='Organization'
@@ -329,9 +329,9 @@ class ProfileClass extends React.Component<Props, State> {
                     <Tooltip title='Search Country'>
                         <Form.Item className='profile-input-form' required={true} {...formItemLayout} label=' '>
                             <AutoComplete
-                                className='clear-disabled marginTop10px'
+                                className='clear-disabled margin-top-10px'
                                 style={{ width: '100%' }}
-                                disabled={!this.props.editEnable}
+                                disabled={this.props.editEnable}//TODO FIX THIS
                                 allowClear
                                 placeholder='Country'
                                 onChange={(value) => { this.setStateProperty('country', value as string) }}
@@ -358,9 +358,9 @@ class ProfileClass extends React.Component<Props, State> {
                     <Tooltip trigger='hover' title='Search US States'>
                         <Form.Item style={this.USStateVisibility()} className='profile-input-form' required={true} {...formItemLayout} label=' '>
                             <Select
-                                className='clear-disabled marginTop10px'
+                                className='clear-disabled'
                                 mode='single'
-                                disabled={!this.props.editEnable}
+                                disabled={this.props.editEnable} //TODO FIX THIS
                                 allowClear
                                 placeholder='State'
                                 showArrow={true}
@@ -417,12 +417,11 @@ class ProfileClass extends React.Component<Props, State> {
                     />
                     <Meta title='Primary Funding Source' />
                     <Select
-                        className='clear-disabled marginTop10px'
+                        className='clear-disabled margin-top-10px'
                         mode='single'
                         style={{ width: '100%', marginTop: '10px' }}
                         showSearch
-                        disabled={!this.props.editEnable}
-                        maxTagCount={20}
+                        disabled={this.props.editEnable} //TODO FIX THIS
                         placeholder='enter more than 3 characters'
                         showArrow={true}
                         onChange={this.fundingSourceOnChange}
@@ -809,7 +808,7 @@ class ProfileClass extends React.Component<Props, State> {
                                         />
                                         <Input
                                             placeholder='Other research interests'
-                                            className='marginTop10px'
+                                            className='margin-top-10px'
                                             maxLength={50}
                                             onChange={this.researchInterestsOtherOnChange}
                                             hidden={this.state.researchInterestsValue.includes('Other') ? false : true}
