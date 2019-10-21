@@ -174,7 +174,7 @@ class ProfileClass extends React.Component<Props, State> {
                 <Tooltip title='must be less than 100 characters'>
                     <Input
                         className='clear-disabled ant-card-meta-title'
-                        readOnly={this.props.editEnable}
+                        readOnly={true}
                         maxLength={100}
                         defaultValue={this.props.userName.name ? this.props.userName.name : ''}
                     />
@@ -305,7 +305,7 @@ class ProfileClass extends React.Component<Props, State> {
                         <AutoComplete
                             className='clear-disabled margin-top-10px margin-bottom-24px'
                             style={{ width: '100%' }}
-                            disabled={this.props.editEnable}//TODO FIX THIS
+                            disabled={!this.props.editEnable}
                             allowClear
                             dataSource={this.state.institutionFiltered}
                             placeholder='Organization'
@@ -331,7 +331,7 @@ class ProfileClass extends React.Component<Props, State> {
                             <AutoComplete
                                 className='clear-disabled margin-top-10px'
                                 style={{ width: '100%' }}
-                                disabled={this.props.editEnable}//TODO FIX THIS
+                                disabled={!this.props.editEnable}
                                 allowClear
                                 placeholder='Country'
                                 onChange={(value) => { this.setStateProperty('country', value as string) }}
@@ -360,7 +360,7 @@ class ProfileClass extends React.Component<Props, State> {
                             <Select
                                 className='clear-disabled'
                                 mode='single'
-                                disabled={this.props.editEnable} //TODO FIX THIS
+                                disabled={!this.props.editEnable}
                                 allowClear
                                 placeholder='State'
                                 showArrow={true}
@@ -421,7 +421,7 @@ class ProfileClass extends React.Component<Props, State> {
                         mode='single'
                         style={{ width: '100%', marginTop: '10px' }}
                         showSearch
-                        disabled={this.props.editEnable} //TODO FIX THIS
+                        disabled={!this.props.editEnable}
                         placeholder='enter more than 3 characters'
                         showArrow={true}
                         onChange={this.fundingSourceOnChange}

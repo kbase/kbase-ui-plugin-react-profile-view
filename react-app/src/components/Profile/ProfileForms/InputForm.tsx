@@ -62,6 +62,7 @@ class InputForm extends React.Component<Props, State> {
     };
 
     componentDidMount() {
+        console.log(this.props.maxLength, this.props.minLength)
         this.setState({ requiredNotification: this.props.required })
     };
 

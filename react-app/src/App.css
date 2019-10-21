@@ -43,6 +43,7 @@ label::after {
 .ant-form-item-control-wrapper > 
 .ant-form-item-control {
     width: 100% !important;
+    background-color: white;
     cursor: pointer;
 }
  
@@ -60,21 +61,26 @@ label::after {
 .ant-select-auto-complete.ant-select >
 .ant-input-disabled {
     color: rgba(0,0,0,.65) !important;
+    background-color: white;
     cursor: pointer;
 }
 
 .clear-disabled.ant-select-disabled {
     color: rgba(0,0,0,.65) !important;
+    background-color: white;
     cursor: pointer;
 }
 
 .clear-disabled >
 .ant-input-disabled {
     color: rgba(0,0,0,.65) !important;
+    background-color: white;
     cursor: pointer;
 }
+
 .clear-disabled.ant-select-auto-complete.ant-select 
 .ant-input-disabled {
     color: rgba(0,0,0,.65) !important;
+    background-color: white;
     cursor: pointer;
 }
