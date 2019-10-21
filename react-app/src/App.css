@@ -6,6 +6,11 @@
   margin-top: -8px;
 }
 
+.card-with-height
+.ant-card-body{
+    height: 200px;
+    overflow: auto;
+}
 
 .profile-tabs {
   margin: 0 0.5em;
@@ -29,7 +34,6 @@
 label::after {
     content: none !important;
 }
-
 
 .affiliation-row {
     display: flex;

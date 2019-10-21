@@ -62,8 +62,7 @@ class InputForm extends React.Component<Props, State> {
     };
 
     componentDidMount() {
-        console.log(this.props.maxLength, this.props.minLength)
-        this.setState({ requiredNotification: this.props.required })
+        this.setState({ requiredNotification: this.props.required });
     };
 
     // componentDidUpdate(prevProps: Props, prevState: State, snapshot: any) {
@@ -76,8 +75,9 @@ class InputForm extends React.Component<Props, State> {
             return false;
         } else {
             return false;
-        }
-    }
+        };
+    };
+
     /**
      * Validate value against 
      *  - max and min length
@@ -107,6 +107,7 @@ class InputForm extends React.Component<Props, State> {
         } else {
             minLength = 2;
         };
+
         if (inputValue.length <= maxLength && inputValue.length >= minLength) {
 
             this.setState({ validateStatus: 'success', helpText: undefined, requiredNotification: false });
@@ -124,7 +125,6 @@ class InputForm extends React.Component<Props, State> {
             this.setState({ validateStatus: 'error', helpText: 'input must be less than ' + maxLength + ' characters' });
 
         };
-
     };
 
     /**
@@ -134,7 +134,6 @@ class InputForm extends React.Component<Props, State> {
      * @param event 
      */
     updateStoreStateProperty(event: React.FocusEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) {
-        // console.log(data)
         if (!this.props.required) {
             this.setState({ helpText: undefined });
         };
