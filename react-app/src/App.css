@@ -35,11 +35,11 @@ label::after {
     content: none !important;
 }
 
-.affiliation-row {
+/* .affiliation-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-}
+} */
 
 /* this forces Organization AutoComplete input field to 100% in 
  AfflicationForm */
