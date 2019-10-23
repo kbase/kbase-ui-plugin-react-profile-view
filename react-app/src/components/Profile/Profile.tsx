@@ -545,22 +545,25 @@ class Profile extends React.Component<Props, State> {
                     /></Card>
             );
         } else {
-            let affiliations = this.props.profileData.affiliations;
-            // TODO: change BFF so that it will return an empty array when there is no data
-            // so instead of using this -> affiliations[0]['title'], affiliations.length > 0
-
+            let affiliationsArray = this.props.profileData.affiliations;
             // non-empty array
-            if (affiliations[0]['title'] !== '') {
+            if (affiliationsArray.length > 0  && affiliationsArray[0]['title'] !== '') {
                 return (
                     <Card style={{ margin: '8px 0px' }} title='Affiliations'>
                         <div id='affiliations'>
-                            {affiliations.map((position) => {
+                            {affiliationsArray.map((position) => {
                                 return (
                                     <div className='affiliation-row'>
-                                        <p style={{ width: '25%', marginRight: "1em" }}>{position.title}</p><p style={{ flexGrow: 1 }}>{position.organization}</p><p style={{ width: '90px' }}>{position.started} </p><p style={{ width: '90px' }}>{position.ended ? position.ended : 'present'}</p>
+                                        <p style={{ width:'20%', display:'inline-block', marginRight: '1em', verticalAlign: 'middle' }}>{position.title}</p>
+                                        <p style={{ width:'45%', display:'inline-block', marginRight: '1em', verticalAlign: 'middle' }}>{position.organization}</p>
+                                        <div style={{ width:'29%', display: 'inline-block', verticalAlign: 'text-bottom', whiteSpace: 'nowrap' }}>
+                                            <p style={{ display:'inline', marginRight: '1em' }}>{position.started}</p>
+                                            <p style={{ display:'inline', marginRight: '1em'}}> - </p>
+                                            <p style={{ display:'inline', marginRight: '1em' }}>{position.ended ? position.ended : 'present'}</p>
+                                        </div>  
                                     </div>
                                 );
-                            })}
+                        })}
                         </div>
                     </Card>
                 );
