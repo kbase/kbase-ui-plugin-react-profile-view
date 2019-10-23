@@ -132,7 +132,6 @@ class AffiliationForm extends React.Component<Props, State> {
 
         // it has to be set to "any" in order to use generic property name    
         let affiliationArray: any = this.state.affiliations;
-        // console.log(parseInt(inputValue, 10))
         // When type is number, then check if it's a number first
         if (type === "number" && isNaN(parseInt(inputValue, 10))) {
             affiliationArray[index][property] = "error";
@@ -369,7 +368,18 @@ class AffiliationForm extends React.Component<Props, State> {
     affiliations() {
         // TODO: change BFF so that it will return an empty array when there is no data
         // so instead of using this -> affiliations[0]['title'], affiliations.length > 0
-        if ( this.props.affiliations[0]['title'] !== '') {
+        let profileIsEmpty;
+        if(this.props.affiliations.length === 0) {
+            profileIsEmpty = true;
+        } else if(this.props.affiliations[0]['title']){
+            if(this.props.affiliations[0]['title'] === ''){
+                profileIsEmpty = true;
+            };
+        } else {
+            profileIsEmpty = false;
+        };
+
+        if (profileIsEmpty === false) {
             return (
                 <div id='affiliations'>
                     {this.state.affiliations.map((position, index) => (
@@ -478,17 +488,122 @@ class AffiliationForm extends React.Component<Props, State> {
                         Save
                     </Button>
                 </div>
-            )
+            );
         } else {
             return (
-                <div><Empty image={Empty.PRESENTED_IMAGE_SIMPLE} /></div>
+                <div id='affiliations'>
+                    {this.state.affiliations.map((position, index) => (
+                        <form key={index} className='affiliation-row ant-form ant-form-inline' name={index.toString(10)} autoComplete="on">
+                            <Form.Item {...formItemLayout}
+                                className="profile-input-form"
+                                required={this.requiredNotificationControl()}
+                                label=' '
+                                hasFeedback
+                                help={this.state.affiliations[index]['helpTextJobTitle']}
+                                validateStatus={this.state.affiliations[index]['validatedStatusJobTitle']}
+                            ><Input
+                                readOnly={!this.props.editEnable}
+                                style={{ width: '100%' }}
+                                autoComplete='organization-title'
+                                type='text'
+                                className='clear-disabled'
+                                maxLength={50}
+                                defaultValue={position.title}
+                                placeholder={'Job title'}
+                                onChange={(event) => { this.affiliationJobTitleOnChange(event, index) }}
+                            /></Form.Item>
+                            <Form.Item {...formItemLayout}
+                                style={{ flexGrow: 1 }}
+                                className="profile-input-form"
+                                required={this.requiredNotificationControl()}
+                                label=' '
+                                hasFeedback
+                                help={this.state.affiliations[index]['helpTextOrganization']}
+                                validateStatus={this.state.affiliations[index]['validatedStatusOrganization']}
+                            ><AutoComplete
+                                className='clear-disabled'
+                                allowClear
+                                disabled={!this.props.editEnable}
+                                placeholder='Organization'
+                                onSelect={(item) => { this.saveLocalState(item as string, index, 'organization') }}
+                                onSearch={(value) => { this.institutionOnSearch(value, index) }}
+                                filterOption={(inputValue, option) => {
+
+                                    if (typeof option.props.children === 'string') {
+                                        let item = option.props.children;
+                                        return item.toLowerCase().indexOf(inputValue.toLowerCase()) >= 0;
+                                    } else {
+                                        return false;
+                                    };
+
+                                }}
+                                defaultValue={position.organization}
+                            >
+                                    {this.state.institutionFiltered.map((item, index) => {
+                                        return (
+                                            <Option style={{ width: '90%' }} className='clear-disabled' key={index} value={item} >
+                                                {item}
+                                            </Option>
+                                        );
+                                    })}
+                            </AutoComplete></Form.Item>
+                            <Tooltip overlayStyle={this.tooltipVisibility()} title='Enter 4 digits start year and end year'>
+                                <Form.Item {...formItemLayout}
+                                    className="profile-input-form"
+                                    required={this.requiredNotificationControl()}
+                                    label=' '
+                                    hasFeedback
+                                    help={this.state.affiliations[index]['helpTextStartYear']}
+                                    validateStatus={this.state.affiliations[index]['validatedStatusStartYear']}
+                                ><Input
+                                    readOnly={!this.props.editEnable}
+                                    style={{ width: '90px', display: 'inline' }}
+                                    onChange={(item) => { this.affiliationStartOnChange(item, index) }}
+                                    type='number'
+                                    maxLength={4}
+                                    className='clear-disabled'
+                                    placeholder='Start'
+                                    defaultValue={position.started}
+                                /></Form.Item>
+                            </Tooltip>
+                            <Tooltip overlayStyle={this.tooltipVisibility()} title='Enter 4 digits start year and end year'>
+                                <Form.Item {...formItemLayout}
+                                    className="profile-input-form"
+                                    required={false}
+                                    label=' '
+                                    hasFeedback
+                                    help={this.state.affiliations[index]['helpTextEndYear']}
+                                    validateStatus={this.state.affiliations[index]['validatedStatusEndYear']}
+                                ><Input
+                                    readOnly={!this.props.editEnable}
+                                    style={{ width: '90px', display: 'inline' }}
+                                    onChange={(item) => { this.affiliationEndOnChange(item, index) }}
+                                    type='number'
+                                    maxLength={4}
+                                    className='clear-disabled'
+                                    placeholder='End'
+                                    defaultValue={position.ended}
+                                /></Form.Item>
+                            </Tooltip>
+                            <Icon type="delete" style={{ display: this.showEditButtons() }} onClick={() => this.deleteAffiliation(index)} />
+                            {/* <Button style={{ margin: '10px', display: this.showEditButtons() }} type="primary" onClick={() => this.deleteAffiliation(index)}>
+                                delete
+                            </Button> */}
+                        </form>
+                    ))}
+                    <Button style={{ margin: '10px', display: this.showEditButtons() }} key="add" type="primary" onClick={this.addAffiliation}>
+                        Add
+                    </Button>
+                    <Button disabled={this.saveDisabled()} style={{ margin: '10px', display: this.showEditButtons() }} key="submit" type="primary" onClick={this.affiliationOnSave}>
+                        Save
+                    </Button>
+                </div>
             );
         };
     };
     render() {
         return this.affiliations();
     };
-
 };
 
 

@@ -109,7 +109,6 @@ class TextAreaForm extends React.Component<Props, State> {
      * @param event 
      */
     updateStoreStateProperty(event: React.FocusEvent<HTMLTextAreaElement> | React.KeyboardEvent<HTMLTextAreaElement>) {
-        // console.log(data)
         if (!this.props.required) {
             this.setState({ helpText: undefined });
         };

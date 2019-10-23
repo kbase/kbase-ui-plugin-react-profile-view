@@ -542,7 +542,7 @@ class Profile extends React.Component<Props, State> {
                         editEnable={this.props.editEnable}
                         affiliations={this.props.profileData.affiliations}
                         updateStoreState={this.props.updateProfile}
-                    /></Card>
+                /></Card>
             );
         } else {
             let affiliationsArray = this.props.profileData.affiliations;
@@ -552,18 +552,20 @@ class Profile extends React.Component<Props, State> {
                     <Card style={{ margin: '8px 0px' }} title='Affiliations'>
                         <div id='affiliations'>
                             {affiliationsArray.map((position) => {
-                                return (
-                                    <div className='affiliation-row'>
-                                        <p style={{ width:'20%', display:'inline-block', marginRight: '1em', verticalAlign: 'middle' }}>{position.title}</p>
-                                        <p style={{ width:'45%', display:'inline-block', marginRight: '1em', verticalAlign: 'middle' }}>{position.organization}</p>
-                                        <div style={{ width:'29%', display: 'inline-block', verticalAlign: 'text-bottom', whiteSpace: 'nowrap' }}>
-                                            <p style={{ display:'inline', marginRight: '1em' }}>{position.started}</p>
-                                            <p style={{ display:'inline', marginRight: '1em'}}> - </p>
-                                            <p style={{ display:'inline', marginRight: '1em' }}>{position.ended ? position.ended : 'present'}</p>
-                                        </div>  
-                                    </div>
-                                );
-                        })}
+                                if(position.title){
+                                  return (
+                                        <div className='affiliation-row'>
+                                            <p style={{ width:'20%', display:'inline-block', marginRight: '1em', verticalAlign: 'middle' }}>{position.title}</p>
+                                            <p style={{ width:'45%', display:'inline-block', marginRight: '1em', verticalAlign: 'middle' }}>{position.organization}</p>
+                                            <div style={{ width:'29%', display: 'inline-block', verticalAlign: 'text-bottom', whiteSpace: 'nowrap' }}>
+                                                <p style={{ display:'inline', marginRight: '1em' }}>{position.started}</p>
+                                                <p style={{ display:'inline', marginRight: '1em'}}> - </p>
+                                                <p style={{ display:'inline', marginRight: '1em' }}>{position.ended ? position.ended : 'present'}</p>
+                                            </div>  
+                                        </div>
+                                    );  
+                                };
+                            })}
                         </div>
                     </Card>
                 );
