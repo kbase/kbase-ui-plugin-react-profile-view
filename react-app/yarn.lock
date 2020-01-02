@@ -1031,12 +1031,12 @@
     "@types/istanbul-reports" "^1.1.1"
     "@types/yargs" "^13.0.0"
 
-"@kbase/ui-components@0.2.1-alpha.4":
-  version "0.2.1-alpha.4"
-  resolved "https://registry.yarnpkg.com/@kbase/ui-components/-/ui-components-0.2.1-alpha.4.tgz#d089c1b87dbe3c70ad4414e8c158b3d5d452bb12"
-  integrity sha512-U3V3yC0+E4QvXRsrRc0nXR59g/+UcRt2d5qt6rfwZqXMUXW3cR8z6tJ+4o01qpOuk0FGU8kx4iVLaAHJBrNStQ==
+"@kbase/ui-components@0.2.1-alpha.6":
+  version "0.2.1-alpha.6"
+  resolved "https://registry.yarnpkg.com/@kbase/ui-components/-/ui-components-0.2.1-alpha.6.tgz#c74229ef007573a84706767f5b4dbf02f54f8580"
+  integrity sha512-U3vvF3U4prFb9HTTjD5T0rIFfW4omI/66w7NP1luhvNxvFU+NKTyZGmHCHz2Pq0ts/m3xljPHgXycPeZGFPloQ==
   dependencies:
-    "@kbase/ui-lib" "^0.2.0-alpha.4"
+    "@kbase/ui-lib" "^0.2.0-alpha.5"
     "@types/bluebird" "*"
     "@types/react" "*"
     "@types/react-dom" "*"
@@ -1055,7 +1055,7 @@
     typeface-roboto "^0.0.75"
     uuid "^3.3.2"
 
-"@kbase/ui-lib@0.2.0-alpha.5", "@kbase/ui-lib@^0.2.0-alpha.4":
+"@kbase/ui-lib@0.2.0-alpha.5", "@kbase/ui-lib@^0.2.0-alpha.5":
   version "0.2.0-alpha.5"
   resolved "https://registry.yarnpkg.com/@kbase/ui-lib/-/ui-lib-0.2.0-alpha.5.tgz#86f00028f1a16b486a8d7b36fe316fd25e3501e6"
   integrity sha512-j1DL4WEhpCG7XsjU7evuh7OLRW3KUb73Ar1IJmqa4O1Rqns9W0++LsD7sLRzN5tAIkHWPCm0NYTpz0j2t1+Ztw==
