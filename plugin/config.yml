@@ -1,0 +1,18 @@
+## Plugin Configuration
+---
+package:
+  author: KBase Developer
+  name: User UI Profile View
+  description: KBase user profile view plugin built with React.
+  type: iframe
+install:
+  routes:
+    - path: [["people", "user"], {type: 'param', name: 'username', required: false}]
+      captureExtraPath: true
+      # queryParams: 
+      #   username: {}
+      widget: kb_iframe_loader
+      authorization: true 
+      params:
+        view: user-profile
+        plugin: react-profile-view

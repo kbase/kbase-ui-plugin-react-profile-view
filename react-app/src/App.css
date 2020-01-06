@@ -15,7 +15,12 @@
 .profile-tabs {
   margin: 0 0.5em;
 }
-
+.ant-tabs-nav-wrap
+.ant-tabs-nav-scroll
+.ant-tabs-nav 
+{  
+    width: 100% !important;
+}
 .margin-top-10px {
     margin-top: 10px !important;
 }
