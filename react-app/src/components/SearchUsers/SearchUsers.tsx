@@ -84,7 +84,7 @@ class SearchUsers extends React.Component<Props, State> {
         let data = this.state.data;
         return (
             <Select
-                mode='single'
+                mode='default'
                 style={{ width: 250 }}
                 allowClear
                 showSearch

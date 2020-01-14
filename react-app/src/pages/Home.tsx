@@ -118,15 +118,16 @@ class Home extends React.Component<HomeProps, HomeState> {
     render() {
         return (
             <div className="profile-tabs">
-                <Tabs type="line" defaultActiveKey="5">
-                    <TabPane tab="Narratives" key="3">
-                        <NarrativeContainer />
-                    </TabPane>
-                    <TabPane tab="Profile" key="5">
+                <div className="fake-tab">{this.searchOnATab}</div>
+                <Tabs type="line" defaultActiveKey="1">
+                    <TabPane tab="Profile" key="1">
                         <ProfileContainer />
                     </TabPane>
+                    <TabPane tab="Narratives" key="5">
+                        <NarrativeContainer />
+                    </TabPane>
                     {/* Insert search user component div as a title to place it on the navigation tab  */}
-                    <TabPane disabled tab={this.searchOnATab} key="8"></TabPane>
+                    {/* <TabPane disabled tab={this.searchOnATab} key="8"></TabPane> */}
                 </Tabs>
             </div>
         );

@@ -475,7 +475,7 @@ class AffiliationForm extends React.Component<Props, State> {
                                     defaultValue={position.ended}
                                 /></Form.Item>
                             </Tooltip>
-                            <Icon type="delete" style={{ display: this.showEditButtons() }} onClick={() => this.deleteAffiliation(index)} />
+                            <Icon type="delete" style={{ display: this.showEditButtons(), verticalAlign: "-webkit-baseline-middle" }} onClick={() => this.deleteAffiliation(index)} />
                             {/* <Button style={{ margin: '10px', display: this.showEditButtons() }} type="primary" onClick={() => this.deleteAffiliation(index)}>
                                 delete
                             </Button> */}
