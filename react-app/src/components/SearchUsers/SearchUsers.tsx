@@ -74,7 +74,6 @@ class SearchUsers extends React.Component<Props, State> {
 
     onChangeHandler(value: string): void {
         if (value !== 'error' && typeof value !== 'undefined' && isNaN(parseInt(value))){
-
             let url = '/#user/' + value;
             window.open(url, '_blank');
         };
@@ -90,6 +89,7 @@ class SearchUsers extends React.Component<Props, State> {
                 showSearch
                 placeholder='enter more than 3 characters'
                 showArrow={false}
+                onInputKeyDown={(e)=>{e.stopPropagation()}} // this is required so that tabs don't respond to key board events
                 onSearch={this.onSearchHandler}
                 onChange={this.onChangeHandler}
                 onMouseLeave={this.onMouseLeaveHandler}

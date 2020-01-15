@@ -1,9 +1,13 @@
 
 
 .fake-tab {
-    position: absolute;
-    right: 22px;
+    position: relative;
+    right: calc(-100% + 385px);
     width: 385px;
+    z-index: 5;
+}
+.search-on-a-tab {
+    white-space: nowrap;
 }
 .card-with-height
 .ant-card-body{

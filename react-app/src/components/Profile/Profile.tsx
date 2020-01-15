@@ -104,7 +104,7 @@ class Profile extends React.Component<Props, State> {
     componentDidMount() {
         let profile: ProfileData;
         profile = this.props.profileData;
-
+        console.log("profile", profile)
         this.setState({
             researchInterestsOther: profile.researchInterestsOther,
             jobTitleValue: profile.jobTitle,
@@ -417,7 +417,7 @@ class Profile extends React.Component<Props, State> {
                         style={{ width: '100%', marginTop: '10px' }}
                         showSearch
                         disabled={!this.props.editEnable}
-                        placeholder='enter more than 3 characters'
+                        placeholder='enter 3 or more characters'
                         showArrow={true}
                         onChange={this.fundingSourceOnChange}
                         optionFilterProp='children'
@@ -457,9 +457,9 @@ class Profile extends React.Component<Props, State> {
                     style={{ margin: '8px 0px', textAlign: 'left' }}
                     title={this.props.userName.userID}
                 >
-                    <div>
-                        <p>{this.props.userName.userID}</p>
+                    <Meta title='Position' />
                         <p style={{ fontStyle: "italic" }}>{profile.jobTitleOther ? profile.jobTitleOther : profile.jobTitle}</p>
+                    <div>
                         <p>{profile.organization}<br />
                             {profile.department}</p>
                     </div>
@@ -484,6 +484,14 @@ class Profile extends React.Component<Props, State> {
      *  - Return either form or plain text
      */
     buildResearchStatement() {
+        let statement: JSX.Element;
+        if(!this.props.profileData.researchStatement || this.props.profileData.researchStatement === ''){
+            statement = <div><Empty image={Empty.PRESENTED_IMAGE_SIMPLE} /></div>
+        } else {
+            statement = <p>{this.props.profileData.researchStatement}</p>
+        }
+        console.log("statement", statement)
+
         if (this.props.editEnable) {
             return (
                 <Card
@@ -515,7 +523,7 @@ class Profile extends React.Component<Props, State> {
                     style={{ margin: '8px 0px' }}
                     title='Research or Personal Statement'
                 >
-                    <p>{this.props.profileData.researchStatement}</p>
+                    {statement}
                 </Card>
             );
         };
@@ -637,7 +645,8 @@ class Profile extends React.Component<Props, State> {
      */
     researchInterestsOtherOnChange(event: any) {
         if (typeof event.target.value === 'string') {
-            this.setState({ researchInterestsOther: event.target.value });
+            let value = event.target.value;
+            this.setState({ researchInterestsOther: value.trim() });
         };
     };
 
