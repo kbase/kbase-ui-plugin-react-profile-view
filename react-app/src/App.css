@@ -1,11 +1,14 @@
 
-.search-on-a-tab {
-  color: rgba(0, 0, 0, 0.65);
-  position: absolute;
-  right: -76vw;
-  margin-top: -8px;
-}
 
+.fake-tab {
+    position: relative;
+    right: calc(-100% + 385px);
+    width: 385px;
+    z-index: 5;
+}
+.search-on-a-tab {
+    white-space: nowrap;
+}
 .card-with-height
 .ant-card-body{
     height: 200px;
@@ -40,6 +43,11 @@ label::after {
     justify-content: space-between;
     align-items: center;
 } */
+
+
+.ant-select-show-arrow.clear-disabled.ant-select.ant-select-enabled {
+    width: 100%;
+}
 
 /* this forces Organization AutoComplete input field to 100% in 
  AfflicationForm */

@@ -133,9 +133,9 @@ class AffiliationForm extends React.Component<Props, State> {
         // it has to be set to "any" in order to use generic property name    
         let affiliationArray: any = this.state.affiliations;
         // When type is number, then check if it's a number first
-        if (type === "number" && isNaN(parseInt(inputValue, 10))) {
+        if (type === "number" && isNaN(parseInt(inputValue, 10)) || parseInt(inputValue, 10) < 0) {
             affiliationArray[index][property] = "error";
-            affiliationArray[index][helperTextProp] = 'Expecting numbers';
+            affiliationArray[index][helperTextProp] = 'Expecting positive numbers';
             this.setState({ affiliations: affiliationArray });
             return;
         };
@@ -217,6 +217,16 @@ class AffiliationForm extends React.Component<Props, State> {
         this.validateInput(value, index, 'validatedStatusJobTitle', 'helpTextJobTitle', 'string', 50);
     };
 
+    isYearValid(value: string): boolean{
+        // e: euler's number and -: negative sign is handleed in euler function)
+        // if it's an int, and positive number, and 0 < length <= 4
+        // then it's a valid 4-digit year  
+        if (typeof (parseInt(value, 10)) === 'number' && parseInt(value, 10) > 0 && value.length === 4 ) { 
+            return true;
+        } else {
+            return false;
+        }
+    }
     /**
      * Save/update local state and call input validation function
      * check if it's smaller than the corresponding end year
@@ -224,28 +234,42 @@ class AffiliationForm extends React.Component<Props, State> {
      * @param index 
      */
     affiliationStartOnChange(event: any, index: number) {
+        let affiliationArray = this.state.affiliations;
         let value = event.target.value;
+        this.saveLocalState(value, index, 'started');
+
+        let isStartYearValid = this.isYearValid(value);
+        if(!isStartYearValid){
+            affiliationArray[index]['validatedStatusStartYear'] = 'error';
+            affiliationArray[index]['helpTextStartYear'] = 'expecting 4 digit year ';
+            this.setState({ affiliations: affiliationArray });
+            return;
+        }
         let endYear =  this.state.affiliations[index]['ended'];
         // check if the entered start year is less than end year if it is already entered.
         if(typeof endYear !== 'undefined') {
-            let affiliationArray = this.state.affiliations;
+            let endYearInt:number = parseInt(endYear, 10);
+            let valueInt:number = parseInt(value, 10);
             // while entered start year is less than end year, other validations are not required.
             // update validated status to error and set helpt text. 
-            if (value > endYear) {
+            if (valueInt > endYearInt) {
                 affiliationArray[index]['validatedStatusStartYear'] = 'error';
                 affiliationArray[index]['helpTextStartYear'] = 'must be less than end year';
                 this.setState({ affiliations: affiliationArray });
                 return;
-            } else {
+            } else if (valueInt <= endYearInt){
                 // other wise set validated state and helpText to undefined 
                 /// and let the validate input function set the validated state.
                 affiliationArray[index]['validatedStatusStartYear'] = undefined;
                 affiliationArray[index]['helpTextStartYear'] = undefined;
+                let isEndYearValid = this.isYearValid(endYear);
+                if(isEndYearValid){
+                    affiliationArray[index]['validatedStatusEndYear'] = undefined;
+                    affiliationArray[index]['helpTextEndYear'] = undefined;
+                }
                 this.setState({ affiliations: affiliationArray });
             };   
         }
-        this.saveLocalState(value, index, 'started');
-        this.validateInput(value, index, 'validatedStatusStartYear', 'helpTextStartYear', 'number', 4, 4);
     };
 
     /**
@@ -257,26 +281,48 @@ class AffiliationForm extends React.Component<Props, State> {
     affiliationEndOnChange(event: any, index: number) {
         let value = event.target.value;
         let affiliationArray = this.state.affiliations;
-        // if the start date is already entered and is larger than the entered value, 
-        // set the valudated status to error and set help text. 
-        let startDate = this.state.affiliations[index]['started'];
-        if (startDate!== undefined) {
-            if (value < startDate ) {
-                affiliationArray[index]['validatedStatusEndYear'] = 'error';
-                affiliationArray[index]['helpTextEndYear'] = 'must be larger than start year';
-                this.setState({ affiliations: affiliationArray });
-                return;
-            };
-        };
         this.saveLocalState(value, index, 'ended');
+
         // if the entry is empty, then set the state to undefined. 
-        if(value.length > 0) {
-            this.validateInput(value, index, 'validatedStatusEndYear', 'helpTextEndYear', 'number', 4, 4);
-        } else {
+        if(value.length === 0) {
             affiliationArray[index]['validatedStatusEndYear'] = undefined;
             affiliationArray[index]['ended'] = undefined;
             affiliationArray[index]['helpTextEndYear'] = undefined;
             this.setState({ affiliations: affiliationArray });
+            return;
+        };
+        
+        let isEndYearValid = this.isYearValid(value); 
+        if(!isEndYearValid){
+            affiliationArray[index]['validatedStatusEndYear'] = 'error';
+            affiliationArray[index]['helpTextEndYear'] = 'expecting 4 digit year ';
+            this.setState({ affiliations: affiliationArray });
+            //this.saveLocalState(value, index, 'ended');
+            return;
+        }
+               
+        // if the start date is already entered and is larger than the entered value, 
+        // set the valudated status to error and set help text. 
+         let startDate = this.state.affiliations[index]['started'];
+        if (startDate!== undefined) {
+            let startDateInt:number = parseInt(startDate, 10);
+            let valueInt:number = parseInt(value, 10);
+            if (valueInt < startDateInt) {
+                affiliationArray[index]['validatedStatusEndYear'] = 'error';
+                affiliationArray[index]['helpTextEndYear'] = 'must be larger than start year';
+                this.setState({ affiliations: affiliationArray });
+                return;
+            } else if (valueInt >= startDateInt){
+                affiliationArray[index]['validatedStatusEndYear'] = undefined;
+                affiliationArray[index]['helpTextEndYear'] = undefined;
+                
+                let isStartYearValid = this.isYearValid(startDate);
+                if(isStartYearValid){
+                    affiliationArray[index]['helpTextStartYear'] = undefined;
+                    affiliationArray[index]['validatedStatusStartYear'] = undefined;
+                }
+                this.setState({ affiliations: affiliationArray });
+            }
         };
     };
     
@@ -361,6 +407,19 @@ class AffiliationForm extends React.Component<Props, State> {
             return { visibility: 'visible' };
         };
     };
+
+    /**
+     * handle negative and Euler's number
+     */
+    euler(keyCode:number, property:string, helptext: string, index:number):void{
+        if(keyCode === 189 || keyCode == 69) {
+            let affiliationArray: any = this.state.affiliations;
+            affiliationArray[index][property] = "error";
+            affiliationArray[index][helptext] = 'expecting 4 digit year';
+            this.setState({ affiliations: affiliationArray });
+        }
+    }
+
 
     /**
      * builds affiliation card
@@ -454,6 +513,7 @@ class AffiliationForm extends React.Component<Props, State> {
                                     className='clear-disabled'
                                     placeholder='Start'
                                     defaultValue={position.started}
+                                    onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {this.euler(event.keyCode, 'validatedStatusStartYear', 'helpTextStartYear', index)}}
                                 /></Form.Item>
                             </Tooltip>
                             <Tooltip overlayStyle={this.tooltipVisibility()} title='Enter 4 digits start year and end year'>
@@ -470,15 +530,13 @@ class AffiliationForm extends React.Component<Props, State> {
                                     onChange={(item) => { this.affiliationEndOnChange(item, index) }}
                                     type='number'
                                     maxLength={4}
+                                    onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {this.euler(event.keyCode, "validatedStatusEndYear", 'helpTextEndYear', index)}}
                                     className='clear-disabled'
                                     placeholder='End'
                                     defaultValue={position.ended}
                                 /></Form.Item>
                             </Tooltip>
-                            <Icon type="delete" style={{ display: this.showEditButtons() }} onClick={() => this.deleteAffiliation(index)} />
-                            {/* <Button style={{ margin: '10px', display: this.showEditButtons() }} type="primary" onClick={() => this.deleteAffiliation(index)}>
-                                delete
-                            </Button> */}
+                            <Icon type="delete" style={{ display: this.showEditButtons(), verticalAlign: "-webkit-baseline-middle" }} onClick={() => this.deleteAffiliation(index)} />
                         </form>
                     ))}
                     <Button style={{ margin: '10px', display: this.showEditButtons() }} key="add" type="primary" onClick={this.addAffiliation}>
@@ -562,6 +620,7 @@ class AffiliationForm extends React.Component<Props, State> {
                                     type='number'
                                     maxLength={4}
                                     className='clear-disabled'
+                                    onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {this.euler(event.keyCode, 'validatedStatusStartYear', 'helpTextStartYear',index)}}
                                     placeholder='Start'
                                     defaultValue={position.started}
                                 /></Form.Item>
@@ -581,14 +640,12 @@ class AffiliationForm extends React.Component<Props, State> {
                                     type='number'
                                     maxLength={4}
                                     className='clear-disabled'
+                                    onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {this.euler(event.keyCode, 'validatedStatusEndYear', 'helpTextEndYear', index)}}
                                     placeholder='End'
                                     defaultValue={position.ended}
                                 /></Form.Item>
                             </Tooltip>
                             <Icon type="delete" style={{ display: this.showEditButtons() }} onClick={() => this.deleteAffiliation(index)} />
-                            {/* <Button style={{ margin: '10px', display: this.showEditButtons() }} type="primary" onClick={() => this.deleteAffiliation(index)}>
-                                delete
-                            </Button> */}
                         </form>
                     ))}
                     <Button style={{ margin: '10px', display: this.showEditButtons() }} key="add" type="primary" onClick={this.addAffiliation}>
