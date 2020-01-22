@@ -443,7 +443,7 @@ class Profile extends React.Component<Props, State> {
                     style={{ margin: '8px 0px', textAlign: 'left' }}
                     title={this.props.userName.userID}
                 >
-                        {profile.jobTitleOther || profile.jobTitle ? (<Meta title='Primary Funding Source' />) : null}
+                        {profile.jobTitleOther || profile.jobTitle ? (<Meta title='Position' />) : null}
                             <p style={{ fontStyle: "italic" }}>{profile.jobTitleOther ? profile.jobTitleOther : profile.jobTitle}</p>
                         {profile.department ? (<Meta title='Department' />) : null}
                             <p>{profile.department}</p>
