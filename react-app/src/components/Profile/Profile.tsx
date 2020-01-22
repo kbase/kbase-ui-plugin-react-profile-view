@@ -168,20 +168,7 @@ class Profile extends React.Component<Props, State> {
      * plain text depending on if auth-user is viewing or not
      */
     setName() {
-        if (this.props.editEnable) {
-            return (
-                <Tooltip title='must be less than 100 characters'>
-                    <Input
-                        className='clear-disabled ant-card-meta-title'
-                        readOnly={true}
-                        maxLength={100}
-                        defaultValue={this.props.userName.name ? this.props.userName.name : ''}
-                    />
-                </Tooltip>
-            );
-        } else {
-            return (<div className='name ant-card-meta-title'>{this.props.userName.name}</div>);
-        };
+        return (<div className='name ant-card-meta-title'>{this.props.userName.name}</div>);
     };
 
     // Create tootip for Organization Auto Complete
@@ -456,20 +443,16 @@ class Profile extends React.Component<Props, State> {
                     style={{ margin: '8px 0px', textAlign: 'left' }}
                     title={this.props.userName.userID}
                 >
-                    <Meta title='Position' />
-                        <p style={{ fontStyle: "italic" }}>{profile.jobTitleOther ? profile.jobTitleOther : profile.jobTitle}</p>
-                    <div>
-                        <p>{profile.organization}<br />
-                            {profile.department}</p>
-                    </div>
-                    <div>
-                        {hasLocation() ? (<h4>Location</h4>) : null}
-                        <p>{profile.country ? profile.country + ', ' : null}{profile.state ? profile.state + ', ' : null}{profile.city ? profile.city : null}</p>
-                    </div>
-                    <div>
-                        {profile.fundingSource ? (<h4>Primary Funding Source</h4>) : null}
-                        <p>{profile.fundingSource}</p>
-                    </div>
+                        {profile.jobTitleOther || profile.jobTitle ? (<Meta title='Primary Funding Source' />) : null}
+                            <p style={{ fontStyle: "italic" }}>{profile.jobTitleOther ? profile.jobTitleOther : profile.jobTitle}</p>
+                        {profile.department ? (<Meta title='Department' />) : null}
+                            <p>{profile.department}</p>
+                        {profile.organization ? (<Meta title='Organization' />) : null}
+                            <p>{profile.organization}</p>
+                        {hasLocation() ? (<Meta title='Location' />) : null}
+                            <p>{profile.country ? profile.country + ', ' : null}{profile.state ? profile.state + ', ' : null}{profile.city ? profile.city : null}</p>
+                        {profile.fundingSource ? (<Meta title='Primary Funding Source' />) : null}
+                            <p>{profile.fundingSource}</p>
                 </Card>
             );
         };
@@ -726,7 +709,7 @@ class Profile extends React.Component<Props, State> {
                 <Row gutter={8}>
                     <Col span={8}>
                         <Card style={{ margin: '8px 0px', textAlign: 'center' }}
-                            title={this.setName()}
+                            title={this.props.userName.name ? this.props.userName.name : ''}
                         >
                             <Tooltip overlayStyle={this.tooltipVisibility()} title='click to edit Avatar Options'>
                                 <img style={{ maxWidth: '100%', margin: '8px 0px' }} alt='avatar' src={this.gravaterSrc()} onClick={(event) => { this.showModal(event, ModalName.AvatarOption) }} />
