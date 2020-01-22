@@ -87,7 +87,7 @@ class SearchUsers extends React.Component<Props, State> {
                 style={{ width: 250 }}
                 allowClear
                 showSearch
-                placeholder='enter more than 3 characters'
+                placeholder='enter 3 or more characters'
                 showArrow={false}
                 onInputKeyDown={(e)=>{e.stopPropagation()}} // this is required so that tabs don't respond to key board events
                 onSearch={this.onSearchHandler}
