@@ -104,7 +104,6 @@ class Profile extends React.Component<Props, State> {
     componentDidMount() {
         let profile: ProfileData;
         profile = this.props.profileData;
-        console.log("profile", profile)
         this.setState({
             researchInterestsOther: profile.researchInterestsOther,
             jobTitleValue: profile.jobTitle,
@@ -490,7 +489,6 @@ class Profile extends React.Component<Props, State> {
         } else {
             statement = <p>{this.props.profileData.researchStatement}</p>
         }
-        console.log("statement", statement)
 
         if (this.props.editEnable) {
             return (
