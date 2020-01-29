@@ -104,7 +104,6 @@ class Profile extends React.Component<Props, State> {
     componentDidMount() {
         let profile: ProfileData;
         profile = this.props.profileData;
-
         this.setState({
             researchInterestsOther: profile.researchInterestsOther,
             jobTitleValue: profile.jobTitle,
@@ -169,20 +168,7 @@ class Profile extends React.Component<Props, State> {
      * plain text depending on if auth-user is viewing or not
      */
     setName() {
-        if (this.props.editEnable) {
-            return (
-                <Tooltip title='must be less than 100 characters'>
-                    <Input
-                        className='clear-disabled ant-card-meta-title'
-                        readOnly={true}
-                        maxLength={100}
-                        defaultValue={this.props.userName.name ? this.props.userName.name : ''}
-                    />
-                </Tooltip>
-            );
-        } else {
-            return (<div className='name ant-card-meta-title'>{this.props.userName.name}</div>);
-        };
+        return (<div className='name ant-card-meta-title'>{this.props.userName.name}</div>);
     };
 
     // Create tootip for Organization Auto Complete
@@ -205,7 +191,7 @@ class Profile extends React.Component<Props, State> {
         let researchInterests: Array<string> = [];
         if (Array.isArray(this.props.profileData.researchInterests)) {
             researchInterests = this.props.profileData.researchInterests;
-            if (researchInterests.includes('Other')) {
+            if (researchInterests.includes('Other') && this.props.profileData.researchInterestsOther) {
                 return (
                     <ul style={{ textAlign: 'left' }}>
                         {researchInterests.map((interest) => (
@@ -246,13 +232,8 @@ class Profile extends React.Component<Props, State> {
             return (
                 <Card
                     style={{ margin: '8px 0px', textAlign: 'left' }}
-                    title={this.setName()}
+                    title={this.props.userName.userID ? this.props.userName.userID : ''}
                 >
-                    <Meta title='User ID' />
-                    <Tooltip title='User ID cannot be changed'>
-                        {/* this might null or undefined or empty string */}
-                        <Input style={this.props.userName ? { border: '0px' } : { border: '1px' }} readOnly={this.props.userName ? true : false} className='clear-disabled margin-top-10px margin-bottom-24px userID' placeholder='User ID' defaultValue={this.props.userName.userID ? this.props.userName.userID : ''} />
-                    </Tooltip>
                     <Meta title='Position' />
                     <Select
                         className='clear-disabled'
@@ -358,12 +339,13 @@ class Profile extends React.Component<Props, State> {
                     <Tooltip trigger='hover' title='Search US States'>
                         <Form.Item style={this.USStateVisibility()} className='profile-input-form' required={true} {...formItemLayout} label=' '>
                             <Select
+                                dropdownMatchSelectWidth
                                 className='clear-disabled'
-                                mode='single'
+                                mode='default'
                                 disabled={!this.props.editEnable}
-                                allowClear
+                                allowClear={false}
                                 placeholder='State'
-                                showArrow={true}
+                                showArrow
                                 onChange={(value:string) => { this.setStateProperty('state', value as string) }}
                                 onSelect={(value:string) => { this.stateOnSelect(value) }}
                                 optionFilterProp='children'
@@ -374,7 +356,6 @@ class Profile extends React.Component<Props, State> {
                                     } else {
                                         return false
                                     }
-
                                 }}
                                 defaultValue={this.props.profileData.state}
                             >
@@ -418,11 +399,11 @@ class Profile extends React.Component<Props, State> {
                     <Meta title='Primary Funding Source' />
                     <Select
                         className='clear-disabled margin-top-10px'
-                        mode='single'
+                        mode='default'
                         style={{ width: '100%', marginTop: '10px' }}
                         showSearch
                         disabled={!this.props.editEnable}
-                        placeholder='enter more than 3 characters'
+                        placeholder='enter 3 or more characters'
                         showArrow={true}
                         onChange={this.fundingSourceOnChange}
                         optionFilterProp='children'
@@ -460,22 +441,18 @@ class Profile extends React.Component<Props, State> {
             return (
                 <Card
                     style={{ margin: '8px 0px', textAlign: 'left' }}
-                    title={this.setName()}
+                    title={this.props.userName.userID}
                 >
-                    <div>
-                        <p>{this.props.userName.userID}</p>
-                        <p style={{ fontStyle: "italic" }}>{profile.jobTitleOther ? profile.jobTitleOther : profile.jobTitle}</p>
-                        <p>{profile.organization}<br />
-                            {profile.department}</p>
-                    </div>
-                    <div>
-                        {hasLocation() ? (<h4>Location</h4>) : null}
-                        <p>{profile.country ? profile.country + ', ' : null}{profile.state ? profile.state + ', ' : null}{profile.city ? profile.city : null}</p>
-                    </div>
-                    <div>
-                        {profile.fundingSource ? (<h4>Primary Funding Source</h4>) : null}
-                        <p>{profile.fundingSource}</p>
-                    </div>
+                        {profile.jobTitleOther || profile.jobTitle ? (<Meta title='Position' />) : null}
+                            <p style={{ fontStyle: "italic" }}>{profile.jobTitleOther ? profile.jobTitleOther : profile.jobTitle}</p>
+                        {profile.department ? (<Meta title='Department' />) : null}
+                            <p>{profile.department}</p>
+                        {profile.organization ? (<Meta title='Organization' />) : null}
+                            <p>{profile.organization}</p>
+                        {hasLocation() ? (<Meta title='Location' />) : null}
+                            <p>{profile.country ? profile.country + ', ' : null}{profile.state ? profile.state + ', ' : null}{profile.city ? profile.city : null}</p>
+                        {profile.fundingSource ? (<Meta title='Primary Funding Source' />) : null}
+                            <p>{profile.fundingSource}</p>
                 </Card>
             );
         };
@@ -489,6 +466,13 @@ class Profile extends React.Component<Props, State> {
      *  - Return either form or plain text
      */
     buildResearchStatement() {
+        let statement: JSX.Element;
+        if(!this.props.profileData.researchStatement || this.props.profileData.researchStatement === ''){
+            statement = <div><Empty image={Empty.PRESENTED_IMAGE_SIMPLE} /></div>
+        } else {
+            statement = <p>{this.props.profileData.researchStatement}</p>
+        }
+
         if (this.props.editEnable) {
             return (
                 <Card
@@ -520,7 +504,7 @@ class Profile extends React.Component<Props, State> {
                     style={{ margin: '8px 0px' }}
                     title='Research or Personal Statement'
                 >
-                    <p>{this.props.profileData.researchStatement}</p>
+                    {statement}
                 </Card>
             );
         };
@@ -642,7 +626,8 @@ class Profile extends React.Component<Props, State> {
      */
     researchInterestsOtherOnChange(event: any) {
         if (typeof event.target.value === 'string') {
-            this.setState({ researchInterestsOther: event.target.value });
+            let value = event.target.value;
+            this.setState({ researchInterestsOther: value.trim() });
         };
     };
 
@@ -723,7 +708,9 @@ class Profile extends React.Component<Props, State> {
             <Row style={{ padding: 16 }}>
                 <Row gutter={8}>
                     <Col span={8}>
-                        <Card style={{ margin: '8px 0px', textAlign: 'center' }}>
+                        <Card style={{ margin: '8px 0px', textAlign: 'center' }}
+                            title={this.props.userName.name ? this.props.userName.name : ''}
+                        >
                             <Tooltip overlayStyle={this.tooltipVisibility()} title='click to edit Avatar Options'>
                                 <img style={{ maxWidth: '100%', margin: '8px 0px' }} alt='avatar' src={this.gravaterSrc()} onClick={(event) => { this.showModal(event, ModalName.AvatarOption) }} />
                                 {/* {gravatar} */}
