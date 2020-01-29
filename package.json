@@ -1,7 +1,7 @@
 {
-    "name": "kbase-ui-plugin-user-profile",
+    "name": "kbase-ui-plugin-react-profile-view",
     "version": "1.0.0",
-    "description": "description of your plugin",
+    "description": "react profileview",
     "main": "index.js",
     "devDependencies": {
         "common-readme": "^1.1.0"
@@ -12,13 +12,13 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/kbase/kbase-ui-plugin-user-profile.git"
+        "url": "git+https://github.com/kbaseIncubator/kbase-ui-plugin-react-profile-view.git"
     },
     "author": "KBase Developers",
     "license": "SEE LICENSE IN LICENSE.md",
     "bugs": {
-        "url": "https://github.com/kbase/kbase-ui-plugin-user-profile/issues"
+        "url": "https://github.com/kbaseIncubator/kbase-ui-plugin-react-profile-view/issues"
     },
-    "homepage": "https://github.com/kbase/kbase-ui-plugin-user-profile#readme",
+    "homepage": "https://github.com/kbaseIncubator/kbase-ui-plugin-react-profile-view#readme",
     "dependencies": {}
 }

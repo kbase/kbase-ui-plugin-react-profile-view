@@ -4,7 +4,6 @@
     "private": true,
     "dependencies": {
         "@craco/craco": "5.5.0",
-        "@kbase/ui-lib": "0.2.0-alpha.5",
         "@kbase/ui-components": "0.2.1-alpha.6",
         "@types/enzyme": "3.10.3",
         "@types/enzyme-adapter-react-16": "1.0.5",
