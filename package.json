@@ -1,7 +1,7 @@
 {
     "name": "kbase-ui-plugin-react-profile-view",
     "version": "1.0.0",
-    "description": "description of your plugin",
+    "description": "react profileview",
     "main": "index.js",
     "devDependencies": {
         "common-readme": "^1.1.0"

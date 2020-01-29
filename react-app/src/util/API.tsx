@@ -10,7 +10,7 @@ export async function getBFFServiceUrl(token: string, baseURL: string) {
         version: '1.1',
         params: [
             {
-                module_name: 'bff',
+                module_name: 'userprofileuibff',
                 version: null
             }
         ]
