@@ -81,39 +81,27 @@ function Narratives(props: Props) {
 
     for (let i = 0; i < props.narratives.length; i += 1) {
         let narrative = props.narratives[i];
-        if (narrative.permission === 'r' || narrative.permission === 'n') {
-            if (Object.keys(narrative.users).length <= 0) {
-                data.push({
-                    key: narrative.wsID,
-                    wsID: narrative.wsID,
-                    name: narrative.name,
-                    last_saved: narrative.last_saved
-                });
-            } else {
-                data.push({
-                    key: narrative.wsID,
-                    wsID: narrative.wsID,
-                    name: narrative.name,
-                    last_saved: narrative.last_saved
-                });
-            }
-        } else {
-            const narrativeDetail = narrative['narrative_detail'];
-            let users = '';
-            for (let user in narrative.users) {
-                if (user !== narrativeDetail.creator) users = users + user + ', ';
-            }
-            data.push({
-                key: narrative.wsID,
-                wsID: narrative.wsID,
-                name: narrative.name,
-                last_saved: narrative.last_saved
-            });
-        }
+        data.push({
+            key: narrative.wsID,
+            wsID: narrative.wsID,
+            name: narrative.name,
+            last_saved: narrative.last_saved
+        });
     }
+    data.sort(function(a, b) {
+        let lastSavedA = a.last_saved;
+        let lastSavedB = b.last_saved;
+        if(lastSavedA < lastSavedB) {
+            return 1;
+        }
+        if(lastSavedA > lastSavedB){
+            return -1;
+        }
+        return 0;
+    })
 
     return (
-        <Table<TableData>
+        <Table
             style={{ width: '85%', margin: 'auto' }}
             columns={colums}
             dataSource={data}
