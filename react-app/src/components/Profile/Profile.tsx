@@ -751,7 +751,7 @@ class Profile extends React.Component<Props, State> {
                                     onSelect={(value: string) => { this.setStateProperty('avatarOption', value) }}
                                 >
                                     {avatarOptions.map((option, index) => {
-                                        return <Option key={index}>{option.label}</Option>
+                                        return <Option value={option.value} key={index}>{option.label}</Option>
                                     })}
                                 </Select>
                                 <p>Gravator Default Image</p>
@@ -761,10 +761,12 @@ class Profile extends React.Component<Props, State> {
                                     disabled={!this.props.editEnable}
                                     style={{ width: '100%', marginBottom: '2em' }}
                                     defaultValue={this.props.profileData.gravatarDefault}
-                                    onSelect={(value: string) => { this.setStateProperty('gravatarDefault', value) }}
+                                    onSelect={(value: string) => { 
+                                      this.setStateProperty('gravatarDefault', value) 
+                                    }}
                                 >
                                     {gravatarDefaults.map((option, index) => {
-                                        return <Option key={index}>{option.label}</Option>
+                                        return <Option value={option.value} key={index}>{option.label}</Option>
                                     })}
                                 </Select>
                             </Modal>

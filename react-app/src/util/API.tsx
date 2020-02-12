@@ -69,8 +69,7 @@ export async function fetchProfileAPI(id: string, token: string, baseURL: string
  * @param user
  */
 export async function updateProfileAPI(token: string, baseURL: string, userdata:ProfileData, user:UserName) {
-    
-    // let newParam = [ { profile: { user: { realname: 'Akiyo Marukawa', username: 'amarukawa' }, profile: {userdata: userdata}}}]
+   
     let newParam = [ { profile: { user: { realname: user.name, username: user.userID }, profile: {userdata: userdata}}}]
     const body = {
         version: '1.1',
