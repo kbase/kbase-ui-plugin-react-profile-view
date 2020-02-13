@@ -29,8 +29,7 @@
         "build": "craco build",
         "test": "react-scripts test",
         "eject": "react-scripts eject",
-        "typedoc": "typedoc --exclude \"**/*.test.*\" --out spec src",
-        "install-plugin": "bash scripts/install-plugin.bash"
+        "typedoc": "typedoc --exclude \"**/*.test.*\" --out spec src"
     },
     "eslintConfig": {
         "extends": "react-app"

@@ -7,9 +7,6 @@ node_modules/
 # created by npm if install with --no-cache option
 false
 
-# created by yarn, but causes problems with kbase-ui builds.
-yarn.lock
-
 # Artifact of local github pages development
 _site
 
@@ -18,3 +15,5 @@ _site
 _trash
 
 package-lock.json
+
+/dist/
