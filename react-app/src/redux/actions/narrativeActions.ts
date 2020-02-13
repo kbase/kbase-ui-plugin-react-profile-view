@@ -17,8 +17,7 @@ export function loadNarratives(filter: string, profileID: string) {
         const rootStore = getState();
         if (rootStore.auth.userAuthorization !== null) {
             const token = rootStore.auth.userAuthorization.token;
-            const baseURL = rootStore.app.config.baseUrl;
-
+            const baseURL = rootStore.app.config.services.ServiceWizard.url;
             switch (filter) {
                 case "they":
                     const publicNarratives = fetchNarrativesAPI('public', token, baseURL);

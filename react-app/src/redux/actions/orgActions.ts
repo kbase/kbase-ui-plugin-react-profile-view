@@ -18,7 +18,7 @@ export function getOrgs(profileID: string) {
         let orgArr: Array<OrgProp> = [];
         if (rootStore.auth.userAuthorization !== null) {
             let token: string = rootStore.auth.userAuthorization.token;
-            let response= await fetchOrgsOfProfileAPI(profileID, token, rootStore.app.config.baseUrl);
+            let response= await fetchOrgsOfProfileAPI(profileID, token, rootStore.app.config.services.ServiceWizard.url);
             if (typeof response !== 'undefined') {
                 if (typeof response[0] === 'number') {
                     // response is error message array 
@@ -28,7 +28,7 @@ export function getOrgs(profileID: string) {
                     let anyFoo:any = response;
                     let res = anyFoo as Array<Org>;
                     res.forEach((org) => {
-                        orgArr.push({ name: org.name, url: rootStore.app.config.baseUrl + '/#org/' + org.id });
+                        orgArr.push({ name: org.name, url: rootStore.app.config.services.ServiceWizard.url + '/#org/' + org.id });
                     });
                     dispatch(loadOrgs({ orgList: orgArr, orgFetchStatus: orgFetchStatuses.SUCCESS }));
                 } else {

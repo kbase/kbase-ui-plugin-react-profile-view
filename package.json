@@ -4,10 +4,10 @@
     "description": "react profileview",
     "main": "index.js",
     "devDependencies": {
-        "common-readme": "1.1.0",
         "bluebird": "3.7.2",
-        "tar": "5.0.5",
-        "fs-extra": "8.1.0"
+        "common-readme": "1.1.0",
+        "fs-extra": "8.1.0",
+        "tar": "5.0.5"
     },
     "scripts": {
         "build-plugin": "bash scripts/build-plugin.bash",
