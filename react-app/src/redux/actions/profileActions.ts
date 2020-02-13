@@ -18,7 +18,7 @@ export function getProfile(profileID:string) {
         const rootStore = getState();
         if(rootStore.auth.userAuthorization !== null) {
             const token = rootStore.auth.userAuthorization.token;
-            const baseURL = rootStore.app.config.baseUrl;
+            const baseURL = rootStore.app.config.services.ServiceWizard.url;
             let payload:ProfileView;
             let response:UserProfileService  | Array<number|string> = await fetchProfileAPI(profileID, token, baseURL);
             let profileEdit:boolean;
@@ -73,7 +73,7 @@ export function updateProfile(userdata:ProfileData, userName:UserName) {
         const rootStore = getState();
         if(rootStore.auth.userAuthorization !== null) {
             const token = rootStore.auth.userAuthorization.token;
-            let baseURL = rootStore.app.config.baseUrl;
+            let baseURL = rootStore.app.config.services.ServiceWizard.url;
             let response = await updateProfileAPI(token, baseURL, userdata, userName);
             if(response === 200) {
                 dispatch(getProfile(userName.userID));
