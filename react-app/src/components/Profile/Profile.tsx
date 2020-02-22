@@ -1,12 +1,16 @@
 import React, { CSSProperties } from 'react';
-import { Row, Col, Card, Input, Tooltip, Form, Checkbox, Modal, Select, Button, Empty, AutoComplete } from 'antd';
+import {
+    Row, Col, Card, Input, Tooltip, Form, Checkbox, Modal, Select, Button, Empty, AutoComplete
+} from 'antd';
 import { UserName, ProfileData, Affiliation } from '../../redux/interfaces';
 import nouserpic from '../../assets/nouserpic.png';
 import OrgsContainer from '../Orgs/OrgsContainer';
 import { InputForm, TextAreaForm, AffiliationForm } from './ProfileForms';
 
 import { researchInterestsList, jobTitles } from '../../profileConfig';
-import { fundingSources, countryCodes, institution, states, avatarOptions, gravatarDefaults } from '../../dataSources';
+import {
+    fundingSources, countryCodes, institution, states, avatarOptions, gravatarDefaults
+} from '../../dataSources';
 
 const { Meta } = Card;
 const { Option } = Select;
@@ -177,13 +181,13 @@ class Profile extends React.Component<Props, State> {
             <div>
                 <p>Your primary association - organization, institution, business.<br />
                     You may enter your own value or chose from the option fileted by your entry.<br />
-                    National Labs derived from: <a href='https://science.energy.gov/laboratories/' target='_blank'>DOE Web Site - Laboratories</a><br />
-                    US higher education institutions derived from: <a href='http://carnegieclassifications.iu.edu/index.php' target='_blank'>Carnegie Classification of Institutions of Higher Education </a>
+                    National Labs derived from: <a href='https://science.energy.gov/laboratories/' target='_blank' rel="noopener noreferrer">DOE Web Site - Laboratories</a><br />
+                    US higher education institutions derived from: <a href='http://carnegieclassifications.iu.edu/index.php' target='_blank' rel="noopener noreferrer">Carnegie Classification of Institutions of Higher Education </a>
                 </p>
             </div>
         );
     };
-    
+
     /**
      * populate research interest and handles case that prop is empty
      */
@@ -244,7 +248,7 @@ class Profile extends React.Component<Props, State> {
                         onChange={this.jobTitleOnChange}
                     >
                         {jobTitles.map((item) => {
-                            return <Option key={item.label} value={item.value}>{item.label}</Option>
+                            return <Option key={item.label} value={item.value}>{item.label}</Option>;
                         })}
                     </Select>
                     <InputForm
@@ -315,14 +319,14 @@ class Profile extends React.Component<Props, State> {
                                 disabled={!this.props.editEnable}
                                 allowClear
                                 placeholder='Country'
-                                onChange={(value) => { this.setStateProperty('country', value as string) }}
+                                onChange={(value) => { this.setStateProperty('country', value as string); }}
                                 onSelect={(value) => this.countryOnSelect(value as string)}
                                 filterOption={(inputValue, option) => {
                                     if (typeof option.props.children === 'string') {
                                         let item = option.props.children;
-                                        return item.toLowerCase().indexOf(inputValue.toLowerCase()) >= 0
+                                        return item.toLowerCase().indexOf(inputValue.toLowerCase()) >= 0;
                                     } else {
-                                        return false
+                                        return false;
                                     }
                                 }}
                                 defaultValue={this.props.profileData.country}
@@ -346,21 +350,21 @@ class Profile extends React.Component<Props, State> {
                                 allowClear={false}
                                 placeholder='State'
                                 showArrow
-                                onChange={(value:string) => { this.setStateProperty('state', value as string) }}
-                                onSelect={(value:string) => { this.stateOnSelect(value) }}
+                                onChange={(value: string) => { this.setStateProperty('state', value as string); }}
+                                onSelect={(value: string) => { this.stateOnSelect(value); }}
                                 optionFilterProp='children'
                                 filterOption={(inputValue, option) => {
                                     if (typeof option.props.children === 'string') {
                                         let item = option.props.children;
-                                        return item.toLowerCase().indexOf(inputValue.toLowerCase()) >= 0
+                                        return item.toLowerCase().indexOf(inputValue.toLowerCase()) >= 0;
                                     } else {
-                                        return false
+                                        return false;
                                     }
                                 }}
                                 defaultValue={this.props.profileData.state}
                             >
                                 {states.map((item, index) => {
-                                    return <Option key={index} value={item}>{item}</Option>
+                                    return <Option key={index} value={item}>{item}</Option>;
                                 })}
                             </Select></Form.Item>
                     </Tooltip>
@@ -411,9 +415,9 @@ class Profile extends React.Component<Props, State> {
                             // return true;
                             if (typeof option.props.children === 'string') {
                                 let str = option.props.children;
-                                return str.toLowerCase().indexOf(inputValue.toLowerCase()) >= 0
+                                return str.toLowerCase().indexOf(inputValue.toLowerCase()) >= 0;
                             } else {
-                                return false
+                                return false;
                             }
 
                         }}
@@ -443,16 +447,16 @@ class Profile extends React.Component<Props, State> {
                     style={{ margin: '8px 0px', textAlign: 'left' }}
                     title={this.props.userName.userID}
                 >
-                        {profile.jobTitleOther || profile.jobTitle ? (<Meta title='Position' />) : null}
-                            <p style={{ fontStyle: "italic" }}>{profile.jobTitleOther ? profile.jobTitleOther : profile.jobTitle}</p>
-                        {profile.department ? (<Meta title='Department' />) : null}
-                            <p>{profile.department}</p>
-                        {profile.organization ? (<Meta title='Organization' />) : null}
-                            <p>{profile.organization}</p>
-                        {hasLocation() ? (<Meta title='Location' />) : null}
-                            <p>{profile.country ? profile.country + ', ' : null}{profile.state ? profile.state + ', ' : null}{profile.city ? profile.city : null}</p>
-                        {profile.fundingSource ? (<Meta title='Primary Funding Source' />) : null}
-                            <p>{profile.fundingSource}</p>
+                    {profile.jobTitleOther || profile.jobTitle ? (<Meta title='Position' />) : null}
+                    <p style={{ fontStyle: "italic" }}>{profile.jobTitleOther ? profile.jobTitleOther : profile.jobTitle}</p>
+                    {profile.department ? (<Meta title='Department' />) : null}
+                    <p>{profile.department}</p>
+                    {profile.organization ? (<Meta title='Organization' />) : null}
+                    <p>{profile.organization}</p>
+                    {hasLocation() ? (<Meta title='Location' />) : null}
+                    <p>{profile.country ? profile.country + ', ' : null}{profile.state ? profile.state + ', ' : null}{profile.city ? profile.city : null}</p>
+                    {profile.fundingSource ? (<Meta title='Primary Funding Source' />) : null}
+                    <p>{profile.fundingSource}</p>
                 </Card>
             );
         };
@@ -467,10 +471,10 @@ class Profile extends React.Component<Props, State> {
      */
     buildResearchStatement() {
         let statement: JSX.Element;
-        if(!this.props.profileData.researchStatement || this.props.profileData.researchStatement === ''){
-            statement = <div><Empty image={Empty.PRESENTED_IMAGE_SIMPLE} /></div>
+        if (!this.props.profileData.researchStatement || this.props.profileData.researchStatement === '') {
+            statement = <div><Empty image={Empty.PRESENTED_IMAGE_SIMPLE} /></div>;
         } else {
-            statement = <p>{this.props.profileData.researchStatement}</p>
+            statement = <p>{this.props.profileData.researchStatement}</p>;
         }
 
         if (this.props.editEnable) {
@@ -526,30 +530,28 @@ class Profile extends React.Component<Props, State> {
                         editEnable={this.props.editEnable}
                         affiliations={this.props.profileData.affiliations}
                         updateStoreState={this.props.updateProfile}
-                /></Card>
+                    /></Card>
             );
         } else {
             let affiliationsArray = this.props.profileData.affiliations;
             // non-empty array
-            if (affiliationsArray.length > 0  && affiliationsArray[0]['title'] !== '') {
+            if (affiliationsArray.length > 0 && affiliationsArray[0]['title'] !== '') {
                 return (
                     <Card style={{ margin: '8px 0px' }} title='Affiliations'>
                         <div id='affiliations'>
-                            {affiliationsArray.map((position) => {
-                                if(position.title){
-                                  return (
-                                        <div className='affiliation-row'>
-                                            <p style={{ width:'20%', display:'inline-block', marginRight: '1em', verticalAlign: 'middle' }}>{position.title}</p>
-                                            <p style={{ width:'45%', display:'inline-block', marginRight: '1em', verticalAlign: 'middle' }}>{position.organization}</p>
-                                            <div style={{ width:'29%', display: 'inline-block', verticalAlign: 'text-bottom', whiteSpace: 'nowrap' }}>
-                                                <p style={{ display:'inline', marginRight: '1em' }}>{position.started}</p>
-                                                <p style={{ display:'inline', marginRight: '1em'}}> - </p>
-                                                <p style={{ display:'inline', marginRight: '1em' }}>{position.ended ? position.ended : 'present'}</p>
-                                            </div>  
+                            {affiliationsArray
+                                .filter(position => position.title)
+                                .map((position) => {
+                                    return <div className='affiliation-row'>
+                                        <p style={{ width: '20%', display: 'inline-block', marginRight: '1em', verticalAlign: 'middle' }}>{position.title}</p>
+                                        <p style={{ width: '45%', display: 'inline-block', marginRight: '1em', verticalAlign: 'middle' }}>{position.organization}</p>
+                                        <div style={{ width: '29%', display: 'inline-block', verticalAlign: 'text-bottom', whiteSpace: 'nowrap' }}>
+                                            <p style={{ display: 'inline', marginRight: '1em' }}>{position.started}</p>
+                                            <p style={{ display: 'inline', marginRight: '1em' }}> - </p>
+                                            <p style={{ display: 'inline', marginRight: '1em' }}>{position.ended ? position.ended : 'present'}</p>
                                         </div>
-                                    );  
-                                };
-                            })}
+                                    </div>;
+                                })}
                         </div>
                     </Card>
                 );
@@ -607,14 +609,14 @@ class Profile extends React.Component<Props, State> {
         };
     };
 
-    countryOnSelect(value:string){
-        this.setState({ country: value })
+    countryOnSelect(value: string) {
+        this.setState({ country: value });
         let profileData = this.props.profileData;
         profileData.country = value;
         this.props.updateProfile(profileData, this.props.userName);
     };
 
-    stateOnSelect(value:string){
+    stateOnSelect(value: string) {
         let profileData = this.props.profileData;
         profileData.state = value;
         this.props.updateProfile(profileData, this.props.userName);
@@ -633,19 +635,19 @@ class Profile extends React.Component<Props, State> {
 
     // handles researchInterest check box onChange 
     researchInterestOnChange(event: any) {
-        if (!event.includes('Other')) { this.setState({ researchInterestsOther: undefined }) };
+        if (!event.includes('Other')) { this.setState({ researchInterestsOther: undefined }); };
         this.setState({ researchInterestsValue: event });
     };
 
     // handles researchInterest onSubmit 
     researchInterestOnSumbit(event: any) {
-        this.setState({ visibleModal: undefined }) // close modal
+        this.setState({ visibleModal: undefined }); // close modal
         let profileData: any = this.props.profileData;
         let arrState = this.state.researchInterestsValue;
         let arrProps = profileData.researchInterests;
 
         // check if researchInterestOther needs to be in the profileData
-        if (!arrState.includes('Other')) { this.setState({ researchInterestsOther: undefined }) };
+        if (!arrState.includes('Other')) { this.setState({ researchInterestsOther: undefined }); };
 
         if (arrState.length !== arrProps.length || profileData.researchInterestsOther !== this.state.researchInterestsOther) {
             profileData.researchInterests = arrState;
@@ -712,16 +714,16 @@ class Profile extends React.Component<Props, State> {
                             title={this.props.userName.name ? this.props.userName.name : ''}
                         >
                             <Tooltip overlayStyle={this.tooltipVisibility()} title='click to edit Avatar Options'>
-                                <img style={{ maxWidth: '100%', margin: '8px 0px' }} alt='avatar' src={this.gravaterSrc()} onClick={(event) => { this.showModal(event, ModalName.AvatarOption) }} />
+                                <img style={{ maxWidth: '100%', margin: '8px 0px' }} alt='avatar' src={this.gravaterSrc()} onClick={(event) => { this.showModal(event, ModalName.AvatarOption); }} />
                                 {/* {gravatar} */}
                             </Tooltip>
                             <Modal
                                 visible={this.state.visibleModal === ModalName.AvatarOption}
                                 title='Avatar Options'
                                 closable={false}
-                                onCancel={(event) => { this.showModal(event, undefined) }}
+                                onCancel={(event) => { this.showModal(event, undefined); }}
                                 footer={[
-                                    <Button key='back' onClick={(event) => { this.showModal(event, undefined) }}>
+                                    <Button key='back' onClick={(event) => { this.showModal(event, undefined); }}>
                                         Return
                                     </Button>,
                                     <Button key='submit' id='researchInterests' type='primary' onClick={this.avatarOptionOnSumbit}>
@@ -748,10 +750,10 @@ class Profile extends React.Component<Props, State> {
                                     disabled={!this.props.editEnable}
                                     style={{ width: '100%', marginBottom: '2em' }}
                                     defaultValue={this.props.profileData.avatarOption}
-                                    onSelect={(value: string) => { this.setStateProperty('avatarOption', value) }}
+                                    onSelect={(value: string) => { this.setStateProperty('avatarOption', value); }}
                                 >
                                     {avatarOptions.map((option, index) => {
-                                        return <Option value={option.value} key={index}>{option.label}</Option>
+                                        return <Option value={option.value} key={index}>{option.label}</Option>;
                                     })}
                                 </Select>
                                 <p>Gravator Default Image</p>
@@ -761,12 +763,12 @@ class Profile extends React.Component<Props, State> {
                                     disabled={!this.props.editEnable}
                                     style={{ width: '100%', marginBottom: '2em' }}
                                     defaultValue={this.props.profileData.gravatarDefault}
-                                    onSelect={(value: string) => { 
-                                      this.setStateProperty('gravatarDefault', value) 
+                                    onSelect={(value: string) => {
+                                        this.setStateProperty('gravatarDefault', value);
                                     }}
                                 >
                                     {gravatarDefaults.map((option, index) => {
-                                        return <Option value={option.value} key={index}>{option.label}</Option>
+                                        return <Option value={option.value} key={index}>{option.label}</Option>;
                                     })}
                                 </Select>
                             </Modal>
@@ -778,7 +780,7 @@ class Profile extends React.Component<Props, State> {
                             <Col span={12}>
                                 <Card className='card-with-height researchInterests' style={{ margin: '8px 0px' }} title='Research Interests'>
                                     <Tooltip overlayStyle={this.tooltipVisibility()} title='Click to select research interests'>
-                                        <div id='researchInterests' onClick={(event) => { this.showModal(event, ModalName.ResearchInterests) }} >
+                                        <div id='researchInterests' onClick={(event) => { this.showModal(event, ModalName.ResearchInterests); }} >
                                             {this.buildResearchInterests()}
                                         </div>
                                     </Tooltip>
@@ -786,9 +788,9 @@ class Profile extends React.Component<Props, State> {
                                         visible={this.state.visibleModal === ModalName.ResearchInterests}
                                         title='Research Interests'
                                         closable={false}
-                                        onCancel={(event) => { this.showModal(event, undefined) }}
+                                        onCancel={(event) => { this.showModal(event, undefined); }}
                                         footer={[
-                                            <Button key='back' onClick={(event) => { this.showModal(event, undefined) }}>
+                                            <Button key='back' onClick={(event) => { this.showModal(event, undefined); }}>
                                                 Return
                                             </Button>,
                                             <Button key='submit' id='researchInterests' type='primary' onClick={this.researchInterestOnSumbit}>

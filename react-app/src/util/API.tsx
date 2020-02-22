@@ -1,9 +1,8 @@
-import { ProfileData, UserName} from '../redux/interfaces';
+import { ProfileData, UserName } from '../redux/interfaces';
 
-export async function getBFFServiceUrl(token: string, baseURL: string) {
+export async function getBFFServiceUrl(token: string, url: string) {
     // TODO: for dev, the baseUrl will be whatever works for the CRA workflow, which is ''.
     // baseURL = 'https://ci.kbase.us/services'; // for dev
-    let url = baseURL + '/services/service_wizard';
     const body = {
         id: 0,
         method: 'ServiceWizard.get_service_status',
@@ -24,10 +23,10 @@ export async function getBFFServiceUrl(token: string, baseURL: string) {
         },
         body: stringBody
     });
-    if(response.status !== 200){
+    if (response.status !== 200) {
         // return empty string so that the fetch API called this function
         // can generate error messages. 
-        return  '';
+        return '';
     } else {
         const responseJson = await response.json();
         return responseJson.result[0]['url'];
@@ -68,9 +67,9 @@ export async function fetchProfileAPI(id: string, token: string, baseURL: string
  * @param userdata 
  * @param user
  */
-export async function updateProfileAPI(token: string, baseURL: string, userdata:ProfileData, user:UserName) {
-   
-    let newParam = [ { profile: { user: { realname: user.name, username: user.userID }, profile: {userdata: userdata}}}]
+export async function updateProfileAPI(token: string, baseURL: string, userdata: ProfileData, user: UserName) {
+
+    let newParam = [{ profile: { user: { realname: user.name, username: user.userID }, profile: { userdata: userdata } } }];
     const body = {
         version: '1.1',
         method: 'UserProfile.update_user_profile',
@@ -87,14 +86,14 @@ export async function updateProfileAPI(token: string, baseURL: string, userdata:
         },
         body: stringBody
     });
-    if(response.status === 200) {
-        return(response.status);
+    if (response.status === 200) {
+        return (response.status);
     } else {
         let responseJSON = await response.json();
-        let responseArray:Array<number|string> = [
-                response.status, 
-                responseJSON.error.message
-            ];
+        let responseArray: Array<number | string> = [
+            response.status,
+            responseJSON.error.message
+        ];
         return responseArray;
     };
 };
@@ -158,14 +157,13 @@ export async function fetchOrgsOfProfileAPI(id: string, token: string, baseURL: 
  * @param searchValue search values
  * @param token kbase session cookie
  */
-export async function filteredUserAPI(searchValue: string, token: string, baseURL: string) {
+export async function filteredUserAPI(searchValue: string, token: string, url: string) {
     const body = {
         version: '1.1',
         method: 'UserProfile.filter_users',
         params: [{ filter: searchValue }]
     };
     const stringBody = JSON.stringify(body);
-    const url = baseURL + '/services/user_profile/rpc';
     const response = await fetch(url, {
         method: 'POST',
         mode: 'cors',

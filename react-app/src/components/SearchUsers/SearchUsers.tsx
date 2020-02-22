@@ -13,7 +13,7 @@ interface State {
 
 interface Props {
     token: string;
-    baseURL: string;
+    url: string;
 };
 
 interface Response {
@@ -45,7 +45,7 @@ class SearchUsers extends React.Component<Props, State> {
      */
     onSearchHandler(value: string): void {
         if (value.length > 2 && this.state.mouseLeave !== true) {
-            filteredUserAPI(value, this.props.token, this.props.baseURL).then((response: Response) => {
+            filteredUserAPI(value, this.props.token, this.props.url).then((response: Response) => {
                 if (typeof response !== 'undefined' && !Array.isArray(response)) {
                     this.setState({ data: response['result'][0] });
                 } else if (Array.isArray(response)) {
@@ -73,7 +73,7 @@ class SearchUsers extends React.Component<Props, State> {
     };
 
     onChangeHandler(value: string): void {
-        if (value !== 'error' && typeof value !== 'undefined' && isNaN(parseInt(value))){
+        if (value !== 'error' && typeof value !== 'undefined' && isNaN(parseInt(value))) {
             let url = '/#user/' + value;
             window.open(url, '_blank');
         };
@@ -89,7 +89,7 @@ class SearchUsers extends React.Component<Props, State> {
                 showSearch
                 placeholder='enter 3 or more characters'
                 showArrow={false}
-                onInputKeyDown={(e)=>{e.stopPropagation()}} // this is required so that tabs don't respond to key board events
+                onInputKeyDown={(e) => { e.stopPropagation(); }} // this is required so that tabs don't respond to key board events
                 onSearch={this.onSearchHandler}
                 onChange={this.onChangeHandler}
                 onMouseLeave={this.onMouseLeaveHandler}

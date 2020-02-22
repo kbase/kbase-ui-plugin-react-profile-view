@@ -2,15 +2,16 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import SearchUsers from './SearchUsers';
+import { StoreState } from '../../redux/interfaces';
 
-interface AppState {
-    app: {
-        config: {
-            baseUrl: string;
-        }
-    };
-    auth: AuthData;
-}
+// interface AppState {
+//     app: {
+//         config: {
+//             baseUrl: string;
+//         }
+//     };
+//     auth: AuthData;
+// }
 
 interface AuthData {
     userAuthorization: {
@@ -21,17 +22,46 @@ interface AuthData {
     };
 };
 
-const mapStateToProps = (state: AppState) => {
+export interface Props {
+    token: string;
+    url: string;
+}
+
+const mapStateToProps = (state: StoreState): Props => {
     // Since this component is just a redux wrapper 
     // and not modifying state to make component props
     // simply return state asd props
-    return state;
+    const {
+        auth: {
+            userAuthorization
+        },
+        app: {
+            config: {
+                services: {
+                    UserProfile: {
+                        url
+                    }
+                }
+            }
+        }
+    } = state;
+
+    if (userAuthorization === null) {
+        throw new Error('Not authorized');
+    }
+
+    const {
+        token
+    } = userAuthorization;
+
+    return {
+        token, url
+    };
 };
 
-function SearchUsersRedux(mapStateToProps: AppState) {
-
+function SearchUsersRedux({ token, url }: Props) {
     return (
-        <SearchUsers token={mapStateToProps.auth.userAuthorization.token} baseURL={mapStateToProps.app.config.baseUrl} />
+        <SearchUsers token={token} url={url} />
     );
 };
 
