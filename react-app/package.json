@@ -3,26 +3,26 @@
     "version": "0.3.1",
     "private": true,
     "dependencies": {
-        "@craco/craco": "5.5.0",
+        "@craco/craco": "5.6.3",
         "@kbase/ui-components": "0.2.1-alpha.14",
-        "@types/enzyme": "3.10.3",
-        "@types/enzyme-adapter-react-16": "1.0.5",
-        "@types/jest": "24.0.18",
-        "@types/node": "13.1.4",
-        "@types/react": "16.9.5",
-        "@types/react-dom": "16.9.1",
-        "@types/react-redux": "7.1.4",
-        "antd": "3.26.6",
+        "@types/enzyme": "*",
+        "@types/enzyme-adapter-react-16": "*",
+        "@types/jest": "*",
+        "@types/node": "*",
+        "@types/react": "*",
+        "@types/react-dom": "*",
+        "@types/react-redux": "*",
+        "antd": "3.26.11",
         "craco-antd": "1.14.1",
         "enzyme": "3.11.0",
-        "enzyme-adapter-react-16": "1.15.1",
+        "enzyme-adapter-react-16": "1.15.2",
         "react": "16.12.0",
         "react-dom": "16.12.0",
-        "react-redux": "7.1.3",
+        "react-redux": "7.2.0",
         "react-scripts": "3.2.0",
         "react-test-renderer": "16.12.0",
         "redux": "4.0.5",
-        "typescript": "3.7.4"
+        "typescript": "3.8.2"
     },
     "scripts": {
         "start": "nodemon -w ./craco.config.js -w ./node_modules/@kbase/ui-lib/lib/custom/antd/theme.less --exec \"craco start\"",
@@ -46,7 +46,7 @@
             "last 1 safari version"
         ]
     },
-    "proxy": "https://ci.kbase.us",
+    "proxy": "https://kbase.us",
     "devDependencies": {
         "nodemon": "2.0.2",
         "typedoc": "^0.15.0"

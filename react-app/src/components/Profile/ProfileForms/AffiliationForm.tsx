@@ -1,5 +1,5 @@
 import React, { CSSProperties } from 'react';
-import { Form, Input, AutoComplete, Tooltip, Select, Empty, Button, Icon } from 'antd';
+import { Form, Input, AutoComplete, Tooltip, Select, Button, Icon } from 'antd';
 import { Affiliation, ProfileData, UserName } from '../../../redux/interfaces';
 import { institution } from '../../../dataSources';
 
@@ -112,7 +112,7 @@ class AffiliationForm extends React.Component<Props, State> {
     saveDisabled() {
         for (let i = 0; i < this.state.affiliations.length; i += 1) {
             let affilicationObj = this.state.affiliations[i];
-            if(Object.values(affilicationObj).includes('error')) {
+            if (Object.values(affilicationObj).includes('error')) {
                 return true;
             };
         };
@@ -133,7 +133,7 @@ class AffiliationForm extends React.Component<Props, State> {
         // it has to be set to "any" in order to use generic property name    
         let affiliationArray: any = this.state.affiliations;
         // When type is number, then check if it's a number first
-        if (type === "number" && isNaN(parseInt(inputValue, 10)) || parseInt(inputValue, 10) < 0) {
+        if (type === "number" && (isNaN(parseInt(inputValue, 10)) || parseInt(inputValue, 10) < 0)) {
             affiliationArray[index][property] = "error";
             affiliationArray[index][helperTextProp] = 'Expecting positive numbers';
             this.setState({ affiliations: affiliationArray });
@@ -217,11 +217,15 @@ class AffiliationForm extends React.Component<Props, State> {
         this.validateInput(value, index, 'validatedStatusJobTitle', 'helpTextJobTitle', 'string', 50);
     };
 
-    isYearValid(value: string): boolean{
-        // e: euler's number and -: negative sign is handleed in euler function)
+    isYearValid(value: string): boolean {
+        // e: euler's number and -: negative sign is handled in euler function)
         // if it's an int, and positive number, and 0 < length <= 4
         // then it's a valid 4-digit year  
-        if (typeof (parseInt(value, 10)) === 'number' && parseInt(value, 10) > 0 && value.length === 4 ) { 
+        const numValue = parseInt(value, 10);
+        console.log(
+            'Int value?', value, numValue, value.length, (typeof numValue === 'number'), (numValue > 0), value.length === 4
+        );
+        if (typeof numValue === 'number' && numValue > 0 && value.length === 4) {
             return true;
         } else {
             return false;
@@ -239,17 +243,17 @@ class AffiliationForm extends React.Component<Props, State> {
         this.saveLocalState(value, index, 'started');
 
         let isStartYearValid = this.isYearValid(value);
-        if(!isStartYearValid){
+        if (!isStartYearValid) {
             affiliationArray[index]['validatedStatusStartYear'] = 'error';
             affiliationArray[index]['helpTextStartYear'] = 'expecting 4 digit year ';
             this.setState({ affiliations: affiliationArray });
             return;
         }
-        let endYear =  this.state.affiliations[index]['ended'];
+        let endYear = this.state.affiliations[index]['ended'];
         // check if the entered start year is less than end year if it is already entered.
-        if(typeof endYear !== 'undefined') {
-            let endYearInt:number = parseInt(endYear, 10);
-            let valueInt:number = parseInt(value, 10);
+        if (typeof endYear !== 'undefined') {
+            let endYearInt: number = parseInt(endYear, 10);
+            let valueInt: number = parseInt(value, 10);
             // while entered start year is less than end year, other validations are not required.
             // update validated status to error and set helpt text. 
             if (valueInt > endYearInt) {
@@ -257,18 +261,18 @@ class AffiliationForm extends React.Component<Props, State> {
                 affiliationArray[index]['helpTextStartYear'] = 'must be less than end year';
                 this.setState({ affiliations: affiliationArray });
                 return;
-            } else if (valueInt <= endYearInt){
+            } else if (valueInt <= endYearInt) {
                 // other wise set validated state and helpText to undefined 
                 /// and let the validate input function set the validated state.
                 affiliationArray[index]['validatedStatusStartYear'] = undefined;
                 affiliationArray[index]['helpTextStartYear'] = undefined;
                 let isEndYearValid = this.isYearValid(endYear);
-                if(isEndYearValid){
+                if (isEndYearValid) {
                     affiliationArray[index]['validatedStatusEndYear'] = undefined;
                     affiliationArray[index]['helpTextEndYear'] = undefined;
                 }
                 this.setState({ affiliations: affiliationArray });
-            };   
+            };
         }
     };
 
@@ -284,40 +288,40 @@ class AffiliationForm extends React.Component<Props, State> {
         this.saveLocalState(value, index, 'ended');
 
         // if the entry is empty, then set the state to undefined. 
-        if(value.length === 0) {
+        if (value.length === 0) {
             affiliationArray[index]['validatedStatusEndYear'] = undefined;
             affiliationArray[index]['ended'] = undefined;
             affiliationArray[index]['helpTextEndYear'] = undefined;
             this.setState({ affiliations: affiliationArray });
             return;
         };
-        
-        let isEndYearValid = this.isYearValid(value); 
-        if(!isEndYearValid){
+
+        let isEndYearValid = this.isYearValid(value);
+        if (!isEndYearValid) {
             affiliationArray[index]['validatedStatusEndYear'] = 'error';
             affiliationArray[index]['helpTextEndYear'] = 'expecting 4 digit year ';
             this.setState({ affiliations: affiliationArray });
             //this.saveLocalState(value, index, 'ended');
             return;
         }
-               
+
         // if the start date is already entered and is larger than the entered value, 
         // set the valudated status to error and set help text. 
-         let startDate = this.state.affiliations[index]['started'];
-        if (startDate!== undefined) {
-            let startDateInt:number = parseInt(startDate, 10);
-            let valueInt:number = parseInt(value, 10);
+        let startDate = this.state.affiliations[index]['started'];
+        if (startDate !== undefined) {
+            let startDateInt: number = parseInt(startDate, 10);
+            let valueInt: number = parseInt(value, 10);
             if (valueInt < startDateInt) {
                 affiliationArray[index]['validatedStatusEndYear'] = 'error';
                 affiliationArray[index]['helpTextEndYear'] = 'must be larger than start year';
                 this.setState({ affiliations: affiliationArray });
                 return;
-            } else if (valueInt >= startDateInt){
+            } else if (valueInt >= startDateInt) {
                 affiliationArray[index]['validatedStatusEndYear'] = undefined;
                 affiliationArray[index]['helpTextEndYear'] = undefined;
-                
+
                 let isStartYearValid = this.isYearValid(startDate);
-                if(isStartYearValid){
+                if (isStartYearValid) {
                     affiliationArray[index]['helpTextStartYear'] = undefined;
                     affiliationArray[index]['validatedStatusStartYear'] = undefined;
                 }
@@ -325,7 +329,7 @@ class AffiliationForm extends React.Component<Props, State> {
             }
         };
     };
-    
+
     /**
      * Save/update local state and call input validation function
      * filters list of insitution before update state.
@@ -353,7 +357,7 @@ class AffiliationForm extends React.Component<Props, State> {
      */
     affiliationOnSave() {
         let update = false; // only when update is set to true, update store state.
-        let keys = ['title', 'organization', 'started', 'ended'] // if there is a way to have this not hard coded, please let me know
+        let keys = ['title', 'organization', 'started', 'ended']; // if there is a way to have this not hard coded, please let me know
         let profileData: any = this.props.profileData; // any is used in order to use generic properties
         let affiliationsProps: any = this.props.affiliations; // any is used in order to use generic properties
         let affiliationsState: any = this.state.affiliations; // any is used in order to use generic properties
@@ -374,18 +378,17 @@ class AffiliationForm extends React.Component<Props, State> {
             // If there is a better way to make a new object and add keys in typescript, please let me know. 
             let affiliObj: object = {};
 
-            keys.forEach(element => {
+            for (const element in keys) {
                 if (affiliationsProps[i] !== undefined) {
                     // if any value is changed, update store state
                     if (affiliationsState[i][element] !== affiliationsProps[i][element]) {
                         update = true;
                     };
-                };
+                }
 
-                let obj = { [element]: affiliationsState[i][element] };
+                const obj = { [element]: affiliationsState[i][element] };
                 affiliObj = Object.assign(affiliObj, obj);
-            });
-
+            }
             affiliArr.push(affiliObj);
         };
 
@@ -411,8 +414,8 @@ class AffiliationForm extends React.Component<Props, State> {
     /**
      * handle negative and Euler's number
      */
-    euler(keyCode:number, property:string, helptext: string, index:number):void{
-        if(keyCode === 189 || keyCode == 69) {
+    euler(keyCode: number, property: string, helptext: string, index: number): void {
+        if (keyCode === 189 || keyCode === 69) {
             let affiliationArray: any = this.state.affiliations;
             affiliationArray[index][property] = "error";
             affiliationArray[index][helptext] = 'expecting 4 digit year';
@@ -428,10 +431,10 @@ class AffiliationForm extends React.Component<Props, State> {
         // TODO: change BFF so that it will return an empty array when there is no data
         // so instead of using this -> affiliations[0]['title'], affiliations.length > 0
         let profileIsEmpty;
-        if(this.props.affiliations.length === 0) {
+        if (this.props.affiliations.length === 0) {
             profileIsEmpty = true;
-        } else if(this.props.affiliations[0]['title']){
-            if(this.props.affiliations[0]['title'] === ''){
+        } else if (this.props.affiliations[0]['title']) {
+            if (this.props.affiliations[0]['title'] === '') {
                 profileIsEmpty = true;
             };
         } else {
@@ -451,16 +454,16 @@ class AffiliationForm extends React.Component<Props, State> {
                                 help={this.state.affiliations[index]['helpTextJobTitle']}
                                 validateStatus={this.state.affiliations[index]['validatedStatusJobTitle']}
                             ><Input
-                                readOnly={!this.props.editEnable}
-                                style={{ width: '100%' }}
-                                autoComplete='organization-title'
-                                type='text'
-                                className='clear-disabled'
-                                maxLength={50}
-                                defaultValue={position.title}
-                                placeholder={'Job title'}
-                                onChange={(event) => { this.affiliationJobTitleOnChange(event, index) }}
-                            /></Form.Item>
+                                    readOnly={!this.props.editEnable}
+                                    style={{ width: '100%' }}
+                                    autoComplete='organization-title'
+                                    type='text'
+                                    className='clear-disabled'
+                                    maxLength={50}
+                                    defaultValue={position.title}
+                                    placeholder={'Job title'}
+                                    onChange={(event) => { this.affiliationJobTitleOnChange(event, index); }}
+                                /></Form.Item>
                             <Form.Item {...formItemLayout}
                                 style={{ flexGrow: 1 }}
                                 className="profile-input-form"
@@ -474,8 +477,8 @@ class AffiliationForm extends React.Component<Props, State> {
                                 allowClear
                                 disabled={!this.props.editEnable}
                                 placeholder='Organization'
-                                onSelect={(item) => { this.saveLocalState(item as string, index, 'organization') }}
-                                onSearch={(value) => { this.institutionOnSearch(value, index) }}
+                                onSelect={(item) => { this.saveLocalState(item as string, index, 'organization'); }}
+                                onSearch={(value) => { this.institutionOnSearch(value, index); }}
                                 filterOption={(inputValue, option) => {
 
                                     if (typeof option.props.children === 'string') {
@@ -495,7 +498,7 @@ class AffiliationForm extends React.Component<Props, State> {
                                             </Option>
                                         );
                                     })}
-                            </AutoComplete></Form.Item>
+                                </AutoComplete></Form.Item>
                             <Tooltip overlayStyle={this.tooltipVisibility()} title='Enter 4 digits start year and end year'>
                                 <Form.Item {...formItemLayout}
                                     className="profile-input-form"
@@ -505,16 +508,16 @@ class AffiliationForm extends React.Component<Props, State> {
                                     help={this.state.affiliations[index]['helpTextStartYear']}
                                     validateStatus={this.state.affiliations[index]['validatedStatusStartYear']}
                                 ><Input
-                                    readOnly={!this.props.editEnable}
-                                    style={{ width: '90px', display: 'inline' }}
-                                    onChange={(item) => { this.affiliationStartOnChange(item, index) }}
-                                    type='number'
-                                    maxLength={4}
-                                    className='clear-disabled'
-                                    placeholder='Start'
-                                    defaultValue={position.started}
-                                    onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {this.euler(event.keyCode, 'validatedStatusStartYear', 'helpTextStartYear', index)}}
-                                /></Form.Item>
+                                        readOnly={!this.props.editEnable}
+                                        style={{ width: '90px', display: 'inline' }}
+                                        onChange={(item) => { this.affiliationStartOnChange(item, index); }}
+                                        type='number'
+                                        maxLength={4}
+                                        className='clear-disabled'
+                                        placeholder='Start'
+                                        defaultValue={position.started}
+                                        onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => { this.euler(event.keyCode, 'validatedStatusStartYear', 'helpTextStartYear', index); }}
+                                    /></Form.Item>
                             </Tooltip>
                             <Tooltip overlayStyle={this.tooltipVisibility()} title='Enter 4 digits start year and end year'>
                                 <Form.Item {...formItemLayout}
@@ -525,16 +528,16 @@ class AffiliationForm extends React.Component<Props, State> {
                                     help={this.state.affiliations[index]['helpTextEndYear']}
                                     validateStatus={this.state.affiliations[index]['validatedStatusEndYear']}
                                 ><Input
-                                    readOnly={!this.props.editEnable}
-                                    style={{ width: '90px', display: 'inline' }}
-                                    onChange={(item) => { this.affiliationEndOnChange(item, index) }}
-                                    type='number'
-                                    maxLength={4}
-                                    onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {this.euler(event.keyCode, "validatedStatusEndYear", 'helpTextEndYear', index)}}
-                                    className='clear-disabled'
-                                    placeholder='End'
-                                    defaultValue={position.ended}
-                                /></Form.Item>
+                                        readOnly={!this.props.editEnable}
+                                        style={{ width: '90px', display: 'inline' }}
+                                        onChange={(item) => { this.affiliationEndOnChange(item, index); }}
+                                        type='number'
+                                        maxLength={4}
+                                        onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => { this.euler(event.keyCode, "validatedStatusEndYear", 'helpTextEndYear', index); }}
+                                        className='clear-disabled'
+                                        placeholder='End'
+                                        defaultValue={position.ended}
+                                    /></Form.Item>
                             </Tooltip>
                             <Icon type="delete" style={{ display: this.showEditButtons(), verticalAlign: "-webkit-baseline-middle" }} onClick={() => this.deleteAffiliation(index)} />
                         </form>
@@ -560,16 +563,16 @@ class AffiliationForm extends React.Component<Props, State> {
                                 help={this.state.affiliations[index]['helpTextJobTitle']}
                                 validateStatus={this.state.affiliations[index]['validatedStatusJobTitle']}
                             ><Input
-                                readOnly={!this.props.editEnable}
-                                style={{ width: '100%' }}
-                                autoComplete='organization-title'
-                                type='text'
-                                className='clear-disabled'
-                                maxLength={50}
-                                defaultValue={position.title}
-                                placeholder={'Job title'}
-                                onChange={(event) => { this.affiliationJobTitleOnChange(event, index) }}
-                            /></Form.Item>
+                                    readOnly={!this.props.editEnable}
+                                    style={{ width: '100%' }}
+                                    autoComplete='organization-title'
+                                    type='text'
+                                    className='clear-disabled'
+                                    maxLength={50}
+                                    defaultValue={position.title}
+                                    placeholder={'Job title'}
+                                    onChange={(event) => { this.affiliationJobTitleOnChange(event, index); }}
+                                /></Form.Item>
                             <Form.Item {...formItemLayout}
                                 style={{ flexGrow: 1 }}
                                 className="profile-input-form"
@@ -583,8 +586,8 @@ class AffiliationForm extends React.Component<Props, State> {
                                 allowClear
                                 disabled={!this.props.editEnable}
                                 placeholder='Organization'
-                                onSelect={(item) => { this.saveLocalState(item as string, index, 'organization') }}
-                                onSearch={(value) => { this.institutionOnSearch(value, index) }}
+                                onSelect={(item) => { this.saveLocalState(item as string, index, 'organization'); }}
+                                onSearch={(value) => { this.institutionOnSearch(value, index); }}
                                 filterOption={(inputValue, option) => {
 
                                     if (typeof option.props.children === 'string') {
@@ -604,7 +607,7 @@ class AffiliationForm extends React.Component<Props, State> {
                                             </Option>
                                         );
                                     })}
-                            </AutoComplete></Form.Item>
+                                </AutoComplete></Form.Item>
                             <Tooltip overlayStyle={this.tooltipVisibility()} title='Enter 4 digits start year and end year'>
                                 <Form.Item {...formItemLayout}
                                     className="profile-input-form"
@@ -614,16 +617,16 @@ class AffiliationForm extends React.Component<Props, State> {
                                     help={this.state.affiliations[index]['helpTextStartYear']}
                                     validateStatus={this.state.affiliations[index]['validatedStatusStartYear']}
                                 ><Input
-                                    readOnly={!this.props.editEnable}
-                                    style={{ width: '90px', display: 'inline' }}
-                                    onChange={(item) => { this.affiliationStartOnChange(item, index) }}
-                                    type='number'
-                                    maxLength={4}
-                                    className='clear-disabled'
-                                    onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {this.euler(event.keyCode, 'validatedStatusStartYear', 'helpTextStartYear',index)}}
-                                    placeholder='Start'
-                                    defaultValue={position.started}
-                                /></Form.Item>
+                                        readOnly={!this.props.editEnable}
+                                        style={{ width: '90px', display: 'inline' }}
+                                        onChange={(item) => { this.affiliationStartOnChange(item, index); }}
+                                        type='number'
+                                        maxLength={4}
+                                        className='clear-disabled'
+                                        onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => { this.euler(event.keyCode, 'validatedStatusStartYear', 'helpTextStartYear', index); }}
+                                        placeholder='Start'
+                                        defaultValue={position.started}
+                                    /></Form.Item>
                             </Tooltip>
                             <Tooltip overlayStyle={this.tooltipVisibility()} title='Enter 4 digits start year and end year'>
                                 <Form.Item {...formItemLayout}
@@ -634,16 +637,16 @@ class AffiliationForm extends React.Component<Props, State> {
                                     help={this.state.affiliations[index]['helpTextEndYear']}
                                     validateStatus={this.state.affiliations[index]['validatedStatusEndYear']}
                                 ><Input
-                                    readOnly={!this.props.editEnable}
-                                    style={{ width: '90px', display: 'inline' }}
-                                    onChange={(item) => { this.affiliationEndOnChange(item, index) }}
-                                    type='number'
-                                    maxLength={4}
-                                    className='clear-disabled'
-                                    onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {this.euler(event.keyCode, 'validatedStatusEndYear', 'helpTextEndYear', index)}}
-                                    placeholder='End'
-                                    defaultValue={position.ended}
-                                /></Form.Item>
+                                        readOnly={!this.props.editEnable}
+                                        style={{ width: '90px', display: 'inline' }}
+                                        onChange={(item) => { this.affiliationEndOnChange(item, index); }}
+                                        type='number'
+                                        maxLength={4}
+                                        className='clear-disabled'
+                                        onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => { this.euler(event.keyCode, 'validatedStatusEndYear', 'helpTextEndYear', index); }}
+                                        placeholder='End'
+                                        defaultValue={position.ended}
+                                    /></Form.Item>
                             </Tooltip>
                             <Icon type="delete" style={{ display: this.showEditButtons() }} onClick={() => this.deleteAffiliation(index)} />
                         </form>

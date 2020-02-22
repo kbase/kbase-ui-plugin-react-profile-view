@@ -9,6 +9,6 @@ configure({ adapter: new Adapter() });
 it('renders without crashing with correct type and data', () => {
     // TODO: shouldn't check tokens into github
     const token = 'xxx';
-    const baseURL = 'https://narrative.kbase.us';
-    shallow(<SearchUsers token={token} baseURL={baseURL} />);
+    const baseURL = 'https://narrative.kbase.us/services/user_profile/rpc';
+    shallow(<SearchUsers token={token} url={baseURL} />);
 });

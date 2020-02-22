@@ -1,7 +1,6 @@
 import React from 'react';
 import { Form, Input } from 'antd';
 import { UserName } from '../../../redux/interfaces';
-import { max } from 'moment';
 
 const { TextArea } = Input;
 
@@ -13,7 +12,7 @@ interface Props {
     updateStoreState: (data: any, userName: UserName) => void;
     data: any;
     stateProperty: string;
-    placeHolder?: string
+    placeHolder?: string;
     defaultValue?: string | undefined;
     readOnly: boolean;
     maxLength?: number;
@@ -74,10 +73,10 @@ class TextAreaForm extends React.Component<Props, State> {
             let status: State['validateStatus'];
             let helper: string | undefined;
             let maxLength;
-            if(this.props.maxLength){
+            if (this.props.maxLength) {
                 maxLength = this.props.maxLength;
             } else {
-                maxLength = 1000000 // number is picked randomly. Number.MAX_SAFE_INTEGER seemed a bit overkill.
+                maxLength = 1000000; // number is picked randomly. Number.MAX_SAFE_INTEGER seemed a bit overkill.
             }
             // this could be ternary operator, but typescript doesn't like it.
             let minLength = 2;
@@ -136,7 +135,7 @@ class TextAreaForm extends React.Component<Props, State> {
     handleOnChange(event: React.ChangeEvent<HTMLTextAreaElement> | React.FocusEvent<HTMLTextAreaElement> | React.KeyboardEvent<HTMLTextAreaElement>) {
         let inputValue = event.currentTarget.value;
         // validate input only when it's not readOnly
-        if(!this.props.readOnly){
+        if (!this.props.readOnly) {
             this.validateInput(inputValue);
         };
         if (typeof inputValue === 'string') {
@@ -148,7 +147,7 @@ class TextAreaForm extends React.Component<Props, State> {
         return (
             <Form.Item hasFeedback help={this.state.helpText} validateStatus={this.state.validateStatus}>
                 <TextArea
-                    autosize
+                    autoSize
                     hidden={this.props.hidden}
                     placeholder={this.props.placeHolder}
                     readOnly={this.props.readOnly}

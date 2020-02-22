@@ -38,6 +38,7 @@ it('renders without crashing with correct type and data', () => {
         jobTitle: 'Current Job Title',
         jobTitleOther: '',
         researchInterests: ['foo', 'bar', 'baz'],
+        researchInterestsOther: '',
         fundingSource: "I don't have any money",
         gravatarDefault: 'mm',
         avatarOption: ''
