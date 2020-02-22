@@ -67,8 +67,7 @@ export async function fetchProfileAPI(id: string, token: string, baseURL: string
  * @param userdata 
  * @param user
  */
-export async function updateProfileAPI(token: string, baseURL: string, userdata: ProfileData, user: UserName) {
-
+export async function updateProfileAPI(token: string, url: string, userdata: ProfileData, user: UserName) {
     let newParam = [{ profile: { user: { realname: user.name, username: user.userID }, profile: { userdata: userdata } } }];
     const body = {
         version: '1.1',
@@ -76,7 +75,6 @@ export async function updateProfileAPI(token: string, baseURL: string, userdata:
         params: newParam
     };
     const stringBody = JSON.stringify(body);
-    const url = baseURL + '/services/user_profile/rpc';
     const response = await fetch(url, {
         method: 'POST',
         mode: 'cors',
