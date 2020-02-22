@@ -46,7 +46,7 @@
             "last 1 safari version"
         ]
     },
-    "proxy": "https://kbase.us",
+    "proxy": "https://narrative-dev.kbase.us",
     "devDependencies": {
         "nodemon": "2.0.2",
         "typedoc": "^0.15.0"
