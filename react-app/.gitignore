@@ -26,4 +26,4 @@ yarn-error.log*
 node_modules/
 .yarn-cache
 
-# /react-app/spec
+/react-app/spec
