@@ -962,9 +962,10 @@ class Profile extends React.Component<Props, State> {
     }
 
     renderResearchInterestsView() {
-        const researchInterests = this.props.profileUserdata.researchInterests.sort();
+        const researchInterests = this.props.profileUserdata.researchInterests;
         if (Array.isArray(researchInterests) &&
             researchInterests.length > 0) {
+            researchInterests.sort();
             if (researchInterests.includes('Other') && this.props.profileUserdata.researchInterestsOther) {
                 return (
                     <ul style={{ textAlign: 'left' }}>
