@@ -900,7 +900,7 @@ class Profile extends React.Component<Props, State> {
             button = <Button icon="edit" type="primary" onClick={this.toggleEditing.bind(this)}>Edit Profile</Button>;
             // bannerText = 'View Mode: You are viewing your profile as other users will see it';
             bannerText = <span>
-                Change any field of your profile.
+
             </span>;
 
         }
