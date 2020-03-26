@@ -9,7 +9,7 @@ const DEFAULT_MAX_TEXT_LENGTH = 4000;
 
 interface Props {
     hidden: boolean;
-    required: boolean;
+    required?: boolean;
     userName: UserName;
     updateStoreState: (data: ProfileUserdata, userName: UserName) => void;
     data: any;
@@ -140,7 +140,6 @@ class TextAreaForm extends React.Component<Props, State> {
                     hidden={this.props.hidden}
                     placeholder={this.props.placeHolder}
                     readOnly={this.props.readOnly}
-                    className="clear-disabled"
                     maxLength={this.props.maxLength}
                     minLength={this.props.minLength}
                     onFocus={this.handleOnChange}

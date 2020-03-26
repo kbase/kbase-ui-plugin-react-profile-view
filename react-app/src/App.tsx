@@ -10,23 +10,31 @@ import HomeRedux from './pages/HomeRedux';
 const { Content } = Layout;
 const store = createReduxStore();
 
+export interface AppProps {
 
-const App: React.FC = () => {
-    return (
-        <Provider store={store}>
-            <AppBase>
-                <AuthGate required={true}>
-                    <div className='App'>
-                        <Layout style={{ minHeight: '100vh' }}>
-                            <Content style={{ backgroundColor: 'white' }}>
-                                <HomeRedux />
-                            </Content>
-                        </Layout>
-                    </div>
-                </AuthGate>
-            </AppBase>
-        </Provider>
-    );
-};
+}
 
-export default App;
+interface AppState {
+
+}
+
+export default class App extends React.Component<AppProps, AppState> {
+    render() {
+        return (
+            <Provider store={store}>
+                <AppBase>
+                    <AuthGate required={true}>
+                        <div className='App ReactProfileView'>
+                            <Layout style={{ minHeight: '100vh' }}>
+                                <Content style={{ backgroundColor: 'white' }}>
+                                    <HomeRedux />
+                                </Content>
+                            </Layout>
+                        </div>
+                    </AuthGate>
+                </AppBase>
+            </Provider>
+        );
+    }
+}
+

@@ -12,11 +12,15 @@ import TextAreaForm from './ProfileForms/TextAreaForm';
 import AffiliationsForm from './ProfileForms/affiliations/AffiliationsForm';
 
 
-import { researchInterestsList, jobTitles, ListItem } from '../../profileConfig';
+// import { researchInterestsList, jobTitles, ListItem } from '../../profileConfig';
+import researchInterestsList from '../../dataSources/researchInterestsOptions';
+import jobTitles from '../../dataSources/jobTitlesOptions';
 import {
     fundingSources, countryCodes, institutions, states, avatarOptions, gravatarDefaults
 } from '../../dataSources';
 import { SelectValue } from 'antd/lib/select';
+
+import './Profile.css';
 
 const { Meta } = Card;
 const { Option } = Select;
@@ -186,35 +190,6 @@ class Profile extends React.Component<Props, State> {
         );
     };
 
-
-
-    //     <AutoComplete
-    //     className='clear-disabled margin-top-10px'
-    //     style={{ width: '100%' }}
-    //     disabled={!this.props.editEnable}
-    //     allowClear
-    //     placeholder='Country'
-    //     onChange={this.onChangeCountry.bind(this)}
-    //     onSelect={this.countryOnSelect.bind(this)}
-    //     filterOption={(inputValue, option) => {
-    //         if (typeof option.props.children === 'string') {
-    //             let item = option.props.children;
-    //             return item.toLowerCase().indexOf(inputValue.toLowerCase()) >= 0;
-    //         } else {
-    //             return false;
-    //         }
-    //     }}
-    //     defaultValue={this.props.profileUserdata.country}
-    // >
-    //     {Array.from(countryCodes).map((item => {
-    //         return (
-    //             <Option key={item[1]} value={item[0]}>
-    //                 {item[0]}
-    //             </Option>
-    //         );
-    //     }))}
-    // </AutoComplete>
-
     renderUserNutshellEditor() {
         return (
             <Card
@@ -227,6 +202,7 @@ class Profile extends React.Component<Props, State> {
                         label="Position">
                         <Select
                             placeholder='Job title'
+                            allowClear
                             disabled={!this.props.editEnable}
                             style={{ width: '100%', marginTop: '10px' }}
                             defaultValue={this.props.profileUserdata.jobTitle}
@@ -260,7 +236,6 @@ class Profile extends React.Component<Props, State> {
                         <InputForm2
                             hidden={false}
                             type={'string'}
-                            required={false}
                             userName={this.props.userName}
                             updateStoreState={this.saveProfile.bind(this)} // updates StoreState
                             data={this.props.profileUserdata}
@@ -276,10 +251,10 @@ class Profile extends React.Component<Props, State> {
                     </Tooltip>
 
                     <Form.Item
-                        required={true}
+                        // required={true}
                         label='Organization'>
                         <AutoComplete
-                            className='clear-disabled margin-top-10px margin-bottom-24px'
+                            className='margin-top-10px margin-bottom-24px'
                             style={{ width: '100%' }}
                             disabled={!this.state.isEditing}
                             dataSource={this.state.institutionFiltered}
@@ -306,11 +281,10 @@ class Profile extends React.Component<Props, State> {
 
                     {/* Country */}
                     <Form.Item
-                        required={true}
                         label='Country' >
                         <Select
                             showSearch
-                            className='clear-disabled'
+                            allowClear
                             style={{ width: '100%' }}
                             disabled={!this.state.isEditing}
                             placeholder='Country'
@@ -340,11 +314,10 @@ class Profile extends React.Component<Props, State> {
                     {/* State - only displayed if US is chosen for country */}
                     <Form.Item
                         style={this.USStateVisibility()}
-                        required={true}
                         label='State'>
                         <Select
                             dropdownMatchSelectWidth
-                            className='clear-disabled'
+                            allowClear
                             mode='default'
                             disabled={!this.state.isEditing}
                             placeholder='State'
@@ -371,7 +344,6 @@ class Profile extends React.Component<Props, State> {
                     <InputForm2
                         hidden={false}
                         type='string'
-                        required={true}
                         userName={this.props.userName}
                         updateStoreState={this.saveProfile.bind(this)} // updates StoreState
                         data={this.props.profileUserdata}
@@ -390,7 +362,6 @@ class Profile extends React.Component<Props, State> {
                     <InputForm2
                         hidden={false}
                         type={this.props.profileUserdata.postalCode === 'United States' ? 'number' : 'string'}
-                        required={true}
                         userName={this.props.userName}
                         updateStoreState={this.saveProfile.bind(this)} // updates StoreState
                         data={this.props.profileUserdata}
@@ -408,7 +379,8 @@ class Profile extends React.Component<Props, State> {
                     {/* Primary Funding Source */}
                     <Form.Item label="Primary Funding Source">
                         <Select
-                            className='clear-disabled margin-top-10px'
+                            className='margin-top-10px'
+                            allowClear
                             mode='default'
                             style={{ width: '100%', marginTop: '10px' }}
                             showSearch
@@ -418,7 +390,6 @@ class Profile extends React.Component<Props, State> {
                             onChange={this.fundingSourceOnChange.bind(this)}
                             optionFilterProp='children'
                             filterOption={(inputValue, option) => {
-                                // return true;
                                 if (typeof option.props.children === 'string') {
                                     let str = option.props.children;
                                     return str.toLowerCase().indexOf(inputValue.toLowerCase()) >= 0;
@@ -452,23 +423,9 @@ class Profile extends React.Component<Props, State> {
 
     renderUserNutshellView() {
         const profile = this.props.profileUserdata;
-        // const hasLocation = () => {
-        //     if (profile.country || profile.state || profile.city) {
-        //         return true;
-        //     } else {
-        //         return false;
-        //     };
-        // };
-        // const cardTitle = <div>
-        //     <div>{this.props.userName.userID}</div>
-        // </div>;
-
         const jobTitle = profile.jobTitle ? (<div><Meta title="Position" /><p>{profile.jobTitleOther}</p></div>) : null;
         const department = profile.department ? (<div><Meta title='Department' /><p>{profile.department}</p></div>) : null;
         const organization = profile.organization ? (<div><Meta title='Organization' /><p>{profile.organization}</p></div>) : null;
-        // const country = profile.country ? profile.country + ', ' : null;
-        // const state = profile.state ? profile.state + ', ' : null;
-        // const city = profile.city ? profile.city : null;
         const locationFields = [profile.country, profile.state, profile.city].filter(x => x).join(', ');
         const location = locationFields ? (<div><Meta title='Location' /><p>{locationFields}</p></div>) : null;
         const fundingSource = profile.fundingSource ? (<div><Meta title='Primary Funding Source' /><p>{profile.fundingSource}</p></div>) : null;
@@ -492,24 +449,6 @@ class Profile extends React.Component<Props, State> {
                 {fundingSource}
             </Card>
         );
-
-        // return (
-        //     <Card
-        //         style={{ margin: '8px 0px', textAlign: 'left' }}
-        //         title={cardTitle}
-        //     >
-        //         {profile.jobTitleOther || profile.jobTitle ? (<Meta title='Position' />) : null}
-        //         <p>{profile.jobTitleOther ? profile.jobTitleOther : profile.jobTitle}</p>
-        //         {profile.department ? (<Meta title='Department' />) : null}
-        //         <p>{profile.department}</p>
-        //         {profile.organization ? (<Meta title='Organization' />) : null}
-        //         
-        //         {hasLocation() ? (<Meta title='Location' />) : null}
-        //         <p>{profile.country ? profile.country + ', ' : null}{profile.state ? profile.state + ', ' : null}{profile.city ? profile.city : null}</p>
-        //         {profile.fundingSource ? (<Meta title='Primary Funding Source' />) : null}
-        //         <p>{profile.fundingSource}</p>
-        //     </Card>
-        // );
     }
 
 
@@ -540,7 +479,8 @@ class Profile extends React.Component<Props, State> {
         if (!this.props.profileUserdata.researchStatement || this.props.profileUserdata.researchStatement === '') {
             statement = <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Research Statement" />;
         } else {
-            statement = <p>{this.props.profileUserdata.researchStatement}</p>;
+            // const fixed = this.props.profileUserdata.researchStatement.replace(/\n/, '<br />');
+            statement = <p style={{ whiteSpace: 'pre' }}>{this.props.profileUserdata.researchStatement}</p>;
         }
 
         if (this.state.isEditing) {
@@ -552,7 +492,7 @@ class Profile extends React.Component<Props, State> {
                     <Tooltip title='A little bit about yourself and your research'>
                         <TextAreaForm
                             hidden={false}
-                            required={false}
+                            // required={false}
                             userName={this.props.userName}
                             updateStoreState={this.saveProfile.bind(this)}
                             data={this.props.profileUserdata}
@@ -690,7 +630,6 @@ class Profile extends React.Component<Props, State> {
         this.setState(newState);
     }
 
-
     /**
      *  Updates store state with local avatarOption state 
      *  and gravatarDefault state
@@ -701,10 +640,15 @@ class Profile extends React.Component<Props, State> {
         let profileData = this.props.profileUserdata;
         if (profileData.gravatarDefault !== this.state.gravatarDefault ||
             profileData.avatarOption !== this.state.avatarOption) {
-            if (typeof this.state.gravatarDefault !== 'undefined') profileData.gravatarDefault = this.state.gravatarDefault;
-            if (typeof this.state.avatarOption !== 'undefined') profileData.avatarOption = this.state.avatarOption;
+            if (typeof this.state.gravatarDefault !== 'undefined') {
+                profileData.gravatarDefault = this.state.gravatarDefault;
+            }
+            if (typeof this.state.avatarOption !== 'undefined') {
+                profileData.avatarOption = this.state.avatarOption;
+            }
             this.saveProfile(profileData);
         };
+        this.hideModal();
     };
 
     countryOnSelect(value: SelectValue) {
@@ -755,8 +699,6 @@ class Profile extends React.Component<Props, State> {
         }
 
         // Detect if anything has changed
-        // console.log('hmm', profileData);
-
         if (this.state.researchInterestsOther === profileData.researchInterestsOther &&
             arraysEqual(this.state.researchInterestsValue, profileData.researchInterests)) {
             return;
@@ -841,9 +783,9 @@ class Profile extends React.Component<Props, State> {
                 // options={researchInterestsList}
                 defaultValue={this.props.profileUserdata.researchInterests}
                 onChange={this.researchInterestOnChange.bind(this)}>
-                {researchInterestsList.map((interest: ListItem, index: number) => {
+                {researchInterestsList.map((interest) => {
                     return <Checkbox
-                        key={index}
+                        key={interest.value}
                         style={{ display: 'block', marginLeft: '0px' }}
                         value={interest.value} >
                         {interest.label}
@@ -857,7 +799,6 @@ class Profile extends React.Component<Props, State> {
                 onChange={this.researchInterestsOtherOnChange.bind(this)}
                 hidden={this.state.researchInterestsValue.includes('Other') ? false : true}
                 defaultValue={this.props.profileUserdata.researchInterestsOther || undefined}
-            // value={this.state.researchInterestsOther}
             />
         </Modal>;
     }
@@ -867,7 +808,6 @@ class Profile extends React.Component<Props, State> {
             return;
         }
         return <Modal
-            // visible={this.state.visibleModal === ModalName.AvatarOption}
             visible={true}
             title='Avatar Options'
             closable={false}
@@ -893,7 +833,6 @@ class Profile extends React.Component<Props, State> {
         >
             <p>Avatar Options</p>
             <Select
-                className='clear-disabled'
                 placeholder='Choose to use gravatar, or the KBase anonymous silhouette.'
                 disabled={!this.state.isEditing}
                 style={{ width: '100%', marginBottom: '2em' }}
@@ -924,7 +863,6 @@ class Profile extends React.Component<Props, State> {
             </div>
             */}
             <Select
-                className='clear-disabled'
                 placeholder='Choose to use gravatar, or the KBase anonymous silhouette.'
                 disabled={!this.state.isEditing}
                 style={{ width: '100%', marginBottom: '2em' }}
@@ -950,29 +888,29 @@ class Profile extends React.Component<Props, State> {
         }
         let button;
         let bannerText;;
-        let bannerColor: string;
         if (this.state.isEditing) {
             // button = <Button icon="eye" onClick={this.toggleEditing.bind(this)}>View</Button>;
-            button = <Button icon="check" onClick={this.toggleEditing.bind(this)}>Done</Button>;
+            button = <Button icon="close" type="danger" onClick={this.toggleEditing.bind(this)}>Close Editor</Button>;
+            const tooltip = ' changes to a field will be saved as soon as you move away from it or press the Enter/Return key.';
             bannerText = <span>
-                Edit Mode: You may now <Tooltip title='Changes to a field will be saved as soon as you move away from it or press the Enter/Return key'>edit</Tooltip> any field of your profile.
+                Closing the editor returns your profile to display mode.
             </span>;
-            bannerColor = 'transparent';
         } else {
 
-            button = <Button icon="edit" onClick={this.toggleEditing.bind(this)}>Edit</Button>;
+            button = <Button icon="edit" type="primary" onClick={this.toggleEditing.bind(this)}>Edit Profile</Button>;
             // bannerText = 'View Mode: You are viewing your profile as other users will see it';
-            bannerText = <span></span>;
-            bannerColor = 'transparent';
+            bannerText = <span>
+
+            </span>;
+
         }
 
         return <Row gutter={8}>
             <Col span={24}>
-                <div style={{ display: 'flex', flexDirection: 'row' }}>
-                    <div style={{ flex: '0 0 auto' }}>{button}</div>
-                    <div style={{ flex: '1 1 0px', display: 'flex', alignItems: 'center', marginLeft: '10px', backgroundColor: bannerColor }}>{bannerText}</div>
+                <div className="ButtonBar">
+                    <div className="ButtonBar-button">{button}</div>
+                    <div className="ButtonBar-text">{bannerText}</div>
                 </div>
-
             </Col>
         </Row>;
     }
@@ -1025,7 +963,7 @@ class Profile extends React.Component<Props, State> {
     }
 
     renderResearchInterestsView() {
-        const researchInterests = this.props.profileUserdata.researchInterests;
+        const researchInterests = this.props.profileUserdata.researchInterests.sort();
         if (Array.isArray(researchInterests) &&
             researchInterests.length > 0) {
             if (researchInterests.includes('Other') && this.props.profileUserdata.researchInterestsOther) {

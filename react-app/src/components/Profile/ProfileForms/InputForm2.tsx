@@ -2,11 +2,13 @@ import React from 'react';
 import { Form, Input } from 'antd';
 import { UserName, ProfileUserdata } from '../../../redux/interfaces';
 
+const DEFAULT_MAX_INPUT_LENGTH = 10000;
+const DEFAULT_MIN_INPUT_LENGTH = 2;
 
 interface Props {
     hidden: boolean;
     type: string;
-    required: boolean;
+    required?: boolean;
     userName: UserName;
     label: string;
     updateStoreState: (userdata: ProfileUserdata, userName: UserName) => void;
@@ -26,17 +28,6 @@ interface State {
     validateStatus?: "" | "error" | "success" | "warning" | "validating" | undefined;
     helpText: string | undefined;
     requiredNotification: boolean | undefined;
-};
-
-const formItemLayout = {
-    // labelCol: {
-    //     xs: { span: 24 },
-    //     sm: { span: 2 },
-    // },
-    // wrapperCol: {
-    //     xs: { span: 24 },
-    //     sm: { span: 22 },
-    // },
 };
 
 /**
@@ -66,9 +57,6 @@ export default class InputForm2 extends React.Component<Props, State> {
         this.setState({ requiredNotification: this.props.required });
     };
 
-    // componentDidUpdate(prevProps: Props, prevState: State, snapshot: any) {
-    // };
-
     requiredNotificationControl() {
         if (this.props.required && !this.props.readOnly) {
             return true;
@@ -93,38 +81,33 @@ export default class InputForm2 extends React.Component<Props, State> {
             this.setState({ validateStatus: 'error', helpText: 'Expecting numbers' });
             return;
         }
-        // check against min and max length
-        // this could be dobe by ternary operator, but typescript doesn't like it.
-        let maxLength: number;
-        if (typeof this.props.maxLength !== 'undefined') {
-            maxLength = this.props.maxLength;
-        } else {
-            maxLength = 10000; // number is picked randomly. Number.MAX_SAFE_INTEGER seemed a bit overkill.
-        };
 
-        let minLength: number;
-        if (typeof this.props.minLength !== 'undefined') {
-            minLength = this.props.minLength;
-        } else {
-            minLength = 2;
-        };
+        const maxLength = typeof this.props.maxLength === 'undefined' ? DEFAULT_MAX_INPUT_LENGTH : this.props.maxLength;
+        const minLength = typeof this.props.minLength === 'undefined' ? DEFAULT_MIN_INPUT_LENGTH : this.props.minLength;
 
         if (inputValue.length <= maxLength && inputValue.length >= minLength) {
-
-            this.setState({ validateStatus: 'success', helpText: undefined, requiredNotification: false });
-
+            this.setState({
+                validateStatus: 'success',
+                helpText: undefined,
+                requiredNotification: false
+            });
         } else if (!this.props.required && inputValue.length === 0) {
-
-            this.setState({ validateStatus: 'success', helpText: undefined, requiredNotification: false });
-
+            this.setState({
+                validateStatus: 'success',
+                helpText: undefined,
+                requiredNotification: false
+            });
         } else if (inputValue.length < minLength) {
-
-            this.setState({ validateStatus: 'error', helpText: 'input must be at least ' + minLength + ' characters' });
-
+            this.setState({
+                validateStatus: 'error',
+                helpText: 'input must be at least ' + minLength + ' characters'
+            });
         } else if (inputValue.length > maxLength) {
             // this shouldn't happen since input field max length is set
-            this.setState({ validateStatus: 'error', helpText: 'input must be less than ' + maxLength + ' characters' });
-
+            this.setState({
+                validateStatus: 'error',
+                helpText: 'input must be less than ' + maxLength + ' characters'
+            });
         };
     };
 
@@ -173,7 +156,7 @@ export default class InputForm2 extends React.Component<Props, State> {
 
     render() {
         return (
-            <Form.Item {...formItemLayout}
+            <Form.Item
                 required={this.state.requiredNotification}
                 label={this.props.label}
                 // hasFeedback help={this.state.helpText}
@@ -183,10 +166,8 @@ export default class InputForm2 extends React.Component<Props, State> {
                 <Input
                     placeholder={this.props.placeHolder}
                     readOnly={this.props.readOnly}
-                    className="clear-disabled"
                     maxLength={this.props.maxLength}
                     minLength={this.props.minLength}
-                    // onFocus={this.handleOnChange}
                     onBlur={this.props.onBlur === true ? this.updateStoreStateProperty : this.handleOnChange}
                     onPressEnter={this.props.onPressEnter === true ? this.updateStoreStateProperty : this.handleOnChange}
                     onChange={this.handleOnChange}

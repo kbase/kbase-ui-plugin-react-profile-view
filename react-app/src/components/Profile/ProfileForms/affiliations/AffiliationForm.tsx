@@ -257,7 +257,7 @@ export default class AffiliationForm extends React.Component<Props, State> {
         } else {
             children = this.state.institutionFiltered.map((item, index) => {
                 return (
-                    <Option className='clear-disabled' key={index} value={item} >
+                    <Option key={index} value={item} >
                         {item}
                     </Option>
                 );
@@ -313,7 +313,6 @@ export default class AffiliationForm extends React.Component<Props, State> {
                                 style={{ width: '100%' }}
                                 // autoComplete='organization-title'
                                 type='text'
-                                className='clear-disabled'
                                 maxLength={50}
                                 defaultValue={affiliation.title}
                                 placeholder={'Job title'}
@@ -341,7 +340,6 @@ export default class AffiliationForm extends React.Component<Props, State> {
                                     type="number"
                                     min={MIN_AFFILIATION_DATE}
                                     max={MAX_AFFILIATION_DATE}
-                                    className='clear-disabled'
                                     placeholder='Start'
                                     onKeyDown={this.startedOnKeyDown.bind(this)}
                                     defaultValue={affiliation.started}
@@ -369,7 +367,6 @@ export default class AffiliationForm extends React.Component<Props, State> {
                                     // min={endDateMin}
                                     min={MIN_AFFILIATION_DATE}
                                     max={MAX_AFFILIATION_DATE}
-                                    className='clear-disabled'
                                     placeholder='End'
                                     defaultValue={affiliation.ended || undefined}
 

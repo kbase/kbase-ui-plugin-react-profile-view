@@ -7,7 +7,8 @@
         "bluebird": "3.7.2",
         "common-readme": "1.1.0",
         "fs-extra": "9.0.0",
-        "tar": "6.0.1"
+        "tar": "6.0.1",
+        "eslint": "6.8.0"
     },
     "scripts": {
         "build-plugin": "bash scripts/build-plugin.bash",
