@@ -1,25 +1,4 @@
-
-const NationalLabs = [
-"Ames Laboratory (Ames)", 
-"Argonne National Laboratory (ANL)",
-"Brookhaven National Laboratory (BNL)",
-"Fermi National Accelerator Laboratory (FERMILAB)",
-"Oak Ridge National Laboratory (ORNL)",
-"Lawrence Berkeley National Laboratory (LBNL)",
-"Pacific Northwest National Laboratory (PNNL)",
-"Princeton Plasma Physics Laboratory (PPPL)",
-"SLAC National Accelerator Laboratory (SLAC)",
-"Idaho National Laboratory (INL)",
-"National Energy Technology Laboratory (NETL)",
-"National Renewabl Energy Laboratory (NREL)",
-"Savannah River National Laboratory (SRNL)",
-"Lawrence Livermore National Laboratory (LLNL)",
-"Los Alamos National Laboratory (LANL)",
-"Sandia National Laboratory(SNL)",
-"Thomas Jefferson National Accelerator Facility(TJNAF)"
-]
-
-const heigherEd = [
+[
     "A T Still University of Health Sciences",
     "Aaniiih Nakoda College",
     "Abilene Christian University",
@@ -4341,6 +4320,4 @@ const heigherEd = [
     "YTI Career Institute-Altoona",
     "YTI Career Institute-York",
     "Yuba College,Zane State College"
-    ]
-    
-    export const institution = NationalLabs.concat(heigherEd);
+]

@@ -2,7 +2,7 @@ import { ThunkDispatch } from "redux-thunk";
 import { StoreState, NarrativeData } from "../interfaces";
 import { AnyAction } from 'redux';
 import { fetchNarrativesAPI } from '../../util/API';
-import { narrativeActionTypes } from '../actions/actionTypes';
+import { ActionTypes } from '../actions/actionTypes';
 
 /**
  * Fetch narratives dependeing on the filter.
@@ -57,7 +57,7 @@ export function loadNarratives(filter: string, profileID: string) {
                         };
 
                         dispatch({
-                            type: narrativeActionTypes.FETCH_NARRATIVE_SUCCESS,
+                            type: ActionTypes.FETCH_NARRATIVE_SUCCESS,
                             payload: { narrativeList: narrativeList, loading: false }
                         });
 
@@ -70,9 +70,9 @@ export function loadNarratives(filter: string, profileID: string) {
 
                     if (typeof response !== 'undefined') {
                         dispatch({
-                            type: narrativeActionTypes.FETCH_NARRATIVE_SUCCESS,
+                            type: ActionTypes.FETCH_NARRATIVE_SUCCESS,
                             payload: { narrativeList: response, loading: false }
-                        })
+                        });
                     } else {
                         let fetchFailed = [
                             {
@@ -86,7 +86,7 @@ export function loadNarratives(filter: string, profileID: string) {
                         ];
 
                         dispatch({
-                            type: narrativeActionTypes.FETCH_NARRATIVE_ERROR,
+                            type: ActionTypes.FETCH_NARRATIVE_ERROR,
                             payload: { narrativeList: fetchFailed, loading: false }
                         });
                     };

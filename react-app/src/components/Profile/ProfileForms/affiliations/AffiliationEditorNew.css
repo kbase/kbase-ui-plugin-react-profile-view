@@ -1,0 +1,15 @@
+.AffiliationEditorNew {}
+
+.AffiliationEditorNew-row {
+    display: flex;
+    flex-direction: row;
+}
+
+.AffiliationEditorNew-form-col {
+    flex: 1 1 0px;
+}
+
+
+.AffiliationEditorNew-control-col {
+    flex: 0 0 3em;
+}

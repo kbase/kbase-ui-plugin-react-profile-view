@@ -1,0 +1,14 @@
+.AffiliationEditor {}
+
+.AffiliationEditor-row {
+    display: flex;
+    flex-direction: row;
+}
+
+.AffiliationEditor-form-col {
+    flex: 1 1 0px;
+}
+
+.AffiliationEditor-delete-col {
+    flex: 0 0 3em;
+}

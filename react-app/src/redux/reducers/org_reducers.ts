@@ -1,43 +1,49 @@
-import { StoreState, OrgAction } from '../interfaces';
-import { orgsActionTypes } from '../actions/actionTypes';
-import { orgFetchStatuses } from '../fetchStatuses';
+import { StoreState } from '../interfaces';
+import { ActionTypes } from '../actions/actionTypes';
+import { AsyncFetchStatus } from '../fetchStatuses';
+import { OrgAction } from '../actions/orgActions';
 
-export default function orgsReducer(state: StoreState, action: OrgAction) {
-    const payload = action.payload;
+export default function orgsReducer(state: StoreState, action: OrgAction): StoreState {
     switch (action.type) {
-        case orgsActionTypes.FETCH_ORGS_SUCCESS:
+        case ActionTypes.FETCH_ORGS_SUCCESS:
             return (
                 {
                     ...state,
-                    orgState: payload
+                    orgState: action.payload
                 }
             );
-
-        case orgsActionTypes.FETCH_ORGS:
+        case ActionTypes.FETCH_ORGS_REFETCHING:
             return (
                 {
                     ...state,
-                    orgState: { orgFetchStatus: orgFetchStatuses.FETCHING }
+                    orgState: action.payload
                 }
             );
-
-        case orgsActionTypes.FETCH_ORGS_ERROR:
-
+        case ActionTypes.FETCH_ORGS_FETCHING:
             return (
                 {
                     ...state,
-                    orgState: payload
+                    orgState: {
+                        orgFetchStatus: AsyncFetchStatus.FETCHING
+                    }
                 }
             );
-
-        case orgsActionTypes.FETCH_ORGS_NONE:
+        case ActionTypes.FETCH_ORGS_ERROR:
             return (
                 {
                     ...state,
-                    orgState: { orgFetchStatus: orgFetchStatuses.NONE }
+                    orgState: action.payload
                 }
             );
-
+        case ActionTypes.FETCH_ORGS_NONE:
+            return (
+                {
+                    ...state,
+                    orgState: {
+                        orgFetchStatus: AsyncFetchStatus.NONE
+                    }
+                }
+            );
         default:
             return state;
     };

@@ -1,7 +1,7 @@
 export const avatarOptions = [{
     "value": "gravatar",
-    "label": "Gravatar - Use your Gravatar image otherwise random generator selected below"
+    "label": "Gravatar - Use your Gravatar image, otherwise the Default Image selected below"
 }, {
-    "value": "silhoutte",
-    "label": "silhoutte - simple, anonymous, featureless, silhoutte"
+    "value": "silhouette",
+    "label": "silhouette - simple, anonymous, featureless, silhouette"
 }]

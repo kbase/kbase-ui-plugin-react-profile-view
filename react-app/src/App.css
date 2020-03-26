@@ -1,29 +1,27 @@
-
-
 .fake-tab {
     position: relative;
     right: calc(-100% + 385px);
     width: 385px;
     z-index: 5;
 }
+
 .search-on-a-tab {
     white-space: nowrap;
 }
-.card-with-height
-.ant-card-body{
+
+.card-with-height .ant-card-body {
     height: 200px;
     overflow: auto;
 }
 
 .profile-tabs {
-  margin: 0 0.5em;
+    margin: 0 0.5em;
 }
-.ant-tabs-nav-wrap
-.ant-tabs-nav-scroll
-.ant-tabs-nav 
-{  
+
+.ant-tabs-nav-wrap .ant-tabs-nav-scroll .ant-tabs-nav {
     width: 100% !important;
 }
+
 .margin-top-10px {
     margin-top: 10px !important;
 }
@@ -36,11 +34,9 @@
     overflow: auto;
 }
 
-/* this is to get rid of : after form item lable */
-.profile-input-form > 
-.ant-form-item-label > 
-label::after {
-    content: none !important;
+/* this is to get rid of : after form item label */
+.profile-input-form>.ant-form-item-label>label::after {
+    /* content: none !important; */
 }
 
 /* .affiliation-row {
@@ -56,48 +52,37 @@ label::after {
 
 /* this forces Organization AutoComplete input field to 100% in 
  AfflicationForm */
-.profile-input-form > 
-.ant-form-item-control-wrapper > 
-.ant-form-item-control {
+.profile-input-form>.ant-form-item-control-wrapper>.ant-form-item-control {
     width: 100% !important;
     background-color: white;
     cursor: pointer;
 }
- 
-.profile-input-form > 
-.ant-form-item-control-wrapper > 
-.ant-form-item-control > span > 
-.ant-select-disabled
-.ant-select-selection
-{
+
+.profile-input-form>.ant-form-item-control-wrapper>.ant-form-item-control>span>.ant-select-disabled .ant-select-selection {
     background: white !important;
     cursor: pointer;
 }
 
-.clear-disabled >
-.ant-select-auto-complete.ant-select >
-.ant-input-disabled {
-    color: rgba(0,0,0,.65) !important;
+.clear-disabled>.ant-select-auto-complete.ant-select>.ant-input-disabled {
+    color: rgba(0, 0, 0, .65) !important;
     background-color: white;
     cursor: pointer;
 }
 
 .clear-disabled.ant-select-disabled {
-    color: rgba(0,0,0,.65) !important;
+    color: rgba(0, 0, 0, .65) !important;
     background-color: white;
     cursor: pointer;
 }
 
-.clear-disabled >
-.ant-input-disabled {
-    color: rgba(0,0,0,.65) !important;
+.clear-disabled>.ant-input-disabled {
+    color: rgba(0, 0, 0, .65) !important;
     background-color: white;
     cursor: pointer;
 }
 
-.clear-disabled.ant-select-auto-complete.ant-select 
-.ant-input-disabled {
-    color: rgba(0,0,0,.65) !important;
+.clear-disabled.ant-select-auto-complete.ant-select .ant-input-disabled {
+    color: rgba(0, 0, 0, .65) !important;
     background-color: white;
     cursor: pointer;
 }

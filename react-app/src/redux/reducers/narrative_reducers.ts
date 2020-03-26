@@ -1,20 +1,20 @@
 import { StoreState, NarrativeAction } from '../interfaces';
-import { narrativeActionTypes } from '../actions/actionTypes';
+import { ActionTypes } from '../actions/actionTypes';
 
 
-export default function narrativeReducer(state: StoreState, action: NarrativeAction):StoreState {
+export default function narrativeReducer(state: StoreState, action: NarrativeAction): StoreState {
     const payload = action.payload;
     switch (action.type) {
-        
-        case narrativeActionTypes.FETCH_NARRATIVE_SUCCESS:
-        case narrativeActionTypes.FETCH_NARRATIVE_ERROR:
+        case ActionTypes.FETCH_NARRATIVE_SUCCESS:
+        case ActionTypes.FETCH_NARRATIVE_ERROR:
             return (
-                { ...state,
+                {
+                    ...state,
                     narrativeState: payload
                 }
             );
-                    
-        default: 
+
+        default:
             return state;
     };
 };

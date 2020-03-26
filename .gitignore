@@ -17,3 +17,5 @@ _trash
 package-lock.json
 
 /dist/
+
+_attic/

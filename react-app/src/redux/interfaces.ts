@@ -1,6 +1,6 @@
 import { BaseStoreState } from "@kbase/ui-components";
-export interface StoreState extends BaseStoreState,  NarrativeState, ProfileState, OrgState {}
-import { profileFetchStatuses, orgFetchStatuses } from '../redux/fetchStatuses';
+export interface StoreState extends BaseStoreState, NarrativeState, ProfileState, OrgState { }
+import { AsyncFetchStatus } from '../redux/fetchStatuses';
 
 export interface UserAuthorization {
     realname: string;
@@ -29,7 +29,7 @@ export interface NarrativeAction {
     payload: {
         narrativeList: Array<NarrativeData>;
         loading: boolean;
-    }
+    };
 };
 
 // need this for adding type to StoreState - see store.ts
@@ -46,28 +46,23 @@ export interface NarrativeState {
  */
 
 // used in reducer 
-export interface OrgAction {
-    type: string;
-    payload: OrgList | OrgFetchError;
-};
-
 // need this for adding type to StoreState - see store.ts
-export interface  OrgState {
-    orgState: OrgList | OrgFetchStatus
+export interface OrgState {
+    orgState: OrgList | OrgFetchStatus | OrgFetchError;
 };
 
 export interface OrgList {
     orgList: Array<OrgProp>,
-    orgFetchStatus: orgFetchStatuses.NONE | orgFetchStatuses.SUCCESS | orgFetchStatuses.ERROR | orgFetchStatuses.FETCHING
+    orgFetchStatus: AsyncFetchStatus.SUCCESS | AsyncFetchStatus.REFETCHING;
 };
 
 export interface OrgFetchError {
-    orgError: Array<number|string>,
-    orgFetchStatus: orgFetchStatuses.NONE | orgFetchStatuses.SUCCESS | orgFetchStatuses.ERROR | orgFetchStatuses.FETCHING
+    orgError: Array<number | string>,
+    orgFetchStatus: AsyncFetchStatus.ERROR;
 };
 
 export interface OrgFetchStatus {
-    orgFetchStatus: orgFetchStatuses.NONE | orgFetchStatuses.SUCCESS | orgFetchStatuses.ERROR | orgFetchStatuses.FETCHING
+    orgFetchStatus: AsyncFetchStatus.NONE | AsyncFetchStatus.FETCHING;
 };
 
 // Used for org list 
@@ -102,12 +97,14 @@ export interface Org {
 export interface UserProfileService {
     user: UsernameRealname;
     profile: {
-        userdata: ProfileData,
-        synced:{
+        userdata: ProfileUserdata,
+        synced: {
             gravatarHash: string;
-        }
+        };
+        // TODO: the rest of the profile structure, at least preserved
+        // as any??
     };
-    
+
 };
 
 // user profile servie resturns
@@ -120,28 +117,28 @@ export interface UsernameRealname {
 
 
 // need this for adding type to StoreState - see store.ts
-export interface  ProfileState {
+export interface ProfileState {
     profileView: ProfileView | ProfileFetchStatus | ErrorMessages;
 };
 
 export interface ErrorMessages {
-    errorMessages: Array<number|string>;
-    profileFetchStatus: profileFetchStatuses.ERROR;
+    errorMessages: Array<number | string>;
+    profileFetchStatus: AsyncFetchStatus.ERROR;
 };
 
-export interface ProfileFetchStatus{
-    profileFetchStatus: profileFetchStatuses.NONE | profileFetchStatuses.ERROR | profileFetchStatuses.SUCCESS | profileFetchStatuses.FETCHING;
+export interface ProfileFetchStatus {
+    profileFetchStatus: AsyncFetchStatus.NONE | AsyncFetchStatus.FETCHING;
 };
 
 export interface ProfileView {
     userName: UserName,
     editEnable: boolean,
-    profileData: ProfileData,
+    profileUserdata: ProfileUserdata,
     gravatarHash: string,
-    profileFetchStatus: profileFetchStatuses.SUCCESS
+    profileFetchStatus: AsyncFetchStatus.SUCCESS | AsyncFetchStatus.REFETCHING;
 };
 
-export interface ProfileData {
+export interface ProfileUserdata {
     organization: string;
     department: string;
     city: string;
@@ -153,7 +150,7 @@ export interface ProfileData {
     jobTitle: string;
     jobTitleOther: string;
     researchInterests: Array<string>;
-    researchInterestsOther: string;
+    researchInterestsOther: string | null;
     fundingSource: string;
     gravatarDefault: string;
     avatarOption: string;
@@ -162,11 +159,13 @@ export interface ProfileData {
 export interface Affiliation {
     title: string;
     organization: string;
-    started: string;
-    ended: string;
+    started: number;
+    ended: number | null;
 };
 
 // used in Profile View app
+// TODO: please refactor, someone; having UserName as something
+// other than a username string is unnecessarily confusing.
 export interface UserName {
     name: string;
     userID: string;
@@ -177,6 +176,3 @@ export interface loadProfileAction {
     type: string;
     payload: ProfileView | ProfileFetchStatus | ErrorMessages;
 };
-
-
-

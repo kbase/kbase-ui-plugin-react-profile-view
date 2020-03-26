@@ -18,8 +18,8 @@ interface StateProps {
 interface DispatchProps {
     setTitle: (title: string) => void;
     loadNarratives: (filter: string, profileID: string) => void;
-    getProfile: (profileID: string) => void;
-    getOrgs: (profileID: string) => void;
+    getProfile: (username: string) => void;
+    getOrgs: (username: string) => void;
 };
 
 // TODO this should be part of the view definition
@@ -33,14 +33,26 @@ function mapStateToProps(state: StoreState, ownProps: OwnProps): StateProps {
         app: {
             config: { baseUrl },
             runtime: {
-                navigation: { params: rawParams }
+                navigation: { params: rawParams },
+                devMode
             }
         }
     } = state;
     if (!userAuthorization) {
         throw new Error('This plugin only operates with authentication; no KBase token in store');
     }
-    const params = (rawParams as unknown) as UserProfileViewParams;
+    // const params = (rawParams as unknown) as UserProfileViewParams;
+    // console.log('params!', params);
+    // TODO: fix this in the develop wrapper in kb-components
+    let params: UserProfileViewParams;
+    if (devMode) {
+        const [, username] = document.location.hash.slice(1).split('/');
+        params = {
+            username
+        };
+    } else {
+        params = (rawParams as unknown) as UserProfileViewParams;
+    }
     return {
         token: userAuthorization.token,
         authUsername: userAuthorization.username,
@@ -51,17 +63,17 @@ function mapStateToProps(state: StoreState, ownProps: OwnProps): StateProps {
 
 function mapDispatchToProps(dispatch: Dispatch<Action>, ownProps: OwnProps): DispatchProps {
     return {
-        loadNarratives: (filter: string, profileID: string) => {
-            return dispatch(loadNarratives(filter, profileID) as any);
+        loadNarratives: (filter: string, username: string) => {
+            return dispatch(loadNarratives(filter, username) as any);
         },
         setTitle: (title: string) => {
             return dispatch(sendTitle(title) as any);
         },
-        getProfile: (profileID: string) => {
-            return dispatch(getProfile(profileID) as any);
+        getProfile: (username: string) => {
+            return dispatch(getProfile(username) as any);
         },
-        getOrgs: (profileID: string) => {
-            return dispatch(getOrgs(profileID) as any);
+        getOrgs: (username: string) => {
+            return dispatch(getOrgs(username) as any);
         }
     };
 };

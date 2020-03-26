@@ -1,6 +1,6 @@
-import React from'react';
+import React from 'react';
 import { Empty } from 'antd';
-import {OrgProp} from '../../redux/interfaces';
+import { OrgProp } from '../../redux/interfaces';
 
 
 interface Props {
@@ -14,13 +14,14 @@ interface Props {
  */
 function Orgs(props: Props) {
     let orgList = props.orgList;
-    
-    if(props.orgList.length === 0) {
+
+    if (props.orgList.length === 0) {
         return (
-            <div><Empty image={Empty.PRESENTED_IMAGE_SIMPLE} /></div>
+            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}
+                description="No Organizations" />
         );
     } else {
-        return(
+        return (
             <ul style={{ textAlign: 'left' }}>
                 {orgList.map((org, index) => (
                     <li key={index}>

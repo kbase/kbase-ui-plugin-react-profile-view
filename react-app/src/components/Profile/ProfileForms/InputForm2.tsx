@@ -8,7 +8,8 @@ interface Props {
     type: string;
     required: boolean;
     userName: UserName;
-    updateStoreState: (data: ProfileUserdata, userName: UserName) => void;
+    label: string;
+    updateStoreState: (userdata: ProfileUserdata, userName: UserName) => void;
     data: any;
     stateProperty: string;
     placeHolder?: string;
@@ -28,14 +29,14 @@ interface State {
 };
 
 const formItemLayout = {
-    labelCol: {
-        xs: { span: 24 },
-        sm: { span: 2 },
-    },
-    wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 22 },
-    },
+    // labelCol: {
+    //     xs: { span: 24 },
+    //     sm: { span: 2 },
+    // },
+    // wrapperCol: {
+    //     xs: { span: 24 },
+    //     sm: { span: 22 },
+    // },
 };
 
 /**
@@ -44,7 +45,7 @@ const formItemLayout = {
  *  - If onBlur/onPressEnter updates storeState, set it to true.
  *  - minLength default = 2
  */
-export default class InputForm extends React.Component<Props, State> {
+export default class InputForm2 extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
@@ -174,12 +175,12 @@ export default class InputForm extends React.Component<Props, State> {
         return (
             <Form.Item {...formItemLayout}
                 required={this.state.requiredNotification}
-                label=' '
+                label={this.props.label}
                 // hasFeedback help={this.state.helpText}
                 validateStatus={this.state.validateStatus}
+                style={{ display: this.props.hidden ? 'none' : 'block' }}
             >
                 <Input
-                    hidden={this.props.hidden}
                     placeholder={this.props.placeHolder}
                     readOnly={this.props.readOnly}
                     className="clear-disabled"
