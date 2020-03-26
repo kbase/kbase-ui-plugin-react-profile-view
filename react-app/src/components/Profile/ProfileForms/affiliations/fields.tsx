@@ -215,8 +215,6 @@ export class AffiliationEditState {
         this.organization.validate();
         this.started.validate();
         this.ended.validate();
-
-        console.log('constructed...', this.title);
     }
 
     isValid(): boolean {
@@ -227,11 +225,9 @@ export class AffiliationEditState {
     }
 
     validate() {
-        console.log('validating form...', this.title);
         if (this.title.isError() || this.organization.isError() || this.started.isError() || this.ended.isError()) {
-            console.warn('all fields NOT valid');
+            //  console.warn('all fields NOT valid');
         } else {
-            console.log('all fields valid...');
             this.onAllValid({
                 title: this.title.value,
                 organization: this.organization.value,
@@ -239,15 +235,9 @@ export class AffiliationEditState {
                 ended: this.ended.value
             });
         }
-
-        // this.title.validate();
-        // this.organization.validate();
-        // this.started.validate();
-        // this.ended.validate();
     }
 
     commit() {
-        console.log('commiting form...', this.title);
         if (this.title.isError() || this.organization.isError() || this.started.isError() || this.ended.isError()) {
             console.warn('all fields NOT valid, not committing');
         } else {
@@ -258,7 +248,6 @@ export class AffiliationEditState {
                 started: this.started.value,
                 ended: this.ended.value
             };
-            console.log('all fields valid, committing...', affiliation, this.title);
             this.onCommit(affiliation);
         }
     }

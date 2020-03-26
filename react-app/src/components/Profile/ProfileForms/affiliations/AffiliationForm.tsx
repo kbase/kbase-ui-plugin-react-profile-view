@@ -64,7 +64,7 @@ export default class AffiliationForm extends React.Component<Props, State> {
 
     onValidated(affiliation: Affiliation) {
         // this.props.save(affiliation);
-        console.log('on validate', affiliation);
+        // console.log('on validate', affiliation);
     }
 
     onCommit(affiliation: Affiliation) {
@@ -159,35 +159,6 @@ export default class AffiliationForm extends React.Component<Props, State> {
     endedOnChange(newValue: number | undefined) {
         this.state.editor.ended.update(newValue);
         this.setState({ editor: this.state.editor });
-
-        // If validation error, just update the state and do nothing.
-        // TODO: why is this just checking the title? should be every field.
-        // console.log('saving', this.state.editor.getValue());
-        // if (!this.state.editor.ended.isError()) {
-        //     this.props.save(this.state.editor.getValue());
-        // }
-        // const affiliations = this.state.affiliations;
-        // const affiliation = affiliations[index];
-
-        // // if the entry is empty, then set the state to undefined.
-        // if (!newValue) {
-        //     affiliation.validatedStatusEndYear = undefined;
-        //     affiliation.ended = undefined;
-        //     affiliation.helpTextEndYear = undefined;
-        // } else {
-        //     if (affiliation.started) {
-        //         if (newValue < affiliation.started) {
-        //             affiliation.validatedStatusEndYear = 'error';
-        //             affiliation.helpTextEndYear = 'must be greater than or equal to the start year, or empty';
-        //         } else if (newValue >= affiliation.started) {
-        //             affiliation.validatedStatusEndYear = undefined;
-        //             affiliation.helpTextEndYear = undefined;
-        //             affiliation.helpTextStartYear = undefined;
-        //             affiliation.validatedStatusStartYear = undefined;
-        //         }
-        //     }
-        // }
-        // this.setState({ affiliations });
     };
 
     endedOnKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {

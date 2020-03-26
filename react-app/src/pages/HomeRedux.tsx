@@ -41,8 +41,7 @@ function mapStateToProps(state: StoreState, ownProps: OwnProps): StateProps {
     if (!userAuthorization) {
         throw new Error('This plugin only operates with authentication; no KBase token in store');
     }
-    // const params = (rawParams as unknown) as UserProfileViewParams;
-    // console.log('params!', params);
+
     // TODO: fix this in the develop wrapper in kb-components
     let params: UserProfileViewParams;
     if (devMode) {
