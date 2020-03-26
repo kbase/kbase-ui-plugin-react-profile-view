@@ -1,34 +1,43 @@
-import { OrgAction, OrgList, loadProfileAction, ProfileView, ErrorMessages, OrgFetchError } from '../interfaces';
-import { profileActionTypes, orgsActionTypes } from './actionTypes';
+import {
+    OrgList, loadProfileAction, ProfileView, ErrorMessages, OrgFetchError
+} from '../interfaces';
+import { ActionTypes } from './actionTypes';
+import { OrgAction, OrgActionError } from './orgActions';
 
 
 // fetching profile data is initiated
-export function fetchProfile() { 
+export function fetchProfile() {
     return {
-        type: profileActionTypes.FETCH_PROFILE
+        type: ActionTypes.FETCH_PROFILE
+    };
+};
+
+export function refetchProfile() {
+    return {
+        type: ActionTypes.FETCH_PROFILE_REFETCHING
     };
 };
 
 // fetching profile data was successful 
 export function loadProfile(payload: ProfileView): loadProfileAction {
     return {
-        type: profileActionTypes.FETCH_PROFILE_SUCCESS,
+        type: ActionTypes.FETCH_PROFILE_SUCCESS,
         payload
     };
 };
 
 // fetch profile failed
-export function fetchErrorProfile(payload: ErrorMessages){
+export function fetchErrorProfile(payload: ErrorMessages) {
     return {
-        type: profileActionTypes.FETCH_PROFILE_ERROR,
+        type: ActionTypes.FETCH_PROFILE_ERROR,
         payload
     };
 };
 
 // during mounting - render before componentDidMount
-export function initialRenderProfile() {
+export function fetchProfileNone() {
     return {
-        type: profileActionTypes.FETCH_PROFILE_NONE,
+        type: ActionTypes.FETCH_PROFILE_NONE,
     };
 };
 
@@ -36,7 +45,7 @@ export function initialRenderProfile() {
 // fetching Orgs was successful 
 export function loadOrgs(payload: OrgList): OrgAction {
     return {
-        type: orgsActionTypes.FETCH_ORGS_SUCCESS,
+        type: ActionTypes.FETCH_ORGS_SUCCESS,
         payload
     };
 };
@@ -44,15 +53,14 @@ export function loadOrgs(payload: OrgList): OrgAction {
 // fetching orgs is initiated
 export function fetchOrgs() {
     return {
-        type: orgsActionTypes.FETCH_ORGS
+        type: ActionTypes.FETCH_ORGS
     };
 };
 
 // fetch orgs failed
-export function fetchErrorOrgs(payload:OrgFetchError):OrgAction {
-
+export function fetchErrorOrgs(payload: OrgFetchError): OrgActionError {
     return {
-        type: orgsActionTypes.FETCH_ORGS_ERROR,
+        type: ActionTypes.FETCH_ORGS_ERROR,
         payload
     };
 };
@@ -60,6 +68,6 @@ export function fetchErrorOrgs(payload:OrgFetchError):OrgAction {
 // during mounting - render before componentDidMount
 export function initialRenderOrgs() {
     return {
-        type: orgsActionTypes.FETCH_ORGS_NONE,
+        type: ActionTypes.FETCH_ORGS_NONE,
     };
 };

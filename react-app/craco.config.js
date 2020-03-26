@@ -20,10 +20,7 @@ module.exports = {
         {
             plugin: CracoAntDesignPlugin,
             options: {
-                customizeThemeLessPath: path.join(__dirname, 'node_modules/@kbase/ui-components/lib/custom/antd/theme.less'),
-                styleLoaderOptions: {
-                    insert: 'body'
-                }
+                customizeThemeLessPath: path.join(__dirname, 'node_modules/@kbase/ui-components/lib/custom/antd/theme.less')
             }
         }
     ],

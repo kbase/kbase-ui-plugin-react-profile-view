@@ -2,8 +2,7 @@ import React from 'react';
 
 import Profile from './Profile';
 import Spinner from '../../pages/Spinner';
-import ErrorMessage from '../../pages/ErrorMessage'
-
+import ErrorMessage from '../../pages/ErrorMessage';
 
 export default function WhichComponent(props: any) {
     switch (props.profileFetchStatus) {
@@ -13,16 +12,25 @@ export default function WhichComponent(props: any) {
         case 'fetching':
             return <Spinner />;
 
+
+        case 'refetching':
+            return <Profile userName={props.userName}
+                editEnable={props.editEnable}
+                profileUserdata={props.profileData}
+                gravatarHash={props.gravatarHash}
+                profileFetchStatus={props.profileFetchStatus}
+                updateProfile={props.updateProfile} />;
+
         case 'success':
             return <Profile userName={props.userName}
                 editEnable={props.editEnable}
-                profileData={props.profileData}
+                profileUserdata={props.profileData}
                 gravatarHash={props.gravatarHash}
                 profileFetchStatus={props.profileFetchStatus}
                 updateProfile={props.updateProfile} />;
 
         case 'error':
-            let newErrorMessageProps = {
+            const newErrorMessageProps = {
                 errorMessages: props.errorMessages,
                 fetchStatus: props.profileFetchStatus
             };
@@ -32,7 +40,5 @@ export default function WhichComponent(props: any) {
 
         default:
             return (<div>???</div>);
-
-    };
-
-};
+    }
+}

@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Tabs } from 'antd';
 
-import ProfileContainer from '../components/Profile/ProfileCountainer';
+import ProfileContainer from '../components/Profile/ProfileContainer';
 import NarrativeContainer from '../components/Narratives';
 import { OrgProp, UserName } from '../redux/interfaces';
 import SearchUsersContainer from '../components/SearchUsers/SearchUsersContainer';
@@ -30,9 +30,9 @@ export interface HomeProps {
     username: string | null;
     baseURL: string;
     setTitle: (title: string) => void;
-    loadNarratives: (filter: string, profileID: string) => void;
-    getProfile: (profileID: string) => void;
-    getOrgs: (profileID: string) => void;
+    loadNarratives: (filter: string, username: string) => void;
+    getProfile: (username: string) => void;
+    getOrgs: (username: string) => void;
 };
 
 class Home extends React.Component<HomeProps, HomeState> {
@@ -50,9 +50,8 @@ class Home extends React.Component<HomeProps, HomeState> {
         };
     };
 
-
     componentDidMount() {
-        let username;
+        let username: string;
         if (this.props.username) {
             username = this.props.username;
             this.props.setTitle('User Profile for ' + username);
@@ -87,7 +86,7 @@ class Home extends React.Component<HomeProps, HomeState> {
         if (typeof this.props.username === 'undefined' || typeof this.props.authUsername === 'undefined') {
             // if there is no logged in user in run time config (redux app state)
             // returns an empty narrative list
-            console.error('How did this even happened? Check error message from Kbase-UI.')
+            console.error('How did this even happened? Check error message from Kbase-UI.');
             return;
         } else {
             // when logged-in user is viewing own profile. 
@@ -105,7 +104,7 @@ class Home extends React.Component<HomeProps, HomeState> {
     };
 
     componentDidUpdate(prevProps: any, prevState: any) {
-        // This privents from infinate component loading loop.
+        // This prevents from infinite component loading loop.
         if (this.state === prevState) {
             return;
         };
@@ -114,7 +113,7 @@ class Home extends React.Component<HomeProps, HomeState> {
     // wrap search user component with a div so that display can be controlled.
     // in order to place search component/box on the navigation tab, 
     // make it into a variable and insert it as tabBarExtraContent. 
-    searchOnATab = <div className="search-on-a-tab">Search other users <SearchUsersContainer /></div>
+    searchOnATab = <div className="search-on-a-tab">Search other users <SearchUsersContainer /></div>;
 
     render() {
         return (

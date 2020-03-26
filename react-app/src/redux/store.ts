@@ -4,7 +4,7 @@ import thunk from 'redux-thunk';
 import { makeBaseStoreState } from '@kbase/ui-components';
 import { StoreState } from './interfaces';
 import rootReducer from './reducers/index';
-import { profileFetchStatuses, orgFetchStatuses } from './fetchStatuses';
+import { AsyncFetchStatus } from './fetchStatuses';
 
 // TODO: need to use action creator initialRenderOrgs & initialRenderProfile instead
 
@@ -12,13 +12,13 @@ import { profileFetchStatuses, orgFetchStatuses } from './fetchStatuses';
 export function makeInitialStoreState(): StoreState {
     const baseStoreState = makeBaseStoreState();
     return {
-        ...baseStoreState,  
+        ...baseStoreState,
         narrativeState: {
             narrativeList: [],
             loading: true
         },
-        profileView: { profileFetchStatus: profileFetchStatuses.NONE },
-        orgState:  { orgFetchStatus: orgFetchStatuses.NONE }
+        profileView: { profileFetchStatus: AsyncFetchStatus.NONE },
+        orgState: { orgFetchStatus: AsyncFetchStatus.NONE }
     };
 };
 

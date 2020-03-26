@@ -1,16 +1,18 @@
 import { connect } from 'react-redux';
 import { Action, Dispatch } from 'redux';
 
-import { UserName, ProfileData, StoreState, ProfileView, ErrorMessages } from '../../redux/interfaces';
+import {
+    UserName, ProfileUserdata, StoreState, ProfileView, ErrorMessages
+} from '../../redux/interfaces';
 import { updateProfile } from '../../redux/actions';
 import WhichComponent from './WhichComponent';
 
-import { profileFetchStatuses } from '../../redux/fetchStatuses';
+import { AsyncFetchStatus } from '../../redux/fetchStatuses';
 
 interface PropsWithProfileData {
     userName: UserName;
     editEnable: boolean;
-    profileData: ProfileData;
+    profileData: ProfileUserdata;
     gravatarHash: string;
     profileFetchStatus: string;
 };
@@ -21,7 +23,7 @@ interface PropsWithoutProfileData {
 type Props = PropsWithoutProfileData | PropsWithProfileData | ErrorMessages;
 
 interface DispatchProps {
-    updateProfile: (profileData: ProfileData, userName:UserName) => void;
+    updateProfile: (profileUserdata: ProfileUserdata, userName: UserName) => void;
 };
 
 interface OwnProps { };
@@ -29,26 +31,27 @@ interface OwnProps { };
 function mapStateToProps(state: StoreState): Props {
 
     switch (state.profileView.profileFetchStatus) {
-        case profileFetchStatuses.NONE:
-        case profileFetchStatuses.FETCHING:
+        case AsyncFetchStatus.NONE:
+        case AsyncFetchStatus.FETCHING:
             return {
                 profileFetchStatus: state.profileView.profileFetchStatus
             };
 
-        case profileFetchStatuses.ERROR:
-            let newProps = state.profileView as ErrorMessages
+        case AsyncFetchStatus.ERROR:
+            let newProps = state.profileView as ErrorMessages;
             return {
                 errorMessages: newProps.errorMessages,
                 profileFetchStatus: state.profileView.profileFetchStatus
             };
 
-        case profileFetchStatuses.SUCCESS:
+        case AsyncFetchStatus.REFETCHING:
+        case AsyncFetchStatus.SUCCESS:
             // typescript isn't good at switch case yet... 
-            let profileData = state.profileView as ProfileView;
+            const profileData = state.profileView as ProfileView;
             return {
                 userName: profileData.userName,
                 editEnable: profileData.editEnable,
-                profileData: profileData.profileData,
+                profileData: profileData.profileUserdata,
                 gravatarHash: profileData.gravatarHash,
                 profileFetchStatus: profileData.profileFetchStatus
             };
@@ -59,7 +62,7 @@ function mapStateToProps(state: StoreState): Props {
             // its type is "never" 
             // hacky way to fix that. 
             return {
-                profileFetchStatus: profileFetchStatuses.ERROR
+                profileFetchStatus: AsyncFetchStatus.ERROR
             };
     };
 
@@ -68,8 +71,8 @@ function mapStateToProps(state: StoreState): Props {
 
 function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
     return {
-        updateProfile: (profileData: ProfileData, userName:UserName) => {
-            return dispatch(updateProfile(profileData, userName) as any);
+        updateProfile: (profileUserdata: ProfileUserdata) => {
+            return dispatch(updateProfile(profileUserdata) as any);
         }
     };
 };

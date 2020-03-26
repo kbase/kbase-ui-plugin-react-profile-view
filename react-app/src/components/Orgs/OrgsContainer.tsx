@@ -2,25 +2,26 @@ import { connect } from 'react-redux';
 
 import { StoreState, OrgList, OrgFetchError } from '../../redux/interfaces';
 import WhichComponent from './WhichComponent';
-import { orgFetchStatuses } from '../../redux/fetchStatuses';
+import { AsyncFetchStatus } from '../../redux/fetchStatuses';
 
 function mapStateToProps(state: StoreState) {
     switch (state.orgState.orgFetchStatus) {
-        case orgFetchStatuses.NONE:
-        case orgFetchStatuses.FETCHING:
+        case AsyncFetchStatus.NONE:
+        case AsyncFetchStatus.FETCHING:
             return {
                 orgFetchStatus: state.orgState.orgFetchStatus
             };
 
-        case orgFetchStatuses.ERROR:
-            let orgError = state.orgState as OrgFetchError
+        case AsyncFetchStatus.ERROR:
+            let orgError = state.orgState as OrgFetchError;
             return {
                 errorMessages: orgError.orgError,
                 orgFetchStatus: state.orgState.orgFetchStatus,
             };
 
-        case orgFetchStatuses.SUCCESS:
-            let orgList = state.orgState as OrgList
+        // case AsyncFetchStatus.REFETCHING:
+        case AsyncFetchStatus.SUCCESS:
+            let orgList = state.orgState as OrgList;
             return {
                 orgList: orgList.orgList,
                 orgFetchStatus: state.orgState.orgFetchStatus

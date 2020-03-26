@@ -19,8 +19,7 @@ export default function ErrorMessage(props: Props) {
     return (
         <div style={{ textAlign: 'center' }}>
             <h2>Something went wrong...</h2>
-            <h3>Error Status Code:<span style={{ color: 'red' }}> {messageArray[0]}</span></h3>
-            <h3>Error Message:<span style={{ color: 'red' }}>  {messageArray[1]}</span></h3>
+            <h3>Error Message:<span style={{ color: 'red' }}>  {messageArray[0]}</span></h3>
             <img src={flapjack} alt='confused flapjack octopus' />
             <p></p>
             <h3>Please contact KBase via  <a href='http://kbase.us/contact-us/' target='_blank' rel="noopener noreferrer">Help Board</a>.</h3>

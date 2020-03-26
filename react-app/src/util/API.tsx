@@ -1,4 +1,4 @@
-import { ProfileData, UserName } from '../redux/interfaces';
+import { ProfileUserdata, UserName } from '../redux/interfaces';
 
 export async function getBFFServiceUrl(token: string, url: string) {
     // TODO: for dev, the baseUrl will be whatever works for the CRA workflow, which is ''.
@@ -45,18 +45,16 @@ export async function fetchProfileAPI(id: string, token: string, baseURL: string
     const response = await fetch(url, {
         method: 'GET'
     });
-    if (response.status !== 200) {
-        console.warn(response.status, response);
-        return [response.status, response.statusText];
-    } else {
+    if (response.status === 200) {
         try {
-            const profile = await response.json();
-            return profile;
+            return await response.json();
         } catch (err) {
-            console.error('profile fetch failed', response);
-            return [response.status, response.statusText];
+            console.error('profile fetch failed', err);
+            throw new Error(`Error parsing profile response to json: ${err.message}`);
         };
-    };
+    } else {
+        throw new Error(`Error fetching user profile: ${response.statusText}`);
+    }
 };
 
 /**
@@ -67,8 +65,13 @@ export async function fetchProfileAPI(id: string, token: string, baseURL: string
  * @param userdata 
  * @param user
  */
-export async function updateProfileAPI(token: string, url: string, userdata: ProfileData, user: UserName) {
-    let newParam = [{ profile: { user: { realname: user.name, username: user.userID }, profile: { userdata: userdata } } }];
+export async function updateProfileAPI(token: string, url: string, userdata: ProfileUserdata, user: UserName) {
+    const newParam = [{
+        profile: {
+            user: { realname: user.name, username: user.userID },
+            profile: { userdata }
+        }
+    }];
     const body = {
         version: '1.1',
         method: 'UserProfile.update_user_profile',
@@ -128,9 +131,9 @@ export async function fetchNarrativesAPI(param: string, token: string, baseURL: 
  * @param id id of the profile
  * @param token kbase session cookie
  */
-export async function fetchOrgsOfProfileAPI(id: string, token: string, baseURL: string) {
+export async function fetchOrgsOfProfileAPI(username: string, token: string, baseURL: string) {
     const bffServiceUrl = await getBFFServiceUrl(token, baseURL);
-    const url = bffServiceUrl + '/org_list/' + id;
+    const url = bffServiceUrl + '/org_list/' + username;
     const response = await fetch(url, {
         method: 'GET',
         headers: {

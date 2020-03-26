@@ -5,20 +5,25 @@
  */
 
 
-export const researchInterestsList = [
+export interface ListItem {
+    value: string;
+    label: string;
+}
+
+export const researchInterestsList: Array<ListItem> = [
     { "value": "Genome Annotation", "label": "Genome Annotation" },
-    { "value": "Genome Assembly", "label": "Genome Assembly" }, 
-    { "value": "Microbial Communities", "label": "Microbial Communities" }, 
-    { "value": "Comparative Genomics", "label": "Comparative Genomics" }, 
-    { "value": "Expression", "label": "Expression" }, 
+    { "value": "Genome Assembly", "label": "Genome Assembly" },
+    { "value": "Microbial Communities", "label": "Microbial Communities" },
+    { "value": "Comparative Genomics", "label": "Comparative Genomics" },
+    { "value": "Expression", "label": "Expression" },
     { "value": "Metabolic Modeling", "label": "Metabolic Modeling" },
     { "value": "Read Processing", "label": "Read Processing" },
     { "value": "Sequence Analysis", "label": "Sequence Analysis" },
     { "value": "Utilities", "label": "Utilities" },
     { "value": "Other", "label": "Other" }
-]
+];
 
-export const jobTitles = [
+export const jobTitles: Array<ListItem> = [
     { "value": "CEO", "label": "CEO" },
     { "value": "CSO", "label": "CSO" },
     { "value": "Scientific Director", "label": "Scientific Director" },
@@ -34,5 +39,5 @@ export const jobTitles = [
     { "value": "Professor", "label": "Professor" },
     { "value": "Physician", "label": "Physician" },
     { "value": "Other", "label": "Other" }
-]
+];
 

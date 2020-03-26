@@ -1,11 +1,11 @@
 import { StoreState, loadProfileAction } from "../interfaces";
-import { profileActionTypes } from "../actions/actionTypes";
-import { profileFetchStatuses } from '../fetchStatuses';
+import { ActionTypes } from "../actions/actionTypes";
+import { AsyncFetchStatus } from '../fetchStatuses';
 
 export default function profileReducer(state: StoreState, action: loadProfileAction): StoreState {
     const payload = action.payload;
     switch (action.type) {
-        case profileActionTypes.FETCH_PROFILE_SUCCESS:
+        case ActionTypes.FETCH_PROFILE_SUCCESS:
             return (
                 {
                     ...state,
@@ -13,22 +13,34 @@ export default function profileReducer(state: StoreState, action: loadProfileAct
                 }
             );
 
-        case profileActionTypes.FETCH_PROFILE_ERROR:
+        case ActionTypes.FETCH_PROFILE_ERROR:
             return {
                 ...state,
                 profileView: payload
             };
 
-        case profileActionTypes.FETCH_PROFILE:
+        case ActionTypes.FETCH_PROFILE:
             return {
                 ...state,
-                profileView: { profileFetchStatus: profileFetchStatuses.FETCHING }
+                profileView: { profileFetchStatus: AsyncFetchStatus.FETCHING }
             };
 
-        case profileActionTypes.FETCH_PROFILE_NONE:
+        case ActionTypes.FETCH_PROFILE_REFETCHING:
+            if (state.profileView.profileFetchStatus !== AsyncFetchStatus.SUCCESS) {
+                return state;
+            }
             return {
                 ...state,
-                profileView: { profileFetchStatus: profileFetchStatuses.NONE }
+                profileView: {
+                    ...state.profileView,
+                    profileFetchStatus: AsyncFetchStatus.REFETCHING
+                }
+            };
+
+        case ActionTypes.FETCH_PROFILE_NONE:
+            return {
+                ...state,
+                profileView: { profileFetchStatus: AsyncFetchStatus.NONE }
             };
 
         default:

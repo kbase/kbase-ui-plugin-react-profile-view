@@ -4,5 +4,6 @@
     "prettier.printWidth": 120,
     "prettier.singleQuote": true,
     "prettier.tabWidth": 4,
-    "editor.detectIndentation": false
+    "editor.detectIndentation": false,
+    "editor.formatOnSave": true
 }
