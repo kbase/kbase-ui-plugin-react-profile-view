@@ -6,13 +6,6 @@ import { loadOrgs, fetchOrgs, fetchErrorOrgs } from './actionCreators';
 import { AsyncFetchStatus } from '../fetchStatuses';
 import { ActionTypes } from './actionTypes';
 
-
-// export interface OrgAction {
-//     type: string;
-//     payload: OrgList | OrgFetchStatus | OrgFetchError;
-// };
-
-
 export interface OrgActionNone {
     type: ActionTypes.FETCH_ORGS_NONE;
 }
@@ -76,7 +69,7 @@ export function getOrgs(username: string) {
                     let anyFoo: any = response;
                     let res = anyFoo as Array<Org>;
                     res.forEach((org) => {
-                        orgArr.push({ name: org.name, url: rootStore.app.config.services.ServiceWizard.url + '/#org/' + org.id });
+                        orgArr.push({ name: org.name, url: '/#org/' + org.id });
                     });
                     dispatch(loadOrgs({ orgList: orgArr, orgFetchStatus: AsyncFetchStatus.SUCCESS }));
                 } else {

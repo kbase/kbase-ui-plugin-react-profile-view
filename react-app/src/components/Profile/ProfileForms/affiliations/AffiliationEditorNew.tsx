@@ -23,12 +23,7 @@ export default class AffiliationEditorNew extends React.Component<Props, State> 
     save(affiliation: Affiliation) {
         this.props.save(affiliation);
     }
-    // canSave(isSavable: boolean) {
-    //     // console.log('can save?', isSavable);
-    //     this.setState({
-    //         canSave: isSavable
-    //     });
-    // }
+
     render() {
         const affiliation: Affiliation = {
             title: '',

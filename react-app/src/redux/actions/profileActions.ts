@@ -163,7 +163,6 @@ export function getProfile(username: string) {
 
             try {
                 const response: UserProfileService = fixProfile(await fetchProfileAPI(username, token, url));
-                console.log('Fixed PROFILE', response);
                 let profileEdit: boolean;
                 if (response.user.username !== rootStore.auth.userAuthorization.username) {
                     dispatch(sendTitle('User Profile for ' + response.user.realname));
