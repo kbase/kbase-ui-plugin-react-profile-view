@@ -21,6 +21,7 @@ module.exports = {
             plugin: CracoAntDesignPlugin,
             options: {
                 customizeThemeLessPath: path.join(__dirname, 'node_modules/@kbase/ui-components/lib/custom/antd/theme.less')
+                // customizeThemeLessPath: path.join(__dirname, 'src/style/antd/theme.less')
             }
         }
     ],
