@@ -891,7 +891,6 @@ class Profile extends React.Component<Props, State> {
         if (this.state.isEditing) {
             // button = <Button icon="eye" onClick={this.toggleEditing.bind(this)}>View</Button>;
             button = <Button icon="close" type="danger" onClick={this.toggleEditing.bind(this)}>Close Editor</Button>;
-            const tooltip = ' changes to a field will be saved as soon as you move away from it or press the Enter/Return key.';
             bannerText = <span>
                 Closing the editor returns your profile to display mode.
             </span>;

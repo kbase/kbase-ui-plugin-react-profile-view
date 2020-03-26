@@ -1,4 +1,52 @@
+/**
+* Primary antd colors. 
+* Blue, green, gold are derived from the kbase logo colors.
+*/
+@blue-kbase: rgb(22, 99, 186);
+@green-kbase: rgb(45, 135, 48);
+@gold-kbase: rgb(251, 116, 7);
+@red-kbase: rgb(163, 36, 36);
+@font-size-base-kbase: 16px;
+@font-family-kbase: 'Oxygen';
+
 // antd theme customization
-@primary-color: #1da57a;
-@link-color: #1da57a;
-@font-size-base: 16px;
+@primary-color: @blue-kbase;
+// @primary-color: @debug-kbase;
+
+
+@info-color: @blue-kbase;
+@success-color: @green-kbase;
+@processing-color: @blue-kbase;
+@error-color: @red-kbase;
+@highlight-color: @red-kbase;
+@warning-color: @gold-kbase;
+@normal-color: #d9d9d9;
+
+
+/**
+* Use KBase fonts. 
+* Note: Currently the kbase ui uses oxygen for most text, and roboto for
+* headlines.
+*/
+@font-family: @font-family-kbase;
+@code-family: monospace;
+
+@text-color: fade(@black, 70%);
+@text-color-secondary: fade(@black, 50%);
+@text-color-warning: @gold-7;
+@text-color-danger: @red-7;
+@text-color-inverse: @white;
+
+
+@font-size-base: @font-size-base-kbase;
+@font-size-lg: @font-size-base + 2px;
+@font-size-sm: 12px;
+@heading-1-size: ceil(@font-size-base * 2.71);
+@heading-2-size: ceil(@font-size-base * 2.14);
+@heading-3-size: ceil(@font-size-base * 1.71);
+@heading-4-size: ceil(@font-size-base * 1.42);
+
+
+// Layout
+@layout-body-background: #f0f2f5;
+@layout-header-background: #001529;
