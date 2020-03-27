@@ -13,6 +13,7 @@
         "@types/react": "*",
         "@types/react-dom": "*",
         "@types/react-redux": "*",
+        "@types/marked": "*",
         "antd": "3.26.14",
         "craco-antd": "1.14.1",
         "enzyme": "3.11.0",
@@ -23,7 +24,8 @@
         "react-scripts": "3.4.1",
         "react-test-renderer": "16.13.1",
         "redux": "4.0.5",
-        "typescript": "3.8.3"
+        "typescript": "3.8.3",
+        "marked": "0.8.2"
     },
     "scripts": {
         "start": "nodemon -w ./craco.config.js -w ./node_modules/@kbase/ui-lib/lib/custom/antd/theme.less --exec \"craco start\"",

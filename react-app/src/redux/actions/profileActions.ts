@@ -111,8 +111,9 @@ function fixProfile(possibleProfile: JSONValue): UserProfileService {
                     } else {
                         const ended = parseInt(possibleEnded);
                         if (isNaN(ended)) {
-                            console.error('Invalid ended year in profile', affiliation);
-                            return null;
+                            affiliation['ended'] = null;
+                            // console.error('Invalid ended year in profile', affiliation);
+                            // return null;
                             // throw new Error('affiliation "ended" is not a number or compatible string');
                         } else {
                             affiliation['ended'] = ended;

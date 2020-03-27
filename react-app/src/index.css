@@ -86,3 +86,42 @@
     background-color: white;
     cursor: pointer;
 }
+
+
+.ButtonBar {
+    display: flex;
+    flex-direction: row;
+}
+
+.ButtonBar-button {
+    flex: 0 0 auto;
+}
+
+.ButtonBar-text {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-left: 10px;
+}
+
+.LayoutTable {
+    width: 100%;
+}
+
+.LayoutTable th,
+.LayoutTable td {
+    text-align: left;
+    padding: 4px;
+    vertical-align: top;
+}
+
+.LayoutTable th {
+    color: rgba(0, 0, 0, 0.3);
+}
+
+.PrettyList {
+    list-style: none;
+}
+
+.PrettyList li {}

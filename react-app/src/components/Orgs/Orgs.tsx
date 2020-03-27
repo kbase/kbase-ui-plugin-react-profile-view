@@ -22,15 +22,21 @@ function Orgs(props: Props) {
         );
     } else {
         return (
-            <ul style={{ textAlign: 'left' }}>
-                {orgList.map((org, index) => (
-                    <li key={index}>
-                        <a href={org.url} target="_blank" rel="noopener noreferrer">
-                            {org.name}
-                        </a>
-                    </li>
-                ))}
-            </ul>
+            <table className="LayoutTable">
+                <tbody>
+                    {orgList.map((org, index) => {
+                        const logo = org.logoURL ?
+                            <img src={org.logoURL} style={{ height: '30px' }} alt={`Logo for org ${org.name}`} /> : undefined;
+
+                        return <tr key={index}>
+                            <td>{logo}</td>
+                            <td>
+                                <a href={org.url} target="_blank" rel="noopener noreferrer">{org.name}</a>
+                            </td>
+                        </tr>;
+                    })}
+                </tbody>
+            </table>
         );
     };
 };
