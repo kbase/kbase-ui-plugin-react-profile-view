@@ -86,6 +86,9 @@ export default class AffiliationsForm extends React.Component<Props, State> {
     doSaveAffiliation(affiliation: Affiliation, index: number) {
         const affiliations = this.state.affiliations;
         affiliations[index] = affiliation;
+        affiliations.sort((a, b) => {
+            return (a.started - b.started);
+        });
         // TODO: Ugh. Everywhere that this is practiced needs to be refactored.
         // very dangerous in general, but for personal user profiles the concurrency is 
         // essentially 1, but still...

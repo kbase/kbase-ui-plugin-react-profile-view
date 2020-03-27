@@ -134,7 +134,9 @@ class TextAreaForm extends React.Component<Props, State> {
 
     render() {
         return (
-            <Form.Item hasFeedback help={this.state.helpText} validateStatus={this.state.validateStatus}>
+            <Form.Item
+                help={this.state.helpText}
+                validateStatus={this.state.validateStatus}>
                 <TextArea
                     autoSize
                     hidden={this.props.hidden}

@@ -69,6 +69,7 @@ export interface OrgFetchStatus {
 export interface OrgProp {
     name: string;
     url: string;
+    logoURL?: string;
 };
 
 // fetchOrgsOfProfile returns a full group info,
@@ -76,6 +77,14 @@ export interface OrgProp {
 export interface Org {
     name: string;
     id: string;
+    custom: {
+        description: string;
+        homeurl: string;
+        logourl: string;
+        relatedgroups: string;
+        researchinterests: string;
+    };
+    // TODO: rest of the fields!!
 };
 
 
@@ -139,7 +148,7 @@ export interface ProfileView {
 };
 
 export interface ProfileUserdata {
-    organization: string;
+    organization: string | null;
     department: string;
     city: string;
     state: string;

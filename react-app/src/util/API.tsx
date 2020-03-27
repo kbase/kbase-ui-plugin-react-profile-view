@@ -126,6 +126,40 @@ export async function fetchNarrativesAPI(param: string, token: string, baseURL: 
     };
 };
 
+export interface CustomFields {
+    [k: string]: string;
+}
+// export interface GroupResourcesCount {
+//     [k:string]: string
+// }
+// export interface GroupResources {
+//     [k:string]: string
+// }
+export interface GroupsUser {
+    name: string;
+    joined: number;
+    lastvisit: number;
+    custom: CustomFields;
+}
+export interface Group {
+    id: string;
+    private: boolean;
+    privatemembers: boolean;
+    role: string;
+    lastvisit: number;
+    name: string;
+    owner: GroupsUser,
+    admins: Array<GroupsUser>,
+    members: Array<GroupsUser>,
+    memcount: number;
+    createdate: number;
+    moddate: number;
+    // resources: GroupResources,
+    // rescount: GroupResourcesCount,
+    custom: CustomFields;
+}
+
+
 /**
  * returns list of orgs that profile and logged in user are both associated with.
  * @param id id of the profile
@@ -141,17 +175,79 @@ export async function fetchOrgsOfProfileAPI(username: string, token: string, bas
         }
     });
     if (response.status !== 200) {
-        console.error('Org Fetch Error:', response);
-        return [response.status, response.statusText];
-    };
+        console.error('fetch org failed', response);
+        throw new Error(`Error fetching groups: ${response.statusText}`);
+    }
     try {
-        const orgs = await response.json();
-        return orgs;
+        return await (response.json() as unknown) as Array<Group>;
     } catch (err) {
         console.error('fetch org failed', response);
-        return [response.status, response.statusText];
+        throw new Error(`Error fetching groups: ${err.message}`);
     };
 };
+
+// export async function fetchOrgsOfProfileAPI(username: string, token: string, baseURL: string) {
+//     const bffServiceUrl = await getBFFServiceUrl(token, baseURL);
+//     const url = bffServiceUrl + '/org_list/' + username;
+//     const response = await fetch(url, {
+//         method: 'GET',
+//         headers: {
+//             Authorization: token
+//         }
+//     });
+//     if (response.status !== 200) {
+//         console.error('Org Fetch Error:', response);
+//         return [response.status, response.statusText];
+//     };
+//     try {
+//         const orgs = await response.json();
+//         return orgs;
+//     } catch (err) {
+//         console.error('fetch org failed', response);
+//         return [response.status, response.statusText];
+//     };
+// };
+
+// export interface OrganizationBriefInfo {
+//     owner: string;
+//     rescount: {
+//         workspace: number;
+//     };
+//     moddate: number;
+//     private: boolean;
+//     role: string;
+//     memcount: number;
+//     custom: {
+//         homeurl: string;
+//         relatedgroups: string;
+//         logourl: string;
+//         researchinterests: string;
+//     };
+//     name: string;
+//     createdate: number;
+//     lastvisit: number;
+//     id: string;
+// }
+
+// export async function fetchOrgsOfProfileAPI(username: string, token: string, groupsURL: string): Promise<Array<OrganizationBriefInfo>> {
+//     const url = `${groupsURL}/group?role=Member`;
+//     const response = await fetch(url, {
+//         method: 'GET',
+//         headers: {
+//             Authorization: token
+//         }
+//     });
+//     if (response.status !== 200) {
+//         console.error('fetch org failed', response);
+//         throw new Error(`Error fetching groups: ${response.statusText}`);
+//     }
+//     try {
+//         return await response.json() as Array<OrganizationBriefInfo>;
+//     } catch (err) {
+//         console.error('fetch org failed', response);
+//         throw new Error(`Error fetching groups: ${err.message}`);
+//     };
+// };
 
 /**
  * returns list of users that are filtered by search values

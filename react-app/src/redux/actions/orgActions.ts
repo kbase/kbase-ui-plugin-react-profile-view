@@ -1,5 +1,5 @@
 import { ThunkDispatch } from 'redux-thunk';
-import { StoreState, OrgProp, Org, OrgList, OrgFetchError } from '../interfaces';
+import { StoreState, OrgList, OrgFetchError } from '../interfaces';
 import { AnyAction } from 'redux';
 import { fetchOrgsOfProfileAPI } from '../../util/API';
 import { loadOrgs, fetchOrgs, fetchErrorOrgs } from './actionCreators';
@@ -35,12 +35,59 @@ export type OrgAction = OrgActionNone | OrgActionFetching | OrgActionSuccess | O
  * 
  * @param userID 
  */
+// export function getOrgs(username: string) {
+//     // add dispatch to let the app know fetch is started so spinner can be loaded 
+//     return async function (dispatch: ThunkDispatch<StoreState, void, AnyAction>, getState: () => StoreState) {
+//         dispatch(fetchOrgs());
+//         const rootStore = getState();
+//         let orgArr: Array<OrgProp> = [];
+//         if (rootStore.auth.userAuthorization !== null) {
+//             const {
+//                 auth: {
+//                     userAuthorization: {
+//                         token
+//                     }
+//                 },
+//                 app: {
+//                     config: {
+//                         services: {
+//                             ServiceWizard: {
+//                                 url
+//                             }
+//                         }
+//                     }
+//                 }
+//             } = rootStore;
+
+//             let response = await fetchOrgsOfProfileAPI(username, token, url);
+//             if (typeof response !== 'undefined') {
+//                 if (typeof response[0] === 'number') {
+//                     // response is error message array 
+//                     dispatch(fetchErrorOrgs({ orgError: response, orgFetchStatus: AsyncFetchStatus.ERROR }));
+//                 } else if (typeof response[0] === 'object') {
+//                     // typescript!
+//                     let anyFoo: any = response;
+//                     let res = anyFoo as Array<Org>;
+//                     res.forEach((org) => {
+//                         orgArr.push({ name: org.name, url: '/#org/' + org.id, logoURL: org.custom.logourl });
+//                     });
+//                     dispatch(loadOrgs({ orgList: orgArr, orgFetchStatus: AsyncFetchStatus.SUCCESS }));
+//                 } else {
+//                     // empty array is returned
+//                     dispatch(loadOrgs({ orgList: response, orgFetchStatus: AsyncFetchStatus.SUCCESS }));
+//                 };
+//             } else {
+//                 dispatch(fetchErrorOrgs({ orgError: [418, 'Please check console errors.'], orgFetchStatus: AsyncFetchStatus.ERROR }));
+//             };
+//         };
+//     };
+// };
+
 export function getOrgs(username: string) {
     // add dispatch to let the app know fetch is started so spinner can be loaded 
     return async function (dispatch: ThunkDispatch<StoreState, void, AnyAction>, getState: () => StoreState) {
         dispatch(fetchOrgs());
         const rootStore = getState();
-        let orgArr: Array<OrgProp> = [];
         if (rootStore.auth.userAuthorization !== null) {
             const {
                 auth: {
@@ -52,33 +99,64 @@ export function getOrgs(username: string) {
                     config: {
                         services: {
                             ServiceWizard: {
-                                url
+                                url: serviceWizardURL
                             }
                         }
                     }
                 }
             } = rootStore;
 
-            let response = await fetchOrgsOfProfileAPI(username, token, url);
-            if (typeof response !== 'undefined') {
-                if (typeof response[0] === 'number') {
-                    // response is error message array 
-                    dispatch(fetchErrorOrgs({ orgError: response, orgFetchStatus: AsyncFetchStatus.ERROR }));
-                } else if (typeof response[0] === 'object') {
-                    // typescript!
-                    let anyFoo: any = response;
-                    let res = anyFoo as Array<Org>;
-                    res.forEach((org) => {
-                        orgArr.push({ name: org.name, url: '/#org/' + org.id });
+            try {
+                const response = await fetchOrgsOfProfileAPI(username, token, serviceWizardURL);
+                const orgs = response
+                    .map((org) => {
+                        return {
+                            name: org.name,
+                            url: '/#org/' + org.id,
+                            logoURL: org.custom.logourl
+                        };
                     });
-                    dispatch(loadOrgs({ orgList: orgArr, orgFetchStatus: AsyncFetchStatus.SUCCESS }));
-                } else {
-                    // empty array is returned
-                    dispatch(loadOrgs({ orgList: response, orgFetchStatus: AsyncFetchStatus.SUCCESS }));
-                };
-            } else {
-                dispatch(fetchErrorOrgs({ orgError: [418, 'Please check console errors.'], orgFetchStatus: AsyncFetchStatus.ERROR }));
-            };
+                dispatch(loadOrgs({ orgList: orgs, orgFetchStatus: AsyncFetchStatus.SUCCESS }));
+            } catch (ex) {
+                dispatch(fetchErrorOrgs({ orgError: ex.message, orgFetchStatus: AsyncFetchStatus.ERROR }));
+            }
+
+            // try {
+            //     const response = await fetchOrgsOfProfileAPI(username, token, groupsURL);
+            //     const orgs = response
+            //         .map((org) => {
+            //             return {
+            //                 name: org.name,
+            //                 url: '/#org/' + org.id,
+            //                 logoURL: org.custom.logourl
+            //             };
+            //         });
+            //     dispatch(loadOrgs({ orgList: orgs, orgFetchStatus: AsyncFetchStatus.SUCCESS }));
+            // } catch (ex) {
+            //     dispatch(fetchErrorOrgs({ orgError: ex.message, orgFetchStatus: AsyncFetchStatus.ERROR }));
+            // }
+
+
+
+            // if (typeof response !== 'undefined') {
+            //     if (typeof response[0] === 'number') {
+            //         // response is error message array 
+            //         dispatch(fetchErrorOrgs({ orgError: response, orgFetchStatus: AsyncFetchStatus.ERROR }));
+            //     } else if (typeof response[0] === 'object') {
+            //         // typescript!
+            //         let anyFoo: any = response;
+            //         let res = anyFoo as Array<Org>;
+            //         res.forEach((org) => {
+            //             orgArr.push({ name: org.name, url: '/#org/' + org.id, logoURL: org.custom.logourl });
+            //         });
+            //         dispatch(loadOrgs({ orgList: orgArr, orgFetchStatus: AsyncFetchStatus.SUCCESS }));
+            //     } else {
+            //         // empty array is returned
+            //         dispatch(loadOrgs({ orgList: response, orgFetchStatus: AsyncFetchStatus.SUCCESS }));
+            //     };
+            // } else {
+            //     dispatch(fetchErrorOrgs({ orgError: [418, 'Please check console errors.'], orgFetchStatus: AsyncFetchStatus.ERROR }));
+            // };
         };
     };
 };

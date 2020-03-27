@@ -1,11 +1,9 @@
 import React, { CSSProperties } from 'react';
 import {
-    Row, Col, Input, Tooltip, Form, Checkbox,
+    Row, Col, Card, Input, Tooltip, Form, Checkbox,
     Modal, Select, Button, Empty, message
 } from 'antd';
 import { UserName, ProfileUserdata, Affiliation } from '../../redux/interfaces';
-import marked from 'marked';
-
 import nouserpic from '../../assets/nouserpic.png';
 import OrgsContainer from '../Orgs/OrgsContainer';
 import InputForm2 from './ProfileForms/InputForm2';
@@ -25,6 +23,7 @@ import { SelectValue } from 'antd/lib/select';
 import './Profile.css';
 import Area from '../Area';
 
+const { Meta } = Card;
 const { Option } = Select;
 
 enum ModalName {
@@ -129,8 +128,7 @@ class Profile extends React.Component<Props, State> {
             postalCode: profile.postalCode,
             state: profile.state,
             gravatarDefault: profile.gravatarDefault,
-            avatarOption: profile.avatarOption,
-            fundingSource: profile.fundingSource
+            avatarOption: profile.avatarOption
         });
         if (Array.isArray(profile.researchInterests)) {
             this.setState({ researchInterestsValue: profile.researchInterests });
@@ -203,66 +201,70 @@ class Profile extends React.Component<Props, State> {
 
     renderUserNutshellEditor() {
         return (
-            <Form layout="vertical">
+            <Card
+                style={{ margin: '8px 0px', textAlign: 'left' }}
+                title={this.props.userName.userID ? this.props.userName.userID : ''}
+            >
+                <Form layout="vertical">
 
-                <Form.Item
-                    label="Position">
-                    <Select
-                        placeholder='Job title'
-                        allowClear
-                        disabled={!this.props.editEnable}
-                        style={{ width: '100%', marginTop: '10px' }}
-                        defaultValue={this.props.profileUserdata.jobTitle}
-                        onChange={this.jobTitleOnChange.bind(this)}
-                    >
-                        {jobTitles.map((item) => {
-                            return <Option key={item.label} value={item.value}>{item.label}</Option>;
-                        })}
-                    </Select>
-                </Form.Item>
+                    <Form.Item
+                        label="Position">
+                        <Select
+                            placeholder='Job title'
+                            allowClear
+                            disabled={!this.props.editEnable}
+                            style={{ width: '100%', marginTop: '10px' }}
+                            defaultValue={this.props.profileUserdata.jobTitle}
+                            onChange={this.jobTitleOnChange.bind(this)}
+                        >
+                            {jobTitles.map((item) => {
+                                return <Option key={item.label} value={item.value}>{item.label}</Option>;
+                            })}
+                        </Select>
+                    </Form.Item>
 
 
-                <InputForm2
-                    hidden={this.state.jobTitle === 'Other' ? false : true}
-                    type={'string'}
-                    required={this.state.jobTitle === 'Other'}
-                    userName={this.props.userName}
-                    updateStoreState={this.saveProfile.bind(this)} // updates StoreState
-                    data={this.props.profileUserdata}
-                    stateProperty={'jobTitleOther'}
-                    placeHolder='Job Title'
-                    label='Position (Other)'
-                    defaultValue={this.props.profileUserdata.jobTitleOther}
-                    readOnly={!this.props.editEnable}
-                    maxLength={50}
-                    onBlur={true}
-                    onPressEnter={true}
-                />
-
-                <Tooltip title='must be more than 2 and less than 50 characters'>
                     <InputForm2
-                        hidden={false}
+                        hidden={this.state.jobTitle === 'Other' ? false : true}
                         type={'string'}
+                        required={this.state.jobTitle === 'Other'}
                         userName={this.props.userName}
                         updateStoreState={this.saveProfile.bind(this)} // updates StoreState
                         data={this.props.profileUserdata}
-                        stateProperty={'department'}
-                        label='Department'
-                        placeHolder='Department'
-                        defaultValue={this.props.profileUserdata.department}
-                        readOnly={!this.state.isEditing}
+                        stateProperty={'jobTitleOther'}
+                        placeHolder='Job Title'
+                        label='Position (Other)'
+                        defaultValue={this.props.profileUserdata.jobTitleOther}
+                        readOnly={!this.props.editEnable}
                         maxLength={50}
                         onBlur={true}
                         onPressEnter={true}
                     />
-                </Tooltip>
 
-                <OrganizationField
-                    required={false}
-                    defaultValue={this.props.profileUserdata.organization}
-                    commit={this.organizationOnCommit.bind(this)} />
+                    <Tooltip title='must be more than 2 and less than 50 characters'>
+                        <InputForm2
+                            hidden={false}
+                            type={'string'}
+                            userName={this.props.userName}
+                            updateStoreState={this.saveProfile.bind(this)} // updates StoreState
+                            data={this.props.profileUserdata}
+                            stateProperty={'department'}
+                            label='Department'
+                            placeHolder='Department'
+                            defaultValue={this.props.profileUserdata.department}
+                            readOnly={!this.state.isEditing}
+                            maxLength={50}
+                            onBlur={true}
+                            onPressEnter={true}
+                        />
+                    </Tooltip>
 
-                {/* 
+                    <OrganizationField
+                        required={false}
+                        defaultValue={this.props.profileUserdata.organization}
+                        commit={this.organizationOnCommit.bind(this)} />
+
+                    {/* 
                   
                     <Form.Item
                         // required={true}
@@ -292,139 +294,140 @@ class Profile extends React.Component<Props, State> {
                     </Form.Item>
                 */}
 
-                <div style={{ fontWeight: 'bold', color: 'rgba(0,0,0,0.3)' }}>location</div>
+                    <Meta title='Location' style={{ marginBottom: '10px' }} />
 
-                {/* Country */}
-                <Form.Item
-                    label='Country' >
-                    <Select
-                        showSearch
-                        allowClear
-                        style={{ width: '100%' }}
-                        disabled={!this.state.isEditing}
-                        placeholder='Country'
-                        onChange={this.onChangeCountry.bind(this)}
-                        onSelect={this.countryOnSelect.bind(this)}
-                        filterOption={(inputValue, option) => {
-                            if (typeof option.props.children === 'string') {
-                                let item = option.props.children;
-                                return item.toLowerCase().indexOf(inputValue.toLowerCase()) >= 0;
-                            } else {
-                                return false;
-                            }
-                        }}
+                    {/* Country */}
+                    <Form.Item
+                        label='Country' >
+                        <Select
+                            showSearch
+                            allowClear
+                            style={{ width: '100%' }}
+                            disabled={!this.state.isEditing}
+                            placeholder='Country'
+                            onChange={this.onChangeCountry.bind(this)}
+                            onSelect={this.countryOnSelect.bind(this)}
+                            filterOption={(inputValue, option) => {
+                                if (typeof option.props.children === 'string') {
+                                    let item = option.props.children;
+                                    return item.toLowerCase().indexOf(inputValue.toLowerCase()) >= 0;
+                                } else {
+                                    return false;
+                                }
+                            }}
 
-                        defaultValue={this.props.profileUserdata.country}
-                    >
-                        {Array.from(countryCodes).map((item => {
-                            return (
-                                <Option key={item[1]} value={item[0]}>
-                                    {item[0]}
-                                </Option>
-                            );
-                        }))}
-                    </Select>
-                </Form.Item>
+                            defaultValue={this.props.profileUserdata.country}
+                        >
+                            {Array.from(countryCodes).map((item => {
+                                return (
+                                    <Option key={item[1]} value={item[0]}>
+                                        {item[0]}
+                                    </Option>
+                                );
+                            }))}
+                        </Select>
+                    </Form.Item>
 
-                {/* State - only displayed if US is chosen for country */}
-                <Form.Item
-                    style={this.USStateVisibility()}
-                    label='State'>
-                    <Select
-                        dropdownMatchSelectWidth
-                        allowClear
-                        mode='default'
-                        disabled={!this.state.isEditing}
-                        placeholder='State'
-                        showArrow
-                        onChange={this.stateOnSelect.bind(this)}
-                        onSelect={this.stateOnSelect.bind(this)}
-                        optionFilterProp='children'
-                        filterOption={(inputValue, option) => {
-                            if (typeof option.props.children === 'string') {
-                                let item = option.props.children;
-                                return item.toLowerCase().indexOf(inputValue.toLowerCase()) >= 0;
-                            } else {
-                                return false;
-                            }
-                        }}
-                        defaultValue={this.props.profileUserdata.state} >
-                        {states.map((item, index) => {
-                            return <Option key={index} value={item}>{item}</Option>;
-                        })}
-                    </Select>
-                </Form.Item>
+                    {/* State - only displayed if US is chosen for country */}
+                    <Form.Item
+                        style={this.USStateVisibility()}
+                        label='State'>
+                        <Select
+                            dropdownMatchSelectWidth
+                            allowClear
+                            mode='default'
+                            disabled={!this.state.isEditing}
+                            placeholder='State'
+                            showArrow
+                            onChange={this.stateOnSelect.bind(this)}
+                            onSelect={this.stateOnSelect.bind(this)}
+                            optionFilterProp='children'
+                            filterOption={(inputValue, option) => {
+                                if (typeof option.props.children === 'string') {
+                                    let item = option.props.children;
+                                    return item.toLowerCase().indexOf(inputValue.toLowerCase()) >= 0;
+                                } else {
+                                    return false;
+                                }
+                            }}
+                            defaultValue={this.props.profileUserdata.state} >
+                            {states.map((item, index) => {
+                                return <Option key={index} value={item}>{item}</Option>;
+                            })}
+                        </Select>
+                    </Form.Item>
 
-                {/* City */}
-                <InputForm2
-                    hidden={false}
-                    type='string'
-                    userName={this.props.userName}
-                    updateStoreState={this.saveProfile.bind(this)} // updates StoreState
-                    data={this.props.profileUserdata}
-                    stateProperty={'city'}
-                    placeHolder='City'
-                    label="City"
-                    defaultValue={this.props.profileUserdata.city}
-                    readOnly={!this.state.isEditing}
-                    maxLength={85}
-                    minLength={0}
-                    onBlur={true}
-                    onPressEnter={true}
-                />
+                    {/* City */}
+                    <InputForm2
+                        hidden={false}
+                        type='string'
+                        userName={this.props.userName}
+                        updateStoreState={this.saveProfile.bind(this)} // updates StoreState
+                        data={this.props.profileUserdata}
+                        stateProperty={'city'}
+                        placeHolder='City'
+                        label="City"
+                        defaultValue={this.props.profileUserdata.city}
+                        readOnly={!this.state.isEditing}
+                        maxLength={85}
+                        minLength={0}
+                        onBlur={true}
+                        onPressEnter={true}
+                    />
 
-                {/* Postal Code */}
-                <InputForm2
-                    hidden={false}
-                    type={this.props.profileUserdata.postalCode === 'United States' ? 'number' : 'string'}
-                    userName={this.props.userName}
-                    updateStoreState={this.saveProfile.bind(this)} // updates StoreState
-                    data={this.props.profileUserdata}
-                    stateProperty={'postalCode'}
-                    placeHolder='Postal Code'
-                    label="Postal Code"
-                    defaultValue={this.props.profileUserdata.postalCode}
-                    readOnly={!this.state.isEditing}
-                    maxLength={this.props.profileUserdata.country === 'United States' ? 5 : 16}
-                    minLength={this.props.profileUserdata.country === 'United States' ? 5 : 0}
-                    onBlur={true}
-                    onPressEnter={true}
-                />
+                    {/* Postal Code */}
+                    <InputForm2
+                        hidden={false}
+                        type={this.props.profileUserdata.postalCode === 'United States' ? 'number' : 'string'}
+                        userName={this.props.userName}
+                        updateStoreState={this.saveProfile.bind(this)} // updates StoreState
+                        data={this.props.profileUserdata}
+                        stateProperty={'postalCode'}
+                        placeHolder='Postal Code'
+                        label="Postal Code"
+                        defaultValue={this.props.profileUserdata.postalCode}
+                        readOnly={!this.state.isEditing}
+                        maxLength={this.props.profileUserdata.country === 'United States' ? 5 : 16}
+                        minLength={this.props.profileUserdata.country === 'United States' ? 5 : 0}
+                        onBlur={true}
+                        onPressEnter={true}
+                    />
 
-                {/* Primary Funding Source */}
-                <Form.Item label="Primary Funding Source">
-                    <Select
-                        className='margin-top-10px'
-                        allowClear
-                        mode='default'
-                        style={{ width: '100%', marginTop: '10px' }}
-                        showSearch
-                        disabled={!this.state.isEditing}
-                        placeholder='enter 3 or more characters'
-                        showArrow={true}
-                        onChange={this.fundingSourceOnChange.bind(this)}
-                        optionFilterProp='children'
-                        filterOption={(inputValue, option) => {
-                            if (typeof option.props.children === 'string') {
-                                let str = option.props.children;
-                                return str.toLowerCase().indexOf(inputValue.toLowerCase()) >= 0;
-                            } else {
-                                return false;
-                            }
+                    {/* Primary Funding Source */}
+                    <Form.Item label="Primary Funding Source">
+                        <Select
+                            className='margin-top-10px'
+                            allowClear
+                            mode='default'
+                            style={{ width: '100%', marginTop: '10px' }}
+                            showSearch
+                            disabled={!this.state.isEditing}
+                            placeholder='enter 3 or more characters'
+                            showArrow={true}
+                            onChange={this.fundingSourceOnChange.bind(this)}
+                            optionFilterProp='children'
+                            filterOption={(inputValue, option) => {
+                                if (typeof option.props.children === 'string') {
+                                    let str = option.props.children;
+                                    return str.toLowerCase().indexOf(inputValue.toLowerCase()) >= 0;
+                                } else {
+                                    return false;
+                                }
 
-                        }}
-                        defaultValue={this.props.profileUserdata.fundingSource}
-                    >
-                        {fundingSources.map((item) => {
-                            return (
-                                <Option key={item['value']} value={item['value']}>
-                                    {item['value']}
-                                </Option>
-                            );
-                        })}
-                    </Select>
-                </Form.Item>
-            </Form>
+                            }}
+                            defaultValue={this.props.profileUserdata.fundingSource}
+                        >
+                            {fundingSources.map((item) => {
+                                return (
+                                    <Option key={item['value']} value={item['value']}>
+                                        {item['value']}
+                                    </Option>
+                                );
+                            })}
+                        </Select>
+                    </Form.Item>
+                </Form>
+            </Card >
         );
     }
 
@@ -435,34 +438,33 @@ class Profile extends React.Component<Props, State> {
         );
     }
 
-    renderSectionTitle(title: string) {
-        return <div
-            style={{ fontWeight: 'bold', color: 'rgba(0,0,0,0.3)', marginTop: '10px' }}>
-            {title}
-        </div>;
-    }
-
     renderUserNutshellView() {
         const profile = this.state;
-        const jobTitle = profile.jobTitle ? (<div>{this.renderSectionTitle('position')}<div>{profile.jobTitleOther}</div></div>) : null;
-        const department = profile.department ? (<div>{this.renderSectionTitle('department')}<div>{profile.department}</div></div>) : null;
-        const organization = profile.organization ? (<div>{this.renderSectionTitle('organization')}<div>{profile.organization}</div></div>) : null;
+        const jobTitle = profile.jobTitle ? (<div><Meta title="Position" /><p>{profile.jobTitleOther}</p></div>) : null;
+        const department = profile.department ? (<div><Meta title='Department' /><p>{profile.department}</p></div>) : null;
+        const organization = profile.organization ? (<div><Meta title='Organization' /><p>{profile.organization}</p></div>) : null;
         const locationFields = [profile.country, profile.state, profile.city].filter(x => x).join(', ');
-        const location = locationFields ? (<div>{this.renderSectionTitle('location')}<div>{locationFields}</div></div>) : null;
-        const fundingSource = profile.fundingSource ? (<div>{this.renderSectionTitle('primary funding source')}<p>{profile.fundingSource}</p></div>) : null;
+        const location = locationFields ? (<div><Meta title='Location' /><p>{locationFields}</p></div>) : null;
+        const fundingSource = profile.fundingSource ? (<div><Meta title='Primary Funding Source' /><p>{profile.fundingSource}</p></div>) : null;
 
         if (!(jobTitle || department || organization || location || fundingSource)) {
-            return this.renderUserNutshellViewEmpty();
+            return <Card
+                style={{ margin: '8px 0px', textAlign: 'left' }}
+                title={this.props.userName.userID}>
+                {this.renderUserNutshellViewEmpty()}
+            </Card>;
         }
 
         return (
-            <div>
+            <Card
+                style={{ margin: '8px 0px', textAlign: 'left' }}
+                title={this.props.userName.userID}>
                 {jobTitle}
                 {department}
                 {organization}
                 {location}
                 {fundingSource}
-            </div>
+            </Card>
         );
     }
 
@@ -490,23 +492,18 @@ class Profile extends React.Component<Props, State> {
      *  - Return either form or plain text
      */
     renderResearchStatement() {
-        let statement;
+        let statement: JSX.Element;
         if (!this.props.profileUserdata.researchStatement || this.props.profileUserdata.researchStatement === '') {
             statement = <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Research Statement" />;
         } else {
             // const fixed = this.props.profileUserdata.researchStatement.replace(/\n/, '<br />');
-            // statement = <p style={{ whiteSpace: 'pre' }}>{this.props.profileUserdata.researchStatement}</p>;
-            const content = marked(this.props.profileUserdata.researchStatement, {
-                breaks: true
-            });
-            statement = <div dangerouslySetInnerHTML={{ __html: content }} />;
+            statement = <p style={{ whiteSpace: 'pre' }}>{this.props.profileUserdata.researchStatement}</p>;
         }
 
         if (this.state.isEditing) {
             return (
                 <Area
                     title='Research or Personal Statement'
-                    style={{ marginTop: '20px' }}
                 >
                     <Tooltip title='A little bit about yourself and your research'>
                         <TextAreaForm
@@ -530,7 +527,6 @@ class Profile extends React.Component<Props, State> {
             return (
                 <Area
                     title='Research or Personal Statement'
-                    style={{ marginTop: '20px' }}
                 >
                     {statement}
                 </Area>
@@ -547,14 +543,14 @@ class Profile extends React.Component<Props, State> {
 
     renderAffiliationsEditor() {
         return (
-            <Area title='Affiliations' style={{ marginTop: '20px' }}>
+            <Card style={{ margin: '8px 0px' }} title='Affiliations'>
                 <AffiliationsForm
                     userName={this.props.userName}
                     profileUserdata={this.props.profileUserdata}
                     editEnable={this.state.isEditing}
                     affiliations={this.props.profileUserdata.affiliations}
                     updateStoreState={this.saveProfile.bind(this)}
-                /></Area>
+                /></Card>
         );
     }
 
@@ -563,34 +559,29 @@ class Profile extends React.Component<Props, State> {
         // non-empty array
         if (affiliationsArray.length > 0 && affiliationsArray[0]['title'] !== '') {
             return (
-                <Area title='Affiliations' style={{ marginTop: '20px' }}>
-                    <table className="LayoutTable">
-                        <thead>
-                            <tr>
-                                <th style={{ width: "40%" }}>position</th>
-                                <th style={{ width: "40%" }}>organization</th>
-                                <th style={{ width: "40%" }}>tenure</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {affiliationsArray
-                                .filter(position => position.title)
-                                .map((position, index) => {
-                                    return <tr key={index}>
-                                        <td>{position.title}</td>
-                                        <td>{position.organization}</td>
-                                        <td>{position.started} - {position.ended ? position.ended : 'present'}</td>
-                                    </tr>;
-                                })}
-                        </tbody>
-                    </table>
-                </Area>
+                <Card style={{ margin: '8px 0px' }} title='Affiliations'>
+                    <div id='affiliations'>
+                        {affiliationsArray
+                            .filter(position => position.title)
+                            .map((position, index) => {
+                                return <div className='affiliation-row' key={index}>
+                                    <p style={{ width: '20%', display: 'inline-block', marginRight: '1em', verticalAlign: 'middle' }}>{position.title}</p>
+                                    <p style={{ width: '45%', display: 'inline-block', marginRight: '1em', verticalAlign: 'middle' }}>{position.organization}</p>
+                                    <div style={{ width: '29%', display: 'inline-block', verticalAlign: 'text-bottom', whiteSpace: 'nowrap' }}>
+                                        <p style={{ display: 'inline', marginRight: '1em' }}>{position.started}</p>
+                                        <p style={{ display: 'inline', marginRight: '1em' }}> - </p>
+                                        <p style={{ display: 'inline', marginRight: '1em' }}>{position.ended ? position.ended : 'present'}</p>
+                                    </div>
+                                </div>;
+                            })}
+                    </div>
+                </Card>
             );
         } else {
             return (
-                <Area title='Affiliations' style={{ marginTop: '20px' }}>
+                <Card style={{ margin: '8px 0px' }} title='Affiliations'>
                     <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Affiliations" />
-                </Area>
+                </Card>
             );
         };
     }
@@ -943,7 +934,7 @@ class Profile extends React.Component<Props, State> {
 
         }
 
-        return <Row gutter={8} style={{ backgroundColor: 'rgba(200, 200, 200, 0.2)' }}>
+        return <Row gutter={8}>
             <Col span={24}>
                 <div className="ButtonBar">
                     <div className="ButtonBar-button">{button}</div>
@@ -1002,27 +993,32 @@ class Profile extends React.Component<Props, State> {
 
     renderResearchInterestsView() {
         const researchInterests = this.props.profileUserdata.researchInterests;
-
         if (Array.isArray(researchInterests) &&
             researchInterests.length > 0) {
-            const normalized = researchInterests.map((interest) => {
-                if (interest === 'Other') {
-                    return this.state.researchInterestsOther || interest;
-                } else {
-                    return interest;
-                }
-            });
-            normalized.sort((a, b) => {
-                return a.toLowerCase().localeCompare(b.toLowerCase());
-            });
+            researchInterests.sort();
+            if (researchInterests.includes('Other') && this.props.profileUserdata.researchInterestsOther) {
+                return (
+                    <ul style={{ textAlign: 'left' }}>
+                        {researchInterests.map((interest) => (
+                            <li key={interest}>{interest}</li>
+                        ))}
+                        <ul>
+                            <li>
+                                {this.props.profileUserdata.researchInterestsOther}
+                            </li>
+                        </ul>
+                    </ul>
+                );
+            } else {
+                return (
+                    <ul style={{ textAlign: 'left' }}>
+                        {researchInterests.map((interest) => (
+                            <li key={interest}>{interest}</li>
+                        ))}
+                    </ul>
+                );
+            };
 
-            return (
-                <ul className="PrettyList" >
-                    {normalized.map((interest) => {
-                        return <li key={interest}>{interest}</li>;
-                    })}
-                </ul>
-            );
         } else {
             return (
                 <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}
@@ -1033,24 +1029,16 @@ class Profile extends React.Component<Props, State> {
 
     render() {
         return (
-            <Row >
+            <Row style={{ padding: 16 }}>
                 {this.renderControls()}
                 <Row gutter={8}>
                     <Col span={8}>
-                        <Area
-
+                        <Card style={{ margin: '8px 0px', textAlign: 'center' }}
+                            title={this.props.userName.name ? this.props.userName.name : ''}
                         >
-                            {/* <p>{this.props.userName.name}</p> */}
-                            <div>
-                                <div style={{ textAlign: 'center', fontWeight: 'bold' }}>{this.props.userName.name}</div>
-                                <div style={{ fontFamily: 'monospace', textAlign: 'center' }}>{this.props.userName.userID}</div>
-                                {this.renderAvatar()}
-
-                            </div>
-                        </Area>
-                        <Area>
-                            {this.renderUserNutshell()}
-                        </Area>
+                            {this.renderAvatar()}
+                        </Card>
+                        {this.renderUserNutshell()}
                     </Col>
                     <Col span={16}>
                         <Row gutter={8}>
@@ -1065,12 +1053,12 @@ class Profile extends React.Component<Props, State> {
                                 */}
                             </Col>
                             <Col span={12}>
-                                <Area title='Organizations' maxHeight='10em'>
+                                <Card className='card-with-height' style={{ margin: '8px 0px' }} title='Organizations'>
                                     <OrgsContainer />
-                                </Area>
+                                </Card>
                             </Col>
                         </Row>
-                        <Row style={{ marginTop: '8px' }}>
+                        <Row>
                             {/* TODO:AKIYO FIX - when the box is very small it doesn't break or hide word */}
                             {this.renderResearchStatement()}
                             {this.renderAffiliations()}
