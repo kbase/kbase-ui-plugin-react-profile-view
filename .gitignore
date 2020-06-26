@@ -19,3 +19,5 @@ package-lock.json
 /dist/
 
 _attic/
+
+_temp/

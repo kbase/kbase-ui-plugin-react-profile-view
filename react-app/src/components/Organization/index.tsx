@@ -5,9 +5,6 @@ import { MIN_ORGANIZATION_CHARS, MAX_INSTITUTIONS_TO_SHOW } from '../../constant
 import { institutions } from '../../dataSources/institutions';
 import { ValidationState, ValidationStatus } from '../../types';
 
-
-
-
 export interface OrganizationProps {
     // field: Field
     required: boolean;
@@ -20,8 +17,6 @@ interface OrganizationState {
     institutionFiltered: Array<string>;
     tooManyInstitutionsToRender: [boolean, number?];
 }
-
-
 
 export default class Organization extends React.Component<OrganizationProps, OrganizationState> {
     value: string | null;
@@ -42,7 +37,6 @@ export default class Organization extends React.Component<OrganizationProps, Org
             tooManyInstitutionsToRender: [false]
         };
     }
-
 
     update(newValue: string) {
         const previousValidationState = this.validationState;
@@ -68,7 +62,7 @@ export default class Organization extends React.Component<OrganizationProps, Org
             // case ValidationStatus.WARNING:
         }
 
-        console.log('update', validationState, this.dirty, previousValidationState);
+        // console.log('update', validationState, this.dirty, previousValidationState);
 
         // const validationState = this.validate(newValue);
         // console.log('update', validationState, newValue);
@@ -177,7 +171,11 @@ export default class Organization extends React.Component<OrganizationProps, Org
     render() {
         let children;
         if (this.state.tooManyInstitutionsToRender[0]) {
-            children = <Select.Option key="sorry">Keep Searching - too many ({this.state.tooManyInstitutionsToRender[1]}) to show (max {MAX_INSTITUTIONS_TO_SHOW})</Select.Option>;
+            children = <Select.Option
+                value=""
+                key="sorry">
+                Keep Searching - too many ({this.state.tooManyInstitutionsToRender[1]}) to show (max {MAX_INSTITUTIONS_TO_SHOW})
+            </Select.Option>;
         } else {
             children = this.state.institutionFiltered.map((item, index) => {
                 return (

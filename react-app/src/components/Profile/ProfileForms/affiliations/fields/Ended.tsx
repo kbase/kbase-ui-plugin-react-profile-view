@@ -125,7 +125,7 @@ export default class Ended extends React.Component<EndedProps, EndedState> {
         return <Tooltip title='Enter 4 digit end year or leave empty if ongoing'>
             <Form.Item
                 required={false}
-                style={{ overflowX: 'auto' }}
+                style={{ overflowX: 'auto', marginBottom: 0 }}
                 help={this.state.message}
                 validateStatus={this.state.status} >
                 <InputNumber

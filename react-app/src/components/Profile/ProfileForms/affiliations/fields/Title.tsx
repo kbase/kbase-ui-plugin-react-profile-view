@@ -93,7 +93,7 @@ export default class Title extends React.Component<TitleProps, TitleState> {
     }
     render() {
         return <Form.Item
-            style={{ flexGrow: 1 }}
+            style={{ flexGrow: 1, marginBottom: 0 }}
             required={true}
             // label=' '
             help={this.state.message}

@@ -5,6 +5,7 @@ import { createReduxStore } from './redux/store';
 import { AppBase, AuthGate } from '@kbase/ui-components';
 
 import './App.css';
+import './antd.css';
 import HomeRedux from './pages/HomeRedux';
 
 const { Content } = Layout;
@@ -25,11 +26,7 @@ export default class App extends React.Component<AppProps, AppState> {
                 <AppBase>
                     <AuthGate required={true}>
                         <div className='App ReactProfileView'>
-                            <Layout style={{ minHeight: '100vh' }}>
-                                <Content style={{ backgroundColor: 'white' }}>
-                                    <HomeRedux />
-                                </Content>
-                            </Layout>
+                            <HomeRedux />
                         </div>
                     </AuthGate>
                 </AppBase>
@@ -37,4 +34,3 @@ export default class App extends React.Component<AppProps, AppState> {
         );
     }
 }
-

@@ -1,6 +1,8 @@
 import { ProfileUserdata, UserName } from '../redux/interfaces';
 
 export async function getBFFServiceUrl(token: string, url: string) {
+    console.log('yeah!');
+    return 'http://localhost:5000';
     // TODO: for dev, the baseUrl will be whatever works for the CRA workflow, which is ''.
     // baseURL = 'https://ci.kbase.us/services'; // for dev
     const body = {

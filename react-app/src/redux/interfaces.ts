@@ -18,6 +18,7 @@ export interface NarrativeData {
     name: string;
     last_saved: number;
     users: object;
+    owner: string;
     narrative_detail: {
         creator: string;
     };
@@ -29,6 +30,7 @@ export interface NarrativeAction {
     payload: {
         narrativeList: Array<NarrativeData>;
         loading: boolean;
+        isOwner: boolean;
     };
 };
 
@@ -37,6 +39,7 @@ export interface NarrativeState {
     narrativeState: {
         narrativeList: Array<NarrativeData>;
         loading: boolean;
+        isOwner: boolean;
     };
 };
 

@@ -12,6 +12,8 @@ import { AntDesignValidationStatus } from '../../../../types';
 export interface Props {
     affiliation: Affiliation;
     save: (affiliation: Affiliation) => void;
+    // canSave: (canSave: boolean) => void;
+    autoSave: boolean;
 };
 
 interface State {
@@ -76,10 +78,14 @@ export default class AffiliationForm extends React.Component<Props, State> {
                 started: started.value,
                 ended: ended.value
             };
+            // this.props.canSave(true);
             console.log('COMMIT - saving', affiliation);
+            // if (this.props.autoSave) {
             this.props.save(affiliation);
+            // }
             this.setState({ dirty: false });
         } else {
+            // this.props.canSave(false);
             console.log('COMMIT - not saving...', this.state.fields);
         }
     }
@@ -194,7 +200,7 @@ export default class AffiliationForm extends React.Component<Props, State> {
     render() {
         return (
             <form
-                className='affiliation-row ant-form '
+                className=''
                 // name={index.toString(10)}
                 autoComplete="on">
                 <div className='AffiliationsRow'>

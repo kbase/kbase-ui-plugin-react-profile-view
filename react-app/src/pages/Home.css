@@ -1,4 +1,6 @@
-.Profile {
+
+.Home {
+    margin: 0 0.5em;
     flex: 1 1 0px;
     display: flex;
     flex-direction: column;

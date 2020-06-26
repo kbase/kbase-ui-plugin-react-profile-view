@@ -109,7 +109,7 @@ export default class Ended extends React.Component<StartedProps, StartedState> {
         return <Tooltip title='Enter 4 digit start year'>
             <Form.Item
                 required={false}
-                style={{ overflowX: 'auto' }}
+                style={{ overflowX: 'auto', marginBottom: 0 }}
                 help={this.state.message}
                 validateStatus={this.state.status} >
                 <InputNumber
