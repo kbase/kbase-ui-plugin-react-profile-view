@@ -441,9 +441,20 @@ class Profile extends React.Component<Props, State> {
         </div>;
     }
 
+    renderJobTitle(profile: State) {
+        if (profile.jobTitle) {
+            return <div>
+                {this.renderSectionTitle('position')}
+                <div>
+                    {profile.jobTitle === 'Other' ? profile.jobTitleOther : profile.jobTitle}
+                </div>
+            </div>;
+        }
+    }
+
     renderUserNutshellView() {
         const profile = this.state;
-        const jobTitle = profile.jobTitle ? (<div>{this.renderSectionTitle('position')}<div>{profile.jobTitleOther}</div></div>) : null;
+        const jobTitle = this.renderJobTitle(profile);
         const department = profile.department ? (<div>{this.renderSectionTitle('department')}<div>{profile.department}</div></div>) : null;
         const organization = profile.organization ? (<div>{this.renderSectionTitle('organization')}<div>{profile.organization}</div></div>) : null;
         const locationFields = [profile.country, profile.state, profile.city].filter(x => x).join(', ');
