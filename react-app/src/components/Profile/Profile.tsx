@@ -338,7 +338,7 @@ class Profile extends React.Component<Props, State> {
                         placeholder='State'
                         showArrow
                         onChange={this.stateOnSelect.bind(this)}
-                        onSelect={this.stateOnSelect.bind(this)}
+                        // onSelect={this.stateOnSelect.bind(this)}
                         optionFilterProp='children'
                         filterOption={(inputValue, option) => {
                             if (option && option.props && typeof option.props.children === 'string') {
@@ -695,9 +695,10 @@ class Profile extends React.Component<Props, State> {
         this.saveProfile(profileData);
     }
 
-    stateOnSelect(value: string) {
+    stateOnSelect(state: string) {
         const profileData = this.props.profileUserdata;
-        profileData.state = value;
+        profileData.state = state;
+        this.setState({ state });
         this.saveProfile(profileData);
     };
 
@@ -709,7 +710,6 @@ class Profile extends React.Component<Props, State> {
         const value = event.target.value;
         this.setState({ researchInterestsOther: value.trim() });
     }
-
 
     // handles researchInterest check box onChange 
     researchInterestOnChange(event: any) {
