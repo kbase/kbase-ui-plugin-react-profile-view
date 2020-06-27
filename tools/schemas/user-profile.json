@@ -1,0 +1,1079 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "title": "The Root Schema",
+    "required": [
+        "user",
+        "profile"
+    ],
+    "properties": {
+        "user": {
+            "$id": "#/properties/user",
+            "type": "object",
+            "title": "The User Schema",
+            "default": {},
+            "required": [
+                "username",
+                "realname"
+            ],
+            "properties": {
+                "username": {
+                    "$id": "#/properties/user/properties/username",
+                    "type": "string",
+                    "title": "The Username Schema",
+                    "default": ""
+                },
+                "realname": {
+                    "$id": "#/properties/user/properties/realname",
+                    "type": "string",
+                    "title": "The Realname Schema",
+                    "default": ""
+                }
+            }
+        },
+        "profile": {
+            "$id": "#/properties/profile",
+            "type": "object",
+            "title": "The Profile Schema",
+            "default": {},
+            "required": [
+                "metadata",
+                "userdata",
+                "synced",
+                "preferences",
+                "uiPersistence",
+                "plugins"
+            ],
+            "properties": {
+                "metadata": {
+                    "$id": "#/properties/profile/properties/metadata",
+                    "type": "object",
+                    "title": "The Metadata Schema",
+                    "default": {},
+                    "required": [
+                        "createdBy",
+                        "created"
+                    ],
+                    "properties": {
+                        "createdBy": {
+                            "$id": "#/properties/profile/properties/metadata/properties/createdBy",
+                            "type": "string",
+                            "title": "The Createdby Schema",
+                            "default": ""
+                        },
+                        "created": {
+                            "$id": "#/properties/profile/properties/metadata/properties/created",
+                            "type": "string",
+                            "title": "The Created Schema",
+                            "default": ""
+                        }
+                    }
+                },
+                "userdata": {
+                    "$id": "#/properties/profile/properties/userdata",
+                    "type": "object",
+                    "title": "The Userdata Schema",
+                    "default": {},
+                    "required": [
+                        "researchStatement",
+                        "jobTitleOther",
+                        "affiliations",
+                        "state",
+                        "country",
+                        "city",
+                        "postalCode",
+                        "organization",
+                        "researchInterests",
+                        "researchInterestsOther",
+                        "department",
+                        "gravatarDefault",
+                        "avatarOption",
+                        "fundingSource",
+                        "jobTitle"
+                    ],
+                    "properties": {
+                        "researchStatement": {
+                            "$id": "#/properties/profile/properties/userdata/properties/researchStatement",
+                            "type": "string",
+                            "title": "The Researchstatement Schema",
+                            "default": ""
+                        },
+                        "jobTitleOther": {
+                            "$id": "#/properties/profile/properties/userdata/properties/jobTitleOther",
+                            "type": "string",
+                            "title": "The Jobtitleother Schema",
+                            "default": ""
+                        },
+                        "affiliations": {
+                            "$id": "#/properties/profile/properties/userdata/properties/affiliations",
+                            "type": "array",
+                            "title": "The Affiliations Schema",
+                            "default": [],
+                            "items": {
+                                "$id": "#/properties/profile/properties/userdata/properties/affiliations/items",
+                                "type": "object",
+                                "title": "The Items Schema",
+                                "default": {},
+                                "required": [
+                                    "title",
+                                    "organization",
+                                    "started",
+                                    "ended"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "$id": "#/properties/profile/properties/userdata/properties/affiliations/items/properties/title",
+                                        "type": "string",
+                                        "title": "The Title Schema",
+                                        "default": ""
+                                    },
+                                    "organization": {
+                                        "$id": "#/properties/profile/properties/userdata/properties/affiliations/items/properties/organization",
+                                        "type": "string",
+                                        "title": "The Organization Schema",
+                                        "default": ""
+                                    },
+                                    "started": {
+                                        "$id": "#/properties/profile/properties/userdata/properties/affiliations/items/properties/started",
+                                        "type": "integer",
+                                        "title": "The Started Schema",
+                                        "default": 0
+                                    },
+                                    "ended": {
+                                        "$id": "#/properties/profile/properties/userdata/properties/affiliations/items/properties/ended",
+                                        "type": "integer",
+                                        "title": "The Ended Schema",
+                                        "default": 0
+                                    }
+                                }
+                            }
+                        },
+                        "state": {
+                            "$id": "#/properties/profile/properties/userdata/properties/state",
+                            "type": "string",
+                            "title": "The State Schema",
+                            "default": ""
+                        },
+                        "country": {
+                            "$id": "#/properties/profile/properties/userdata/properties/country",
+                            "type": "string",
+                            "title": "The Country Schema",
+                            "default": ""
+                        },
+                        "city": {
+                            "$id": "#/properties/profile/properties/userdata/properties/city",
+                            "type": "string",
+                            "title": "The City Schema",
+                            "default": ""
+                        },
+                        "postalCode": {
+                            "$id": "#/properties/profile/properties/userdata/properties/postalCode",
+                            "type": "string",
+                            "title": "The Postalcode Schema",
+                            "default": ""
+                        },
+                        "organization": {
+                            "$id": "#/properties/profile/properties/userdata/properties/organization",
+                            "type": "string",
+                            "title": "The Organization Schema",
+                            "default": ""
+                        },
+                        "researchInterests": {
+                            "$id": "#/properties/profile/properties/userdata/properties/researchInterests",
+                            "type": "array",
+                            "title": "The Researchinterests Schema",
+                            "default": [],
+                            "items": {
+                                "$id": "#/properties/profile/properties/userdata/properties/researchInterests/items",
+                                "type": "string",
+                                "title": "The Items Schema",
+                                "default": ""
+                            }
+                        },
+                        "researchInterestsOther": {
+                            "$id": "#/properties/profile/properties/userdata/properties/researchInterestsOther",
+                            "type": "string",
+                            "title": "The Researchinterestsother Schema",
+                            "default": ""
+                        },
+                        "department": {
+                            "$id": "#/properties/profile/properties/userdata/properties/department",
+                            "type": "string",
+                            "title": "The Department Schema",
+                            "default": ""
+                        },
+                        "gravatarDefault": {
+                            "$id": "#/properties/profile/properties/userdata/properties/gravatarDefault",
+                            "type": "string",
+                            "title": "The Gravatardefault Schema",
+                            "default": ""
+                        },
+                        "avatarOption": {
+                            "$id": "#/properties/profile/properties/userdata/properties/avatarOption",
+                            "type": "string",
+                            "title": "The Avataroption Schema",
+                            "default": ""
+                        },
+                        "fundingSource": {
+                            "$id": "#/properties/profile/properties/userdata/properties/fundingSource",
+                            "type": "string",
+                            "title": "The Fundingsource Schema",
+                            "default": ""
+                        },
+                        "jobTitle": {
+                            "$id": "#/properties/profile/properties/userdata/properties/jobTitle",
+                            "type": "string",
+                            "title": "The Jobtitle Schema",
+                            "default": ""
+                        }
+                    }
+                },
+                "synced": {
+                    "$id": "#/properties/profile/properties/synced",
+                    "type": "object",
+                    "title": "The Synced Schema",
+                    "default": {},
+                    "required": [
+                        "gravatarHash"
+                    ],
+                    "properties": {
+                        "gravatarHash": {
+                            "$id": "#/properties/profile/properties/synced/properties/gravatarHash",
+                            "type": "string",
+                            "title": "The Gravatarhash Schema",
+                            "default": ""
+                        }
+                    }
+                },
+                "preferences": {
+                    "$id": "#/properties/profile/properties/preferences",
+                    "type": "object",
+                    "title": "The Preferences Schema",
+                    "default": {},
+                    "required": [
+                        "settings"
+                    ],
+                    "properties": {
+                        "settings": {
+                            "$id": "#/properties/profile/properties/preferences/properties/settings",
+                            "type": "object",
+                            "title": "The Settings Schema",
+                            "default": {},
+                            "required": [
+                                "jgiDataTerms"
+                            ],
+                            "properties": {
+                                "jgiDataTerms": {
+                                    "$id": "#/properties/profile/properties/preferences/properties/settings/properties/jgiDataTerms",
+                                    "type": "object",
+                                    "title": "The Jgidataterms Schema",
+                                    "default": {},
+                                    "required": [
+                                        "agreed",
+                                        "time"
+                                    ],
+                                    "properties": {
+                                        "agreed": {
+                                            "$id": "#/properties/profile/properties/preferences/properties/settings/properties/jgiDataTerms/properties/agreed",
+                                            "type": "boolean",
+                                            "title": "The Agreed Schema",
+                                            "default": false
+                                        },
+                                        "time": {
+                                            "$id": "#/properties/profile/properties/preferences/properties/settings/properties/jgiDataTerms/properties/time",
+                                            "type": "object",
+                                            "title": "The Time Schema",
+                                            "default": {},
+                                            "required": [
+                                                "$numberLong"
+                                            ],
+                                            "properties": {
+                                                "$numberLong": {
+                                                    "$id": "#/properties/profile/properties/preferences/properties/settings/properties/jgiDataTerms/properties/time/properties/$numberLong",
+                                                    "type": "string",
+                                                    "title": "The $numberlong Schema",
+                                                    "default": ""
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "uiPersistence": {
+                    "$id": "#/properties/profile/properties/uiPersistence",
+                    "type": "object",
+                    "title": "The Uipersistence Schema",
+                    "default": {},
+                    "required": [
+                        "jgi-search"
+                    ],
+                    "properties": {
+                        "jgi-search": {
+                            "$id": "#/properties/profile/properties/uiPersistence/properties/jgi-search",
+                            "type": "object",
+                            "title": "The Jgi-search Schema",
+                            "default": {},
+                            "required": [
+                                "settings"
+                            ],
+                            "properties": {
+                                "settings": {
+                                    "$id": "#/properties/profile/properties/uiPersistence/properties/jgi-search/properties/settings",
+                                    "type": "object",
+                                    "title": "The Settings Schema",
+                                    "default": {},
+                                    "required": [
+                                        "jgiDataTerms",
+                                        "searchInputHistory"
+                                    ],
+                                    "properties": {
+                                        "jgiDataTerms": {
+                                            "$id": "#/properties/profile/properties/uiPersistence/properties/jgi-search/properties/settings/properties/jgiDataTerms",
+                                            "type": "object",
+                                            "title": "The Jgidataterms Schema",
+                                            "default": {},
+                                            "required": [
+                                                "agreed",
+                                                "time"
+                                            ],
+                                            "properties": {
+                                                "agreed": {
+                                                    "$id": "#/properties/profile/properties/uiPersistence/properties/jgi-search/properties/settings/properties/jgiDataTerms/properties/agreed",
+                                                    "type": "boolean",
+                                                    "title": "The Agreed Schema",
+                                                    "default": false
+                                                },
+                                                "time": {
+                                                    "$id": "#/properties/profile/properties/uiPersistence/properties/jgi-search/properties/settings/properties/jgiDataTerms/properties/time",
+                                                    "type": "object",
+                                                    "title": "The Time Schema",
+                                                    "default": {},
+                                                    "required": [
+                                                        "$numberLong"
+                                                    ],
+                                                    "properties": {
+                                                        "$numberLong": {
+                                                            "$id": "#/properties/profile/properties/uiPersistence/properties/jgi-search/properties/settings/properties/jgiDataTerms/properties/time/properties/$numberLong",
+                                                            "type": "string",
+                                                            "title": "The $numberlong Schema",
+                                                            "default": ""
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "searchInputHistory": {
+                                            "$id": "#/properties/profile/properties/uiPersistence/properties/jgi-search/properties/settings/properties/searchInputHistory",
+                                            "type": "object",
+                                            "title": "The Searchinputhistory Schema",
+                                            "default": {},
+                                            "required": [
+                                                "history",
+                                                "time"
+                                            ],
+                                            "properties": {
+                                                "history": {
+                                                    "$id": "#/properties/profile/properties/uiPersistence/properties/jgi-search/properties/settings/properties/searchInputHistory/properties/history",
+                                                    "type": "array",
+                                                    "title": "The History Schema",
+                                                    "default": []
+                                                },
+                                                "time": {
+                                                    "$id": "#/properties/profile/properties/uiPersistence/properties/jgi-search/properties/settings/properties/searchInputHistory/properties/time",
+                                                    "type": "object",
+                                                    "title": "The Time Schema",
+                                                    "default": {},
+                                                    "required": [
+                                                        "$numberLong"
+                                                    ],
+                                                    "properties": {
+                                                        "$numberLong": {
+                                                            "$id": "#/properties/profile/properties/uiPersistence/properties/jgi-search/properties/settings/properties/searchInputHistory/properties/time/properties/$numberLong",
+                                                            "type": "string",
+                                                            "title": "The $numberlong Schema",
+                                                            "default": ""
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "plugins": {
+                    "$id": "#/properties/profile/properties/plugins",
+                    "type": "object",
+                    "title": "The Plugins Schema",
+                    "default": {},
+                    "required": [
+                        "jgi-search",
+                        "data-search",
+                        "public-search",
+                        "organizations"
+                    ],
+                    "properties": {
+                        "jgi-search": {
+                            "$id": "#/properties/profile/properties/plugins/properties/jgi-search",
+                            "type": "object",
+                            "title": "The Jgi-search Schema",
+                            "default": {},
+                            "required": [
+                                "settings"
+                            ],
+                            "properties": {
+                                "settings": {
+                                    "$id": "#/properties/profile/properties/plugins/properties/jgi-search/properties/settings",
+                                    "type": "object",
+                                    "title": "The Settings Schema",
+                                    "default": {},
+                                    "required": [
+                                        "jgiDataTerms",
+                                        "history"
+                                    ],
+                                    "properties": {
+                                        "jgiDataTerms": {
+                                            "$id": "#/properties/profile/properties/plugins/properties/jgi-search/properties/settings/properties/jgiDataTerms",
+                                            "type": "object",
+                                            "title": "The Jgidataterms Schema",
+                                            "default": {},
+                                            "required": [
+                                                "agreed",
+                                                "time"
+                                            ],
+                                            "properties": {
+                                                "agreed": {
+                                                    "$id": "#/properties/profile/properties/plugins/properties/jgi-search/properties/settings/properties/jgiDataTerms/properties/agreed",
+                                                    "type": "boolean",
+                                                    "title": "The Agreed Schema",
+                                                    "default": false
+                                                },
+                                                "time": {
+                                                    "$id": "#/properties/profile/properties/plugins/properties/jgi-search/properties/settings/properties/jgiDataTerms/properties/time",
+                                                    "type": "object",
+                                                    "title": "The Time Schema",
+                                                    "default": {},
+                                                    "required": [
+                                                        "$numberLong"
+                                                    ],
+                                                    "properties": {
+                                                        "$numberLong": {
+                                                            "$id": "#/properties/profile/properties/plugins/properties/jgi-search/properties/settings/properties/jgiDataTerms/properties/time/properties/$numberLong",
+                                                            "type": "string",
+                                                            "title": "The $numberlong Schema",
+                                                            "default": ""
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "history": {
+                                            "$id": "#/properties/profile/properties/plugins/properties/jgi-search/properties/settings/properties/history",
+                                            "type": "object",
+                                            "title": "The History Schema",
+                                            "default": {},
+                                            "required": [
+                                                "jobsbrowser",
+                                                "search"
+                                            ],
+                                            "properties": {
+                                                "jobsbrowser": {
+                                                    "$id": "#/properties/profile/properties/plugins/properties/jgi-search/properties/settings/properties/history/properties/jobsbrowser",
+                                                    "type": "object",
+                                                    "title": "The Jobsbrowser Schema",
+                                                    "default": {},
+                                                    "required": [
+                                                        "history",
+                                                        "time"
+                                                    ],
+                                                    "properties": {
+                                                        "history": {
+                                                            "$id": "#/properties/profile/properties/plugins/properties/jgi-search/properties/settings/properties/history/properties/jobsbrowser/properties/history",
+                                                            "type": "array",
+                                                            "title": "The History Schema",
+                                                            "default": []
+                                                        },
+                                                        "time": {
+                                                            "$id": "#/properties/profile/properties/plugins/properties/jgi-search/properties/settings/properties/history/properties/jobsbrowser/properties/time",
+                                                            "type": "object",
+                                                            "title": "The Time Schema",
+                                                            "default": {},
+                                                            "required": [
+                                                                "$numberLong"
+                                                            ],
+                                                            "properties": {
+                                                                "$numberLong": {
+                                                                    "$id": "#/properties/profile/properties/plugins/properties/jgi-search/properties/settings/properties/history/properties/jobsbrowser/properties/time/properties/$numberLong",
+                                                                    "type": "string",
+                                                                    "title": "The $numberlong Schema",
+                                                                    "default": ""
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                },
+                                                "search": {
+                                                    "$id": "#/properties/profile/properties/plugins/properties/jgi-search/properties/settings/properties/history/properties/search",
+                                                    "type": "object",
+                                                    "title": "The Search Schema",
+                                                    "default": {},
+                                                    "required": [
+                                                        "history",
+                                                        "time"
+                                                    ],
+                                                    "properties": {
+                                                        "history": {
+                                                            "$id": "#/properties/profile/properties/plugins/properties/jgi-search/properties/settings/properties/history/properties/search/properties/history",
+                                                            "type": "array",
+                                                            "title": "The History Schema",
+                                                            "default": [],
+                                                            "items": {
+                                                                "$id": "#/properties/profile/properties/plugins/properties/jgi-search/properties/settings/properties/history/properties/search/properties/history/items",
+                                                                "type": "string",
+                                                                "title": "The Items Schema",
+                                                                "default": ""
+                                                            }
+                                                        },
+                                                        "time": {
+                                                            "$id": "#/properties/profile/properties/plugins/properties/jgi-search/properties/settings/properties/history/properties/search/properties/time",
+                                                            "type": "object",
+                                                            "title": "The Time Schema",
+                                                            "default": {},
+                                                            "required": [
+                                                                "$numberLong"
+                                                            ],
+                                                            "properties": {
+                                                                "$numberLong": {
+                                                                    "$id": "#/properties/profile/properties/plugins/properties/jgi-search/properties/settings/properties/history/properties/search/properties/time/properties/$numberLong",
+                                                                    "type": "string",
+                                                                    "title": "The $numberlong Schema",
+                                                                    "default": ""
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "data-search": {
+                            "$id": "#/properties/profile/properties/plugins/properties/data-search",
+                            "type": "object",
+                            "title": "The Data-search Schema",
+                            "default": {},
+                            "required": [
+                                "settings"
+                            ],
+                            "properties": {
+                                "settings": {
+                                    "$id": "#/properties/profile/properties/plugins/properties/data-search/properties/settings",
+                                    "type": "object",
+                                    "title": "The Settings Schema",
+                                    "default": {},
+                                    "required": [
+                                        "history"
+                                    ],
+                                    "properties": {
+                                        "history": {
+                                            "$id": "#/properties/profile/properties/plugins/properties/data-search/properties/settings/properties/history",
+                                            "type": "object",
+                                            "title": "The History Schema",
+                                            "default": {},
+                                            "required": [
+                                                "search"
+                                            ],
+                                            "properties": {
+                                                "search": {
+                                                    "$id": "#/properties/profile/properties/plugins/properties/data-search/properties/settings/properties/history/properties/search",
+                                                    "type": "object",
+                                                    "title": "The Search Schema",
+                                                    "default": {},
+                                                    "required": [
+                                                        "history",
+                                                        "time"
+                                                    ],
+                                                    "properties": {
+                                                        "history": {
+                                                            "$id": "#/properties/profile/properties/plugins/properties/data-search/properties/settings/properties/history/properties/search/properties/history",
+                                                            "type": "array",
+                                                            "title": "The History Schema",
+                                                            "default": [],
+                                                            "items": {
+                                                                "$id": "#/properties/profile/properties/plugins/properties/data-search/properties/settings/properties/history/properties/search/properties/history/items",
+                                                                "type": "string",
+                                                                "title": "The Items Schema",
+                                                                "default": ""
+                                                            }
+                                                        },
+                                                        "time": {
+                                                            "$id": "#/properties/profile/properties/plugins/properties/data-search/properties/settings/properties/history/properties/search/properties/time",
+                                                            "type": "object",
+                                                            "title": "The Time Schema",
+                                                            "default": {},
+                                                            "required": [
+                                                                "$numberLong"
+                                                            ],
+                                                            "properties": {
+                                                                "$numberLong": {
+                                                                    "$id": "#/properties/profile/properties/plugins/properties/data-search/properties/settings/properties/history/properties/search/properties/time/properties/$numberLong",
+                                                                    "type": "string",
+                                                                    "title": "The $numberlong Schema",
+                                                                    "default": ""
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "public-search": {
+                            "$id": "#/properties/profile/properties/plugins/properties/public-search",
+                            "type": "object",
+                            "title": "The Public-search Schema",
+                            "default": {},
+                            "required": [
+                                "settings"
+                            ],
+                            "properties": {
+                                "settings": {
+                                    "$id": "#/properties/profile/properties/plugins/properties/public-search/properties/settings",
+                                    "type": "object",
+                                    "title": "The Settings Schema",
+                                    "default": {},
+                                    "required": [
+                                        "history"
+                                    ],
+                                    "properties": {
+                                        "history": {
+                                            "$id": "#/properties/profile/properties/plugins/properties/public-search/properties/settings/properties/history",
+                                            "type": "object",
+                                            "title": "The History Schema",
+                                            "default": {},
+                                            "required": [
+                                                "history",
+                                                "time"
+                                            ],
+                                            "properties": {
+                                                "history": {
+                                                    "$id": "#/properties/profile/properties/plugins/properties/public-search/properties/settings/properties/history/properties/history",
+                                                    "type": "array",
+                                                    "title": "The History Schema",
+                                                    "default": [],
+                                                    "items": {
+                                                        "$id": "#/properties/profile/properties/plugins/properties/public-search/properties/settings/properties/history/properties/history/items",
+                                                        "type": "string",
+                                                        "title": "The Items Schema",
+                                                        "default": ""
+                                                    }
+                                                },
+                                                "time": {
+                                                    "$id": "#/properties/profile/properties/plugins/properties/public-search/properties/settings/properties/history/properties/time",
+                                                    "type": "object",
+                                                    "title": "The Time Schema",
+                                                    "default": {},
+                                                    "required": [
+                                                        "$numberLong"
+                                                    ],
+                                                    "properties": {
+                                                        "$numberLong": {
+                                                            "$id": "#/properties/profile/properties/plugins/properties/public-search/properties/settings/properties/history/properties/time/properties/$numberLong",
+                                                            "type": "string",
+                                                            "title": "The $numberlong Schema",
+                                                            "default": ""
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        "organizations": {
+                            "$id": "#/properties/profile/properties/plugins/properties/organizations",
+                            "type": "object",
+                            "title": "The Organizations Schema",
+                            "default": {},
+                            "required": [
+                                "orgSettings"
+                            ],
+                            "properties": {
+                                "orgSettings": {
+                                    "$id": "#/properties/profile/properties/plugins/properties/organizations/properties/orgSettings",
+                                    "type": "object",
+                                    "title": "The Orgsettings Schema",
+                                    "default": {},
+                                    "required": [
+                                        "test",
+                                        "undefined",
+                                        "unicorngenome",
+                                        "myprivateorg",
+                                        "anorg",
+                                        "test6",
+                                        "kbaseberkeley",
+                                        "kbasemags",
+                                        "bcfg",
+                                        "test31",
+                                        "test4",
+                                        "biclusterers"
+                                    ],
+                                    "properties": {
+                                        "test": {
+                                            "$id": "#/properties/profile/properties/plugins/properties/organizations/properties/orgSettings/properties/test",
+                                            "type": "object",
+                                            "title": "The Test Schema",
+                                            "default": {},
+                                            "required": [
+                                                "settings"
+                                            ],
+                                            "properties": {
+                                                "settings": {
+                                                    "$id": "#/properties/profile/properties/plugins/properties/organizations/properties/orgSettings/properties/test/properties/settings",
+                                                    "type": "object",
+                                                    "title": "The Settings Schema",
+                                                    "default": {},
+                                                    "required": [
+                                                        "lastVisitedAt"
+                                                    ],
+                                                    "properties": {
+                                                        "lastVisitedAt": {
+                                                            "$id": "#/properties/profile/properties/plugins/properties/organizations/properties/orgSettings/properties/test/properties/settings/properties/lastVisitedAt",
+                                                            "type": "string",
+                                                            "title": "The Lastvisitedat Schema",
+                                                            "default": ""
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "undefined": {
+                                            "$id": "#/properties/profile/properties/plugins/properties/organizations/properties/orgSettings/properties/undefined",
+                                            "type": "object",
+                                            "title": "The Undefined Schema",
+                                            "default": {},
+                                            "required": [
+                                                "settings"
+                                            ],
+                                            "properties": {
+                                                "settings": {
+                                                    "$id": "#/properties/profile/properties/plugins/properties/organizations/properties/orgSettings/properties/undefined/properties/settings",
+                                                    "type": "object",
+                                                    "title": "The Settings Schema",
+                                                    "default": {},
+                                                    "required": [
+                                                        "lastVisitedAt"
+                                                    ],
+                                                    "properties": {
+                                                        "lastVisitedAt": {
+                                                            "$id": "#/properties/profile/properties/plugins/properties/organizations/properties/orgSettings/properties/undefined/properties/settings/properties/lastVisitedAt",
+                                                            "type": "string",
+                                                            "title": "The Lastvisitedat Schema",
+                                                            "default": ""
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "unicorngenome": {
+                                            "$id": "#/properties/profile/properties/plugins/properties/organizations/properties/orgSettings/properties/unicorngenome",
+                                            "type": "object",
+                                            "title": "The Unicorngenome Schema",
+                                            "default": {},
+                                            "required": [
+                                                "settings"
+                                            ],
+                                            "properties": {
+                                                "settings": {
+                                                    "$id": "#/properties/profile/properties/plugins/properties/organizations/properties/orgSettings/properties/unicorngenome/properties/settings",
+                                                    "type": "object",
+                                                    "title": "The Settings Schema",
+                                                    "default": {},
+                                                    "required": [
+                                                        "lastVisitedAt"
+                                                    ],
+                                                    "properties": {
+                                                        "lastVisitedAt": {
+                                                            "$id": "#/properties/profile/properties/plugins/properties/organizations/properties/orgSettings/properties/unicorngenome/properties/settings/properties/lastVisitedAt",
+                                                            "type": "string",
+                                                            "title": "The Lastvisitedat Schema",
+                                                            "default": ""
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "myprivateorg": {
+                                            "$id": "#/properties/profile/properties/plugins/properties/organizations/properties/orgSettings/properties/myprivateorg",
+                                            "type": "object",
+                                            "title": "The Myprivateorg Schema",
+                                            "default": {},
+                                            "required": [
+                                                "settings"
+                                            ],
+                                            "properties": {
+                                                "settings": {
+                                                    "$id": "#/properties/profile/properties/plugins/properties/organizations/properties/orgSettings/properties/myprivateorg/properties/settings",
+                                                    "type": "object",
+                                                    "title": "The Settings Schema",
+                                                    "default": {},
+                                                    "required": [
+                                                        "lastVisitedAt"
+                                                    ],
+                                                    "properties": {
+                                                        "lastVisitedAt": {
+                                                            "$id": "#/properties/profile/properties/plugins/properties/organizations/properties/orgSettings/properties/myprivateorg/properties/settings/properties/lastVisitedAt",
+                                                            "type": "string",
+                                                            "title": "The Lastvisitedat Schema",
+                                                            "default": ""
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "anorg": {
+                                            "$id": "#/properties/profile/properties/plugins/properties/organizations/properties/orgSettings/properties/anorg",
+                                            "type": "object",
+                                            "title": "The Anorg Schema",
+                                            "default": {},
+                                            "required": [
+                                                "settings"
+                                            ],
+                                            "properties": {
+                                                "settings": {
+                                                    "$id": "#/properties/profile/properties/plugins/properties/organizations/properties/orgSettings/properties/anorg/properties/settings",
+                                                    "type": "object",
+                                                    "title": "The Settings Schema",
+                                                    "default": {},
+                                                    "required": [
+                                                        "lastVisitedAt"
+                                                    ],
+                                                    "properties": {
+                                                        "lastVisitedAt": {
+                                                            "$id": "#/properties/profile/properties/plugins/properties/organizations/properties/orgSettings/properties/anorg/properties/settings/properties/lastVisitedAt",
+                                                            "type": "string",
+                                                            "title": "The Lastvisitedat Schema",
+                                                            "default": ""
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "test6": {
+                                            "$id": "#/properties/profile/properties/plugins/properties/organizations/properties/orgSettings/properties/test6",
+                                            "type": "object",
+                                            "title": "The Test6 Schema",
+                                            "default": {},
+                                            "required": [
+                                                "settings"
+                                            ],
+                                            "properties": {
+                                                "settings": {
+                                                    "$id": "#/properties/profile/properties/plugins/properties/organizations/properties/orgSettings/properties/test6/properties/settings",
+                                                    "type": "object",
+                                                    "title": "The Settings Schema",
+                                                    "default": {},
+                                                    "required": [
+                                                        "lastVisitedAt"
+                                                    ],
+                                                    "properties": {
+                                                        "lastVisitedAt": {
+                                                            "$id": "#/properties/profile/properties/plugins/properties/organizations/properties/orgSettings/properties/test6/properties/settings/properties/lastVisitedAt",
+                                                            "type": "string",
+                                                            "title": "The Lastvisitedat Schema",
+                                                            "default": ""
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "kbaseberkeley": {
+                                            "$id": "#/properties/profile/properties/plugins/properties/organizations/properties/orgSettings/properties/kbaseberkeley",
+                                            "type": "object",
+                                            "title": "The Kbaseberkeley Schema",
+                                            "default": {},
+                                            "required": [
+                                                "settings"
+                                            ],
+                                            "properties": {
+                                                "settings": {
+                                                    "$id": "#/properties/profile/properties/plugins/properties/organizations/properties/orgSettings/properties/kbaseberkeley/properties/settings",
+                                                    "type": "object",
+                                                    "title": "The Settings Schema",
+                                                    "default": {},
+                                                    "required": [
+                                                        "lastVisitedAt"
+                                                    ],
+                                                    "properties": {
+                                                        "lastVisitedAt": {
+                                                            "$id": "#/properties/profile/properties/plugins/properties/organizations/properties/orgSettings/properties/kbaseberkeley/properties/settings/properties/lastVisitedAt",
+                                                            "type": "string",
+                                                            "title": "The Lastvisitedat Schema",
+                                                            "default": ""
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "kbasemags": {
+                                            "$id": "#/properties/profile/properties/plugins/properties/organizations/properties/orgSettings/properties/kbasemags",
+                                            "type": "object",
+                                            "title": "The Kbasemags Schema",
+                                            "default": {},
+                                            "required": [
+                                                "settings"
+                                            ],
+                                            "properties": {
+                                                "settings": {
+                                                    "$id": "#/properties/profile/properties/plugins/properties/organizations/properties/orgSettings/properties/kbasemags/properties/settings",
+                                                    "type": "object",
+                                                    "title": "The Settings Schema",
+                                                    "default": {},
+                                                    "required": [
+                                                        "lastVisitedAt"
+                                                    ],
+                                                    "properties": {
+                                                        "lastVisitedAt": {
+                                                            "$id": "#/properties/profile/properties/plugins/properties/organizations/properties/orgSettings/properties/kbasemags/properties/settings/properties/lastVisitedAt",
+                                                            "type": "string",
+                                                            "title": "The Lastvisitedat Schema",
+                                                            "default": ""
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "bcfg": {
+                                            "$id": "#/properties/profile/properties/plugins/properties/organizations/properties/orgSettings/properties/bcfg",
+                                            "type": "object",
+                                            "title": "The Bcfg Schema",
+                                            "default": {},
+                                            "required": [
+                                                "settings"
+                                            ],
+                                            "properties": {
+                                                "settings": {
+                                                    "$id": "#/properties/profile/properties/plugins/properties/organizations/properties/orgSettings/properties/bcfg/properties/settings",
+                                                    "type": "object",
+                                                    "title": "The Settings Schema",
+                                                    "default": {},
+                                                    "required": [
+                                                        "lastVisitedAt"
+                                                    ],
+                                                    "properties": {
+                                                        "lastVisitedAt": {
+                                                            "$id": "#/properties/profile/properties/plugins/properties/organizations/properties/orgSettings/properties/bcfg/properties/settings/properties/lastVisitedAt",
+                                                            "type": "string",
+                                                            "title": "The Lastvisitedat Schema",
+                                                            "default": ""
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "test31": {
+                                            "$id": "#/properties/profile/properties/plugins/properties/organizations/properties/orgSettings/properties/test31",
+                                            "type": "object",
+                                            "title": "The Test31 Schema",
+                                            "default": {},
+                                            "required": [
+                                                "settings"
+                                            ],
+                                            "properties": {
+                                                "settings": {
+                                                    "$id": "#/properties/profile/properties/plugins/properties/organizations/properties/orgSettings/properties/test31/properties/settings",
+                                                    "type": "object",
+                                                    "title": "The Settings Schema",
+                                                    "default": {},
+                                                    "required": [
+                                                        "lastVisitedAt"
+                                                    ],
+                                                    "properties": {
+                                                        "lastVisitedAt": {
+                                                            "$id": "#/properties/profile/properties/plugins/properties/organizations/properties/orgSettings/properties/test31/properties/settings/properties/lastVisitedAt",
+                                                            "type": "string",
+                                                            "title": "The Lastvisitedat Schema",
+                                                            "default": ""
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "test4": {
+                                            "$id": "#/properties/profile/properties/plugins/properties/organizations/properties/orgSettings/properties/test4",
+                                            "type": "object",
+                                            "title": "The Test4 Schema",
+                                            "default": {},
+                                            "required": [
+                                                "settings"
+                                            ],
+                                            "properties": {
+                                                "settings": {
+                                                    "$id": "#/properties/profile/properties/plugins/properties/organizations/properties/orgSettings/properties/test4/properties/settings",
+                                                    "type": "object",
+                                                    "title": "The Settings Schema",
+                                                    "default": {},
+                                                    "required": [
+                                                        "lastVisitedAt"
+                                                    ],
+                                                    "properties": {
+                                                        "lastVisitedAt": {
+                                                            "$id": "#/properties/profile/properties/plugins/properties/organizations/properties/orgSettings/properties/test4/properties/settings/properties/lastVisitedAt",
+                                                            "type": "string",
+                                                            "title": "The Lastvisitedat Schema",
+                                                            "default": ""
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "biclusterers": {
+                                            "$id": "#/properties/profile/properties/plugins/properties/organizations/properties/orgSettings/properties/biclusterers",
+                                            "type": "object",
+                                            "title": "The Biclusterers Schema",
+                                            "default": {},
+                                            "required": [
+                                                "settings"
+                                            ],
+                                            "properties": {
+                                                "settings": {
+                                                    "$id": "#/properties/profile/properties/plugins/properties/organizations/properties/orgSettings/properties/biclusterers/properties/settings",
+                                                    "type": "object",
+                                                    "title": "The Settings Schema",
+                                                    "default": {},
+                                                    "required": [
+                                                        "lastVisitedAt"
+                                                    ],
+                                                    "properties": {
+                                                        "lastVisitedAt": {
+                                                            "$id": "#/properties/profile/properties/plugins/properties/organizations/properties/orgSettings/properties/biclusterers/properties/settings/properties/lastVisitedAt",
+                                                            "type": "string",
+                                                            "title": "The Lastvisitedat Schema",
+                                                            "default": ""
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
