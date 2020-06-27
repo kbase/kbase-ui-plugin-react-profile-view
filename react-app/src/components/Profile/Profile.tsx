@@ -757,7 +757,6 @@ class Profile extends React.Component<Props, State> {
     };
 
     organizationOnCommit(organization: string | null) {
-        console.log('committing org', organization);
         const userdata = this.props.profileUserdata;
         if (organization !== userdata.organization) {
             this.setState({

@@ -50,25 +50,10 @@ export default class Organization extends React.Component<OrganizationProps, Org
                         }
                         break;
                     default:
-                        // case ValidationStatus.NONE:
-                        // case ValidationStatus.ERROR:
-                        // case ValidationStatus.VALIDATING:
-                        // case ValidationStatus.WARNING:
                         this.dirty = true;
                 }
-            // case ValidationStatus.NONE:
-            // case ValidationStatus.ERROR:
-            // case ValidationStatus.VALIDATING:
-            // case ValidationStatus.WARNING:
         }
 
-        // console.log('update', validationState, this.dirty, previousValidationState);
-
-        // const validationState = this.validate(newValue);
-        // console.log('update', validationState, newValue);
-        // if (validationState.status === ValidationStatus.SUCCESS) {
-
-        // }
         this.validationState = validationState;
         this.setState({
             validationState
@@ -110,7 +95,6 @@ export default class Organization extends React.Component<OrganizationProps, Org
     }
 
     onSelect(newValue: SelectValue) {
-        console.log('onSelect', newValue);
         this.update(newValue.toString());
         this.onBlur();
     }
@@ -130,7 +114,6 @@ export default class Organization extends React.Component<OrganizationProps, Org
     }
 
     onBlur() {
-        console.log('onBlur', this.validationState, this.dirty);
         if (this.validationState.status === ValidationStatus.SUCCESS) {
             if (this.dirty) {
                 this.props.commit(this.validationState.value);
@@ -143,7 +126,6 @@ export default class Organization extends React.Component<OrganizationProps, Org
     }
 
     onFocus() {
-        console.log('on focus?', this.props.defaultValue);
         this.onSearch(this.props.defaultValue || '');
     }
 

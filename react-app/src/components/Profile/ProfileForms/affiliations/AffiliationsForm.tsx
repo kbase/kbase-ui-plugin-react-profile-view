@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from 'antd';
-import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined } from '@ant-design/icons';
 
 import { Affiliation, ProfileUserdata, UserName } from '../../../../redux/interfaces';
 import './AffiliationForm.css';

@@ -41,7 +41,6 @@ export default class Organization extends React.Component<OrganizationProps, Org
 
 
     validate(newValue: string | undefined) {
-        console.log('validating?', newValue);
         if (newValue === undefined || newValue.length === 0) {
             this.props.status('error');
             this.setState({
@@ -61,7 +60,6 @@ export default class Organization extends React.Component<OrganizationProps, Org
                 message: `Organization must be no longer than ${MAX_ORGANIZATION_CHARS} characters long`
             });
         } else {
-            console.log('validated?', newValue);
             this.props.status('success');
             this.setState({
                 status: 'success',
@@ -88,20 +86,6 @@ export default class Organization extends React.Component<OrganizationProps, Org
     onKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
 
     }
-    // maybeCommit() {
-    //     console.log('maybe commit', this.state);
-    //     if (this.state.status === 'success' &&
-    //         this.state.dirty &&
-    //         typeof this.state.currentValue !== 'undefined') {
-    //         this.props.commit(this.state.currentValue);
-    //         this.setState({
-    //             dirty: false
-    //         });
-    //     }
-    // }
-    // onBlur() {
-    //     this.maybeCommit();
-    // }
     onSearch(value: string) {
         if (value.length >= MIN_ORGANIZATION_CHARS) {
             const filtered = institutions.filter((item) =>
@@ -121,8 +105,6 @@ export default class Organization extends React.Component<OrganizationProps, Org
     };
     onSelect(newValue: SelectValue) {
         this.validate(newValue.toString());
-        // console.log('new value?', newValue);
-        // this.maybeCommit();
     }
     render() {
         let children;

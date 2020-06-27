@@ -28,7 +28,6 @@ export function loadNarratives(filter: string, viewedUsername: string) {
                     let narrativeList: Array<NarrativeData> = [];
                     Promise.all([publicNarratives, sharedNarratives])
                         .then((response) => {
-                            console.log('response', response);
                             // generate combined narrative list 
                             if (typeof response[0] !== 'undefined' && typeof response[1] !== 'undefined') {
                                 allNarratives = response[0].concat(response[1]);

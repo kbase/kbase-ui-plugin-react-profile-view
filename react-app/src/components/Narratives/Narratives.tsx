@@ -23,10 +23,6 @@ interface State {
  * @param props
  */
 export default class Narratives extends React.Component<Props, State> {
-    constructor(props: Props) {
-        super(props);
-    }
-
     render() {
         let message: string;
         if (this.props.isOwner) {

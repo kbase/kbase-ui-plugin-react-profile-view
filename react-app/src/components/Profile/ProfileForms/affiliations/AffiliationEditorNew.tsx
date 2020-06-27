@@ -4,7 +4,7 @@ import AffiliationForm from './AffiliationForm';
 import './AffiliationEditorNew.css';
 import { Button } from 'antd';
 import {
-    SaveOutlined, DeleteOutlined, PlusCircleOutlined
+    DeleteOutlined, PlusCircleOutlined
 } from '@ant-design/icons';
 import ButtonGroup from 'antd/lib/button/button-group';
 
@@ -28,18 +28,10 @@ export default class AffiliationEditorNew extends React.Component<Props, State> 
     }
 
     save(affiliation: Affiliation) {
-        console.log('saving 1...', affiliation);
-        // this.props.save(affiliation);
         this.setState({
             savableAffiliation: affiliation
         });
     }
-
-    // canSave(canSave: boolean) {
-    //     this.setState({
-    //         canSave
-    //     })
-    // }
 
     doSave() {
         if (this.state.savableAffiliation) {
@@ -57,7 +49,6 @@ export default class AffiliationEditorNew extends React.Component<Props, State> 
         return <div className="AffiliationEditorNew-row">
             <div className="AffiliationEditorNew-form-col">
                 <AffiliationForm affiliation={affiliation}
-                    // canSave={this.canSave.bind(this)}
                     autoSave={false}
                     save={this.save.bind(this)}
                 />
