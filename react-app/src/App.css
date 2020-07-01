@@ -1,4 +1,11 @@
-.ReactProfileView .ant-select-selection__clear {
+.App {
+    flex: 1 1 0px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.App .ant-select-selection__clear {
     right: 0;
     margin-right: -18px;
 }

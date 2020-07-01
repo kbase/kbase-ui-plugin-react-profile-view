@@ -1,11 +1,12 @@
 import React from 'react';
-
 import { Tabs } from 'antd';
 
 import ProfileContainer from '../components/Profile/ProfileContainer';
 import NarrativeContainer from '../components/Narratives';
 import { OrgProp, UserName } from '../redux/interfaces';
 import SearchUsersContainer from '../components/SearchUsers/SearchUsersContainer';
+
+import './Home.css';
 
 const TabPane = Tabs.TabPane;
 /**
@@ -22,7 +23,6 @@ interface HomeState {
     organizationsLoaded: Boolean;
     gravatarHash: string;
 };
-
 
 export interface HomeProps {
     token: string;
@@ -117,8 +117,12 @@ class Home extends React.Component<HomeProps, HomeState> {
 
     render() {
         return (
-            <div className="profile-tabs">
-                <Tabs type="line" defaultActiveKey="1" tabBarExtraContent={this.searchOnATab}>
+            <div className="Home">
+                <Tabs type="card"
+                    animated={false}
+                    className="FullHeight-tabs"
+                    defaultActiveKey="1"
+                    tabBarExtraContent={this.searchOnATab}>
                     <TabPane tab="Profile" key="1">
                         <ProfileContainer />
                     </TabPane>

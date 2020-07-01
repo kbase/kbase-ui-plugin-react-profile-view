@@ -15,7 +15,8 @@ export function makeInitialStoreState(): StoreState {
         ...baseStoreState,
         narrativeState: {
             narrativeList: [],
-            loading: true
+            loading: true,
+            isOwner: false
         },
         profileView: { profileFetchStatus: AsyncFetchStatus.NONE },
         orgState: { orgFetchStatus: AsyncFetchStatus.NONE }

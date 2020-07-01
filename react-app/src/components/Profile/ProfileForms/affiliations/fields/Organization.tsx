@@ -59,7 +59,6 @@ export default class Organization extends React.Component<OrganizationProps, Org
                 status: 'error',
                 message: `Organization must be no longer than ${MAX_ORGANIZATION_CHARS} characters long`
             });
-
         } else {
             this.props.status('success');
             this.setState({
@@ -68,6 +67,12 @@ export default class Organization extends React.Component<OrganizationProps, Org
                 message: '',
                 dirty: (this.state.currentValue !== newValue)
             });
+            if (this.state.currentValue !== newValue) {
+                this.props.commit(newValue);
+                this.setState({
+                    dirty: false
+                });
+            }
         }
 
     }
@@ -80,17 +85,6 @@ export default class Organization extends React.Component<OrganizationProps, Org
     }
     onKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
 
-    }
-    maybeCommit() {
-        if (this.state.status === 'success' && this.state.dirty && typeof this.state.currentValue !== 'undefined') {
-            this.props.commit(this.state.currentValue);
-            this.setState({
-                dirty: false
-            });
-        }
-    }
-    onBlur() {
-        this.maybeCommit();
     }
     onSearch(value: string) {
         if (value.length >= MIN_ORGANIZATION_CHARS) {
@@ -111,12 +105,15 @@ export default class Organization extends React.Component<OrganizationProps, Org
     };
     onSelect(newValue: SelectValue) {
         this.validate(newValue.toString());
-        this.maybeCommit();
     }
     render() {
         let children;
         if (this.state.tooManyInstitutionsToRender[0]) {
-            children = <Select.Option key="sorry">Keep Searching - too many ({this.state.tooManyInstitutionsToRender[1]}) to show (max {MAX_INSTITUTIONS_TO_SHOW})</Select.Option>;
+            children = <Select.Option
+                value=""
+                key="sorry">
+                Keep Searching - too many ({this.state.tooManyInstitutionsToRender[1]}) to show (max {MAX_INSTITUTIONS_TO_SHOW})
+                </Select.Option>;
         } else {
             children = this.state.institutionFiltered.map((item, index) => {
                 return (
@@ -127,7 +124,7 @@ export default class Organization extends React.Component<OrganizationProps, Org
             });
         }
         return <Form.Item
-            style={{ flexGrow: 1 }}
+            style={{ flexGrow: 1, marginBottom: 0 }}
             required={true}
             // label=' '
             help={this.state.message}
@@ -135,12 +132,12 @@ export default class Organization extends React.Component<OrganizationProps, Org
         >
             <AutoComplete
                 placeholder='Organization'
-                onSelect={this.onSelect.bind(this)}
+                // onSelect={this.onSelect.bind(this)}
                 onChange={this.onChange.bind(this)}
                 onSearch={this.onSearch.bind(this)}
                 dropdownMatchSelectWidth={false}
                 defaultValue={this.props.value || undefined}
-                onBlur={this.onBlur.bind(this)}
+            // onBlur={this.onBlur.bind(this)}
             >
                 {children}
             </AutoComplete>

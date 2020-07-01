@@ -3,6 +3,7 @@ import {
     Row, Col, Input, Tooltip, Form, Checkbox,
     Modal, Select, Button, Empty, message
 } from 'antd';
+import { EditOutlined, CloseOutlined } from '@ant-design/icons';
 import { UserName, ProfileUserdata, Affiliation } from '../../redux/interfaces';
 import marked from 'marked';
 
@@ -306,8 +307,8 @@ class Profile extends React.Component<Props, State> {
                         onChange={this.onChangeCountry.bind(this)}
                         onSelect={this.countryOnSelect.bind(this)}
                         filterOption={(inputValue, option) => {
-                            if (typeof option.props.children === 'string') {
-                                let item = option.props.children;
+                            if (option && option.props && typeof option.props.children === 'string') {
+                                const item = option.props.children;
                                 return item.toLowerCase().indexOf(inputValue.toLowerCase()) >= 0;
                             } else {
                                 return false;
@@ -333,15 +334,14 @@ class Profile extends React.Component<Props, State> {
                     <Select
                         dropdownMatchSelectWidth
                         allowClear
-                        mode='default'
                         disabled={!this.state.isEditing}
                         placeholder='State'
                         showArrow
                         onChange={this.stateOnSelect.bind(this)}
-                        onSelect={this.stateOnSelect.bind(this)}
+                        // onSelect={this.stateOnSelect.bind(this)}
                         optionFilterProp='children'
                         filterOption={(inputValue, option) => {
-                            if (typeof option.props.children === 'string') {
+                            if (option && option.props && typeof option.props.children === 'string') {
                                 let item = option.props.children;
                                 return item.toLowerCase().indexOf(inputValue.toLowerCase()) >= 0;
                             } else {
@@ -396,7 +396,6 @@ class Profile extends React.Component<Props, State> {
                     <Select
                         className='margin-top-10px'
                         allowClear
-                        mode='default'
                         style={{ width: '100%', marginTop: '10px' }}
                         showSearch
                         disabled={!this.state.isEditing}
@@ -405,7 +404,7 @@ class Profile extends React.Component<Props, State> {
                         onChange={this.fundingSourceOnChange.bind(this)}
                         optionFilterProp='children'
                         filterOption={(inputValue, option) => {
-                            if (typeof option.props.children === 'string') {
+                            if (option && option.props && typeof option.props.children === 'string') {
                                 let str = option.props.children;
                                 return str.toLowerCase().indexOf(inputValue.toLowerCase()) >= 0;
                             } else {
@@ -442,9 +441,20 @@ class Profile extends React.Component<Props, State> {
         </div>;
     }
 
+    renderJobTitle(profile: State) {
+        if (profile.jobTitle) {
+            return <div>
+                {this.renderSectionTitle('position')}
+                <div>
+                    {profile.jobTitle === 'Other' ? profile.jobTitleOther : profile.jobTitle}
+                </div>
+            </div>;
+        }
+    }
+
     renderUserNutshellView() {
         const profile = this.state;
-        const jobTitle = profile.jobTitle ? (<div>{this.renderSectionTitle('position')}<div>{profile.jobTitleOther}</div></div>) : null;
+        const jobTitle = this.renderJobTitle(profile);
         const department = profile.department ? (<div>{this.renderSectionTitle('department')}<div>{profile.department}</div></div>) : null;
         const organization = profile.organization ? (<div>{this.renderSectionTitle('organization')}<div>{profile.organization}</div></div>) : null;
         const locationFields = [profile.country, profile.state, profile.city].filter(x => x).join(', ');
@@ -478,7 +488,6 @@ class Profile extends React.Component<Props, State> {
             return this.renderUserNutshellEditor();
         } else {
             return this.renderUserNutshellView();
-
         };
     }
 
@@ -686,9 +695,10 @@ class Profile extends React.Component<Props, State> {
         this.saveProfile(profileData);
     }
 
-    stateOnSelect(value: string) {
+    stateOnSelect(state: string) {
         const profileData = this.props.profileUserdata;
-        profileData.state = value;
+        profileData.state = state;
+        this.setState({ state });
         this.saveProfile(profileData);
     };
 
@@ -700,7 +710,6 @@ class Profile extends React.Component<Props, State> {
         const value = event.target.value;
         this.setState({ researchInterestsOther: value.trim() });
     }
-
 
     // handles researchInterest check box onChange 
     researchInterestOnChange(event: any) {
@@ -748,7 +757,6 @@ class Profile extends React.Component<Props, State> {
     };
 
     organizationOnCommit(organization: string | null) {
-        console.log('committing org', organization);
         const userdata = this.props.profileUserdata;
         if (organization !== userdata.organization) {
             this.setState({
@@ -807,7 +815,7 @@ class Profile extends React.Component<Props, State> {
             onCancel={this.hideModal.bind(this)}
             footer={[
                 <Button key='back'
-                    type="danger"
+                    danger
                     onClick={this.hideModal.bind(this)}>
                     Cancel
                 </Button>,
@@ -855,7 +863,7 @@ class Profile extends React.Component<Props, State> {
             }}
             footer={[
                 <Button key="back"
-                    type="danger"
+                    danger
                     onClick={this.hideModal.bind(this)}>
                     Cancel
                 </Button>,
@@ -929,28 +937,31 @@ class Profile extends React.Component<Props, State> {
         let bannerText;;
         if (this.state.isEditing) {
             // button = <Button icon="eye" onClick={this.toggleEditing.bind(this)}>View</Button>;
-            button = <Button icon="close" type="danger" onClick={this.toggleEditing.bind(this)}>Close Editor</Button>;
+            button = <Button
+                icon={<CloseOutlined />}
+                danger
+                onClick={this.toggleEditing.bind(this)}>
+                Close Editor
+            </Button>;
             bannerText = <span>
-                Closing the editor returns your profile to display mode.
+                Closing the editor returns your profile to display mode; all edits are saved as you make them.
             </span>;
         } else {
-
-            button = <Button icon="edit" type="primary" onClick={this.toggleEditing.bind(this)}>Edit Profile</Button>;
+            button = <Button
+                icon={<EditOutlined />}
+                type="primary"
+                onClick={this.toggleEditing.bind(this)}>
+                Edit Profile
+            </Button>;
             // bannerText = 'View Mode: You are viewing your profile as other users will see it';
             bannerText = <span>
-
             </span>;
-
         }
 
-        return <Row gutter={8} style={{ backgroundColor: 'rgba(200, 200, 200, 0.2)' }}>
-            <Col span={24}>
-                <div className="ButtonBar">
-                    <div className="ButtonBar-button">{button}</div>
-                    <div className="ButtonBar-text">{bannerText}</div>
-                </div>
-            </Col>
-        </Row>;
+        return <div className="ButtonBar">
+            <div className="ButtonBar-button">{button}</div>
+            <div className="ButtonBar-text">{bannerText}</div>
+        </div>;
     }
 
     renderAvatarEditor() {
@@ -1033,13 +1044,13 @@ class Profile extends React.Component<Props, State> {
 
     render() {
         return (
-            <Row >
-                {this.renderControls()}
-                <Row gutter={8}>
-                    <Col span={8}>
-                        <Area
-
-                        >
+            <div className="Profile">
+                <div style={{ marginBottom: '10px' }}>
+                    {this.renderControls()}
+                </div>
+                <Row gutter={8} style={{ overflowY: 'auto', flex: '1 1 0px' }}>
+                    <Col span={6}>
+                        <Area>
                             {/* <p>{this.props.userName.name}</p> */}
                             <div>
                                 <div style={{ textAlign: 'center', fontWeight: 'bold' }}>{this.props.userName.name}</div>
@@ -1052,17 +1063,12 @@ class Profile extends React.Component<Props, State> {
                             {this.renderUserNutshell()}
                         </Area>
                     </Col>
-                    <Col span={16}>
+                    <Col span={18}>
                         <Row gutter={8}>
                             <Col span={12}>
                                 <Area title="Research Interests">
                                     {this.renderResearchInterests()}
                                 </Area>
-                                {/*
-                                <Card className='card-with-height researchInterests' style={{ margin: '8px 0px' }} title='Research Interests'>
-                                    {this.renderResearchInterests()}
-                                </Card>
-                                */}
                             </Col>
                             <Col span={12}>
                                 <Area title='Organizations' maxHeight='10em'>
@@ -1070,14 +1076,17 @@ class Profile extends React.Component<Props, State> {
                                 </Area>
                             </Col>
                         </Row>
-                        <Row style={{ marginTop: '8px' }}>
-                            {/* TODO:AKIYO FIX - when the box is very small it doesn't break or hide word */}
-                            {this.renderResearchStatement()}
-                            {this.renderAffiliations()}
+                        <Row style={{ marginTop: '8px' }} gutter={8}>
+                            <Col span={8}>
+                                {this.renderResearchStatement()}
+                            </Col>
+                            <Col span={16}>
+                                {this.renderAffiliations()}
+                            </Col>
                         </Row>
                     </Col>
-                </Row>
-            </Row>
+                </Row >
+            </div >
         );
     };
 };

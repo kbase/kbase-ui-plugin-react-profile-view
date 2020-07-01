@@ -1,11 +1,13 @@
 import React from 'react';
+import { Button } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+
 import { Affiliation, ProfileUserdata, UserName } from '../../../../redux/interfaces';
 import './AffiliationForm.css';
 // import AffiliationForm from './AffiliationForm';
 // import NewAffiliationForm from './NewAffiliationForm';
 import AffiliationEditor from './AffiliationEditor';
 import AffiliationEditorNew from './AffiliationEditorNew';
-import { Button } from 'antd';
 
 // const { Option } = Select;
 
@@ -105,14 +107,13 @@ export default class AffiliationsForm extends React.Component<Props, State> {
         // TODO: Ugh. Everywhere that this is practiced needs to be refactored.
         // very dangerous in general, but for personal user profiles the concurrency is 
         // essentially 1, but still...
-        const profile = this.props.profileUserdata;
         affiliations.push(affiliation);
         this.setState({
             affiliations,
             addingNewAffiliation: false
         });
         const newProfile: ProfileUserdata = {
-            ...profile,
+            ...this.props.profileUserdata,
             affiliations
         };
         this.props.updateStoreState(newProfile, this.props.userName);
@@ -144,22 +145,30 @@ export default class AffiliationsForm extends React.Component<Props, State> {
         if (this.state.addingNewAffiliation) {
             return (
                 <div>
-                    <Button type="danger" icon="minus" onClick={this.toggleNewAffiliation.bind(this)}>Cancel</Button>
-
                     <AffiliationEditorNew
-                        save={(affiliation) => { this.doSaveNewAffiliation(affiliation); }}
+                        save={this.doSaveNewAffiliation.bind(this)}
+                        cancel={this.toggleNewAffiliation.bind(this)}
                     />
                 </div>
             );
         } else {
             return <div>
-                <Button icon="plus" onClick={this.toggleNewAffiliation.bind(this)}>Add New Affiliation</Button>
+                <Button
+                    icon={<PlusOutlined />}
+                    onClick={this.toggleNewAffiliation.bind(this)}>
+                    Add New Affiliation
+                </Button>
             </div>;
         }
     }
 
     renderHeader() {
-        return <div style={{ display: 'flex', flexDirection: 'row', borderBottom: '1px solid silver' }}>
+        return <div style={{
+            display: 'flex',
+            flexDirection: 'row',
+            borderBottom: '1px solid silver',
+            marginBottom: '4px'
+        }}>
             <div className="AffiliationsRow" style={{ flex: '1 1 0px' }}>
                 <div className="AffiliationsCol">Position</div>
                 <div className="AffiliationsCol">Organization</div>

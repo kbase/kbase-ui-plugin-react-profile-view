@@ -5,9 +5,6 @@ import { MIN_ORGANIZATION_CHARS, MAX_INSTITUTIONS_TO_SHOW } from '../../constant
 import { institutions } from '../../dataSources/institutions';
 import { ValidationState, ValidationStatus } from '../../types';
 
-
-
-
 export interface OrganizationProps {
     // field: Field
     required: boolean;
@@ -20,8 +17,6 @@ interface OrganizationState {
     institutionFiltered: Array<string>;
     tooManyInstitutionsToRender: [boolean, number?];
 }
-
-
 
 export default class Organization extends React.Component<OrganizationProps, OrganizationState> {
     value: string | null;
@@ -43,7 +38,6 @@ export default class Organization extends React.Component<OrganizationProps, Org
         };
     }
 
-
     update(newValue: string) {
         const previousValidationState = this.validationState;
         const validationState = this.validate(newValue);
@@ -56,25 +50,10 @@ export default class Organization extends React.Component<OrganizationProps, Org
                         }
                         break;
                     default:
-                        // case ValidationStatus.NONE:
-                        // case ValidationStatus.ERROR:
-                        // case ValidationStatus.VALIDATING:
-                        // case ValidationStatus.WARNING:
                         this.dirty = true;
                 }
-            // case ValidationStatus.NONE:
-            // case ValidationStatus.ERROR:
-            // case ValidationStatus.VALIDATING:
-            // case ValidationStatus.WARNING:
         }
 
-        console.log('update', validationState, this.dirty, previousValidationState);
-
-        // const validationState = this.validate(newValue);
-        // console.log('update', validationState, newValue);
-        // if (validationState.status === ValidationStatus.SUCCESS) {
-
-        // }
         this.validationState = validationState;
         this.setState({
             validationState
@@ -116,7 +95,6 @@ export default class Organization extends React.Component<OrganizationProps, Org
     }
 
     onSelect(newValue: SelectValue) {
-        console.log('onSelect', newValue);
         this.update(newValue.toString());
         this.onBlur();
     }
@@ -136,7 +114,6 @@ export default class Organization extends React.Component<OrganizationProps, Org
     }
 
     onBlur() {
-        console.log('onBlur', this.validationState, this.dirty);
         if (this.validationState.status === ValidationStatus.SUCCESS) {
             if (this.dirty) {
                 this.props.commit(this.validationState.value);
@@ -149,7 +126,6 @@ export default class Organization extends React.Component<OrganizationProps, Org
     }
 
     onFocus() {
-        console.log('on focus?', this.props.defaultValue);
         this.onSearch(this.props.defaultValue || '');
     }
 
@@ -177,7 +153,11 @@ export default class Organization extends React.Component<OrganizationProps, Org
     render() {
         let children;
         if (this.state.tooManyInstitutionsToRender[0]) {
-            children = <Select.Option key="sorry">Keep Searching - too many ({this.state.tooManyInstitutionsToRender[1]}) to show (max {MAX_INSTITUTIONS_TO_SHOW})</Select.Option>;
+            children = <Select.Option
+                value=""
+                key="sorry">
+                Keep Searching - too many ({this.state.tooManyInstitutionsToRender[1]}) to show (max {MAX_INSTITUTIONS_TO_SHOW})
+            </Select.Option>;
         } else {
             children = this.state.institutionFiltered.map((item, index) => {
                 return (

@@ -83,7 +83,6 @@ class SearchUsers extends React.Component<Props, State> {
         let data = this.state.data;
         return (
             <Select
-                mode='default'
                 style={{ width: 250 }}
                 allowClear
                 showSearch
@@ -101,7 +100,7 @@ class SearchUsers extends React.Component<Props, State> {
             >
                 {data.map((item) => {
                     return (
-                        <Option key={item['username']}>
+                        <Option key={item['username']} value={item['username']}>
                             {item['realname']} ({item['username']})
                         </Option>
                     );

@@ -12,6 +12,8 @@ import { AntDesignValidationStatus } from '../../../../types';
 export interface Props {
     affiliation: Affiliation;
     save: (affiliation: Affiliation) => void;
+    // canSave: (canSave: boolean) => void;
+    autoSave: boolean;
 };
 
 interface State {
@@ -62,11 +64,6 @@ export default class AffiliationForm extends React.Component<Props, State> {
         };
     };
 
-    onValidated(affiliation: Affiliation) {
-        // this.props.save(affiliation);
-        // console.log('on validate', affiliation);
-    }
-
     commit() {
         const { title, organization, started, ended } = this.state.fields;
         if (title.status === 'success' && organization.status === 'success' && started.status === 'success' && ended.status === 'success') {
@@ -76,11 +73,10 @@ export default class AffiliationForm extends React.Component<Props, State> {
                 started: started.value,
                 ended: ended.value
             };
-            console.log('COMMIT - saving', affiliation);
             this.props.save(affiliation);
             this.setState({ dirty: false });
         } else {
-            console.log('COMMIT - not saving...', this.state.fields);
+            console.warn('COMMIT - not saving...', this.state.fields);
         }
     }
 
@@ -156,16 +152,6 @@ export default class AffiliationForm extends React.Component<Props, State> {
         this.setState({
             fields
         });
-        // // console.log('started org!', status);
-        // this.setState({
-        //     fields: {
-        //         ...this.state.fields,
-        //         organization: {
-        //             ...this.state.fields.organization,
-        //             status
-        //         }
-        //     }
-        // });
     }
 
     onStatusStarted(status: AntDesignValidationStatus) {
@@ -183,19 +169,13 @@ export default class AffiliationForm extends React.Component<Props, State> {
             fields
         });
     }
-
-    // componentWillUpdate() {
-    //     console.log('FORM WILL UPDATE', this.state);
-    // }
-
     /**
      * builds affiliation card
      */
     render() {
         return (
             <form
-                className='affiliation-row ant-form '
-                // name={index.toString(10)}
+                className=''
                 autoComplete="on">
                 <div className='AffiliationsRow'>
                     {/* Job title / role */}

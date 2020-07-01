@@ -19,6 +19,7 @@ it('renders without crashing with correct type and data', () => {
             name: 'Bronko',
             last_saved: 0,
             users: {},
+            owner: '',
             narrative_detail: { creator: 'Luna' }
         }
     ];
@@ -56,6 +57,7 @@ it('renders without crashing with bad type and data', () => {
             name: 1234,
             last_saved: 'me',
             users: {},
+            onwer: '',
             narrative_detail: { creator: 4567 }
         }
     ];

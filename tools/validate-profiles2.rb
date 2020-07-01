@@ -1,8 +1,10 @@
 require './services'
+require 'json_schemer'
 
 $kbase_env = ENV['KBASE_ENV']
 
 def main()
+    schemaDir = "./schemas"
     dataDir = "./_temp/#{$kbase_env}"
     puts "Data dir #{dataDir}"
     Dir.entries(dataDir).each do |file|
@@ -68,7 +70,7 @@ def main()
                     if ended == nil
                         # this is normal too
                         # puts "ended: NIL #{username}, #{affiliation}"
-                    elsif started.instance_of? String 
+                    elsif ended.instance_of? String 
                         puts "ended: STRING #{username}, #{affiliation}"
                     else 
                         # puts "#{username}, #{started}, #{started.class}"
