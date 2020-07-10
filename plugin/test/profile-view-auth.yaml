@@ -12,9 +12,9 @@ specs:
           - type: iframe
             value: plugin-iframe
       - action: switchToFrame
-      - wait: forElement
+      - wait: forText
         timeout: 10000
+        text: "{{config.auth.username}}"
         selector:
-          - type: raw
-            name: class
-            value: profile-tabs
+          - type: element
+            value: username
