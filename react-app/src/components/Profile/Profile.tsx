@@ -1051,10 +1051,15 @@ class Profile extends React.Component<Props, State> {
                 <Row gutter={8} style={{ overflowY: 'auto', flex: '1 1 0px' }}>
                     <Col span={6}>
                         <Area>
-                            {/* <p>{this.props.userName.name}</p> */}
                             <div>
-                                <div style={{ textAlign: 'center', fontWeight: 'bold' }}>{this.props.userName.name}</div>
-                                <div style={{ fontFamily: 'monospace', textAlign: 'center' }}>{this.props.userName.userID}</div>
+                                <div data-k-b-testhook-element="realname" style={{
+                                    textAlign: 'center',
+                                    fontWeight: 'bold'
+                                }}>{this.props.userName.name}</div>
+                                <div data-k-b-testhook-element="username" style={{
+                                    fontFamily: 'monospace',
+                                    textAlign: 'center'
+                                }}>{this.props.userName.userID}</div>
                                 {this.renderAvatar()}
 
                             </div>
