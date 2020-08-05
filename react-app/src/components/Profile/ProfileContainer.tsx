@@ -46,7 +46,6 @@ function mapStateToProps(state: StoreState): Props {
 
         case AsyncFetchStatus.REFETCHING:
         case AsyncFetchStatus.SUCCESS:
-            // typescript isn't good at switch case yet... 
             const profileData = state.profileView as ProfileView;
             return {
                 userName: profileData.userName,
@@ -57,17 +56,11 @@ function mapStateToProps(state: StoreState): Props {
             };
 
         default:
-            // if you don't return Props type, it will complain. 
-            // but if you try to return state.profileView.profileFetchStatus
-            // its type is "never" 
-            // hacky way to fix that. 
             return {
                 profileFetchStatus: AsyncFetchStatus.ERROR
             };
     };
-
 };
-
 
 function mapDispatchToProps(dispatch: Dispatch<Action>): DispatchProps {
     return {

@@ -4,15 +4,6 @@ import { connect } from 'react-redux';
 import SearchUsers from './SearchUsers';
 import { StoreState } from '../../redux/interfaces';
 
-// interface AppState {
-//     app: {
-//         config: {
-//             baseUrl: string;
-//         }
-//     };
-//     auth: AuthData;
-// }
-
 interface AuthData {
     userAuthorization: {
         realname: string;
@@ -30,7 +21,7 @@ export interface Props {
 const mapStateToProps = (state: StoreState): Props => {
     // Since this component is just a redux wrapper 
     // and not modifying state to make component props
-    // simply return state asd props
+    // simply return state and props
     const {
         auth: {
             userAuthorization

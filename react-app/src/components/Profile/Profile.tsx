@@ -4,13 +4,12 @@ import {
     Modal, Select, Button, Empty, message
 } from 'antd';
 import { EditOutlined, CloseOutlined } from '@ant-design/icons';
-import { UserName, ProfileUserdata, Affiliation } from '../../redux/interfaces';
 import marked from 'marked';
 
+import { UserName, ProfileUserdata, Affiliation } from '../../redux/interfaces';
 import nouserpic from '../../assets/nouserpic.png';
 import OrgsContainer from '../Orgs/OrgsContainer';
-import InputForm2 from './ProfileForms/InputForm2';
-
+import InputWrapper from './ProfileForms/InputForm';
 import TextAreaForm from './ProfileForms/TextAreaForm';
 import AffiliationsForm from './ProfileForms/affiliations/AffiliationsForm';
 import OrganizationField from '../Organization';
@@ -25,6 +24,7 @@ import { SelectValue } from 'antd/lib/select';
 
 import './Profile.css';
 import Area from '../Area';
+import { CheckboxValueType } from 'antd/lib/checkbox/Group';
 
 const { Option } = Select;
 
@@ -33,24 +33,7 @@ enum ModalName {
     AvatarOption,
 };
 
-function arraysEqual(a: any, b: any): boolean {
-    if (!Array.isArray(a)) {
-        return false;
-    }
-    if (!Array.isArray(b)) {
-        return false;
-    }
 
-    if (a.length !== b.length) {
-        return false;
-    }
-    for (let i = 0; i < a.length; i += 1) {
-        if (a[i] !== b[i]) {
-            return false;
-        }
-    }
-    return true;
-}
 
 interface Props {
     userName: UserName;
@@ -58,30 +41,14 @@ interface Props {
     profileUserdata: ProfileUserdata;
     gravatarHash: string;
     profileFetchStatus: string;
-    updateProfile: (userdata: ProfileUserdata) => void;
+    updateProfile: (userdata: ProfileUserdata, username: UserName) => void;
 };
 
 interface State {
     visibleModal: ModalName | null;
-
-    // TODO: profile object instead of loose fields
-    researchInterestsValue: Array<string>;
-    researchInterestsOther: string | undefined;
-    jobTitle: string;
-    jobTitleOther: string | undefined;
-    department: string | null;
-    organization: string | null;
-    country: string;
-    city: string;
-    postalCode: string;
-    state: string;
+    profile: ProfileUserdata;
     institutionFiltered: Array<string>;
-    affiliations: Array<Affiliation>;
-    gravatarDefault: string | undefined;
-    avatarOption: string | undefined;
-    fundingSource: string | null;
-
-    tooManyInstitutionsToRender?: boolean;
+    tooManyInstitutionsToRender: boolean;
     isEditing: boolean;
 };
 
@@ -94,53 +61,17 @@ class Profile extends React.Component<Props, State> {
         super(props);
         this.state = {
             visibleModal: null,
-            researchInterestsValue: [],
-            researchInterestsOther: undefined,
-            jobTitle: '',
-            jobTitleOther: undefined,
-            organization: null,
-            fundingSource: '',
-            country: '',
-            city: '',
-            postalCode: '',
-            state: '',
+            profile: this.props.profileUserdata,
+            tooManyInstitutionsToRender: false,
             institutionFiltered: [],
-            affiliations: [],
-            department: '',
-            gravatarDefault: undefined,
-            avatarOption: undefined,
             isEditing: false
         };
     };
 
-    saveProfile(profile: ProfileUserdata) {
-        this.props.updateProfile(profile);
+    saveProfile() {
+        this.props.updateProfile(this.state.profile, this.props.userName);
         message.success('Saved changes to your Profile');
     }
-
-    componentDidMount() {
-        const profile = this.props.profileUserdata;
-        this.setState({
-            researchInterestsOther: profile.researchInterestsOther || undefined,
-            jobTitle: profile.jobTitle,
-            jobTitleOther: profile.jobTitleOther,
-            organization: profile.organization,
-            country: profile.country,
-            city: profile.city,
-            postalCode: profile.postalCode,
-            state: profile.state,
-            gravatarDefault: profile.gravatarDefault,
-            avatarOption: profile.avatarOption,
-            fundingSource: profile.fundingSource
-        });
-        if (Array.isArray(profile.researchInterests)) {
-            this.setState({ researchInterestsValue: profile.researchInterests });
-        };
-        if (Array.isArray(profile.affiliations)) {
-            this.setState({ affiliations: profile.affiliations });
-        };
-
-    };
 
     // if you're going ot use prevProps, prevState
     // you need to put all these three for typescript to be happy.
@@ -163,7 +94,7 @@ class Profile extends React.Component<Props, State> {
 
     // set visitbility after initial mounting
     USStateVisibility() {
-        if (this.state.country === 'United States') {
+        if (this.state.profile.country === 'United States') {
             return { display: 'inherit' };
         } else {
             return { display: 'none' };
@@ -222,76 +153,49 @@ class Profile extends React.Component<Props, State> {
                     </Select>
                 </Form.Item>
 
-
-                <InputForm2
-                    hidden={this.state.jobTitle === 'Other' ? false : true}
-                    type={'string'}
-                    required={this.state.jobTitle === 'Other'}
-                    userName={this.props.userName}
-                    updateStoreState={this.saveProfile.bind(this)} // updates StoreState
-                    data={this.props.profileUserdata}
-                    stateProperty={'jobTitleOther'}
+                <InputWrapper
+                    hidden={this.state.profile.jobTitle === 'Other' ? false : true}
+                    type="string"
+                    required={this.state.profile.jobTitle === 'Other'}
                     placeHolder='Job Title'
                     label='Position (Other)'
-                    defaultValue={this.props.profileUserdata.jobTitleOther}
-                    readOnly={!this.props.editEnable}
+                    defaultValue={this.state.profile.jobTitleOther}
+                    value={this.state.profile.jobTitleOther}
                     maxLength={50}
-                    onBlur={true}
-                    onPressEnter={true}
+                    updateProfileField={(value: string) => {
+                        this.setState({
+                            profile: {
+                                ...this.state.profile,
+                                jobTitleOther: value
+                            }
+                        }, this.saveProfile.bind(this));
+                    }}
                 />
 
                 <Tooltip title='must be more than 2 and less than 50 characters'>
-                    <InputForm2
+                    <InputWrapper
                         hidden={false}
-                        type={'string'}
-                        userName={this.props.userName}
-                        updateStoreState={this.saveProfile.bind(this)} // updates StoreState
-                        data={this.props.profileUserdata}
-                        stateProperty={'department'}
+                        type="string"
+                        updateProfileField={(value: string) => {
+                            this.setState({
+                                profile: {
+                                    ...this.state.profile,
+                                    department: value
+                                }
+                            }, this.saveProfile.bind(this));
+                        }}
                         label='Department'
                         placeHolder='Department'
-                        defaultValue={this.props.profileUserdata.department}
-                        readOnly={!this.state.isEditing}
+                        defaultValue={this.state.profile.department}
+                        value={this.state.profile.department}
                         maxLength={50}
-                        onBlur={true}
-                        onPressEnter={true}
                     />
                 </Tooltip>
 
                 <OrganizationField
                     required={false}
-                    defaultValue={this.props.profileUserdata.organization}
+                    defaultValue={this.state.profile.organization}
                     commit={this.organizationOnCommit.bind(this)} />
-
-                {/* 
-                  
-                    <Form.Item
-                        // required={true}
-                        label='Organization'>
-                        <AutoComplete
-                        className='margin-top-10px margin-bottom-24px'
-                        style={{ width: '100%' }}
-                        disabled={!this.state.isEditing}
-                        dataSource={this.state.institutionFiltered}
-                        placeholder='Organization'
-                        onSearch={this.institutionOnSearch.bind(this)}
-                        onSelect={this.institutionOnSave.bind(this)}
-                        onBlur={this.institutionOnSave.bind(this)}
-                        dropdownMatchSelectWidth={false}
-                        filterOption={(inputValue, option) => {
-                            if (typeof option.props.children === 'string') {
-                                let item = option.props.children;
-                                return item.toLowerCase().indexOf(inputValue.toLowerCase()) >= 0;
-                            } else {
-                                return false;
-                            };
-                        }}
-                        defaultValue={this.props.profileUserdata.organization}
-                    >
-                        <Input />
-                    </AutoComplete>
-                    </Form.Item>
-                */}
 
                 <div style={{ fontWeight: 'bold', color: 'rgba(0,0,0,0.3)' }}>location</div>
 
@@ -315,7 +219,7 @@ class Profile extends React.Component<Props, State> {
                             }
                         }}
 
-                        defaultValue={this.props.profileUserdata.country}
+                        defaultValue={this.state.profile.country}
                     >
                         {Array.from(countryCodes).map((item => {
                             return (
@@ -338,7 +242,6 @@ class Profile extends React.Component<Props, State> {
                         placeholder='State'
                         showArrow
                         onChange={this.stateOnSelect.bind(this)}
-                        // onSelect={this.stateOnSelect.bind(this)}
                         optionFilterProp='children'
                         filterOption={(inputValue, option) => {
                             if (option && option.props && typeof option.props.children === 'string') {
@@ -348,7 +251,7 @@ class Profile extends React.Component<Props, State> {
                                 return false;
                             }
                         }}
-                        defaultValue={this.props.profileUserdata.state} >
+                        defaultValue={this.state.profile.state} >
                         {states.map((item, index) => {
                             return <Option key={index} value={item}>{item}</Option>;
                         })}
@@ -356,39 +259,43 @@ class Profile extends React.Component<Props, State> {
                 </Form.Item>
 
                 {/* City */}
-                <InputForm2
+                <InputWrapper
                     hidden={false}
                     type='string'
-                    userName={this.props.userName}
-                    updateStoreState={this.saveProfile.bind(this)} // updates StoreState
-                    data={this.props.profileUserdata}
-                    stateProperty={'city'}
                     placeHolder='City'
                     label="City"
-                    defaultValue={this.props.profileUserdata.city}
-                    readOnly={!this.state.isEditing}
+                    defaultValue={this.state.profile.city}
                     maxLength={85}
                     minLength={0}
-                    onBlur={true}
-                    onPressEnter={true}
+                    value={this.state.profile.city}
+                    updateProfileField={(value: string) => {
+                        this.setState({
+                            profile: {
+                                ...this.state.profile,
+                                city: value
+                            }
+                        }, this.saveProfile.bind(this));
+                    }}
                 />
 
                 {/* Postal Code */}
-                <InputForm2
+                <InputWrapper
                     hidden={false}
-                    type={this.props.profileUserdata.postalCode === 'United States' ? 'number' : 'string'}
-                    userName={this.props.userName}
-                    updateStoreState={this.saveProfile.bind(this)} // updates StoreState
-                    data={this.props.profileUserdata}
-                    stateProperty={'postalCode'}
+                    type="string"
                     placeHolder='Postal Code'
                     label="Postal Code"
-                    defaultValue={this.props.profileUserdata.postalCode}
-                    readOnly={!this.state.isEditing}
-                    maxLength={this.props.profileUserdata.country === 'United States' ? 5 : 16}
-                    minLength={this.props.profileUserdata.country === 'United States' ? 5 : 0}
-                    onBlur={true}
-                    onPressEnter={true}
+                    defaultValue={this.state.profile.postalCode}
+                    value={this.state.profile.postalCode}
+                    maxLength={this.state.profile.country === 'United States' ? 10 : 16}
+                    minLength={this.state.profile.country === 'United States' ? 5 : 0}
+                    updateProfileField={(value: string) => {
+                        this.setState({
+                            profile: {
+                                ...this.state.profile,
+                                postalCode: value
+                            }
+                        }, this.saveProfile.bind(this));
+                    }}
                 />
 
                 {/* Primary Funding Source */}
@@ -412,7 +319,7 @@ class Profile extends React.Component<Props, State> {
                             }
 
                         }}
-                        defaultValue={this.props.profileUserdata.fundingSource}
+                        defaultValue={this.state.profile.fundingSource}
                     >
                         {fundingSources.map((item) => {
                             return (
@@ -441,20 +348,20 @@ class Profile extends React.Component<Props, State> {
         </div>;
     }
 
-    renderJobTitle(profile: State) {
-        if (profile.jobTitle) {
+    renderJobTitle() {
+        if (this.state.profile.jobTitle) {
             return <div>
                 {this.renderSectionTitle('position')}
                 <div>
-                    {profile.jobTitle === 'Other' ? profile.jobTitleOther : profile.jobTitle}
+                    {this.state.profile.jobTitle === 'Other' ? this.state.profile.jobTitleOther : this.state.profile.jobTitle}
                 </div>
             </div>;
         }
     }
 
     renderUserNutshellView() {
-        const profile = this.state;
-        const jobTitle = this.renderJobTitle(profile);
+        const profile = this.state.profile;
+        const jobTitle = this.renderJobTitle();
         const department = profile.department ? (<div>{this.renderSectionTitle('department')}<div>{profile.department}</div></div>) : null;
         const organization = profile.organization ? (<div>{this.renderSectionTitle('organization')}<div>{profile.organization}</div></div>) : null;
         const locationFields = [profile.country, profile.state, profile.city].filter(x => x).join(', ');
@@ -500,12 +407,12 @@ class Profile extends React.Component<Props, State> {
      */
     renderResearchStatement() {
         let statement;
-        if (!this.props.profileUserdata.researchStatement || this.props.profileUserdata.researchStatement === '') {
+        if (!this.state.profile.researchStatement || this.state.profile.researchStatement === '') {
             statement = <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Research Statement" />;
         } else {
             // const fixed = this.props.profileUserdata.researchStatement.replace(/\n/, '<br />');
             // statement = <p style={{ whiteSpace: 'pre' }}>{this.props.profileUserdata.researchStatement}</p>;
-            const content = marked(this.props.profileUserdata.researchStatement, {
+            const content = marked(this.state.profile.researchStatement, {
                 breaks: true
             });
             statement = <div dangerouslySetInnerHTML={{ __html: content }} />;
@@ -521,16 +428,19 @@ class Profile extends React.Component<Props, State> {
                         <TextAreaForm
                             hidden={false}
                             // required={false}
-                            userName={this.props.userName}
-                            updateStoreState={this.saveProfile.bind(this)}
-                            data={this.props.profileUserdata}
-                            stateProperty='researchStatement'
+                            // updateStoreState={this.saveProfile.bind(this)}
                             placeHolder=''
-                            defaultValue={this.props.profileUserdata.researchStatement}
+                            defaultValue={this.state.profile.researchStatement}
                             readOnly={!this.state.isEditing}
                             maxLength={1000}
-                            onBlur={true}
-                            onPressEnter={true}
+                            updateProfileField={(value: string) => {
+                                this.setState({
+                                    profile: {
+                                        ...this.state.profile,
+                                        researchStatement: value
+                                    }
+                                }, this.saveProfile.bind(this));
+                            }}
                         />
                     </Tooltip>
                 </Area>
@@ -558,19 +468,27 @@ class Profile extends React.Component<Props, State> {
         return (
             <Area title='Affiliations' style={{ marginTop: '20px' }}>
                 <AffiliationsForm
-                    userName={this.props.userName}
-                    profileUserdata={this.props.profileUserdata}
+                    profileUserdata={this.state.profile}
                     editEnable={this.state.isEditing}
-                    affiliations={this.props.profileUserdata.affiliations}
-                    updateStoreState={this.saveProfile.bind(this)}
+                    affiliations={this.state.profile.affiliations}
+                    save={(affiliations: Array<Affiliation>) => {
+                        this.setState({
+                            profile: {
+                                ...this.state.profile,
+                                affiliations
+                            }
+                        }, () => {
+                            this.saveProfile();
+                        });
+                    }}
                 /></Area>
         );
     }
 
     renderAffiliationsView() {
-        let affiliationsArray = this.props.profileUserdata.affiliations;
+        let affiliations = this.state.profile.affiliations;
         // non-empty array
-        if (affiliationsArray.length > 0 && affiliationsArray[0]['title'] !== '') {
+        if (affiliations.length > 0 && affiliations[0]['title'] !== '') {
             return (
                 <Area title='Affiliations' style={{ marginTop: '20px' }}>
                     <table className="LayoutTable">
@@ -582,7 +500,7 @@ class Profile extends React.Component<Props, State> {
                             </tr>
                         </thead>
                         <tbody>
-                            {affiliationsArray
+                            {affiliations
                                 .filter(position => position.title)
                                 .map((position, index) => {
                                     return <tr key={index}>
@@ -645,22 +563,25 @@ class Profile extends React.Component<Props, State> {
         }
     }
 
+    // TODO: fix avatar/gravatar default and option...
+
     onSelectAvatarOption(value: string) {
         // validation?
-        const newState: State = {
-            ...this.state,
-            avatarOption: value
-        };
-        this.setState(newState);
+        this.setState({
+            profile: {
+                ...this.state.profile,
+                avatarOption: value
+            }
+        });
     }
 
     onSelectGravatarDefault(value: string) {
-        // validation?
-        const newState: State = {
-            ...this.state,
-            gravatarDefault: value
-        };
-        this.setState(newState);
+        this.setState({
+            profile: {
+                ...this.state.profile,
+                gravatarDefault: value
+            }
+        });
     }
 
     /**
@@ -669,18 +590,19 @@ class Profile extends React.Component<Props, State> {
      * @param event 
      */
     avatarOptionOnSubmit() {
-        // any is used here for creating gereric property 
-        let profileData = this.props.profileUserdata;
-        if (profileData.gravatarDefault !== this.state.gravatarDefault ||
-            profileData.avatarOption !== this.state.avatarOption) {
-            if (typeof this.state.gravatarDefault !== 'undefined') {
-                profileData.gravatarDefault = this.state.gravatarDefault;
-            }
-            if (typeof this.state.avatarOption !== 'undefined') {
-                profileData.avatarOption = this.state.avatarOption;
-            }
-            this.saveProfile(profileData);
-        };
+        // any is used here for creating generic property 
+        // let profileData = this.props.profileUserdata;
+        // if (profileData.gravatarDefault !== this.state.profile.gravatarDefault ||
+        //     profileData.avatarOption !== this.state.profile.avatarOption) {
+        //     if (typeof this.state.profile.gravatarDefault !== 'undefined') {
+        //         profileData.gravatarDefault = this.state.profile.gravatarDefault;
+        //     }
+        //     if (typeof this.state.profile.avatarOption !== 'undefined') {
+        //         profileData.avatarOption = this.state.profile.avatarOption;
+        //     }
+        //     this.saveProfile(profileData);
+        // };
+        this.saveProfile();
         this.hideModal();
     };
 
@@ -689,17 +611,33 @@ class Profile extends React.Component<Props, State> {
     };
 
     countryChanged(country: string) {
-        this.setState({ country });
-        let profileData = this.props.profileUserdata;
-        profileData.country = country;
-        this.saveProfile(profileData);
+        if (country !== 'United States' && this.state.profile.country === 'United States') {
+            // reset state too.
+            this.setState({
+                profile: {
+                    ...this.state.profile,
+                    country,
+                    state: ''
+                }
+            }, this.saveProfile.bind(this));
+        } else {
+            this.setState({
+                profile: {
+                    ...this.state.profile,
+                    country
+                }
+            }, this.saveProfile.bind(this));
+        }
     }
 
     stateOnSelect(state: string) {
-        const profileData = this.props.profileUserdata;
-        profileData.state = state;
-        this.setState({ state });
-        this.saveProfile(profileData);
+        // TODO: bad again, modyfing props. should just copy to an instance property.
+        this.setState({
+            profile: {
+                ...this.state.profile,
+                state
+            }
+        }, this.saveProfile.bind(this));
     };
 
     /**
@@ -708,66 +646,99 @@ class Profile extends React.Component<Props, State> {
      */
     researchInterestsOtherOnChange(event: React.ChangeEvent<HTMLInputElement>) {
         const value = event.target.value;
-        this.setState({ researchInterestsOther: value.trim() });
+        this.setState({
+            profile: {
+                ...this.state.profile,
+                researchInterestsOther: value.trim()
+            }
+        }, this.saveProfile.bind(this));
     }
 
     // handles researchInterest check box onChange 
-    researchInterestOnChange(event: any) {
-        if (!event.includes('Other')) {
-            this.setState({ researchInterestsOther: undefined });
-        };
-        this.setState({ researchInterestsValue: event });
+    researchInterestOnChange(researchInterestsValue: Array<CheckboxValueType>) {
+        // console.log('research interests on change', researchInterestsChecked);
+        // const researchInterests = researchInterestsChecked.map((index) => {
+        //     return researchInterestsList[index];
+        // });
+        // if (researchInterests.findIndex((value) => {
+        //     if (typeof value !== 'string') {
+        //         return;
+        //     }
+        // }))
+        const researchInterests = (researchInterestsValue as unknown) as Array<string>;
+        if (!researchInterests.includes('Other')) {
+            this.setState({
+                profile: {
+                    ...this.state.profile,
+                    researchInterestsOther: null
+                }
+            }, this.saveProfile.bind(this));
+        } else {
+            this.setState({
+                profile: {
+                    ...this.state.profile,
+                    researchInterests
+                }
+            }, this.saveProfile.bind(this));
+        }
     };
 
-    // handles researchInterest onSubmit 
-    researchInterestOnSubmit() {
-        this.setState({ visibleModal: null }); // close modal
+    // // handles researchInterest onSubmit 
+    // researchInterestOnSubmit() {
+    //     this.setState({ visibleModal: null }); // close modal
 
-        const profileData = this.props.profileUserdata;
-        const newResearchInterests = this.state.researchInterestsValue;
+    //     // const profileData = this.props.profileUserdata;
+    //     // const newResearchInterests = this.state.profile.researchInterests;
 
-        // check if researchInterestOther needs to be in the profileData
-        if (!newResearchInterests.includes('Other')) {
-            this.setState({ researchInterestsOther: undefined });
-        }
+    //     // check if researchInterestOther needs to be in the profileData
+    //     if (!this.state.profile.researchInterests.includes('Other')) {
+    //         this.setState({
+    //             profile: {
+    //                 ...this.state.profile,
+    //                 researchInterestsOther: null
+    //             }
+    //         }, this.saveProfile.bind(this));
+    //     } else {
+    //         this.saveProfile();
+    //     }
 
-        // Detect if anything has changed
-        if (this.state.researchInterestsOther === profileData.researchInterestsOther &&
-            arraysEqual(this.state.researchInterestsValue, profileData.researchInterests)) {
-            return;
-        }
+    //     // // Detect if anything has changed
+    //     // if (this.state.profile.researchInterestsOther === profileData.researchInterestsOther &&
+    //     //     arraysEqual(this.state.profile.researchInterests, profileData.researchInterests)) {
+    //     //     return;
+    //     // }
 
-        // Save new values if so
-        profileData.researchInterests = this.state.researchInterestsValue;
-        profileData.researchInterestsOther = this.state.researchInterestsOther || null;
-        this.saveProfile(profileData);
-    };
+    //     // // Save new values if so
+    //     // profileData.researchInterests = this.state.profile.researchInterests;
+    //     // profileData.researchInterestsOther = this.state.profile.researchInterestsOther || null;
+    //     // this.saveProfile(profileData);
+    // };
 
     /**
      * 
      * Organization 
      */
-    institutionOnSave(selectValue: SelectValue) {
-        const value = selectValue.toString();
-        const profileData = this.props.profileUserdata;
-        if (typeof value !== 'undefined' && value !== profileData.organization) {
-            profileData.organization = value;
-            this.saveProfile(profileData);
-        };
-    };
+    // institutionOnSave(selectValue: SelectValue) {
+    //     const value = selectValue.toString();
+    //     const profileData = this.props.profileUserdata;
+    //     if (typeof value !== 'undefined' && value !== profileData.organization) {
+    //         profileData.organization = value;
+    //         this.saveProfile();
+    //     };
+    // };
 
     organizationOnCommit(organization: string | null) {
-        const userdata = this.props.profileUserdata;
-        if (organization !== userdata.organization) {
-            this.setState({
+        // const userdata = this.props.profileUserdata;
+        if (organization === this.state.profile.organization) {
+            return;
+        }
+
+        this.setState({
+            profile: {
+                ...this.state.profile,
                 organization
-            });
-            const updatedProfile = {
-                ...userdata,
-                organization
-            };
-            this.saveProfile(updatedProfile);
-        };
+            }
+        }, this.saveProfile.bind(this));
     };
 
     institutionOnSearch(value: string) {
@@ -776,31 +747,39 @@ class Profile extends React.Component<Props, State> {
                 item.toLowerCase().includes(value.toLowerCase())
             );
             if (filtered.length <= 30) {
-                this.setState({ tooManyInstitutionsToRender: false });
-                this.setState({ institutionFiltered: filtered });
+                this.setState({
+                    tooManyInstitutionsToRender: false,
+                    institutionFiltered: filtered
+                });
             } else {
-                this.setState({ tooManyInstitutionsToRender: true });
+                this.setState({
+                    tooManyInstitutionsToRender: true
+                });
             }
         };
     };
 
     // handles jobtitle pulldown menu onChange 
     jobTitleOnChange(value: string) {
-        const profileData = this.props.profileUserdata;
-        if (profileData.jobTitle !== value) {
-            profileData.jobTitle = value;
+        if (this.state.profile.jobTitle !== value) {
             this.setState({
-                jobTitle: value
-            });
-            this.saveProfile(profileData);
+                profile: {
+                    ...this.state.profile,
+                    jobTitle: value
+                }
+            }, this.saveProfile.bind(this));
         };
     };
 
     // handles fundingSource pulldown menu onChange 
-    fundingSourceOnChange(value: string) {
-        const profileData = this.props.profileUserdata;
-        profileData.fundingSource = value;
-        this.saveProfile(profileData);
+    fundingSourceOnChange(fundingSource: string) {
+        // fundingSource === this.state.profile.fundingSource;
+        this.setState({
+            profile: {
+                ...this.state.profile,
+                fundingSource
+            }
+        }, this.saveProfile.bind(this));
     };
 
     renderResearchInterestsModal() {
@@ -808,27 +787,18 @@ class Profile extends React.Component<Props, State> {
             return;
         }
         return <Modal
-            // visible={this.state.visibleModal === ModalName.ResearchInterests}
             visible={true}
             title='Research Interests'
             closable={false}
             onCancel={this.hideModal.bind(this)}
             footer={[
                 <Button key='back'
-                    danger
                     onClick={this.hideModal.bind(this)}>
-                    Cancel
-                </Button>,
-                <Button key='submit'
-                    id='researchInterests'
-                    type='primary'
-                    onClick={this.researchInterestOnSubmit.bind(this)}>
-                    Save
+                    Close
                 </Button>
             ]} >
             <Checkbox.Group
-                // options={researchInterestsList}
-                defaultValue={this.props.profileUserdata.researchInterests}
+                defaultValue={this.state.profile.researchInterests}
                 onChange={this.researchInterestOnChange.bind(this)}>
                 {researchInterestsList.map((interest) => {
                     return <Checkbox
@@ -844,8 +814,8 @@ class Profile extends React.Component<Props, State> {
                 className='margin-top-10px'
                 maxLength={50}
                 onChange={this.researchInterestsOtherOnChange.bind(this)}
-                hidden={this.state.researchInterestsValue.includes('Other') ? false : true}
-                defaultValue={this.props.profileUserdata.researchInterestsOther || undefined}
+                hidden={this.state.profile.researchInterests.includes('Other') ? false : true}
+                defaultValue={this.state.profile.researchInterestsOther || undefined}
             />
         </Modal>;
     }
@@ -883,7 +853,7 @@ class Profile extends React.Component<Props, State> {
                 placeholder='Choose to use gravatar, or the KBase anonymous silhouette.'
                 disabled={!this.state.isEditing}
                 style={{ width: '100%', marginBottom: '2em' }}
-                defaultValue={this.props.profileUserdata.avatarOption}
+                defaultValue={this.state.profile.avatarOption}
                 onSelect={this.onSelectAvatarOption.bind(this)}
             >
                 {avatarOptions.map((option) => {
@@ -913,7 +883,7 @@ class Profile extends React.Component<Props, State> {
                 placeholder='Choose to use gravatar, or the KBase anonymous silhouette.'
                 disabled={!this.state.isEditing}
                 style={{ width: '100%', marginBottom: '2em' }}
-                defaultValue={this.props.profileUserdata.gravatarDefault}
+                defaultValue={this.state.profile.gravatarDefault}
                 onSelect={this.onSelectGravatarDefault.bind(this)}
             >
                 {gravatarDefaults.map((option, index) => {
@@ -930,13 +900,12 @@ class Profile extends React.Component<Props, State> {
     }
 
     renderControls() {
-        if (!this.props.editEnable) {
-            return;
-        }
+        // if (!this.props.editEnable) {
+        //     return;
+        // }
         let button;
         let bannerText;;
         if (this.state.isEditing) {
-            // button = <Button icon="eye" onClick={this.toggleEditing.bind(this)}>View</Button>;
             button = <Button
                 icon={<CloseOutlined />}
                 danger
@@ -953,7 +922,6 @@ class Profile extends React.Component<Props, State> {
                 onClick={this.toggleEditing.bind(this)}>
                 Edit Profile
             </Button>;
-            // bannerText = 'View Mode: You are viewing your profile as other users will see it';
             bannerText = <span>
             </span>;
         }
@@ -1012,13 +980,13 @@ class Profile extends React.Component<Props, State> {
     }
 
     renderResearchInterestsView() {
-        const researchInterests = this.props.profileUserdata.researchInterests;
+        const researchInterests = this.state.profile.researchInterests;
 
         if (Array.isArray(researchInterests) &&
             researchInterests.length > 0) {
             const normalized = researchInterests.map((interest) => {
                 if (interest === 'Other') {
-                    return this.state.researchInterestsOther || interest;
+                    return this.state.profile.researchInterestsOther || interest;
                 } else {
                     return interest;
                 }

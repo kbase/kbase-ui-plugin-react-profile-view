@@ -1,7 +1,7 @@
 import React from 'react';
 import { Form, AutoComplete } from 'antd';
 import Select, { SelectValue } from 'antd/lib/select';
-import { MIN_ORGANIZATION_CHARS, MAX_INSTITUTIONS_TO_SHOW } from '../../constants';
+import { MIN_ORGANIZATION_CHARS, MAX_INSTITUTIONS_TO_SHOW, MAX_ORGANIZATION_CHARS } from '../../constants';
 import { institutions } from '../../dataSources/institutions';
 import { ValidationState, ValidationStatus } from '../../types';
 
@@ -74,10 +74,10 @@ export default class Organization extends React.Component<OrganizationProps, Org
                 message: `Organization must be at least ${MIN_ORGANIZATION_CHARS} characters long`
             };
         }
-        if (newValue.length >= 100) {
+        if (newValue.length >= MAX_ORGANIZATION_CHARS) {
             return {
                 status: ValidationStatus.ERROR,
-                message: 'Organization must no more than 100 characters long'
+                message: `Organization must no more than ${MAX_ORGANIZATION_CHARS} characters long`
             };
         }
         return {
@@ -113,7 +113,7 @@ export default class Organization extends React.Component<OrganizationProps, Org
         };
     }
 
-    onBlur() {
+    commit() {
         if (this.validationState.status === ValidationStatus.SUCCESS) {
             if (this.dirty) {
                 this.props.commit(this.validationState.value);
@@ -125,8 +125,19 @@ export default class Organization extends React.Component<OrganizationProps, Org
         });
     }
 
+    onBlur() {
+        this.commit();
+    }
+
     onFocus() {
         this.onSearch(this.props.defaultValue || '');
+    }
+
+    async onKeyUp(event: React.KeyboardEvent<HTMLInputElement>) {
+        if (event.key !== 'Enter') {
+            return;
+        }
+        this.commit();
     }
 
     getValidationMessage() {
@@ -180,6 +191,7 @@ export default class Organization extends React.Component<OrganizationProps, Org
                 onChange={this.onChange.bind(this)}
                 onFocus={this.onFocus.bind(this)}
                 onSearch={this.onSearch.bind(this)}
+                onKeyUp={this.onKeyUp.bind(this)}
                 dropdownMatchSelectWidth={false}
                 defaultValue={this.props.defaultValue || ''}
                 onBlur={this.onBlur.bind(this)}
@@ -189,5 +201,3 @@ export default class Organization extends React.Component<OrganizationProps, Org
         </Form.Item >;
     }
 }
-
-

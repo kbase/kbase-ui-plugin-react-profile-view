@@ -12,7 +12,6 @@ export default function WhichComponent(props: any) {
         case 'fetching':
             return <Spinner />;
 
-
         case 'refetching':
             return <Profile userName={props.userName}
                 editEnable={props.editEnable}

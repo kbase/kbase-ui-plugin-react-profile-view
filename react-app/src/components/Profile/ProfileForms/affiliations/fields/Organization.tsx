@@ -15,6 +15,7 @@ interface OrganizationState {
     message: string;
     status: AntDesignValidationStatus;
     currentValue?: string;
+    committedValue?: string;
     dirty: boolean;
     tooManyInstitutionsToRender: [boolean, number?];
     institutionFiltered: Array<string>;
@@ -27,65 +28,95 @@ export default class Organization extends React.Component<OrganizationProps, Org
             message: '',
             status: '',
             currentValue: this.props.value || undefined,
+            committedValue: this.props.value || undefined,
             dirty: false,
             tooManyInstitutionsToRender: [false],
             institutionFiltered: []
         };
     }
 
-    componentDidMount() {
-        // hmm, try simulating control input when first
-        // mounted?
-        this.validate(this.props.value || undefined);
+    async componentDidMount() {
+        await this.validate(this.props.value || undefined);
     }
 
-
-    validate(newValue: string | undefined) {
-        if (newValue === undefined || newValue.length === 0) {
-            this.props.status('error');
-            this.setState({
-                status: 'error',
-                message: `The Organization is required`
-            });
-        } else if (newValue.length <= MIN_ORGANIZATION_CHARS) {
-            this.props.status('error');
-            this.setState({
-                status: 'error',
-                message: `Organization must be at least ${MIN_ORGANIZATION_CHARS} characters long`
-            });
-        } else if (newValue.length >= 100) {
-            this.props.status('error');
-            this.setState({
-                status: 'error',
-                message: `Organization must be no longer than ${MAX_ORGANIZATION_CHARS} characters long`
-            });
-        } else {
-            this.props.status('success');
-            this.setState({
-                status: 'success',
-                currentValue: newValue,
-                message: '',
-                dirty: (this.state.currentValue !== newValue)
-            });
-            if (this.state.currentValue !== newValue) {
-                this.props.commit(newValue);
-                this.setState({
-                    dirty: false
-                });
+    validate(newValue: string | undefined): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            try {
+                if (newValue === undefined || newValue.length === 0) {
+                    this.props.status('error');
+                    this.setState({
+                        status: 'error',
+                        message: `The Organization is required`
+                    }, () => {
+                        resolve(false);
+                    });
+                } else if (newValue.length <= MIN_ORGANIZATION_CHARS) {
+                    this.props.status('error');
+                    this.setState({
+                        status: 'error',
+                        message: `Organization must be at least ${MIN_ORGANIZATION_CHARS} characters long`
+                    }, () => {
+                        resolve(false);
+                    });
+                } else if (newValue.length >= MAX_ORGANIZATION_CHARS) {
+                    this.props.status('error');
+                    this.setState({
+                        status: 'error',
+                        message: `Organization must be no longer than ${MAX_ORGANIZATION_CHARS} characters long`
+                    }, () => {
+                        resolve(false);
+                    });
+                } else {
+                    this.props.status('success');
+                    this.setState({
+                        status: 'success',
+                        currentValue: newValue,
+                        message: '',
+                        dirty: (this.state.committedValue !== newValue)
+                    }, () => {
+                        resolve(true);
+                    });
+                }
+            } catch (ex) {
+                reject(ex);
             }
+        });
+    }
+
+    commit() {
+        if (this.state.status === 'success' &&
+            this.state.dirty &&
+            typeof this.state.currentValue !== 'undefined') {
+            this.props.commit(this.state.currentValue);
+            this.setState({
+                dirty: false,
+                committedValue: this.state.currentValue
+            });
         }
-
     }
-    onChange(newValue: SelectValue) {
-        this.validate(newValue.toString());
 
-        if (newValue.toString().length === 0) {
-            this.setState({ institutionFiltered: [] });
+    async onKeyUp(event: React.KeyboardEvent<HTMLInputElement>) {
+        if (event.key !== 'Enter') {
+            return;
         }
+        this.commit();
     }
-    onKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
 
+    async onChange(newValue: SelectValue) {
+        if (typeof newValue !== 'string') {
+            return;
+        }
+        await this.validate(newValue);
     }
+
+    async onSelect(newValue: SelectValue) {
+        if (typeof newValue !== 'string') {
+            return;
+        }
+        await this.validate(newValue);
+        this.commit();
+    }
+
     onSearch(value: string) {
         if (value.length >= MIN_ORGANIZATION_CHARS) {
             const filtered = institutions.filter((item) =>
@@ -101,11 +132,14 @@ export default class Organization extends React.Component<OrganizationProps, Org
                     tooManyInstitutionsToRender: [true, filtered.length]
                 });
             }
-        };
+        } else {
+            this.setState({
+                tooManyInstitutionsToRender: [false],
+                institutionFiltered: []
+            });
+        }
     };
-    onSelect(newValue: SelectValue) {
-        this.validate(newValue.toString());
-    }
+
     render() {
         let children;
         if (this.state.tooManyInstitutionsToRender[0]) {
@@ -126,22 +160,21 @@ export default class Organization extends React.Component<OrganizationProps, Org
         return <Form.Item
             style={{ flexGrow: 1, marginBottom: 0 }}
             required={true}
-            // label=' '
             help={this.state.message}
             validateStatus={this.state.status}
         >
             <AutoComplete
                 placeholder='Organization'
-                // onSelect={this.onSelect.bind(this)}
+                onSelect={this.onSelect.bind(this)}
                 onChange={this.onChange.bind(this)}
+                onBlur={this.commit.bind(this)}
                 onSearch={this.onSearch.bind(this)}
                 dropdownMatchSelectWidth={false}
                 defaultValue={this.props.value || undefined}
-            // onBlur={this.onBlur.bind(this)}
+                onKeyUp={this.onKeyUp.bind(this)}
             >
                 {children}
             </AutoComplete>
         </Form.Item>;
-
     }
 }
