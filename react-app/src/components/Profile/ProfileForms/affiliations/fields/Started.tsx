@@ -14,6 +14,7 @@ interface StartedState {
     message: string;
     status: AntDesignValidationStatus;
     currentValue?: number;
+    committedValue?: number;
     dirty: boolean;
 }
 
@@ -24,13 +25,12 @@ export default class Ended extends React.Component<StartedProps, StartedState> {
             message: '',
             status: '',
             currentValue: this.props.value || undefined,
+            committedValue: this.props.value || undefined,
             dirty: false
         };
     }
 
     componentDidMount() {
-        // hmm, try simulating control input when first
-        // mounted?
         this.validate(this.props.value || undefined);
     }
 
@@ -61,7 +61,7 @@ export default class Ended extends React.Component<StartedProps, StartedState> {
                     status: 'success',
                     currentValue: newValue,
                     message: '',
-                    dirty: (this.state.currentValue !== newValue)
+                    dirty: (this.state.committedValue !== newValue)
                 });
             }
         }
@@ -69,6 +69,7 @@ export default class Ended extends React.Component<StartedProps, StartedState> {
     onChange(value: number | string | undefined) {
         this.validate(value);
     }
+
     numberEditingOnly(e: React.KeyboardEvent<HTMLInputElement>) {
         // Allow typing of number digits
         if (e.key >= '0' && e.key <= '9') {
@@ -82,7 +83,6 @@ export default class Ended extends React.Component<StartedProps, StartedState> {
                     return;
                 }
             }
-
             return;
         }
 
@@ -94,17 +94,23 @@ export default class Ended extends React.Component<StartedProps, StartedState> {
         // Otherwise, ignore all other keys.
         e.preventDefault();
     }
+
     onKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
         this.numberEditingOnly(event);
     }
-    onBlur() {
-        if (this.state.status === 'success' && this.state.dirty && typeof this.state.currentValue !== 'undefined') {
+
+    commit() {
+        if (this.state.status === 'success' &&
+            this.state.dirty &&
+            typeof this.state.currentValue !== 'undefined') {
             this.props.commit(this.state.currentValue);
             this.setState({
-                dirty: false
+                dirty: false,
+                committedValue: this.state.currentValue
             });
         }
     }
+
     render() {
         return <Tooltip title='Enter 4 digit start year'>
             <Form.Item
@@ -121,7 +127,8 @@ export default class Ended extends React.Component<StartedProps, StartedState> {
                     max={MAX_AFFILIATION_DATE}
                     placeholder='Year Started'
                     defaultValue={this.props.value || undefined}
-                    onBlur={this.onBlur.bind(this)}
+                    onBlur={this.commit.bind(this)}
+                    onPressEnter={this.commit.bind(this)}
                 />
             </Form.Item>
         </Tooltip>;

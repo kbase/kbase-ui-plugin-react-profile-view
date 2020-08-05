@@ -2,33 +2,10 @@ import React from 'react';
 import { Button } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 
-import { Affiliation, ProfileUserdata, UserName } from '../../../../redux/interfaces';
+import { Affiliation, ProfileUserdata } from '../../../../redux/interfaces';
 import './AffiliationForm.css';
-// import AffiliationForm from './AffiliationForm';
-// import NewAffiliationForm from './NewAffiliationForm';
 import AffiliationEditor from './AffiliationEditor';
 import AffiliationEditorNew from './AffiliationEditorNew';
-
-// const { Option } = Select;
-
-// const MIN_AFFILIATION_DATE = 1900;
-// const MAX_AFFILIATION_DATE = 2300;
-
-
-// interface AffiliationValidated {
-//     title: string;
-//     organization: string;
-//     started: number;
-//     ended: number | undefined;
-//     validatedStatusJobTitle: "" | "error" | "success" | "warning" | "validating" | undefined;
-//     validatedStatusOrganization: "" | "error" | "success" | "warning" | "validating" | undefined;
-//     validatedStatusStartYear: "" | "error" | "success" | "warning" | "validating" | undefined;
-//     validatedStatusEndYear: "" | "error" | "success" | "warning" | "validating" | undefined;
-//     helpTextJobTitle: string | undefined;
-//     helpTextOrganization: string | undefined;
-//     helpTextStartYear: string | undefined;
-//     helpTextEndYear: string | undefined;
-// };
 
 interface State {
     affiliations: Array<Affiliation>;
@@ -36,23 +13,11 @@ interface State {
 };
 
 interface Props {
-    userName: UserName;
     profileUserdata: ProfileUserdata;
     editEnable: boolean;
     affiliations: Array<Affiliation>;
-    updateStoreState: (data: ProfileUserdata, userName: UserName) => void;
+    save: (affiliations: Array<Affiliation>) => void;
 };
-
-// const formItemLayout = {
-//     labelCol: {
-//         xs: { span: 24 },
-//         sm: { span: 1 },
-//     },
-//     wrapperCol: {
-//         xs: { span: 24 },
-//         sm: { span: 23 },
-//     },
-// };
 
 export default class AffiliationsForm extends React.Component<Props, State> {
     constructor(props: Props) {
@@ -68,17 +33,9 @@ export default class AffiliationsForm extends React.Component<Props, State> {
         affiliations.splice(index, 1);
         this.setState({
             affiliations
+        }, () => {
+            this.props.save(this.state.affiliations);
         });
-
-        // TODO: Ugh. Everywhere that this is practiced needs to be refactored.
-        // very dangerous in general, but for personal user profiles the concurrency is 
-        // essentially 1, but still...
-        const profile = this.props.profileUserdata;
-        const newProfile: ProfileUserdata = {
-            ...profile,
-            affiliations
-        };
-        this.props.updateStoreState(newProfile, this.props.userName);
     }
 
     doEditEnable() {
@@ -86,37 +43,27 @@ export default class AffiliationsForm extends React.Component<Props, State> {
     }
 
     doSaveAffiliation(affiliation: Affiliation, index: number) {
-        const affiliations = this.state.affiliations;
+        const affiliations = this.state.affiliations.slice(0);
         affiliations[index] = affiliation;
         affiliations.sort((a, b) => {
             return (a.started - b.started);
         });
-        // TODO: Ugh. Everywhere that this is practiced needs to be refactored.
-        // very dangerous in general, but for personal user profiles the concurrency is 
-        // essentially 1, but still...
-        const profile = this.props.profileUserdata;
-        const newProfile: ProfileUserdata = {
-            ...profile,
+        this.setState({
             affiliations
-        };
-        this.props.updateStoreState(newProfile, this.props.userName);
+        }, () => {
+            this.props.save(this.state.affiliations);
+        });
     }
 
     doSaveNewAffiliation(affiliation: Affiliation) {
         const affiliations = this.state.affiliations;
-        // TODO: Ugh. Everywhere that this is practiced needs to be refactored.
-        // very dangerous in general, but for personal user profiles the concurrency is 
-        // essentially 1, but still...
         affiliations.push(affiliation);
         this.setState({
             affiliations,
             addingNewAffiliation: false
+        }, () => {
+            this.props.save(this.state.affiliations);
         });
-        const newProfile: ProfileUserdata = {
-            ...this.props.profileUserdata,
-            affiliations
-        };
-        this.props.updateStoreState(newProfile, this.props.userName);
     }
 
     renderAffiliations() {

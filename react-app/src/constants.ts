@@ -7,4 +7,10 @@ export const MAX_ORGANIZATION_CHARS = 100;
 export const MIN_TITLE_CHARS = 2;
 export const MAX_TITLE_CHARS = 100;
 
-export const MAX_INSTITUTIONS_TO_SHOW = 30;
+export const MAX_INSTITUTIONS_TO_SHOW = 100;
+
+export const DEFAULT_MAX_INPUT_LENGTH = 10000;
+export const DEFAULT_MIN_INPUT_LENGTH = 2;
+
+export const DEFAULT_MIN_TEXT_LENGTH = 0;
+export const DEFAULT_MAX_TEXT_LENGTH = 1000;

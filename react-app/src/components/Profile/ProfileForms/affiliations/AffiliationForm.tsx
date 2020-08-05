@@ -12,8 +12,6 @@ import { AntDesignValidationStatus } from '../../../../types';
 export interface Props {
     affiliation: Affiliation;
     save: (affiliation: Affiliation) => void;
-    // canSave: (canSave: boolean) => void;
-    autoSave: boolean;
 };
 
 interface State {
@@ -76,13 +74,7 @@ export default class AffiliationForm extends React.Component<Props, State> {
             this.props.save(affiliation);
             this.setState({ dirty: false });
         } else {
-            console.warn('COMMIT - not saving...', this.state.fields);
-        }
-    }
-
-    componentDidUpdate() {
-        if (this.state.dirty) {
-            this.commit();
+            console.warn('COMMIT - not saving...', title.status, organization.status, started.status, ended.status);
         }
     }
 
@@ -96,6 +88,8 @@ export default class AffiliationForm extends React.Component<Props, State> {
                     status: 'success'
                 }
             }
+        }, () => {
+            this.commit();
         });
     }
 
@@ -109,6 +103,8 @@ export default class AffiliationForm extends React.Component<Props, State> {
                     status: 'success'
                 }
             }
+        }, () => {
+            this.commit();
         });
     }
 
@@ -122,6 +118,8 @@ export default class AffiliationForm extends React.Component<Props, State> {
                     status: 'success'
                 }
             }
+        }, () => {
+            this.commit();
         });
     }
 
@@ -135,6 +133,8 @@ export default class AffiliationForm extends React.Component<Props, State> {
                     status: 'success'
                 }
             }
+        }, () => {
+            this.commit();
         });
     }
 

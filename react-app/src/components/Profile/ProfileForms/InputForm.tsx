@@ -1,41 +1,27 @@
 import React from 'react';
 import { Form, Input } from 'antd';
-import { UserName, ProfileUserdata } from '../../../redux/interfaces';
-
+import { DEFAULT_MIN_INPUT_LENGTH, DEFAULT_MAX_INPUT_LENGTH } from '../../../constants';
 
 interface Props {
     hidden: boolean;
     type: string;
-    required: boolean;
-    userName: UserName;
-    updateStoreState: (data: ProfileUserdata, userName: UserName) => void;
-    data: any;
-    stateProperty: string;
+    required?: boolean;
+    label: string;
+    updateProfileField: (value: string) => void;
     placeHolder?: string;
-    defaultValue?: string | undefined;
-    readOnly: boolean;
+    defaultValue?: string;
+    value?: string;
     maxLength?: number;
     minLength?: number;
-    onBlur?: boolean | undefined; // when true, it updates store state
-    onPressEnter?: boolean | undefined; // when true, it updates store state
 };
 
 interface State {
-    inputValue: string | undefined;
-    validateStatus?: "" | "error" | "success" | "warning" | "validating" | undefined;
-    helpText: string | undefined;
-    requiredNotification: boolean | undefined;
-};
-
-const formItemLayout = {
-    labelCol: {
-        xs: { span: 24 },
-        sm: { span: 2 },
-    },
-    wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 22 },
-    },
+    status: "" | "error" | "success" | "warning" | "validating" | null;
+    helpText: string | null;
+    requiredNotification: boolean | null;
+    currentValue: string;
+    committedValue: string;
+    dirty: boolean;
 };
 
 /**
@@ -44,39 +30,25 @@ const formItemLayout = {
  *  - If onBlur/onPressEnter updates storeState, set it to true.
  *  - minLength default = 2
  */
-export default class InputForm extends React.Component<Props, State> {
+export default class InputForm3 extends React.Component<Props, State> {
+    savedValue: string;
     constructor(props: Props) {
         super(props);
         this.state = {
-            inputValue: undefined,
-            validateStatus: undefined,
-            helpText: undefined,
-            requiredNotification: undefined
+            currentValue: this.props.value || '',
+            committedValue: this.props.value || '',
+            status: null,
+            dirty: false,
+            helpText: null,
+            requiredNotification: null
         };
-
-        this.validateInput = this.validateInput.bind(this);
-        this.updateStoreStateProperty = this.updateStoreStateProperty.bind(this);
-        this.saveLocalState = this.saveLocalState.bind(this);
-        this.handleOnChange = this.handleOnChange.bind(this);
-        this.requiredNotificationControl = this.requiredNotificationControl.bind(this);
-    };
+        this.savedValue = props.defaultValue || '';
+    }
 
     componentDidMount() {
-        this.setState({ requiredNotification: this.props.required });
-    };
-
-    // componentDidUpdate(prevProps: Props, prevState: State, snapshot: any) {
-    // };
-
-    requiredNotificationControl() {
-        if (this.props.required && !this.props.readOnly) {
-            return true;
-        } else if (this.state.validateStatus === 'success') {
-            return false;
-        } else {
-            return false;
-        };
-    };
+        this.setState({ requiredNotification: this.props.required || false });
+        this.validate(this.state.currentValue);
+    }
 
     /**
      * Validate value against 
@@ -86,109 +58,83 @@ export default class InputForm extends React.Component<Props, State> {
      * and set state per validation result.
      * @param inputValue 
      */
-    validateInput(inputValue: string) {
-        // When type is number, then check if it's a number first
-        if (this.props.type === "number" && isNaN(parseInt(inputValue, 10))) {
-            this.setState({ validateStatus: 'error', helpText: 'Expecting numbers' });
+    validate(inputValue: string) {
+        const minLength = typeof this.props.minLength === 'undefined' ? DEFAULT_MIN_INPUT_LENGTH : this.props.minLength;
+        const maxLength = typeof this.props.maxLength === 'undefined' ? DEFAULT_MAX_INPUT_LENGTH : this.props.maxLength;
+
+        if (this.props.required && (!inputValue || inputValue.length === 0)) {
+            this.setState({
+                status: 'error',
+                helpText: 'input is required for this field'
+            });
+            return false;
+        }
+
+        if (inputValue.length < minLength) {
+            this.setState({
+                status: 'error',
+                helpText: 'input must be at least ' + minLength + ' characters'
+            });
+            return false;
+        }
+
+        if (inputValue.length > maxLength) {
+            // this shouldn't happen since input field max length is set
+            this.setState({
+                status: 'error',
+                helpText: 'input must be less than ' + maxLength + ' characters'
+            });
+            return false;
+        }
+
+        this.setState({
+            status: 'success',
+            helpText: null,
+            requiredNotification: false,
+            currentValue: inputValue,
+            dirty: this.state.committedValue !== inputValue
+        });
+        return true;
+    };
+
+    async handleOnChange(event: React.ChangeEvent<HTMLInputElement>) {
+        const newValue = event.currentTarget.value;
+        if (typeof newValue !== 'string') {
             return;
         }
-        // check against min and max length
-        // this could be dobe by ternary operator, but typescript doesn't like it.
-        let maxLength: number;
-        if (typeof this.props.maxLength !== 'undefined') {
-            maxLength = this.props.maxLength;
-        } else {
-            maxLength = 10000; // number is picked randomly. Number.MAX_SAFE_INTEGER seemed a bit overkill.
-        };
+        await this.validate(newValue);
+    }
 
-        let minLength: number;
-        if (typeof this.props.minLength !== 'undefined') {
-            minLength = this.props.minLength;
-        } else {
-            minLength = 2;
-        };
-
-        if (inputValue.length <= maxLength && inputValue.length >= minLength) {
-
-            this.setState({ validateStatus: 'success', helpText: undefined, requiredNotification: false });
-
-        } else if (!this.props.required && inputValue.length === 0) {
-
-            this.setState({ validateStatus: 'success', helpText: undefined, requiredNotification: false });
-
-        } else if (inputValue.length < minLength) {
-
-            this.setState({ validateStatus: 'error', helpText: 'input must be at least ' + minLength + ' characters' });
-
-        } else if (inputValue.length > maxLength) {
-            // this shouldn't happen since input field max length is set
-            this.setState({ validateStatus: 'error', helpText: 'input must be less than ' + maxLength + ' characters' });
-
-        };
-    };
-
-    /**
-     * When data has been changed and input validation is success,
-     * calls upstateStoreState to update store state. 
-     * If input is not required, clears help text. 
-     * @param event 
-     */
-    updateStoreStateProperty(event: React.FocusEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) {
-        if (!this.props.required) {
-            this.setState({ helpText: undefined });
-        };
-        // any is used to use generic property 
-        let data: any = this.props.data;
-        if (this.state.validateStatus === 'success' && data[this.props.stateProperty] !== this.state.inputValue) {
-            data[this.props.stateProperty] = this.state.inputValue;
-            this.props.updateStoreState(data, this.props.userName);
-        };
-    };
-
-    /**
-     * Save/update input value to state
-     * @param event 
-     */
-    saveLocalState(value: string) {
-        this.setState({ inputValue: value.trim() });
-    };
-
-    /**
-     * handle on change event
-     * call saveLocalState function & validateInput function
-     * @param event 
-     */
-    handleOnChange(event: React.ChangeEvent<HTMLInputElement> | React.FocusEvent<HTMLInputElement> | React.KeyboardEvent<HTMLInputElement>) {
-        let inputValue = event.currentTarget.value;
-        if (this.props.readOnly) {
-            return;
-        } else {
-            if (typeof inputValue === 'string') {
-                this.saveLocalState(inputValue);
-                this.validateInput(inputValue);
-            };
-        };
-    };
+    commit() {
+        if (this.state.status === 'success' &&
+            this.state.dirty &&
+            typeof this.state.currentValue !== 'undefined') {
+            this.props.updateProfileField(this.state.currentValue);
+            this.setState({
+                dirty: false,
+                committedValue: this.state.currentValue
+            });
+        }
+    }
 
     render() {
         return (
-            <Form.Item {...formItemLayout}
-                required={this.state.requiredNotification}
-                label=' '
-                // hasFeedback help={this.state.helpText}
-                validateStatus={this.state.validateStatus}
+            <Form.Item
+                required={this.state.requiredNotification || undefined}
+                label={this.props.label}
+                // hasFeedback 
+                help={this.state.helpText}
+                validateStatus={this.state.status || undefined}
+                style={{ display: this.props.hidden ? 'none' : 'block' }}
             >
                 <Input
-                    hidden={this.props.hidden}
                     placeholder={this.props.placeHolder}
-                    readOnly={this.props.readOnly}
-                    className="clear-disabled"
                     maxLength={this.props.maxLength}
                     minLength={this.props.minLength}
-                    // onFocus={this.handleOnChange}
-                    onBlur={this.props.onBlur === true ? this.updateStoreStateProperty : this.handleOnChange}
-                    onPressEnter={this.props.onPressEnter === true ? this.updateStoreStateProperty : this.handleOnChange}
-                    onChange={this.handleOnChange}
+                    onBlur={this.commit.bind(this)}
+                    onPressEnter={this.commit.bind(this)}
+                    onChange={this.handleOnChange.bind(this)}
+                    // onInput={this.handleOnInput.bind(this)}
                     defaultValue={this.props.defaultValue}
                 />
             </Form.Item>

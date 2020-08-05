@@ -1,9 +1,7 @@
-import React, { ChangeEvent } from 'react';
+import React from 'react';
 import { Form, Input } from 'antd';
 import { MIN_TITLE_CHARS, MAX_TITLE_CHARS } from '../../../../../constants';
 import { AntDesignValidationStatus } from '../../../../../types';
-import { SelectValue } from 'antd/lib/select';
-
 
 export interface TitleProps {
     value: string | null;
@@ -15,6 +13,7 @@ interface TitleState {
     message: string;
     status: AntDesignValidationStatus;
     currentValue?: string;
+    committedValue?: string;
     dirty: boolean;
     tooManyInstitutionsToRender: [boolean, number?];
     institutionFiltered: Array<string>;
@@ -27,75 +26,92 @@ export default class Title extends React.Component<TitleProps, TitleState> {
             message: '',
             status: '',
             currentValue: this.props.value || undefined,
+            committedValue: this.props.value || undefined,
             dirty: false,
             tooManyInstitutionsToRender: [false],
             institutionFiltered: []
         };
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         // hmm, try simulating control input when first
         // mounted?
-        this.validate(this.props.value || undefined);
+        await this.validate(this.props.value || undefined);
     }
 
     validate(newValue: string | undefined) {
-        if (newValue === undefined || newValue.length === 0) {
-            this.props.status('error');
-            this.setState({
-                status: 'error',
-                message: `The Job Title is required`
-            });
-        } else if (newValue.length <= MIN_TITLE_CHARS) {
-            this.props.status('error');
-            this.setState({
-                status: 'error',
-                message: `Job Title must be at least ${MIN_TITLE_CHARS} characters long`
-            });
-        } else if (newValue.length >= 100) {
-            this.props.status('error');
-            this.setState({
-                status: 'error',
-                message: `Job Title must be no longer than ${MAX_TITLE_CHARS} characters long`
-            });
+        return new Promise((resolve, reject) => {
+            try {
+                if (newValue === undefined || newValue.length === 0) {
+                    this.props.status('error');
+                    this.setState({
+                        status: 'error',
+                        message: `The Job Title is required`
+                    }, () => {
+                        resolve(false);
+                    });
+                    return;
+                }
+                if (newValue.length <= MIN_TITLE_CHARS) {
+                    this.props.status('error');
+                    this.setState({
+                        status: 'error',
+                        message: `Job Title must be at least ${MIN_TITLE_CHARS} characters long`
+                    }, () => {
+                        resolve(false);
+                    });
+                    return;
+                }
+                if (newValue.length >= MAX_TITLE_CHARS) {
+                    this.props.status('error');
+                    this.setState({
+                        status: 'error',
+                        message: `Job Title must be no longer than ${MAX_TITLE_CHARS} characters long`
+                    }, () => {
+                        resolve(false);
+                    });
+                    return;
+                }
 
-        } else {
-            this.props.status('success');
-            this.setState({
-                status: 'success',
-                currentValue: newValue,
-                message: '',
-                dirty: (this.state.currentValue !== newValue)
-            });
-        }
+                this.props.status('success');
+                this.setState({
+                    status: 'success',
+                    currentValue: newValue,
+                    message: '',
+                    dirty: (this.state.committedValue !== newValue)
+                }, () => {
+                    resolve(true);
+                });
+            } catch (ex) {
+                reject(ex);
+            }
+        });
+    }
 
-    }
-    onChange(e: ChangeEvent<HTMLInputElement>) {
-        this.validate(e.target.value);
-    }
-    onKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
-
-    }
-    maybeCommit() {
-        if (this.state.status === 'success' && this.state.dirty && typeof this.state.currentValue !== 'undefined') {
+    commit() {
+        if (this.state.status === 'success' &&
+            this.state.dirty &&
+            typeof this.state.currentValue !== 'undefined') {
             this.props.commit(this.state.currentValue);
             this.setState({
-                dirty: false
+                dirty: false,
+                committedValue: this.state.currentValue
             });
         }
     }
-    onBlur() {
-        this.maybeCommit();
+
+    async onChange(event: React.ChangeEvent<HTMLInputElement>) {
+        const newValue = event.currentTarget.value;
+        if (typeof newValue !== 'string') {
+            return;
+        }
+        await this.validate(newValue);
     }
-    onSelect(newValue: SelectValue) {
-        this.validate(newValue.toString());
-        this.maybeCommit();
-    }
+
     render() {
         return <Form.Item
             style={{ flexGrow: 1, marginBottom: 0 }}
             required={true}
-            // label=' '
             help={this.state.message}
             validateStatus={this.state.status}
         >
@@ -106,7 +122,8 @@ export default class Title extends React.Component<TitleProps, TitleState> {
                 defaultValue={this.props.value || undefined}
                 placeholder={'Job title'}
                 onChange={this.onChange.bind(this)}
-                onBlur={this.onBlur.bind(this)}
+                onPressEnter={this.commit.bind(this)}
+                onBlur={this.commit.bind(this)}
             />
         </Form.Item>;
     }

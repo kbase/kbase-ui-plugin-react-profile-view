@@ -14,6 +14,7 @@ interface EndedState {
     message: string;
     status: AntDesignValidationStatus;
     currentValue: number | null;
+    committedValue: number | null;
     dirty: boolean;
 }
 
@@ -24,16 +25,14 @@ export default class Ended extends React.Component<EndedProps, EndedState> {
             message: '',
             status: '',
             currentValue: this.props.value,
+            committedValue: this.props.value,
             dirty: false
         };
     }
 
     componentDidMount() {
-        // hmm, try simulating control input when first
-        // mounted?
         this.validate(this.props.value || undefined);
     }
-
 
     validate(newValue: number | string | undefined) {
         if (newValue === undefined) {
@@ -42,7 +41,7 @@ export default class Ended extends React.Component<EndedProps, EndedState> {
                 status: 'success',
                 currentValue: null,
                 message: '',
-                dirty: (this.state.currentValue !== newValue)
+                dirty: (this.state.committedValue !== newValue)
             });
         } else if (typeof newValue === 'string') {
             // Some form of invalid input -- but not non-numeric since we already
@@ -53,7 +52,7 @@ export default class Ended extends React.Component<EndedProps, EndedState> {
                 status: 'success',
                 currentValue: null,
                 message: '',
-                dirty: (this.state.currentValue !== null)
+                dirty: (this.state.committedValue !== null)
             });
         } else {
             const thisYear = new Date().getFullYear();
@@ -76,7 +75,7 @@ export default class Ended extends React.Component<EndedProps, EndedState> {
                     status: 'success',
                     currentValue: newValue,
                     message: '',
-                    dirty: (this.state.currentValue !== newValue)
+                    dirty: (this.state.committedValue !== newValue)
                 });
             }
         }
@@ -98,7 +97,6 @@ export default class Ended extends React.Component<EndedProps, EndedState> {
                     return;
                 }
             }
-
             return;
         }
 
@@ -113,14 +111,18 @@ export default class Ended extends React.Component<EndedProps, EndedState> {
     onKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
         this.numberEditingOnly(event);
     }
-    onBlur() {
-        if (this.state.status === 'success' && this.state.dirty) {
+    commit() {
+        if (this.state.status === 'success' &&
+            this.state.dirty &&
+            typeof this.state.currentValue !== 'undefined') {
             this.props.commit(this.state.currentValue);
             this.setState({
-                dirty: false
+                dirty: false,
+                committedValue: this.state.currentValue
             });
         }
     }
+
     render() {
         return <Tooltip title='Enter 4 digit end year or leave empty if ongoing'>
             <Form.Item
@@ -137,7 +139,8 @@ export default class Ended extends React.Component<EndedProps, EndedState> {
                     max={MAX_AFFILIATION_DATE}
                     placeholder='Year Ended'
                     defaultValue={this.props.value || undefined}
-                    onBlur={this.onBlur.bind(this)}
+                    onBlur={this.commit.bind(this)}
+                    onPressEnter={this.commit.bind(this)}
                 />
             </Form.Item>
         </Tooltip>;
