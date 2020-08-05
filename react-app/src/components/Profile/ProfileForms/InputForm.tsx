@@ -128,6 +128,7 @@ export default class InputForm3 extends React.Component<Props, State> {
                 style={{ display: this.props.hidden ? 'none' : 'block' }}
             >
                 <Input
+                    allowClear={true}
                     placeholder={this.props.placeHolder}
                     maxLength={this.props.maxLength}
                     minLength={this.props.minLength}
