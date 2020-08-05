@@ -359,30 +359,85 @@ class Profile extends React.Component<Props, State> {
         }
     }
 
-    renderUserNutshellView() {
+    renderLocationSection() {
         const profile = this.state.profile;
-        const jobTitle = this.renderJobTitle();
-        const department = profile.department ? (<div>{this.renderSectionTitle('department')}<div>{profile.department}</div></div>) : null;
-        const organization = profile.organization ? (<div>{this.renderSectionTitle('organization')}<div>{profile.organization}</div></div>) : null;
-        const locationFields = [profile.country, profile.state, profile.city].filter(x => x).join(', ');
-        const location = locationFields ? (<div>{this.renderSectionTitle('location')}<div>{locationFields}</div></div>) : null;
-        const fundingSource = profile.fundingSource ? (<div>{this.renderSectionTitle('primary funding source')}<p>{profile.fundingSource}</p></div>) : null;
+        const location = (() => {
+            if (profile.country === 'United States') {
+                return [profile.country, profile.state, profile.city].filter(x => x).join(', ');
+            } else {
+                return [profile.country, profile.city].filter(x => x).join(', ');
+            }
+        })();
 
-        if (!(jobTitle || department || organization || location || fundingSource)) {
+        if (!location) {
+            return;
+        }
+
+        return <div>
+            {this.renderSectionTitle('location')}
+            <div>{location}</div>
+        </div>;
+    }
+
+    renderDepartmentSection() {
+        if (!this.state.profile.department) {
+            return;
+        }
+        return <div>
+            {this.renderSectionTitle('department')}
+            <div>{this.state.profile.department}</div>
+        </div>;
+    }
+
+    renderOrganizationSection() {
+        if (!this.state.profile.organization) {
+            return;
+        }
+        return <div>
+            {this.renderSectionTitle('organization')}
+            <div>{this.state.profile.organization}</div>
+        </div>;
+    }
+
+    renderFundingSourceSection() {
+        if (!this.state.profile.fundingSource) {
+            return;
+        }
+        return <div>{this.renderSectionTitle('primary funding source')}
+            <p>{this.state.profile.fundingSource}</p>
+        </div>;
+    }
+
+    isNutshellEmpty() {
+        const profile = this.state.profile;
+        if (profile.jobTitle || profile.department || profile.organization || profile.fundingSource) {
+            return false;
+        }
+        if (profile.country === 'United States') {
+            if (profile.country || profile.state || profile.city) {
+                return false;
+            }
+        } else {
+            if (profile.country || profile.city) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    renderUserNutshellView() {
+        if (this.isNutshellEmpty()) {
             return this.renderUserNutshellViewEmpty();
         }
 
-        return (
-            <div>
-                {jobTitle}
-                {department}
-                {organization}
-                {location}
-                {fundingSource}
-            </div>
-        );
+        return <div>
+            {this.renderJobTitle()}
+            {this.renderDepartmentSection()}
+            {this.renderOrganizationSection()}
+            {this.renderLocationSection()}
+            {this.renderFundingSourceSection()}
+        </div>;
     }
-
 
     /**
      * builds User Nutshell card
