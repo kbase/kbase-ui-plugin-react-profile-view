@@ -7,9 +7,9 @@ package:
   type: iframe
 install:
   routes:
-    - path: [[people, user], {type: param, name: username, required: false}]
-      captureExtraPath: true
-      widget: kb_iframe_loader
+    - path: people/:-username
       authorization: true
-      params:
-        view: user-profile
+      view: user-profile
+    - path: user/:-username
+      authorization: true
+      view: user-profile
