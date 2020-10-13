@@ -5,11 +5,12 @@ package:
   name: react-profile-view
   description: KBase user profile view plugin built with React.
   type: iframe
-install:
-  routes:
-    - path: people/:-username
-      authorization: true
-      view: user-profile
-    - path: user/:-username
-      authorization: true
-      view: user-profile
+services:
+  route:
+    routes:
+      - path: people/:-username
+        authorization: true
+        view: user-profile
+      - path: user/:-username
+        authorization: true
+        view: user-profile
