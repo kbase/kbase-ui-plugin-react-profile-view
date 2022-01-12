@@ -3,13 +3,13 @@
     "version": "0.3.1",
     "private": true,
     "dependencies": {
-        "@ant-design/icons": "4.2.2",
+        "@ant-design/icons": "4.7.0",
         "@kbase/ui-components": "0.2.1-alpha.21",
         "@kbase/ui-lib": "0.2.1-alpha.3",
         "@types/enzyme": "*",
         "@types/enzyme-adapter-react-16": "*",
         "@types/jest": "*",
-        "@types/marked": "*",
+        "@types/marked": "4",
         "@types/node": "*",
         "@types/react": "*",
         "@types/react-dom": "*",
@@ -21,14 +21,14 @@
         "enzyme-adapter-react-16": "1.15.2",
         "less": "3.12.2",
         "less-loader": "6.2.0",
-        "marked": "1.1.1",
+        "marked": "4.0.9",
         "react": "16.13.1",
         "react-app-rewired": "2.1.6",
         "react-dom": "16.13.1",
         "react-redux": "7.2.1",
         "react-scripts": "3.4.1",
         "react-test-renderer": "16.13.1",
-        "redux": "4.0.5",
+        "redux": "4.1.2",
         "typescript": "3.9.7"
     },
     "scripts": {
@@ -59,8 +59,8 @@
         "@testing-library/jest-dom": "5.11.2",
         "@testing-library/react": "10.4.7",
         "@testing-library/user-event": "12.1.0",
-        "nodemon": "2.0.4",
-        "typedoc": "0.17.8"
+        "nodemon": "2.0.15",
+        "typedoc": "0.22.10"
     },
     "jest": {
         "collectCoverageFrom": [

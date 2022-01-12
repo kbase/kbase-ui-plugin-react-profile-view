@@ -50,7 +50,7 @@ export async function fetchProfileAPI(id: string, token: string, baseURL: string
             return await response.json();
         } catch (err) {
             console.error('profile fetch failed', err);
-            throw new Error(`Error parsing profile response to json: ${err.message}`);
+            throw new Error(`Error parsing profile response to json: ${err instanceof Error ? err.message : 'Unknown error'}`);
         };
     } else {
         throw new Error(`Error fetching user profile: ${response.statusText}`);
@@ -182,7 +182,7 @@ export async function fetchOrgsOfProfileAPI(username: string, token: string, bas
         return await (response.json() as unknown) as Array<Group>;
     } catch (err) {
         console.error('fetch org failed', response);
-        throw new Error(`Error fetching groups: ${err.message}`);
+        throw new Error(`Error fetching groups: ${err instanceof Error ? err.message : "Unknown error"}`);
     };
 };
 

@@ -4,7 +4,7 @@ import {
     Modal, Select, Button, Empty, message
 } from 'antd';
 import { EditOutlined, CloseOutlined } from '@ant-design/icons';
-import marked from 'marked';
+import {marked} from 'marked';
 
 import { UserName, ProfileUserdata, Affiliation } from '../../redux/interfaces';
 import nouserpic from '../../assets/nouserpic.png';
@@ -467,9 +467,10 @@ class Profile extends React.Component<Props, State> {
         } else {
             // const fixed = this.props.profileUserdata.researchStatement.replace(/\n/, '<br />');
             // statement = <p style={{ whiteSpace: 'pre' }}>{this.props.profileUserdata.researchStatement}</p>;
-            const content = marked(this.state.profile.researchStatement, {
+            marked.use({
                 breaks: true
             });
+            const content = marked.parse(this.state.profile.researchStatement);
             statement = <div dangerouslySetInnerHTML={{ __html: content }} />;
         }
 
@@ -662,7 +663,7 @@ class Profile extends React.Component<Props, State> {
     };
 
     countryOnSelect(value: SelectValue) {
-        this.countryChanged(value.toString());
+        this.countryChanged(value!.toString());
     };
 
     countryChanged(country: string) {
@@ -955,9 +956,9 @@ class Profile extends React.Component<Props, State> {
     }
 
     renderControls() {
-        // if (!this.props.editEnable) {
-        //     return;
-        // }
+        if (!this.props.editEnable) {
+            return;
+        }
         let button;
         let bannerText;;
         if (this.state.isEditing) {
