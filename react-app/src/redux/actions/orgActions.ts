@@ -118,7 +118,8 @@ export function getOrgs(username: string) {
                     });
                 dispatch(loadOrgs({ orgList: orgs, orgFetchStatus: AsyncFetchStatus.SUCCESS }));
             } catch (ex) {
-                dispatch(fetchErrorOrgs({ orgError: ex.message, orgFetchStatus: AsyncFetchStatus.ERROR }));
+                const orgError = ex instanceof Error ? ex.message : 'Unknown error';
+                dispatch(fetchErrorOrgs({ orgError: [orgError], orgFetchStatus: AsyncFetchStatus.ERROR }));
             }
 
             // try {

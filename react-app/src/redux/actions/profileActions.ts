@@ -192,7 +192,7 @@ export function getProfile(username: string) {
             } catch (ex) {
                 console.error('ERROR fetching profile', ex);
                 dispatch(fetchErrorProfile({
-                    errorMessages: [ex.message],
+                    errorMessages: [ex instanceof Error ? ex.message : 'Unknown error'],
                     profileFetchStatus: AsyncFetchStatus.ERROR
                 }));
             }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Component} from 'react'
 import { Form, AutoComplete } from 'antd';
 import Select, { SelectValue } from 'antd/lib/select';
 import { MIN_ORGANIZATION_CHARS, MAX_INSTITUTIONS_TO_SHOW, MAX_ORGANIZATION_CHARS } from '../../constants';
@@ -18,7 +18,7 @@ interface OrganizationState {
     tooManyInstitutionsToRender: [boolean, number?];
 }
 
-export default class Organization extends React.Component<OrganizationProps, OrganizationState> {
+export default class Organization extends Component<OrganizationProps, OrganizationState> {
     value: string | null;
     dirty: boolean;
     validationState: ValidationState<string>;
@@ -95,8 +95,10 @@ export default class Organization extends React.Component<OrganizationProps, Org
     }
 
     onSelect(newValue: SelectValue) {
-        this.update(newValue.toString());
-        this.onBlur();
+        if (newValue) {
+            this.update(newValue.toString());
+            this.onBlur();
+        }
     }
 
     onSearch(value: string) {
