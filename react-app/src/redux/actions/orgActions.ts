@@ -5,6 +5,7 @@ import { fetchOrgsOfProfileAPI } from '../../util/API';
 import { loadOrgs, fetchOrgs, fetchErrorOrgs } from './actionCreators';
 import { AsyncFetchStatus } from '../fetchStatuses';
 import { ActionTypes } from './actionTypes';
+import { AuthenticationStatus } from '@kbase/ui-lib';
 
 export interface OrgActionNone {
     type: ActionTypes.FETCH_ORGS_NONE;
@@ -88,77 +89,49 @@ export function getOrgs(username: string) {
     return async function (dispatch: ThunkDispatch<StoreState, void, AnyAction>, getState: () => StoreState) {
         dispatch(fetchOrgs());
         const rootStore = getState();
-        if (rootStore.auth.userAuthorization !== null) {
-            const {
-                auth: {
-                    userAuthorization: {
-                        token
-                    }
-                },
-                app: {
-                    config: {
-                        services: {
-                            ServiceWizard: {
-                                url: serviceWizardURL
-                            }
+
+        const {
+            authentication,
+            app: {
+                config: {
+                    services: {
+                        ServiceWizard: {
+                            url: serviceWizardURL
                         }
                     }
                 }
-            } = rootStore;
-
-            try {
-                const response = await fetchOrgsOfProfileAPI(username, token, serviceWizardURL);
-                const orgs = response
-                    .map((org) => {
-                        return {
-                            name: org.name,
-                            url: '/#org/' + org.id,
-                            logoURL: org.custom.logourl
-                        };
-                    });
-                dispatch(loadOrgs({ orgList: orgs, orgFetchStatus: AsyncFetchStatus.SUCCESS }));
-            } catch (ex) {
-                const orgError = ex instanceof Error ? ex.message : 'Unknown error';
-                dispatch(fetchErrorOrgs({ orgError: [orgError], orgFetchStatus: AsyncFetchStatus.ERROR }));
             }
+        } = rootStore;
 
-            // try {
-            //     const response = await fetchOrgsOfProfileAPI(username, token, groupsURL);
-            //     const orgs = response
-            //         .map((org) => {
-            //             return {
-            //                 name: org.name,
-            //                 url: '/#org/' + org.id,
-            //                 logoURL: org.custom.logourl
-            //             };
-            //         });
-            //     dispatch(loadOrgs({ orgList: orgs, orgFetchStatus: AsyncFetchStatus.SUCCESS }));
-            // } catch (ex) {
-            //     dispatch(fetchErrorOrgs({ orgError: ex.message, orgFetchStatus: AsyncFetchStatus.ERROR }));
-            // }
+        if (authentication.status !== AuthenticationStatus.AUTHENTICATED) {
+            // console.error("I don't think this even should happen, but if it did, I must ask 'what kind of horrible bugs did you create?'");
+            // throw new Error('Not authorized');
+            return;
+        }
+
+        const {
+            userAuthentication: {
+                token, username
+            } 
+        } = authentication;
 
 
+        try {
+            const response = await fetchOrgsOfProfileAPI(username, token, serviceWizardURL);
+            const orgs = response
+                .map((org) => {
+                    return {
+                        name: org.name,
+                        url: '/#org/' + org.id,
+                        logoURL: org.custom.logourl
+                    };
+                });
+            dispatch(loadOrgs({ orgList: orgs, orgFetchStatus: AsyncFetchStatus.SUCCESS }));
+        } catch (ex) {
+            const orgError = ex instanceof Error ? ex.message : 'Unknown error';
+            dispatch(fetchErrorOrgs({ orgError: [orgError], orgFetchStatus: AsyncFetchStatus.ERROR }));
+        }
 
-            // if (typeof response !== 'undefined') {
-            //     if (typeof response[0] === 'number') {
-            //         // response is error message array 
-            //         dispatch(fetchErrorOrgs({ orgError: response, orgFetchStatus: AsyncFetchStatus.ERROR }));
-            //     } else if (typeof response[0] === 'object') {
-            //         // typescript!
-            //         let anyFoo: any = response;
-            //         let res = anyFoo as Array<Org>;
-            //         res.forEach((org) => {
-            //             orgArr.push({ name: org.name, url: '/#org/' + org.id, logoURL: org.custom.logourl });
-            //         });
-            //         dispatch(loadOrgs({ orgList: orgArr, orgFetchStatus: AsyncFetchStatus.SUCCESS }));
-            //     } else {
-            //         // empty array is returned
-            //         dispatch(loadOrgs({ orgList: response, orgFetchStatus: AsyncFetchStatus.SUCCESS }));
-            //     };
-            // } else {
-            //     dispatch(fetchErrorOrgs({ orgError: [418, 'Please check console errors.'], orgFetchStatus: AsyncFetchStatus.ERROR }));
-            // };
-        };
     };
 };
 

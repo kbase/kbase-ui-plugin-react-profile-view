@@ -1,3 +1,6 @@
+/*
+TODO: test is broken, fix!
+*/
 import React from 'react';
 
 import { configure } from 'enzyme';

@@ -4,8 +4,8 @@
     "private": true,
     "dependencies": {
         "@ant-design/icons": "4.7.0",
-        "@kbase/ui-components": "0.2.1-alpha.21",
-        "@kbase/ui-lib": "0.2.1-alpha.3",
+        "@kbase/ui-components": "0.5.17",
+        "@kbase/ui-lib": "0.4.12",
         "@types/enzyme": "*",
         "@types/enzyme-adapter-react-16": "*",
         "@types/jest": "*",
