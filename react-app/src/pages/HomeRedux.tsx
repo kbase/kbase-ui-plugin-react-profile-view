@@ -5,6 +5,7 @@ import Home from './Home';
 import { StoreState } from '../redux/interfaces';
 import { sendTitle } from '@kbase/ui-components';
 import { loadNarratives, getProfile, getOrgs } from '../redux/actions';
+import { AuthenticationStatus } from '@kbase/ui-lib';
 
 interface OwnProps { };
 
@@ -29,7 +30,7 @@ interface UserProfileViewParams {
 
 function mapStateToProps(state: StoreState, ownProps: OwnProps): StateProps {
     const {
-        auth: { userAuthorization },
+        authentication,
         app: {
             config: { baseUrl },
             runtime: {
@@ -38,9 +39,15 @@ function mapStateToProps(state: StoreState, ownProps: OwnProps): StateProps {
             }
         }
     } = state;
-    if (!userAuthorization) {
-        throw new Error('This plugin only operates with authentication; no KBase token in store');
+     if (authentication.status !== AuthenticationStatus.AUTHENTICATED) {
+        throw new Error('Not authorized');
     }
+
+    const {
+        userAuthentication: {
+            token, username
+        } 
+    } = authentication;
 
     // TODO: fix this in the develop wrapper in kb-components
     let params: UserProfileViewParams;
@@ -53,8 +60,8 @@ function mapStateToProps(state: StoreState, ownProps: OwnProps): StateProps {
         params = (rawParams as unknown) as UserProfileViewParams;
     }
     return {
-        token: userAuthorization.token,
-        authUsername: userAuthorization.username,
+        token,
+        authUsername: username,
         username: params.username || null,
         baseURL: baseUrl
     };

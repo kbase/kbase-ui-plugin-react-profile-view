@@ -8,6 +8,7 @@ import {
 import { fetchProfile, refetchProfile, loadProfile, fetchErrorProfile } from './actionCreators';
 import { AsyncFetchStatus } from '../fetchStatuses';
 import { JSONValue, JSONObject, JSONArray } from '../../types';
+import { AuthenticationStatus } from '@kbase/ui-lib';
 
 function isJSONObject(value: JSONValue): value is JSONObject {
     if (typeof value === 'string') {
@@ -143,62 +144,66 @@ export function getProfile(username: string) {
         dispatch(fetchProfile());
 
         const rootStore = getState();
-        if (rootStore.auth.userAuthorization !== null) {
 
-            const {
-                auth: {
-                    userAuthorization: {
-                        token
-                    }
-                },
-                app: {
-                    config: {
-                        services: {
-                            ServiceWizard: {
-                                url
-                            }
+        const {
+            authentication,
+            app: {
+                config: {
+                    services: {
+                        ServiceWizard: {
+                            url: serviceWizardURL
                         }
                     }
                 }
-            } = rootStore;
-
-            try {
-                const response: UserProfileService = fixProfile(await fetchProfileAPI(username, token, url));
-                let profileEdit: boolean;
-                if (response.user.username !== rootStore.auth.userAuthorization.username) {
-                    dispatch(sendTitle('User Profile for ' + response.user.realname));
-                    profileEdit = false;
-                } else {
-                    profileEdit = true;
-                };
-                // shape response to profile before dispatch 
-                // TODO: preserve profile structure; the fetched profile is, of course, already 
-                // in the profile shape; we are creating a view model here, which, unfortunately, 
-                // dissects the profile for no good reason I can see. A few model is free to do this,
-                // of course, but it needs a good reason. E.g. raw values may need to be wrapped in a 
-                // field, to control field state. Even then, you probably want to preserve the 
-                // original raw data as well.
-                const payload: ProfileView = {
-                    userName: {
-                        userID: response.user.username,
-                        name: response.user.realname
-                    },
-                    editEnable: profileEdit,
-                    profileUserdata: response.profile.userdata,
-                    gravatarHash: response.profile.synced.gravatarHash,
-                    profileFetchStatus: AsyncFetchStatus.SUCCESS
-                };
-                dispatch(loadProfile(payload));
-            } catch (ex) {
-                console.error('ERROR fetching profile', ex);
-                dispatch(fetchErrorProfile({
-                    errorMessages: [ex instanceof Error ? ex.message : 'Unknown error'],
-                    profileFetchStatus: AsyncFetchStatus.ERROR
-                }));
             }
-        } else {
-            console.error('auth is null ', rootStore.auth.userAuthorization);
-        };
+        } = rootStore;
+
+        if (authentication.status !== AuthenticationStatus.AUTHENTICATED) {
+            console.error('Not authenticated');
+            return;
+        }
+        
+         const {
+            userAuthentication: {
+                token, username
+            } 
+        } = authentication;
+
+
+        try {
+            const response: UserProfileService = fixProfile(await fetchProfileAPI(username, token, serviceWizardURL));
+            let profileEdit: boolean;
+            if (response.user.username !== username) {
+                dispatch(sendTitle('User Profile for ' + response.user.realname));
+                profileEdit = false;
+            } else {
+                profileEdit = true;
+            };
+            // shape response to profile before dispatch 
+            // TODO: preserve profile structure; the fetched profile is, of course, already 
+            // in the profile shape; we are creating a view model here, which, unfortunately, 
+            // dissects the profile for no good reason I can see. A few model is free to do this,
+            // of course, but it needs a good reason. E.g. raw values may need to be wrapped in a 
+            // field, to control field state. Even then, you probably want to preserve the 
+            // original raw data as well.
+            const payload: ProfileView = {
+                userName: {
+                    userID: response.user.username,
+                    name: response.user.realname
+                },
+                editEnable: profileEdit,
+                profileUserdata: response.profile.userdata,
+                gravatarHash: response.profile.synced.gravatarHash,
+                profileFetchStatus: AsyncFetchStatus.SUCCESS
+            };
+            dispatch(loadProfile(payload));
+        } catch (ex) {
+            console.error('ERROR fetching profile', ex);
+            dispatch(fetchErrorProfile({
+                errorMessages: [ex instanceof Error ? ex.message : 'Unknown error'],
+                profileFetchStatus: AsyncFetchStatus.ERROR
+            }));
+        }
     };
 };
 
@@ -215,48 +220,52 @@ export function updateProfile(userdata: ProfileUserdata) {
     return async function (dispatch: ThunkDispatch<StoreState, void, AnyAction>, getState: () => StoreState) {
         dispatch(refetchProfile());
         const rootStore = getState();
-        if (rootStore.auth.userAuthorization !== null) {
-            const {
-                auth: {
-                    userAuthorization: {
-                        token,
-                        username,
-                        realname
-                    }
-                },
-                app: {
-                    config: {
-                        services: {
-                            UserProfile: {
-                                url
-                            }
+
+        const {
+            authentication,
+            app: {
+                config: {
+                    services: {
+                        UserProfile: {
+                            url: userProfileServiceURL
                         }
                     }
                 }
-            } = rootStore;
+            }
+        } = rootStore;
 
-            // TODO: better is to fetch the profile first, with just the username, 
-            // the take the 'user' property for the update.
-            // const token = rootStore.auth.userAuthorization.token;
-            // let url = rootStore.app.config.services.UserProfile.url;
-            const user: UserName = {
-                userID: username,
-                name: realname
-            };
+        if (authentication.status !== AuthenticationStatus.AUTHENTICATED) {
+            console.error('Not authenticated');
+            return;
+        }
+        
+         const {
+            userAuthentication: {
+                token, username, realname
+            } 
+        } = authentication;
 
-            // TODO: NO NO NO - don't expose the http response code here. All we need
-            // to do is handle an exception.
-            let response = await updateProfileAPI(token, url, userdata, user);
-            if (response === 200) {
-                // dispatch(getProfile(username));
-            } else {
-                if (Array.isArray(response)) {
-                    let errorPayload: ErrorMessages = {
-                        errorMessages: response,
-                        profileFetchStatus: AsyncFetchStatus.ERROR
-                    };
-                    dispatch(fetchErrorProfile(errorPayload));
+        // TODO: better is to fetch the profile first, with just the username, 
+        // the take the 'user' property for the update.
+        // const token = rootStore.auth.userAuthorization.token;
+        // let url = rootStore.app.config.services.UserProfile.url;
+        const user: UserName = {
+            userID: username,
+            name: realname
+        };
+
+        // TODO: NO NO NO - don't expose the http response code here. All we need
+        // to do is handle an exception.
+        let response = await updateProfileAPI(token, userProfileServiceURL, userdata, user);
+        if (response === 200) {
+            // dispatch(getProfile(username));
+        } else {
+            if (Array.isArray(response)) {
+                let errorPayload: ErrorMessages = {
+                    errorMessages: response,
+                    profileFetchStatus: AsyncFetchStatus.ERROR
                 };
+                dispatch(fetchErrorProfile(errorPayload));
             };
         };
     };

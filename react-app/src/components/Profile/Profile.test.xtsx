@@ -1,10 +1,14 @@
+/*
+TODO: test is broken - FIX
+*/
+
 import React from 'react';
 
 import { configure } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import { shallow } from 'enzyme';
 import Profile from './Profile';
-import { ProfileData, UserName, OrgProp } from '../../redux/interfaces';
+import { ProfileUserdata, UserName, OrgProp } from '../../redux/interfaces';
 
 configure({ adapter: new Adapter() }); //interface
 
@@ -23,7 +27,7 @@ it('renders without crashing with correct type and data', () => {
     };
     // TODO: shouldn't check tokens into github
     const token = 'xxx';
-    const userProfile: ProfileData = {
+    const userProfile: ProfileUserdata = {
         organization: 'Current organiztaion',
         department: 'Current department',
         city: 'Current city',
@@ -31,8 +35,8 @@ it('renders without crashing with correct type and data', () => {
         postalCode: '',
         country: 'usa',
         affiliations: [
-            { title: 'past job title 1', organization: 'past org 1', started: 'started 1', ended: 'ended 1' },
-            { title: 'past job title 2', organization: 'past org 2', started: 'started 2', ended: 'ended 2' }
+            { title: 'past job title 1', organization: 'past org 1', started: 100, ended: 1000 },
+            { title: 'past job title 2', organization: 'past org 2', started: 2000, ended: 3000 }
         ],
         researchStatement: 'blah blah',
         jobTitle: 'Current Job Title',
@@ -56,12 +60,12 @@ it('renders without crashing with correct type and data', () => {
     shallow(
         <Profile
             userName={userName}
-            userProfile={userProfile}
-            orgs={orgs}
+            profileUserdata={userProfile}
+            // orgs={orgs}
             gravatarHash="ceccacd4f6311e66cdf51f1666be71a9"
-            profileloaded={profileloaded}
-            orgsloaded={orgsloaded}
-            token={token}
+            // profileloaded={profileloaded}
+            // orgsloaded={orgsloaded}
+            // token={token}
         />
     );
 });
@@ -137,11 +141,11 @@ it('renders without crashing with all props undefined', () => {
     shallow(
         <Profile
             userName={userName as UserName}
-            userProfile={userProfile as ProfileData}
+            userProfile={(userProfile as unknown) as ProfileData}
             orgs={orgs as Array<OrgProp>}
-            gravatarHash={gravatarHash as string}
-            profileloaded={profileloaded as Boolean}
-            orgsloaded={orgsloaded as Boolean}
+            gravatarHash={(gravatarHash as unknown) as string}
+            profileloaded={(profileloaded as unknown) as Boolean}
+            orgsloaded={(orgsloaded as unknown) as Boolean}
             token={token}
         />
     );

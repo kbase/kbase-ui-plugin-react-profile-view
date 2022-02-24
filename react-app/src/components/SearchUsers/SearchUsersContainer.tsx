@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import SearchUsers from './SearchUsers';
 import { StoreState } from '../../redux/interfaces';
+import { AuthenticationStatus } from '@kbase/ui-lib';
 
 interface AuthData {
     userAuthorization: {
@@ -23,9 +24,7 @@ const mapStateToProps = (state: StoreState): Props => {
     // and not modifying state to make component props
     // simply return state and props
     const {
-        auth: {
-            userAuthorization
-        },
+        authentication,
         app: {
             config: {
                 services: {
@@ -37,13 +36,15 @@ const mapStateToProps = (state: StoreState): Props => {
         }
     } = state;
 
-    if (userAuthorization === null) {
+    if (authentication.status !== AuthenticationStatus.AUTHENTICATED) {
         throw new Error('Not authorized');
     }
 
     const {
-        token
-    } = userAuthorization;
+        userAuthentication: {
+            token
+        } 
+    } = authentication;
 
     return {
         token, url

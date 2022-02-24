@@ -103,12 +103,12 @@ class Profile extends React.Component<Props, State> {
 
     // Set gravatarURL
     gravatarSrc() {
-        if (this.props.profileUserdata['avatarOption'] === 'silhoutte' || !this.props.gravatarHash) {
+
+        if (this.state.profile.avatarOption === 'silhouette' || !this.props.gravatarHash) {
             // let gravatar = <img style={{ maxWidth: '100%', margin: '8px 0px' }} alt='avatar' src={nouserpic} />;
             return nouserpic;
         } else if (this.props.gravatarHash) {
             return 'https://www.gravatar.com/avatar/' + this.props.gravatarHash + '?s=300&amp;r=pg&d=' + this.props.profileUserdata.gravatarDefault;
-            // let gravatar = <img style={{ maxWidth: '100%', margin: '8px 0px' }} alt='avatar' src={gravatarSrc} />;
         };
     };
 
@@ -1075,17 +1075,12 @@ class Profile extends React.Component<Props, State> {
                 <Row gutter={8} style={{ overflowY: 'auto', flex: '1 1 0px' }}>
                     <Col span={6}>
                         <Area>
-                            <div>
-                                <div data-k-b-testhook-element="realname" style={{
-                                    textAlign: 'center',
-                                    fontWeight: 'bold'
-                                }}>{this.props.userName.name}</div>
-                                <div data-k-b-testhook-element="username" style={{
-                                    fontFamily: 'monospace',
-                                    textAlign: 'center'
-                                }}>{this.props.userName.userID}</div>
-                                {this.renderAvatar()}
-
+                            <div className="ProfileAvatar">
+                                <div data-k-b-testhook-element="realname" className="ProfileAvatar-Realname">{this.props.userName.name}</div>
+                                <div data-k-b-testhook-element="username" className="ProfileAvatar-Username">{this.props.userName.userID}</div>
+                                <div  className="ProfileAvatar-Avatar">
+                                    {this.renderAvatar()}
+                                </div>
                             </div>
                         </Area>
                         <Area>

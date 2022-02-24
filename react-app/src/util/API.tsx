@@ -4,9 +4,9 @@ export async function getBFFServiceUrl(token: string, url: string) {
     // TODO: for dev, the baseUrl will be whatever works for the CRA workflow, which is ''.
     // baseURL = 'https://ci.kbase.us/services'; // for dev
     const body = {
-        id: 0,
         method: 'ServiceWizard.get_service_status',
         version: '1.1',
+        id: "123",
         params: [
             {
                 module_name: 'userprofileuibff',
@@ -75,6 +75,7 @@ export async function updateProfileAPI(token: string, url: string, userdata: Pro
     const body = {
         version: '1.1',
         method: 'UserProfile.update_user_profile',
+        id: "123",
         params: newParam
     };
     const stringBody = JSON.stringify(body);

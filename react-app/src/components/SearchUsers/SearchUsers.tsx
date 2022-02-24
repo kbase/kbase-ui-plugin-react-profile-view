@@ -81,6 +81,12 @@ class SearchUsers extends React.Component<Props, State> {
 
     render() {
         let data = this.state.data;
+        const options = this.state.data.map(({ username, realname }) => {
+            return {
+                value: username,
+                label: `${realname} (${username})`
+            };
+        });
         return (
             <Select
                 style={{ width: 250 }}
@@ -97,15 +103,8 @@ class SearchUsers extends React.Component<Props, State> {
                 filterOption={(inputValue, option) => {
                     return true;
                 }}
-            >
-                {data.map((item) => {
-                    return (
-                        <Option key={item['username']} value={item['username']}>
-                            {item['realname']} ({item['username']})
-                        </Option>
-                    );
-                })}
-            </Select>
+                options={options}
+            />
         );
     };
 };
