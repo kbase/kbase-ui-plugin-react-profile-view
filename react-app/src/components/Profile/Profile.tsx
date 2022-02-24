@@ -103,12 +103,11 @@ class Profile extends React.Component<Props, State> {
 
     // Set gravatarURL
     gravatarSrc() {
-        if (this.props.profileUserdata['avatarOption'] === 'silhoutte' || !this.props.gravatarHash) {
+        if (this.props.profileUserdata['avatarOption'] === 'silhouette' || !this.props.gravatarHash) {
             // let gravatar = <img style={{ maxWidth: '100%', margin: '8px 0px' }} alt='avatar' src={nouserpic} />;
             return nouserpic;
         } else if (this.props.gravatarHash) {
             return 'https://www.gravatar.com/avatar/' + this.props.gravatarHash + '?s=300&amp;r=pg&d=' + this.props.profileUserdata.gravatarDefault;
-            // let gravatar = <img style={{ maxWidth: '100%', margin: '8px 0px' }} alt='avatar' src={gravatarSrc} />;
         };
     };
 
