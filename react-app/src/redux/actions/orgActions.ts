@@ -1,43 +1,47 @@
-import { ThunkDispatch } from 'redux-thunk';
-import { StoreState, OrgList, OrgFetchError } from '../interfaces';
-import { AnyAction } from 'redux';
-import { fetchOrgsOfProfileAPI } from '../../util/API';
-import { loadOrgs, fetchOrgs, fetchErrorOrgs } from './actionCreators';
-import { AsyncFetchStatus } from '../fetchStatuses';
-import { ActionTypes } from './actionTypes';
-import { AuthenticationStatus } from '@kbase/ui-lib';
+import { ThunkDispatch } from "redux-thunk";
+import { OrgFetchError, OrgList, StoreState } from "../interfaces";
+import { AnyAction } from "redux";
+import { fetchOrgsOfProfileAPI } from "../../util/API";
+import { fetchErrorOrgs, fetchOrgs, loadOrgs } from "./actionCreators";
+import { AsyncFetchStatus } from "../fetchStatuses";
+import { ActionTypes } from "./actionTypes";
+import { AuthenticationStatus } from "@kbase/ui-lib";
 
 export interface OrgActionNone {
-    type: ActionTypes.FETCH_ORGS_NONE;
+  type: ActionTypes.FETCH_ORGS_NONE;
 }
 
 export interface OrgActionFetching {
-    type: ActionTypes.FETCH_ORGS_FETCHING;
+  type: ActionTypes.FETCH_ORGS_FETCHING;
 }
 
 export interface OrgActionSuccess {
-    type: ActionTypes.FETCH_ORGS_SUCCESS,
-    payload: OrgList;
+  type: ActionTypes.FETCH_ORGS_SUCCESS;
+  payload: OrgList;
 }
 
 export interface OrgActionRefetching {
-    type: ActionTypes.FETCH_ORGS_REFETCHING,
-    payload: OrgList;
+  type: ActionTypes.FETCH_ORGS_REFETCHING;
+  payload: OrgList;
 }
 
 export interface OrgActionError {
-    type: ActionTypes.FETCH_ORGS_ERROR,
-    payload: OrgFetchError;
+  type: ActionTypes.FETCH_ORGS_ERROR;
+  payload: OrgFetchError;
 }
 
-export type OrgAction = OrgActionNone | OrgActionFetching | OrgActionSuccess | OrgActionError | OrgActionRefetching;
+export type OrgAction =
+  | OrgActionNone
+  | OrgActionFetching
+  | OrgActionSuccess
+  | OrgActionError
+  | OrgActionRefetching;
 
 /**
- * 
- * @param userID 
+ * @param userID
  */
 // export function getOrgs(username: string) {
-//     // add dispatch to let the app know fetch is started so spinner can be loaded 
+//     // add dispatch to let the app know fetch is started so spinner can be loaded
 //     return async function (dispatch: ThunkDispatch<StoreState, void, AnyAction>, getState: () => StoreState) {
 //         dispatch(fetchOrgs());
 //         const rootStore = getState();
@@ -63,7 +67,7 @@ export type OrgAction = OrgActionNone | OrgActionFetching | OrgActionSuccess | O
 //             let response = await fetchOrgsOfProfileAPI(username, token, url);
 //             if (typeof response !== 'undefined') {
 //                 if (typeof response[0] === 'number') {
-//                     // response is error message array 
+//                     // response is error message array
 //                     dispatch(fetchErrorOrgs({ orgError: response, orgFetchStatus: AsyncFetchStatus.ERROR }));
 //                 } else if (typeof response[0] === 'object') {
 //                     // typescript!
@@ -85,53 +89,64 @@ export type OrgAction = OrgActionNone | OrgActionFetching | OrgActionSuccess | O
 // };
 
 export function getOrgs(username: string) {
-    // add dispatch to let the app know fetch is started so spinner can be loaded 
-    return async function (dispatch: ThunkDispatch<StoreState, void, AnyAction>, getState: () => StoreState) {
-        dispatch(fetchOrgs());
-        const rootStore = getState();
+  // add dispatch to let the app know fetch is started so spinner can be loaded
+  return async function (
+    dispatch: ThunkDispatch<StoreState, void, AnyAction>,
+    getState: () => StoreState,
+  ) {
+    dispatch(fetchOrgs());
+    const rootStore = getState();
 
-        const {
-            authentication,
-            app: {
-                config: {
-                    services: {
-                        ServiceWizard: {
-                            url: serviceWizardURL
-                        }
-                    }
-                }
-            }
-        } = rootStore;
+    const {
+      authentication,
+      app: {
+        config: {
+          services: {
+            ServiceWizard: {
+              url: serviceWizardURL,
+            },
+          },
+        },
+      },
+    } = rootStore;
 
-        if (authentication.status !== AuthenticationStatus.AUTHENTICATED) {
-            // console.error("I don't think this even should happen, but if it did, I must ask 'what kind of horrible bugs did you create?'");
-            // throw new Error('Not authorized');
-            return;
-        }
+    if (authentication.status !== AuthenticationStatus.AUTHENTICATED) {
+      // console.error("I don't think this even should happen, but if it did, I must ask 'what kind of horrible bugs did you create?'");
+      // throw new Error('Not authorized');
+      return;
+    }
 
-        const {
-            userAuthentication: {
-                token, username
-            } 
-        } = authentication;
+    const {
+      userAuthentication: {
+        token,
+      },
+    } = authentication;
 
-
-        try {
-            const response = await fetchOrgsOfProfileAPI(username, token, serviceWizardURL);
-            const orgs = response
-                .map((org) => {
-                    return {
-                        name: org.name,
-                        url: '/#org/' + org.id,
-                        logoURL: org.custom.logourl
-                    };
-                });
-            dispatch(loadOrgs({ orgList: orgs, orgFetchStatus: AsyncFetchStatus.SUCCESS }));
-        } catch (ex) {
-            const orgError = ex instanceof Error ? ex.message : 'Unknown error';
-            dispatch(fetchErrorOrgs({ orgError: [orgError], orgFetchStatus: AsyncFetchStatus.ERROR }));
-        }
-
-    };
-};
-
+    try {
+      const response = await fetchOrgsOfProfileAPI(
+        username,
+        token,
+        serviceWizardURL,
+      );
+      const orgs = response
+        .map((org) => {
+          return {
+            name: org.name,
+            url: "/#org/" + org.id,
+            logoURL: org.custom.logourl,
+          };
+        });
+      dispatch(
+        loadOrgs({ orgList: orgs, orgFetchStatus: AsyncFetchStatus.SUCCESS }),
+      );
+    } catch (ex) {
+      const orgError = ex instanceof Error ? ex.message : "Unknown error";
+      dispatch(
+        fetchErrorOrgs({
+          orgError: [orgError],
+          orgFetchStatus: AsyncFetchStatus.ERROR,
+        }),
+      );
+    }
+  };
+}
