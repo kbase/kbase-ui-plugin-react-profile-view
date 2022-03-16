@@ -59,6 +59,7 @@ function mapStateToProps(state: StoreState, ownProps: OwnProps): StateProps {
     } else {
         params = (rawParams as unknown) as UserProfileViewParams;
     }
+
     return {
         token,
         authUsername: username,

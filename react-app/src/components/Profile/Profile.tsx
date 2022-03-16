@@ -855,15 +855,20 @@ class Profile extends React.Component<Props, State> {
             ]} >
             <Checkbox.Group
                 defaultValue={this.state.profile.researchInterests}
+                style={{width: '100%'}}
                 onChange={this.researchInterestOnChange.bind(this)}>
+                    <Row>
                 {researchInterestsList.map((interest) => {
-                    return <Checkbox
-                        key={interest.value}
-                        style={{ display: 'block', marginLeft: '0px' }}
-                        value={interest.value} >
-                        {interest.label}
-                    </Checkbox>;
+                    return <Col span={24}>
+                        <Checkbox
+                            key={interest.value}
+                            style={{ marginLeft: '0px' }}
+                            value={interest.value} >
+                            {interest.label}
+                        </Checkbox>
+                    </Col>;
                 })}
+                </Row>
             </Checkbox.Group>
             <Input
                 placeholder='Other research interests'
