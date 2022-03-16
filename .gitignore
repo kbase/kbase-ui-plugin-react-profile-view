@@ -14,8 +14,6 @@ _site
 # (but keep it locally to support procrastination.)
 _trash
 
-package-lock.json
-
 /dist/
 
 _attic/
