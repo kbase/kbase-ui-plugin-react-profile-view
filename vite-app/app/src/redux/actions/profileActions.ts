@@ -69,7 +69,7 @@ function fixProfile(possibleProfile: JSONValue): UserProfileService {
         throw new Error('User profile missing "user" property');
     }
 
-    if (hasOwnProperty(possibleProfile, "profile")) {
+    if (!hasOwnProperty(possibleProfile, "profile")) {
         throw new Error('User profile missing "profile" property');
     }
 
