@@ -22,7 +22,7 @@ Create a project folder and clone the repo and KBase-UI https://github.com/kbase
 Navigate to this repo's folder and run
 
     ```bash
-    yarn build
+    npm run build
     ```
 
 Navigate to kbase-ui folder and run:

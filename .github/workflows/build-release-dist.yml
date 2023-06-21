@@ -1,0 +1,29 @@
+name: Plugin build and create dist upon release
+on:
+  release:
+    branches: 
+      -master
+    types: [published]
+jobs:
+  build-dist:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out GitHub Repo
+        uses: actions/checkout@v3
+
+      #
+      # Build the plugin
+      #
+      - name: Build the plugin dist
+        run: make build
+
+      #
+      # Add the built assets to the release
+      #
+      - name: Upload dist to release
+        uses: alexellis/upload-assets@0.4.0
+        env:
+          # GITHUB_TOKEN: ${{ secrets.KBASE_BOT_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          asset_paths: '["dist.tgz"]'
