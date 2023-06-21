@@ -10,8 +10,10 @@
         "eslint": "^6.6.0"
     },
     "scripts": {
-        "build": "bash scripts/build.bash",
-        "create-dist": "node scripts/create-dist.js"
+        "build": "bash scripts/build.sh",
+        "create-dist": "node scripts/create-dist.js",
+        "dev-build": "bash scripts/dev-build.sh",
+        "update-dist": "node scripts/update-dist.js"
     },
     "repository": {
         "type": "git",
