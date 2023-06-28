@@ -19,17 +19,16 @@ Edit user profile or serach other users' profile.
 
 Create a project folder and clone the repo and KBase-UI https://github.com/kbase/kbase-ui to the same folder.
 
-Navigate to this repo's folder and run
+gate to this repo's directory, and then into the `vite-app` directory.
 
-    ```bash
-    npm run build
-    ```
+```bash
+cd vite-app
 
-Navigate to kbase-ui folder and run:
+npm install
+npm run dev
+```
 
-    ```bash
-    make dev-start plugins="react-profile-view" build-image=t
-    ```
+
 
 More details on running Kbase-UI and plugins in KBase-UI docs.
 

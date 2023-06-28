@@ -2,7 +2,7 @@
 echo "Running plugin build script"
 npm install && \
 echo "✓ dist dependencies installed successfully" && \
-cd vite-app/app && \
+cd vite-app && \
 npm install && \
 echo "✓ build dependencies installed successfully" && \
 npm run build && \

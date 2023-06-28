@@ -11,6 +11,11 @@ jobs:
       - name: Check out GitHub Repo
         uses: actions/checkout@v3
 
+      - name: Use specific node version
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
       #
       # Build the plugin
       #

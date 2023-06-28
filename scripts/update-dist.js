@@ -12,7 +12,7 @@ dist/plugin.
 */
 async function copyBuildFiles(rootDir) {
     const root = rootDir.split('/');
-    const source = root.concat(['vite-app', 'app', 'dist']).join('/');
+    const source = root.concat(['vite-app', 'dist']).join('/');
     const dest = root.concat(['dist', 'plugin', 'iframe_root']).join('/');
     await fs.ensureDir(dest);
     await fs.copy(source, dest);
