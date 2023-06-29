@@ -103,7 +103,7 @@ class SearchUsers extends React.Component<SearchUsersProps, SearchUsersState> {
                         if (this.state.searchText.length === 0) {
                             return <Alert type="info" message={`Search for a user`} />
                         }
-                        return <Empty description={`Nobody found for "${this.state.searchText}"`} />
+                        return <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={`Nobody found for "${this.state.searchText}"`} />
                     }
             }
         })();
