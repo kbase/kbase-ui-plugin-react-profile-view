@@ -2,7 +2,7 @@
  *  Narrative.tsx is a view component
  *
  */
-import { Popover, Table } from 'antd';
+import { Empty, Popover, Table } from 'antd';
 import React from 'react';
 import { NarrativeData } from '../../redux/interfaces'; //interface
 import { dateDisplay } from '../../util/dateDisplay'; // date format
@@ -23,11 +23,16 @@ export interface Props {
 export default class Narratives extends React.Component<Props> {
     render() {
         let message: string;
+        let emptyText: JSX.Element;
         if (this.props.isOwner) {
             message = 'This table shows all of your narratives.';
+            emptyText = <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="You have no Narratives" />
         } else {
             message = 'This table shows all Narratives owned by this user which are also accessible to you.';
+            emptyText = <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="You do not have access to any Narratives owned by this user" />
         }
+
+
         return <div className="Narratives">
             <p>{message}</p>
             <div className="Col">
@@ -39,6 +44,7 @@ export default class Narratives extends React.Component<Props> {
                     pagination={false}
                     scroll={{ y: '100%' }}
                     rowKey="wsID"
+                    locale={{ emptyText }}
                 >
                     <Table.Column
                         title="Title"
