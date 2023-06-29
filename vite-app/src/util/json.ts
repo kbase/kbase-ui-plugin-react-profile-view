@@ -22,6 +22,9 @@ export interface JSONObjectOf<T extends JSONValue> {
 export type JSONArrayOf<T extends JSONValue> = Array<T>;
 
 export function isPlainObject(value: unknown): boolean {
+    if (typeof value !== "object" || value === null) {
+        return false;
+    }
     return Object.getPrototypeOf(value) === Object.prototype;
 }
 
@@ -33,10 +36,14 @@ export function isJSONArray(value: unknown): value is JSONArray {
     return isJSONValue(value) && Array.isArray(value);
 }
 
-export function assertJSONObject(value: unknown): asserts value is JSONObject {
-    assertJSONValue(value);
+export function assertJSONObject(value: unknown, errorMessage?: string): asserts value is JSONObject {
+    try {
+        assertJSONValue(value);
+    } catch (ex) {
+        throw new Error(`${errorMessage ? errorMessage + ':' : ''}${ex instanceof Error ? ex.message : 'Unknown error'}`)
+    }
     if (!isPlainObject(value)) {
-        throw new Error('json value is not an object');
+        throw new Error(errorMessage || 'json value is not an object');
     }
 }
 
