@@ -13,7 +13,7 @@ Tech Stack:
 
 ## Usage
 
-Edit user profile or serach other users' profile. 
+View any user profile, edit own user profile, and search other users' profile.
 
 ## Install and run
 
@@ -23,7 +23,6 @@ gate to this repo's directory, and then into the `vite-app` directory.
 
 ```bash
 cd vite-app
-
 npm install
 npm run dev
 ```
