@@ -366,6 +366,23 @@ function Profile(props: ProfileProps) {
         </Form.Item>
     }
 
+    function renderLocation() {
+        const location = <div>
+            {renderCountryField()}
+            {/* State - only displayed if US is chosen for country */}
+            {countryWatched === 'United States' ? renderStateField() : ''}
+            <Row gutter={8}>
+                <Col span={14}>
+                    {renderCityField()}
+                </Col>
+                <Col span={10}>
+                    {renderPostalCode()}
+                </Col>
+            </Row>
+        </div>
+        return renderSection('location', location);
+    }
+
     function renderUserNutshellEditor() {
         function renderJobTitle() {
             if (jobTitleWatched === 'Other') {
@@ -386,18 +403,7 @@ function Profile(props: ProfileProps) {
                 {renderDepartmentField()}
                 {renderOrganizationField()}
                 {renderPrimaryFundingSource()}
-                {renderSectionTitle('location')}
-                {renderCountryField()}
-                {/* State - only displayed if US is chosen for country */}
-                {countryWatched === 'United States' ? renderStateField() : ''}
-                <Row gutter={8}>
-                    <Col span={14}>
-                        {renderCityField()}
-                    </Col>
-                    <Col span={10}>
-                        {renderPostalCode()}
-                    </Col>
-                </Row>
+                {renderLocation()}
             </>
         );
     }
@@ -409,21 +415,22 @@ function Profile(props: ProfileProps) {
         );
     }
 
-    function renderSectionTitle(title: string) {
-        return <div
-            style={{ fontWeight: 'bold', color: 'rgba(0,0,0,0.3)', marginTop: '1rem' }}>
-            {title}
+    function renderSection(title: string, body: string | undefined | JSX.Element) {
+        return <div className="Profile-section">
+            <div className="Profile-section-title">
+                {title}
+            </div>
+            <div className="Profile-section-body">
+                {body}
+            </div>
         </div>;
     }
 
     function renderJobTitleView() {
         if (props.profileView.profile.userdata.jobTitle) {
-            return <div>
-                {renderSectionTitle('position')}
-                <div>
-                    {props.profileView.profile.userdata.jobTitle === 'Other' ? props.profileView.profile.userdata.jobTitleOther : props.profileView.profile.userdata.jobTitle}
-                </div>
-            </div>;
+            renderSection('position',
+                props.profileView.profile.userdata.jobTitle === 'Other' ? props.profileView.profile.userdata.jobTitleOther : props.profileView.profile.userdata.jobTitle
+            )
         }
     }
 
@@ -441,39 +448,28 @@ function Profile(props: ProfileProps) {
             return;
         }
 
-        return <div>
-            {renderSectionTitle('location')}
-            <div>{location}</div>
-        </div>;
+        return renderSection('location', location);
     }
 
     function renderDepartmentSection() {
         if (!props.profileView.profile.userdata.department) {
             return;
         }
-        return <div>
-            {renderSectionTitle('department')}
-            <div>{props.profileView.profile.userdata.department}</div>
-        </div>;
+        return renderSection('department', props.profileView.profile.userdata.department)
     }
 
     function renderOrganizationSection() {
         if (!props.profileView.profile.userdata.organization) {
             return;
         }
-        return <div>
-            {renderSectionTitle('organization')}
-            <div>{props.profileView.profile.userdata.organization}</div>
-        </div>;
+        return renderSection('organization', props.profileView.profile.userdata.organization);
     }
 
     function renderFundingSourceSection() {
         if (!props.profileView.profile.userdata.fundingSource) {
             return;
         }
-        return <div>{renderSectionTitle('primary funding source')}
-            <div>{props.profileView.profile.userdata.fundingSource}</div>
-        </div>;
+        return renderSection('primary funding source', props.profileView.profile.userdata.fundingSource);
     }
 
     function isNutshellEmpty() {
@@ -1631,7 +1627,7 @@ function Profile(props: ProfileProps) {
                         </Row>
                         <Row gutter={8} style={{ marginTop: '1rem' }}>
                             <Col span={7} style={{ display: 'flex', flexDirection: 'column' }}>
-                                <Area title="Location">
+                                <Area >
                                     {renderUserNutshell()}
                                 </Area>
                             </Col>
