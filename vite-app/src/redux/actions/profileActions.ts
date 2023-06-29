@@ -23,7 +23,7 @@ export interface FetchProfileViewOptions {
 export async function fetchProfileView({ authUsername, username, token, userProfileServiceURL }: FetchProfileViewOptions): Promise<[boolean, ProfileView]> {
 
     // const profile = await fetchProfileAPI(username, token, serviceWizardURL);
-    const profile = await fetchProfileAPI2(username, token, userProfileServiceURL);
+    const [profile, warnings] = await fetchProfileAPI2(username, token, userProfileServiceURL);
     const { user, profile: { userdata, preferences, synced: { gravatarHash } } } = profile;
 
     const isOwner = profile.user.username === authUsername;
@@ -38,7 +38,8 @@ export async function fetchProfileView({ authUsername, username, token, userProf
     const profileView: ProfileView = {
         user,
         profile: { userdata, preferences, gravatarHash },
-        editEnable: isOwner
+        editEnable: isOwner,
+        warnings
     };
 
     return [isOwner, profileView];

@@ -1,6 +1,6 @@
 import { BaseStoreState } from "@kbase/ui-components";
 import { AsyncProcess } from "@kbase/ui-lib/lib/AsyncProcess";
-import { UserProfilePreferences, UserProfileUser, UserProfileUserdata } from "../util/API";
+import { ProfileWarnings, UserProfilePreferences, UserProfileUser, UserProfileUserdata } from "../util/API";
 import { AsyncFetchState } from './asyncFetchState';
 
 export interface StoreState extends BaseStoreState {
@@ -86,7 +86,8 @@ export interface UserProfileSubset {
 export interface ProfileView {
     user: UserProfileUser
     profile: UserProfileSubset
-    editEnable: boolean
+    editEnable: boolean,
+    warnings: ProfileWarnings
 }
 
 export type ProfileState = AsyncFetchState<ProfileView, SimpleError>

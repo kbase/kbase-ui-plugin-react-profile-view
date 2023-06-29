@@ -243,8 +243,11 @@ function assertFieldType(obj: JSONObject, name: string, types: Array<string>, op
     }
 }
 
+export type ProfileWarnings = Array<string>;
+
 // TODO: Yikes, this should actually be called fixProfile!
-function fixProfile(rawPossibleUserProfile: unknown): UserProfile {
+function fixProfile(rawPossibleUserProfile: unknown): [UserProfile, ProfileWarnings] {
+    const warnings: ProfileWarnings = [];
     // Let us establish that this is, generally, a valid JSON-compatible
     // object.
     assertJSONObject(rawPossibleUserProfile, "User profile is not an object");
@@ -298,17 +301,23 @@ function fixProfile(rawPossibleUserProfile: unknown): UserProfile {
                     console.warn(`Omitting non-object affiliation: ${affiliation}`)
                     return false;
                 }
+                // Rarely a 
                 return true;
             })
             .map((affiliation, index) => {
                 if (!isJSONObject(affiliation)) {
                     throw new Error(`User profile "affiliation" # ${index}is not an object`);
                 }
-                // Check fields.
-                assertFieldType(affiliation, "title", ["string"]);
-                assertFieldType(affiliation, "organization", ["string"]);
-                assertFieldType(affiliation, "started", ["number", "string"]);
-                assertFieldType(affiliation, "ended", ["number", "string", "undefined"], { nullable: true });
+                // If any field fails validation, we simply omit the affiliation and generate a warning.
+                try {
+                    assertFieldType(affiliation, "title", ["string"]);
+                    assertFieldType(affiliation, "organization", ["string"]);
+                    assertFieldType(affiliation, "started", ["number", "string"]);
+                    assertFieldType(affiliation, "ended", ["number", "string", "undefined"], { nullable: true });
+                } catch (ex) {
+                    warnings.push(`An invalid affiliation record was removed: ${JSON.stringify(affiliation)}`)
+                    return false;
+                }
 
                 // See if there are any extant cases of this!
                 if (typeof affiliation["started"] === "string") {
@@ -325,6 +334,7 @@ function fixProfile(rawPossibleUserProfile: unknown): UserProfile {
                         // probably added later. Let's change this to "false" to clarify, and I agree it
                         // is best to remove these, although it is interesting to contemplate an infinite
                         // affiliation...
+                        warnings.push(`An affiliation record with an invalid start year was omitted: ${JSON.stringify(affiliation)}`)
                         return false;
                     } else {
                         affiliation["started"] = parseInt(possibleStarted);
@@ -361,7 +371,7 @@ function fixProfile(rawPossibleUserProfile: unknown): UserProfile {
     // if (hasOwnProperty(profile, "preferences"))
     // TODO: more assertions
 
-    return (possibleUserProfile as unknown) as UserProfile;
+    return [possibleUserProfile as unknown as UserProfile, warnings];
 }
 
 
@@ -426,7 +436,7 @@ function validateProfile(possibleProfile: unknown): asserts possibleProfile is U
  * @param token KBase session cookie
  * @param serviceWizardURL URL for the service wizard in the current environment
  */
-export async function fetchProfileAPI(username: string, token: string, serviceWizardURL: string): Promise<UserProfile> {
+export async function fetchProfileAPI(username: string, token: string, serviceWizardURL: string): Promise<[UserProfile, ProfileWarnings]> {
     const bffServiceUrl = await getBFFServiceUrl(token, serviceWizardURL);
     const url = bffServiceUrl + '/fetchUserProfile/' + username;
     const response = await fetch(url, {
@@ -445,7 +455,7 @@ export async function fetchProfileAPI(username: string, token: string, serviceWi
     }
 }
 
-export async function fetchProfileAPI2(username: string, token: string, url: string): Promise<UserProfile> {
+export async function fetchProfileAPI2(username: string, token: string, url: string): Promise<[UserProfile, ProfileWarnings]> {
     const client = new UserProfileClient({ url, timeout: SERVICE_CALL_TIMEOUT, token });
     const [profile] = await client.get_user_profile([username]);
     return fixProfile(profile);

@@ -1,4 +1,4 @@
-import { CloseOutlined, DeleteOutlined, EditOutlined, PlusOutlined, SaveOutlined } from '@ant-design/icons';
+import { CloseOutlined, DeleteOutlined, EditOutlined, ExclamationOutlined, PlusOutlined, SaveOutlined } from '@ant-design/icons';
 import { AsyncProcessStatus } from '@kbase/ui-lib';
 import {
     Alert,
@@ -9,6 +9,7 @@ import {
     Form,
     Image,
     Input,
+    List,
     Modal,
     Radio,
     Row,
@@ -666,7 +667,6 @@ function Profile(props: ProfileProps) {
                                                     if ((year < 1900) || (year > 2100)) {
                                                         throw new Error('must be between 1900 and 2100');
                                                     }
-                                                    console.log('clean!');
                                                 }
                                             }
                                         ]}
@@ -888,7 +888,6 @@ function Profile(props: ProfileProps) {
 
     function saveForm() {
         const update = formToUpdate(form.getFieldsValue())
-        // console.log('saving', update);
         saveProfile(update);
     }
 
@@ -907,14 +906,6 @@ function Profile(props: ProfileProps) {
                 return errors.length === 0;
             })
         })();
-
-        // const isValid = typeof fields === 'undefined' || fields.every((field) => {
-        //     return field.errors.length === 0;
-        // });
-
-        if (!isValid) {
-            console.log(form.getFieldsError());
-        }
 
         const isTouched = form.isFieldsTouched();
 
@@ -955,6 +946,23 @@ function Profile(props: ProfileProps) {
         if (!props.profileView.editEnable) {
             return;
         }
+        const warnings = (() => {
+            if (props.profileView.warnings.length > 0) {
+                const showWarnings = () => {
+                    Modal.warning({
+                        title: 'Warnings',
+                        content: <List bordered dataSource={props.profileView.warnings}
+                            renderItem={(warning) => {
+                                return <List.Item>{warning}</List.Item>
+                            }} />
+                    })
+                }
+                return <Button type="dashed"
+                    icon={<ExclamationOutlined />}
+                    onClick={showWarnings}
+                >Warnings</Button>
+            }
+        })()
         let button;
         // let bannerText;
         if (isEditing) {
@@ -989,12 +997,16 @@ function Profile(props: ProfileProps) {
             //     Closing the editor returns your profile to display mode; all edits are saved as you make them.
             // </span>;
         } else {
-            button = <Button
-                icon={<EditOutlined />}
-                type="primary"
-                onClick={enableEditing}>
-                Edit Profile
-            </Button>;
+            button = <Space wrap >
+                <Button
+                    icon={<EditOutlined />}
+                    type="primary"
+                    onClick={enableEditing}>
+                    Edit Profile
+                </Button>
+                {warnings}
+            </Space>;
+
             // bannerText = <span>
             // </span>;
         }
@@ -1109,7 +1121,6 @@ function Profile(props: ProfileProps) {
             return url.toString();
         }
 
-        console.log('field value?', form.getFieldValue('showORCIDId'));
         return <div>
             <div>{link}</div>
             <div style={{ fontStyle: 'italic' }}>{visibiltyMessage}</div>
@@ -1144,7 +1155,6 @@ function Profile(props: ProfileProps) {
             const onORCIDLink = () => {
                 // open window, without much or any window decoration.
                 const eventId = uuidv4();
-                console.log('event id', eventId);
                 // const url = new URL(`${document.location.origin}#orcidlink/link`);
                 // TODO: for better ergonomics in development, should be able to get the 
                 // kbase environment host from the config...
@@ -1155,9 +1165,6 @@ function Profile(props: ProfileProps) {
                 // {id: string} is the ReturnFromWindow type expected by ORCIDLink.
                 url.searchParams.set('ui_options', "hide-ui");
                 url.searchParams.set('return_link', JSON.stringify({ type: 'window', origin: window.location.origin, id: eventId, label: 'User Profile' }));
-                console.log('url?', url.toString());
-                // TODO: make the window smaller, etc.
-
 
                 const newWindow = window.open(url.toString(), '_blank', "popup,width=1079,height=960");
                 if (newWindow === null) {
@@ -1169,7 +1176,6 @@ function Profile(props: ProfileProps) {
 
 
                 const handleEvent = ({ data }: MessageEvent<any>) => {
-                    console.log('got', data);
                     if (typeof data === 'object' && data !== null) {
                         const { id } = data;
                         if (eventId === id) {
@@ -1224,9 +1230,9 @@ function Profile(props: ProfileProps) {
         }
     }
 
-    function onFormFinish(values: any) {
-        console.log('finished!', values);
-    }
+    // function onFormFinish(values: any) {
+    //     console.log('finished!', values);
+    // }
 
     // function onFieldChange(changedFields: any, allFields: any) {
     //     console.log('on field changed', changedFields);
@@ -1471,7 +1477,6 @@ function Profile(props: ProfileProps) {
         // TODO: remove if orcid is not linked.
         if (typeof formUpdate.showORCIDId === 'boolean') {
             if (hasOwnProperty(preferences, 'showORCIDId')) {
-                console.log('wow', preferences);
                 preferences.showORCIDId = {
                     ...preferences.showORCIDId,
                     value: formUpdate.showORCIDId,
@@ -1487,7 +1492,6 @@ function Profile(props: ProfileProps) {
         } else if (preferences.showORCIDId) {
             // Handles case of a user without orcid link - this 
             // form field will be undefined.
-            console.log('removing unused???')
             delete preferences.showORCIDId;
         }
 
@@ -1511,7 +1515,6 @@ function Profile(props: ProfileProps) {
     // }
 
     function onFieldsChange(_: Array<FieldData>, allFields: Array<FieldData>) {
-        console.log('all fields change', allFields);
         const { isValid, isTouched } = checkForm(allFields);
         setIsFormValid(isValid);
         setIsFormTouched(isTouched);
@@ -1587,7 +1590,7 @@ function Profile(props: ProfileProps) {
                         layout="vertical"
                         initialValues={initialValues}
                         onFieldsChange={onFieldsChange}
-                        onFinish={onFormFinish}
+                        // onFinish={onFormFinish}
                         onLoad={onFormLoad}
                     >
                         <Row gutter={8} >
