@@ -4,7 +4,9 @@ import { SERVICE_CALL_TIMEOUT } from '../constants';
 import { JSONObject, assertJSONObject, isJSONArray, isJSONObject } from './json';
 import { hasOwnProperty } from './utils';
 
-export async function getBFFServiceUrl(token: string, url: string) {
+
+// TODO: replace the BFF calls with a regular dynamic service call!
+export async function getBFFServiceUrl(token: string, serviceWizardURL: string) {
     // TODO: for dev, the baseUrl will be whatever works for the CRA workflow, which is ''.
     // baseURL = 'https://ci.kbase.us/services'; // for dev
     const body = {
@@ -19,7 +21,7 @@ export async function getBFFServiceUrl(token: string, url: string) {
         ]
     };
     const stringBody = JSON.stringify(body);
-    const response = await fetch(url, {
+    const response = await fetch(serviceWizardURL, {
         method: 'POST',
         mode: 'cors',
         headers: {
@@ -28,6 +30,7 @@ export async function getBFFServiceUrl(token: string, url: string) {
         body: stringBody
     });
     if (response.status !== 200) {
+
         // return empty string so that the fetch API called this function
         // can generate error messages. 
         return '';
@@ -224,126 +227,142 @@ export function convertNumberLong(valueFromMongo: JSONObject): JSONObject {
 
 // }
 
-// TODO: Yikes, this should actually be called fixProfile!
-function fixProfile(rawPossibleProfile: unknown): UserProfile {
-    assertJSONObject(rawPossibleProfile);
 
-    const possibleProfile = convertNumberLong(rawPossibleProfile);
+export interface AssertFieldTypeOptions {
+    nullable?: boolean;
+}
 
-    if (!isJSONObject(possibleProfile)) {
-        throw new Error("User profile is not an object");
+function assertFieldType(obj: JSONObject, name: string, types: Array<string>, options: AssertFieldTypeOptions = {}) {
+    const value = obj[name];
+    const valueType = typeof value;
+    if (!types.includes(valueType)) {
+        if (options.nullable && value === null) {
+            return;
+        }
+        throw new Error(`Property "${name}" is not of the expected type "${types.join('|')}", rather is a "${valueType}"`)
     }
+}
 
-    if (!hasOwnProperty(possibleProfile, 'user')) {
+// TODO: Yikes, this should actually be called fixProfile!
+function fixProfile(rawPossibleUserProfile: unknown): UserProfile {
+    // Let us establish that this is, generally, a valid JSON-compatible
+    // object.
+    assertJSONObject(rawPossibleUserProfile, "User profile is not an object");
+
+    // Here we convert any "$numberLong" instances into plain numbers.
+    // Mongo db converts json numbers of a certain scale to an object
+    // like {$numberLong: "number"}, where the number becomes a string.
+    // Since these should all originate from Javascript numbers in the
+    // browser, it should be save to convert them back. 
+
+    const possibleUserProfile = convertNumberLong(rawPossibleUserProfile);
+
+
+    // TODO: remove, this is so incredibly unlikely; user and profile,
+    // and the property structure of user, are the only things that the
+    // user profile service guarantees.
+    if (!hasOwnProperty(possibleUserProfile, 'user')) {
         throw new Error('User profile missing "user" property');
     }
 
-    if (!hasOwnProperty(possibleProfile, "profile")) {
+    if (!hasOwnProperty(possibleUserProfile, "profile")) {
         throw new Error('User profile missing "profile" property');
     }
 
-    const profile = possibleProfile.profile;
+    const profile = possibleUserProfile.profile;
 
     if (!isJSONObject(profile)) {
         throw new Error('User profile "profile" is not an object');
     }
 
-    if (!hasOwnProperty(profile, "userdata")) {
-        throw new Error('User profile missing "userdata" property');
-    }
-    const userdata = profile.userdata;
-    if (!isJSONObject(userdata)) {
-        throw new Error('User profile "userdata" is not an object');
+    // if (!hasOwnProperty(profile, "userdata")) {
+    //     throw new Error('User profile missing "userdata" property');
+    // }
+
+    if (!hasOwnProperty(profile, "userdata") || !isJSONObject(profile.userdata)) {
+        // throw new Error('User profile "userdata" is not an object');
+        // Fix it up!
+        profile.userdata = {}
     }
 
-    if (hasOwnProperty(userdata, "affiliations")) {
-        const affiliations = userdata["affiliations"];
+
+    if (hasOwnProperty(profile.userdata, "affiliations")) {
+        const affiliations = profile.userdata["affiliations"];
         if (!isJSONArray(affiliations)) {
             throw new Error('User profile "affiliations" is not an array');
         }
         const fixedAffiliations = affiliations
             .filter((affiliation) => {
-                // this just to deal with broken affiliations during tesitng.
-                return isJSONObject(affiliation);
-            })
-            .map((affiliation) => {
+                // this just to deal with broken affiliations during testing.
                 if (!isJSONObject(affiliation)) {
-                    throw new Error('User profile "affiliation" is not an object');
+                    console.warn(`Omitting non-object affiliation: ${affiliation}`)
+                    return false;
+                }
+                return true;
+            })
+            .map((affiliation, index) => {
+                if (!isJSONObject(affiliation)) {
+                    throw new Error(`User profile "affiliation" # ${index}is not an object`);
                 }
                 // Check fields.
-                checkField(affiliation, "title", "string");
-                checkField(affiliation, "organization", "string");
+                assertFieldType(affiliation, "title", ["string"]);
+                assertFieldType(affiliation, "organization", ["string"]);
+                assertFieldType(affiliation, "started", ["number", "string"]);
+                assertFieldType(affiliation, "ended", ["number", "string", "undefined"], { nullable: true });
 
-                if (!checkField(affiliation, "started", "number")) {
+                // See if there are any extant cases of this!
+                if (typeof affiliation["started"] === "string") {
+                    console.warn('Converting affiliation started date from string to number');
                     const possibleStarted = affiliation["started"];
-                    if (typeof possibleStarted === "string") {
-                        const started = parseInt(possibleStarted);
-                        if (isNaN(started)) {
-                            console.warn("Invalid started year in profile", affiliation);
-                            // throw new Error('affiliation "started" year is not a number or compatible string');
-                            return null;
-                        } else {
-                            affiliation["started"] = started;
-                        }
+
+                    // Okay, this rule is a bit looser than the ui, but that is okay.
+                    if (!/[0-9]{4}/.test(affiliation['started'])) {
+                        console.warn(`Invalid start year in affiliation ${index} - skipping affiliation`, affiliation);
+                        // throw new Error('affiliation "started" year is not a number or compatible string');
+                        affiliation["started"] = null;
+                        // WHAT?? Oh, I see, these were filtered out afterwards. This may explain why some 
+                        // "null" affiliations have been seen in profiles in CI - the filter at the end was
+                        // probably added later. Let's change this to "false" to clarify, and I agree it
+                        // is best to remove these, although it is interesting to contemplate an infinite
+                        // affiliation...
+                        return false;
                     } else {
-                        console.error("Invalid started year in profile", affiliation);
-                        return null;
-                        // throw new Error('affiliation "started" year is not a number or string');
+                        affiliation["started"] = parseInt(possibleStarted);
                     }
                 }
-                if (
-                    !(checkField(affiliation, "ended", "number") ||
-                        checkField(affiliation, "ended", "undefined") ||
-                        (checkField(affiliation, "ended", "object") &&
-                            affiliation["ended"] === null))
-                ) {
-                    const possibleEnded = affiliation["ended"];
-                    if (typeof possibleEnded === "string") {
-                        if (possibleEnded === "") {
-                            // console.warn('dropping affiliation')
-                            // delete affiliation['ended'];
-                            affiliation["ended"] = null;
-                        } else {
-                            const ended = parseInt(possibleEnded);
-                            if (isNaN(ended)) {
-                                affiliation["ended"] = null;
-                                // console.error('Invalid ended year in profile', affiliation);
-                                // return null;
-                                // throw new Error('affiliation "ended" is not a number or compatible string');
-                            } else {
-                                affiliation["ended"] = ended;
-                            }
-                        }
+
+                if (typeof affiliation["ended"] === "string") {
+                    console.warn('Converting affiliation ended date from string to number');
+                    const possibleStarted = affiliation["ended"];
+
+                    // Okay, this rule is a bit looser than the ui, but that is okay.
+                    if (!/[0-9]{4}/.test(affiliation['ended'])) {
+                        console.warn(`Invalid end year in affiliation ${index}`, affiliation);
+                        affiliation["ended"] = null;
+                        // WHAT??
+                        // return null;
                     } else {
-                        console.warn(
-                            `Invalid ended year in profile, expected number or string, got ${typeof possibleEnded}`,
-                            possibleEnded,
-                        );
-                        return null;
-                        // throw new Error('affiliation "ended" year is not a number or string');
+                        affiliation["ended"] = parseInt(possibleStarted);
                     }
                 }
                 return affiliation;
             }).filter((affiliation) => {
-                return affiliation === null ? false : true;
+                return affiliation
             });
-        userdata.affiliations = fixedAffiliations;
+        profile.userdata.affiliations = fixedAffiliations;
+    }
+
+    if (!hasOwnProperty(profile, "synced") || !isJSONObject(profile.synced)) {
+        // throw new Error('User profile "userdata" is not an object');
+        // Fix it up!
+        profile.synced = {}
     }
 
     // if (hasOwnProperty(profile, "preferences"))
     // TODO: more assertions
 
-    return (possibleProfile as unknown) as UserProfile;
+    return (possibleUserProfile as unknown) as UserProfile;
 }
-
-function checkField(obj: JSONObject, name: string, type: string) {
-    const value = obj[name];
-    if (typeof value !== type) {
-        return false;
-    }
-    return true;
-}
-
 
 
 
@@ -353,6 +372,8 @@ function validateProfile(possibleProfile: unknown): asserts possibleProfile is U
         throw new Error("User profile is not an object");
     }
 
+
+
     if (!hasOwnProperty(possibleProfile, 'user')) {
         throw new Error('User profile missing "user" property');
     }
@@ -386,78 +407,27 @@ function validateProfile(possibleProfile: unknown): asserts possibleProfile is U
                     throw new Error('User profile "affiliation" is not an object');
                 }
                 // Check fields.
-                checkField(affiliation, "title", "string");
-                checkField(affiliation, "organization", "string");
+                assertFieldType(affiliation, "title", ["string"]);
+                assertFieldType(affiliation, "organization", ["string"]);
+                assertFieldType(affiliation, "started", ["number"])
+                assertFieldType(affiliation, "ended", ["number", "string"], { nullable: true })
 
-                if (!checkField(affiliation, "started", "number")) {
-                    const possibleStarted = affiliation["started"];
-                    if (typeof possibleStarted === "string") {
-                        const started = parseInt(possibleStarted);
-                        if (isNaN(started)) {
-                            console.error("Invalid started year in profile", affiliation);
-                            // throw new Error('affiliation "started" year is not a number or compatible string');
-                            return null;
-                        } else {
-                            affiliation["started"] = started;
-                        }
-                    } else {
-                        console.error("Invalid started year in profile", affiliation);
-                        return null;
-                        // throw new Error('affiliation "started" year is not a number or string');
-                    }
-                }
-                if (
-                    !(checkField(affiliation, "ended", "number") ||
-                        (checkField(affiliation, "ended", "object") &&
-                            affiliation["ended"] === null))
-                ) {
-                    const possibleEnded = affiliation["ended"];
-                    if (typeof possibleEnded === "string") {
-                        if (possibleEnded === "") {
-                            // console.warn('dropping affiliation')
-                            // delete affiliation['ended'];
-                            affiliation["ended"] = null;
-                        } else {
-                            const ended = parseInt(possibleEnded);
-                            if (isNaN(ended)) {
-                                affiliation["ended"] = null;
-                                // console.error('Invalid ended year in profile', affiliation);
-                                // return null;
-                                // throw new Error('affiliation "ended" is not a number or compatible string');
-                            } else {
-                                affiliation["ended"] = ended;
-                            }
-                        }
-                    } else {
-                        console.warn(
-                            `Invalid ended year in profile, expected number or string, got ${typeof possibleEnded}`,
-                            possibleEnded,
-                        );
-                        return null;
-                        // throw new Error('affiliation "ended" year is not a number or string');
-                    }
-                }
                 return affiliation;
-            }).filter((affiliation) => {
-                return affiliation === null ? false : true;
             });
         userdata.affiliations = fixedAffiliations;
     }
 
-    // if (hasOwnProperty(profile, "preferences"))
-    // TODO: more assertions
-
-    // return (possibleProfile as unknown) as UserProfile;
+    // TODO: more assertions?
 }
 
 /**
  * Return profile data
  * @param id profile id
  * @param token KBase session cookie
- * @param baseUrl hostname
+ * @param serviceWizardURL URL for the service wizard in the current environment
  */
-export async function fetchProfileAPI(username: string, token: string, baseURL: string): Promise<UserProfile> {
-    const bffServiceUrl = await getBFFServiceUrl(token, baseURL);
+export async function fetchProfileAPI(username: string, token: string, serviceWizardURL: string): Promise<UserProfile> {
+    const bffServiceUrl = await getBFFServiceUrl(token, serviceWizardURL);
     const url = bffServiceUrl + '/fetchUserProfile/' + username;
     const response = await fetch(url, {
         method: 'GET'
@@ -465,10 +435,7 @@ export async function fetchProfileAPI(username: string, token: string, baseURL: 
     if (response.status === 200) {
         try {
             const possibleProfile = await response.json();
-            const cleanedProfile = convertNumberLong(possibleProfile);
-            validateProfile(cleanedProfile);
-            console.log('converted?', possibleProfile, cleanedProfile);
-            return possibleProfile;
+            return fixProfile(possibleProfile);
         } catch (err) {
             console.error('profile fetch failed', err);
             throw new Error(`Error parsing profile response to json: ${err instanceof Error ? err.message : 'Unknown error'}`);
@@ -482,6 +449,10 @@ export async function fetchProfileAPI2(username: string, token: string, url: str
     const client = new UserProfileClient({ url, timeout: SERVICE_CALL_TIMEOUT, token });
     const [profile] = await client.get_user_profile([username]);
     return fixProfile(profile);
+
+    // TODO: the bff service can break with ill-formed profiles, as revealed during development.
+    //       best if it services for both saving and fetching profiles, as it can apply the same
+    //       validation - and since the u.p. service does not apply any to the profile
     // const bffServiceUrl = await getBFFServiceUrl(token, baseURL);
     // const url = bffServiceUrl + '/fetchUserProfile/' + username;
     // const response = await fetch(url, {
@@ -516,7 +487,7 @@ export interface UpdateProfileParams {
  * update profile 
  * method 'UserProfile.update_user_profile' takes top level key of profile object. 
  * @param token 
- * @param baseURL 
+ * @param url 
  * @param userdata 
  * @param user
  */
@@ -552,8 +523,9 @@ export async function updateProfileAPI(token: string, url: string, profile: User
  * @param param shared/mine/public
  * @param token kbase session cookie
  */
-export async function fetchNarrativesAPI(param: string, token: string, baseURL: string) {
-    const bffServiceUrl = await getBFFServiceUrl(token, baseURL);
+export async function fetchNarrativesAPI(param: string, token: string, serviceWizardURL: string) {
+    // TODO: use the dynamic service client.
+    const bffServiceUrl = await getBFFServiceUrl(token, serviceWizardURL);
     const url = bffServiceUrl + '/narrative_list/' + param;
     const response = await fetch(url, {
         method: 'GET',
@@ -612,9 +584,10 @@ export interface Group {
  * returns list of orgs that profile and logged in user are both associated with.
  * @param id id of the profile
  * @param token kbase session cookie
+ * @param serviceWizardURL URL for the service wizard in the current environment
  */
-export async function fetchOrgsOfProfileAPI(username: string, token: string, baseURL: string) {
-    const bffServiceUrl = await getBFFServiceUrl(token, baseURL);
+export async function fetchOrgsOfProfileAPI(username: string, token: string, serviceWizardURL: string) {
+    const bffServiceUrl = await getBFFServiceUrl(token, serviceWizardURL);
     const url = bffServiceUrl + '/org_list/' + username;
     const response = await fetch(url, {
         method: 'GET',
