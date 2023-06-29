@@ -452,7 +452,6 @@ export class ORCIDLinkServiceClient extends ServiceClient {
     async startLinkingSession(sessionId: string, returnInstruction?: ReturnInstruction, skipPrompt?: boolean, uiOptions?: string): Promise<void> {
         const baseURL = await this.getURL();
         const startURL = new URL(`${baseURL}/${LINKING_SESSIONS_PATH}/${sessionId}/oauth/start`);
-        // startURL.searchParams.set('session_id', sessionId);
 
         // Add return link if provided
         if (returnInstruction) {
@@ -464,13 +463,6 @@ export class ORCIDLinkServiceClient extends ServiceClient {
         if (uiOptions) {
             startURL.searchParams.set('ui_options', uiOptions);
         }
-
-        console.log('ui options?', uiOptions);
-
-        // Add the 'return from window' if provided
-        // if (returnFromWindow) {
-        //     startURL.searchParams.set('return_from_window', JSON.stringify(returnFromWindow));
-        // }
 
         startURL.searchParams.set('skip_prompt', skipPrompt ? 'true' : 'false')
         window.open(startURL, '_parent');
