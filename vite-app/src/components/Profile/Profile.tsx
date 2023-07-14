@@ -1159,47 +1159,6 @@ function Profile(props: ProfileProps) {
             if (orcidId) {
                 return renderORCIDIdLinkEdit(orcidId);
             }
-            const onORCIDLink = () => {
-                // open window, without much or any window decoration.
-                const eventId = uuidv4();
-                // const url = new URL(`${document.location.origin}#orcidlink/link`);
-                // TODO: for better ergonomics in development, should be able to get the
-                // kbase environment host from the config...
-
-                // TODO - fix!
-                const url = new URL(props.baseUrl);
-                // const url = new URL(window.location.href);
-                url.hash = '#orcidlink/link';
-
-                // {id: string} is the ReturnFromWindow type expected by ORCIDLink.
-                url.searchParams.set('ui_options', "hide-ui");
-                url.searchParams.set('return_link', JSON.stringify({ type: 'window', origin: window.location.origin, id: eventId, label: 'User Profile' }));
-
-                const newWindow = window.open(url.toString(), '_blank', "popup,width=1079,height=960");
-                if (newWindow === null) {
-                    // what to do?
-                    // return <Alert type="error" message="Cannot open new window for linking" />
-                    console.error('Cannot open new window for linking');
-                    return;
-                }
-
-                const handleEvent = ({ data }: MessageEvent<any>) => {
-                    if (typeof data === 'object' && data !== null) {
-                        const { id } = data;
-                        if (eventId === id) {
-                            // this.evaluate();
-                            // do something here...
-                            props.checkORCID(props.profileView.user.username);
-                            if (newWindow) {
-                                newWindow.close();
-                                window.removeEventListener('message', handleEvent);
-                            }
-                        }
-                    }
-
-                };
-                window.addEventListener('message', handleEvent);
-            }
 
             const alertMessage = <div>
                 Have an ORCID account? Create an <a href={`${props.baseUrl}/#orcidlink`} target="_blank">ORCID Link</a> to
