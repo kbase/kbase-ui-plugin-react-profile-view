@@ -3,11 +3,14 @@
     "version": "1.0.0",
     "description": "react profileview",
     "main": "index.js",
+    "engines": {
+        "node": ">= 18.0.0"
+    },
     "devDependencies": {
         "common-readme": "1.1.0",
         "fs-extra": "11.1.1",
         "tar": "6.1.15",
-        "eslint": "^6.6.0"
+        "eslint": "8.45.0"
     },
     "scripts": {
         "build": "bash scripts/build.sh",
