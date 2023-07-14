@@ -3,11 +3,16 @@ import { AsyncProcess } from "@kbase/ui-lib/lib/AsyncProcess";
 import { ProfileWarnings, UserProfilePreferences, UserProfileUser, UserProfileUserdata } from "../util/API";
 import { AsyncFetchState } from './asyncFetchState';
 
+export interface SupplementalBaseState {
+    uiOrigin: string
+}
+
 export interface StoreState extends BaseStoreState {
     orcidState: ORCIDState
     profileState: ProfileState
     orgsState: OrgsState
     narrativeState: NarrativesState
+    supplementalBaseState: SupplementalBaseState
 }
 
 

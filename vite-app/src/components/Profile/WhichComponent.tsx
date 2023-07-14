@@ -8,9 +8,12 @@ import Profile from './Profile';
 export interface LoaderProps {
     profileState: ProfileState;
     orcidState: ORCIDState;
+    baseUrl: string;
 
     updateProfile: (profile: UserProfileUpdate) => void;
     checkORCID: (username: string) => void;
+    fetchProfile: (username: string) => void;
+
 }
 
 export default class Loader extends Component<LoaderProps> {
@@ -32,8 +35,10 @@ export default class Loader extends Component<LoaderProps> {
                 return <Profile
                     profileView={profileView}
                     orcidState={this.props.orcidState}
+                    baseUrl={this.props.baseUrl}
                     updateProfile={this.props.updateProfile}
                     checkORCID={this.props.checkORCID}
+                    fetchProfile={this.props.fetchProfile}
                 />
             }
         }

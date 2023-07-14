@@ -12,6 +12,14 @@ import rootReducer from './reducers/index';
 // When app starts, this runs first to set the initial state.
 export function makeInitialStoreState(): StoreState {
     const baseStoreState = makeBaseStoreState();
+    // A big fake for now, but at least it will work for the most common case.
+    const uiOrigin = (() => {
+        const origin = document.location.origin;
+        if (origin.match(/https:\/\/.*kbase.us\//)) {
+            return origin;
+        }
+        return 'https://ci.kbase.us';
+    })();
     return {
         ...baseStoreState,
         // narrativeState: {
@@ -19,6 +27,7 @@ export function makeInitialStoreState(): StoreState {
         //     loading: true,
         //     isOwner: false
         // },
+        supplementalBaseState: { uiOrigin },
         narrativeState: { status: AsyncProcessStatus.NONE },
         profileState: { status: AsyncFetchStatus.NONE },
         orgsState: { status: AsyncFetchStatus.NONE },

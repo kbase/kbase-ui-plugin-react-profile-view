@@ -17,6 +17,7 @@ import {
     Space,
     Spin,
     Switch,
+    Typography,
     message
 } from 'antd';
 import DOMPurify from 'dompurify';
@@ -25,6 +26,7 @@ import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import orcidIcon from '../../assets/ORCID-iD_icon-vector.svg';
 import nouserpic from '../../assets/nouserpic.png';
+import { ORCID_URL } from '../../constants';
 import { options as statesOptions } from '../../dataSources/USStates';
 import avatarOptions from '../../dataSources/avatarOptions';
 import countryCodes from '../../dataSources/countryCodes';
@@ -44,8 +46,10 @@ import OrganizationField from './fields/Organization';
 export interface ProfileProps {
     profileView: ProfileView
     orcidState: ORCIDState;
+    baseUrl: string;
     updateProfile: (profile: UserProfileUpdate) => void;
     checkORCID: (username: string) => void;
+    fetchProfile: (username: string) => void;
 
 }
 
@@ -89,20 +93,6 @@ interface FieldData {
     errors?: string[];
 }
 
-
-
-//     visibleModal: ModalName | null;
-//     profile: UserProfileSubset;
-//     preferences?: UserProfilePreferences;
-//     institutionFiltered: Array<string>;
-//     tooManyInstitutionsToRender: boolean;
-//     isEditing: boolean;
-// }
-
-const ORCID_URL = 'https://sandbox.orcid.org';
-
-
-
 /**
  * Returns profile component.
  * @param props
@@ -128,18 +118,6 @@ function Profile(props: ProfileProps) {
         setIsEditing(false);
     }
 
-    // constructor(props: ProfileProps) {
-    //     super(props);
-    //     this.state = {
-    //         visibleModal: null,
-    //         profile: this.props.profileView.profile,
-    //         preferences: this.props.profileView.profile.preferences,
-    //         tooManyInstitutionsToRender: false,
-    //         institutionFiltered: [],
-    //         isEditing: false
-    //     };
-    // }
-
     function showSuccess(message: string, duration = 3000) {
         messageAPI.open({
             type: 'success',
@@ -152,33 +130,6 @@ function Profile(props: ProfileProps) {
         props.updateProfile(profile);
         showSuccess('Saved changes to your Profile');
     }
-
-    // if you're going ot use prevProps, prevState
-    // you need to put all these three for typescript to be happy.
-    // componentDidUpdate(_: ProfileProps, prevState: ProfileState) {
-    //     if (prevState === this.state) {
-    //         return;
-    //     }
-    // }
-
-
-    //if profile is auth user's profile, then make tool tips visible
-    // tooltipVisibility(): CSSProperties {
-    //     if (this.state.isEditing === false) {
-    //         return { visibility: 'hidden' };
-    //     } else {
-    //         return { visibility: 'visible' };
-    //     }
-    // }
-
-
-    /**
-     * set name field to either input field or 
-     * plain text depending on if auth-user is viewing or not
-     */
-    // function setName() {
-    //     return (<div className='name ant-card-meta-title'>{this.props.profileView.user.realname}</div>);
-    // }
 
     // Create tootip for Organization Auto Complete
     // function institutionToolTip() {
@@ -942,10 +893,53 @@ function Profile(props: ProfileProps) {
         setIsFormTouched(isTouched);
     }
 
+    function onORCIDLink() {
+        // open window, without much or any window decoration.
+        const eventId = uuidv4();
+        // const url = new URL(`${document.location.origin}#orcidlink/link`);
+        // TODO: for better ergonomics in development, should be able to get the
+        // kbase environment host from the config...
+
+        const url = new URL(props.baseUrl);
+        // const url = new URL(window.location.href);
+        url.hash = '#orcidlink/link';
+
+        // {id: string} is the ReturnFromWindow type expected by ORCIDLink.
+        url.searchParams.set('ui_options', "hide-ui");
+        url.searchParams.set('return_link', JSON.stringify({ type: 'window', origin: window.location.origin, id: eventId, label: 'User Profile' }));
+
+        const newWindow = window.open(url.toString(), '_blank', "popup,width=1079,height=960");
+        if (newWindow === null) {
+            // what to do?
+            // return <Alert type="error" message="Cannot open new window for linking" />
+            console.error('Cannot open new window for linking');
+            return;
+        }
+
+        const handleEvent = ({ data }: MessageEvent<any>) => {
+            if (typeof data === 'object' && data !== null) {
+                const { id } = data;
+                if (eventId === id) {
+                    // this.evaluate();
+                    // do something here...
+                    props.checkORCID(props.profileView.user.username);
+                    props.fetchProfile(props.profileView.user.username);
+                    if (newWindow) {
+                        newWindow.close();
+                        window.removeEventListener('message', handleEvent);
+                    }
+                }
+            }
+
+        };
+        window.addEventListener('message', handleEvent);
+    }
+
     function renderControls() {
         if (!props.profileView.editEnable) {
             return;
         }
+
         const warnings = (() => {
             if (props.profileView.warnings.length > 0) {
                 const showWarnings = () => {
@@ -962,7 +956,8 @@ function Profile(props: ProfileProps) {
                     onClick={showWarnings}
                 >Warnings</Button>
             }
-        })()
+        })();
+
         let button;
         // let bannerText;
         if (isEditing) {
@@ -997,6 +992,15 @@ function Profile(props: ProfileProps) {
             //     Closing the editor returns your profile to display mode; all edits are saved as you make them.
             // </span>;
         } else {
+
+            const orcidLinkButton = (() => {
+                if (props.orcidState.status === AsyncProcessStatus.SUCCESS) {
+                    if (props.orcidState.value.orcidId) {
+                        return <Button disabled>ORCID Linked</Button>
+                    }
+                    return <Button onClick={onORCIDLink}>Link to ORCID</Button>
+                }
+            })();
             button = <Space wrap >
                 <Button
                     icon={<EditOutlined />}
@@ -1004,6 +1008,7 @@ function Profile(props: ProfileProps) {
                     onClick={enableEditing}>
                     Edit Profile
                 </Button>
+                {orcidLinkButton}
                 {warnings}
             </Space>;
 
@@ -1106,24 +1111,23 @@ function Profile(props: ProfileProps) {
             {orcidId}
         </a>;
 
-        const visibiltyMessage = (() => {
+        const visibilityMessage = (() => {
             if (showORCIDIdWatched) {
-                return <span>showing in profile</span>
+                return <Typography.Text type="success">showing in profile</Typography.Text>
             }
-            return <span>not showing in profile</span>
+            return <Typography.Text type="warning">not showing in profile</Typography.Text>
         })();
 
 
         function makeUIURL(path: string) {
-            const UI_BASE_URL = "https://ci.kbase.us";
-            const url = new URL(UI_BASE_URL);
+            const url = new URL(props.baseUrl);
             url.hash = `${path}`;
             return url.toString();
         }
 
         return <div>
             <div>{link}</div>
-            <div style={{ fontStyle: 'italic' }}>{visibiltyMessage}</div>
+            <div style={{ fontStyle: 'italic' }}>{visibilityMessage}</div>
             <div className="Profile-field-force-inline">
                 <Form.Item name="showORCIDId" label="Display in profile?" valuePropName="checked">
                     <Switch checkedChildren="Yes" unCheckedChildren="No" />
@@ -1156,9 +1160,11 @@ function Profile(props: ProfileProps) {
                 // open window, without much or any window decoration.
                 const eventId = uuidv4();
                 // const url = new URL(`${document.location.origin}#orcidlink/link`);
-                // TODO: for better ergonomics in development, should be able to get the 
+                // TODO: for better ergonomics in development, should be able to get the
                 // kbase environment host from the config...
-                const url = new URL('https://ci.kbase.us');
+
+                // TODO - fix!
+                const url = new URL(props.baseUrl);
                 // const url = new URL(window.location.href);
                 url.hash = '#orcidlink/link';
 
@@ -1173,7 +1179,6 @@ function Profile(props: ProfileProps) {
                     console.error('Cannot open new window for linking');
                     return;
                 }
-
 
                 const handleEvent = ({ data }: MessageEvent<any>) => {
                     if (typeof data === 'object' && data !== null) {
@@ -1191,8 +1196,6 @@ function Profile(props: ProfileProps) {
 
                 };
                 window.addEventListener('message', handleEvent);
-                console.error('messages?', newWindow);
-
             }
 
             const alertMessage = <div>
@@ -1229,15 +1232,6 @@ function Profile(props: ProfileProps) {
                 }
         }
     }
-
-    // function onFormFinish(values: any) {
-    //     console.log('finished!', values);
-    // }
-
-    // function onFieldChange(changedFields: any, allFields: any) {
-    //     console.log('on field changed', changedFields);
-    // }
-
 
     /**
      * Convert form values and state into a user profile update
@@ -1504,15 +1498,7 @@ function Profile(props: ProfileProps) {
         }
 
         return update
-
     }
-
-    // function onValuesChange(changedValues: unknown, allValues: FormData) {
-    //     console.log('onValuesChange');
-    //     // const { isValid, isTouched } = checkForm();
-    //     // setIsFormValid(isValid);
-    //     // setIsFormTouched(isTouched);
-    // }
 
     function onFieldsChange(_: Array<FieldData>, allFields: Array<FieldData>) {
         const { isValid, isTouched } = checkForm(allFields);

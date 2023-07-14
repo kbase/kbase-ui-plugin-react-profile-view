@@ -431,7 +431,6 @@ export class ORCIDLinkServiceClient extends ServiceClient {
     }
 
     async saveWork(work: WorkUpdate): Promise<Work> {
-        console.log('saveWork', toJSON(work), work);
         return await this.put<Work>(`${WORKS_PATH}`, toJSON(work))
     }
 
