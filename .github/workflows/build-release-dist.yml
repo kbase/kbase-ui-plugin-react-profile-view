@@ -20,7 +20,7 @@ jobs:
       # Build the plugin
       #
       - name: Build the plugin dist
-        run: make build
+        run: ./Taskfile build
 
       #
       # Add the built assets to the release

@@ -1,0 +1,33 @@
+#!/bin/bash
+
+#
+# PRIVATE
+#
+
+
+
+function _noop {
+    echo "Not implemented yet"
+}
+
+#
+# PUBLIC
+#
+
+function build {
+    ./scripts/build.sh
+}
+
+
+function help {
+    echo "$0 <task> <args>"
+    echo "Runs the tasks listed below."
+    echo "To find out more about them, either read the source"
+    echo "for ${0} or the docs located in 'docs/tasks.md'."
+    echo "Tasks:"
+    # Note that this omits private functions - those prefixed with an _
+    compgen -A function | grep -e '^[^_]' | cat -n
+}
+
+TIMEFORMAT="Task completed in %3lR"
+time "${@:-help}"

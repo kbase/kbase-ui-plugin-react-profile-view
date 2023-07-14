@@ -23,4 +23,4 @@ jobs:
       # Build the plugin
       #
       - name: Build the plugin dist
-        run: make build
+        run: ./Taskfile build
