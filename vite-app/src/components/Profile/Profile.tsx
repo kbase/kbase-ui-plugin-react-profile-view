@@ -17,6 +17,7 @@ import {
     Space,
     Spin,
     Switch,
+    Tooltip,
     Typography,
     message
 } from 'antd';
@@ -998,7 +999,9 @@ function Profile(props: ProfileProps) {
                     if (props.orcidState.value.orcidId) {
                         return <Button disabled>ORCID Linked</Button>
                     }
-                    return <Button onClick={onORCIDLink}>Link to ORCID</Button>
+                    return <Tooltip title="Click this button to link your KBase account to your ORCID account">
+                        <Button onClick={onORCIDLink}>Link to ORCID</Button>
+                    </Tooltip>
                 }
             })();
             button = <Space wrap >
@@ -1199,9 +1202,8 @@ function Profile(props: ProfileProps) {
             }
 
             const alertMessage = <div>
-                Have an ORCID account?
-                <Button size="small" style={{ display: 'inline-block', marginRight: '0.5rem' }} onClick={onORCIDLink}>Link It</Button>
-                to your KBase account and show it in your profile.
+                Have an ORCID account? Create an <a href={`${props.baseUrl}/#orcidlink`} target="_blank">ORCID Link</a> to
+                show your ORCID Id in your profile.
             </div>
             return <Alert message={alertMessage} />
         }
