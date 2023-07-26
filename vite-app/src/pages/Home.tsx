@@ -118,7 +118,7 @@ class Home extends React.Component<HomeProps, HomeState> {
     // wrap search user component with a div so that display can be controlled.
     // in order to place search component/box on the navigation tab, 
     // make it into a variable and insert it as tabBarExtraContent. 
-    searchOnATab = <div className="search-on-a-tab">Search other users <SearchUsersContainer /></div>;
+    searchOnATab = <div className="search-on-a-tab">Search for users <SearchUsersContainer /></div>;
 
     render() {
         const items: TabsProps['items'] = [{

@@ -113,15 +113,12 @@ class SearchUsers extends React.Component<SearchUsersProps, SearchUsersState> {
                 style={{ width: 250 }}
                 allowClear
                 showSearch
+                filterOption={false}
                 placeholder={`Enter ${MINIMUM_SEARCH_CHARS} or more characters`}
                 showArrow={false}
-                // onInputKeyDown={(e) => { e.stopPropagation(); }} // this is required so that tabs don't respond to key board events
                 onSearch={this.onSearchHandler.bind(this)}
                 onChange={this.onChangeHandler.bind(this)}
                 notFoundContent={notFoundContent}
-                // onMouseLeave={this.onMouseLeaveHandler.bind(this)}
-                // onMouseEnter={this.onMouseEnterHandler.bind(this)}
-                // optionFilterProp='label'
                 options={options}
             />
         );

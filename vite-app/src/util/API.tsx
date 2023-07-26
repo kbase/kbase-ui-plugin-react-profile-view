@@ -245,7 +245,17 @@ function assertFieldType(obj: JSONObject, name: string, types: Array<string>, op
 
 export type ProfileWarnings = Array<string>;
 
-// TODO: Yikes, this should actually be called fixProfile!
+/**
+ * Inspect the profile, ensuring fields are within spec and if any are out of spec, repair them.
+ * 
+ * There is not really a case for failure here. In the most egregious cases we may just have to 
+ * remove a field value.
+ * 
+ * See the ...
+ * 
+ * @param rawPossibleUserProfile 
+ * @returns 
+ */
 function fixProfile(rawPossibleUserProfile: unknown): [UserProfile, ProfileWarnings] {
     const warnings: ProfileWarnings = [];
     // Let us establish that this is, generally, a valid JSON-compatible
@@ -686,12 +696,11 @@ export async function fetchOrgsOfProfileAPI(username: string, token: string, ser
  * @param token kbase session cookie
  */
 export async function filteredUserAPI(searchValue: string, token: string, url: string) {
-    const body = {
+    const rpc_message = {
         version: '1.1',
         method: 'UserProfile.filter_users',
         params: [{ filter: searchValue }]
     };
-    const stringBody = JSON.stringify(body);
     const response = await fetch(url, {
         method: 'POST',
         mode: 'cors',
@@ -699,7 +708,7 @@ export async function filteredUserAPI(searchValue: string, token: string, url: s
             Authorization: token,
             'Content-Type': 'application/json'
         },
-        body: stringBody
+        body: JSON.stringify(rpc_message)
     });
     if (response.status === 500) {
         console.error('500 response:', response);
@@ -707,9 +716,6 @@ export async function filteredUserAPI(searchValue: string, token: string, url: s
     }
     try {
         const { result: [users] } = await response.json();
-        // if you try to: return response.json, it will get error below
-        // Unhandled Rejection (TypeError): Failed to execute 'json' on 'Response': body stream is locked
-        // but assigning it to a variable somehow magically works.
         return [response.status, users];
     } catch (err) {
         console.error('fetch search users failed', response);
