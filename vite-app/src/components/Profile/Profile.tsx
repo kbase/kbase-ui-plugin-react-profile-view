@@ -55,7 +55,7 @@ export interface ProfileProps {
 }
 
 export type KeyOfType<Type, ValueType> = keyof {
-    [Key in keyof Type as Type[Key] extends ValueType ? Key : never]: any;
+    [Key in keyof Type as Type[Key] extends ValueType ? Key : never]: unknown;
 };
 
 export interface FormDataAffiliation {
@@ -92,6 +92,13 @@ interface FieldData {
     touched?: boolean;
     validating?: boolean;
     errors?: string[];
+}
+
+export interface ReturnLink {
+    type: string;
+    origin: string;
+    id: string;
+    label: string;
 }
 
 /**
@@ -671,7 +678,14 @@ function Profile(props: ProfileProps) {
                         })}
                         <div className='AffiliationsRow'>
                             <div className='AffiliationsCol'>
-                                <Button icon={<PlusOutlined />} type="primary" onClick={() => { add() }}>
+                                <Button icon={<PlusOutlined />} type="primary" onClick={() => {
+                                    // Note that start and end year are strings, as these values 
+                                    // match the field, not the profile affiliation value.
+                                    // yeah, and we don't actually have to supply the full object, 
+                                    // just a placeholder object.
+                                    const defaultValue = {}
+                                    add(defaultValue)
+                                }}>
                                     {fields.length === 0 ? 'Add Your First Affiliation' : 'Add Another Affiliation'}
                                 </Button>
                             </div>
@@ -907,7 +921,12 @@ function Profile(props: ProfileProps) {
 
         // {id: string} is the ReturnFromWindow type expected by ORCIDLink.
         url.searchParams.set('ui_options', "hide-ui");
-        url.searchParams.set('return_link', JSON.stringify({ type: 'window', origin: window.location.origin, id: eventId, label: 'User Profile' }));
+        url.searchParams.set('return_link', JSON.stringify({
+            type: 'window',
+            origin: window.location.origin,
+            id: eventId,
+            label: 'User Profile'
+        }));
 
         const newWindow = window.open(url.toString(), '_blank', "popup,width=1079,height=960");
         if (newWindow === null) {
@@ -917,7 +936,7 @@ function Profile(props: ProfileProps) {
             return;
         }
 
-        const handleEvent = ({ data }: MessageEvent<any>) => {
+        const handleEvent = ({ data }: MessageEvent<ReturnLink>) => {
             if (typeof data === 'object' && data !== null) {
                 const { id } = data;
                 if (eventId === id) {
@@ -1499,7 +1518,7 @@ function Profile(props: ProfileProps) {
     const showORCIDId = preferences ? (preferences['showORCIDId']?.value ? true : false) : false;
 
     // Needs to be string for the input control.
-    const affiliations = typeof rawAffiliations === 'undefined' ? {} : rawAffiliations
+    const affiliations = typeof rawAffiliations === 'undefined' ? [] : rawAffiliations
         .filter(({ started, title, organization }) => {
             return (title && title.length && organization && organization.length &&
                 started);
