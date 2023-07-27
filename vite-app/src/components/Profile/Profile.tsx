@@ -1,4 +1,4 @@
-import { CloseOutlined, DeleteOutlined, EditOutlined, ExclamationOutlined, PlusOutlined, SaveOutlined } from '@ant-design/icons';
+import { CloseOutlined, DeleteOutlined, EditOutlined, ExclamationOutlined, LinkOutlined, PlusOutlined, SaveOutlined } from '@ant-design/icons';
 import { AsyncProcessStatus } from '@kbase/ui-lib';
 import {
     Alert,
@@ -18,9 +18,9 @@ import {
     Spin,
     Switch,
     Tooltip,
-    Typography,
     message
 } from 'antd';
+import Link from 'antd/es/typography/Link';
 import DOMPurify from 'dompurify';
 import { marked } from 'marked';
 import { useState } from 'react';
@@ -116,7 +116,6 @@ function Profile(props: ProfileProps) {
     const [isFormValid, setIsFormValid] = useState(false);
     const [isFormTouched, setIsFormTouched] = useState(false);
     const [messageAPI, contextHolder] = message.useMessage();
-    const showORCIDIdWatched = Form.useWatch('showORCIDId', { form })
 
     function enableEditing() {
         setIsEditing(true);
@@ -543,7 +542,7 @@ function Profile(props: ProfileProps) {
     }
 
     /**
-     * builds affliations card
+     * builds affiliations card
      *  - Choose between the non-auth user profile  
      *    vs. editable user profile 
      *  - Return either form or plain text
@@ -563,8 +562,8 @@ function Profile(props: ProfileProps) {
                     <div className="AffiliationsRow">
                         <div className="AffiliationsCol" >Position</div>
                         <div className="AffiliationsCol">Organization</div>
-                        <div className="AffiliationsCol">Year Started</div>
-                        <div className="AffiliationsCol">Year Ended</div>
+                        <div className="AffiliationsCol">Start</div>
+                        <div className="AffiliationsCol">End</div>
                         <div className="AffiliationsCol"></div>
                     </div>
                 </div>
@@ -626,6 +625,14 @@ function Profile(props: ProfileProps) {
                                                     if ((year < 1900) || (year > 2100)) {
                                                         throw new Error('must be between 1900 and 2100');
                                                     }
+
+                                                    const ended = form.getFieldValue(['affiliations', index, 'ended']);
+                                                    if (!ended) {
+                                                        return;
+                                                    }
+                                                    if (year > parseInt(ended, 10)) {
+                                                        throw new Error('must be less than or equal to the end year');
+                                                    }
                                                 }
                                             }
                                         ]}
@@ -657,6 +664,14 @@ function Profile(props: ProfileProps) {
                                                     const year = parseInt(value, 10);
                                                     if ((year < 1900) || (year > 2100)) {
                                                         throw new Error('must be between 1900 and 2100');
+                                                    }
+
+                                                    const started = form.getFieldValue(['affiliations', index, 'started']);
+                                                    if (!started) {
+                                                        return;
+                                                    }
+                                                    if (year < parseInt(started, 10)) {
+                                                        throw new Error('must be greater than or equal to the start year');
                                                     }
                                                 }
                                             }
@@ -698,6 +713,7 @@ function Profile(props: ProfileProps) {
 
     function renderAffiliationsView() {
         const affiliations = props.profileView.profile.userdata.affiliations;
+
         // non-empty array
 
         // TODO: not sure about that last case -- at least explain it
@@ -705,6 +721,34 @@ function Profile(props: ProfileProps) {
             return (
                 <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="No Affiliations" />
             );
+
+        affiliations.sort((a: UserProfileAffiliation, b: UserProfileAffiliation) => {
+            const startedSort = a.started - b.started;
+            if (startedSort !== 0) {
+                return startedSort;
+            }
+
+            const endedSort = (() => {
+                if (!a.ended) {
+                    return -1;
+                }
+                if (!b.ended) {
+                    return 1;
+                }
+                return a.ended - b.ended;
+            })();
+
+            if (endedSort !== 0) {
+                return endedSort;
+            }
+
+            const titleSort = a.title.localeCompare(b.title);
+            if (titleSort !== 0) {
+                return titleSort;
+            }
+
+            return a.organization.localeCompare(b.organization);
+        });
 
         return (
             <table className="LayoutTable">
@@ -983,7 +1027,6 @@ function Profile(props: ProfileProps) {
         })();
 
         let button;
-        // let bannerText;
         if (isEditing) {
             button = <Space wrap>
                 <Button
@@ -991,13 +1034,13 @@ function Profile(props: ProfileProps) {
                     disabled={!(isFormTouched && isFormValid)}
                     type="primary"
                     onClick={saveForm}>
-                    Save
+                    {isFormTouched ? 'Save Changes' : 'No Changes to Save'}
                 </Button>
                 <Button
                     icon={<CloseOutlined />}
                     danger
                     onClick={cancelForm}>
-                    Cancel
+                    {isFormTouched ? 'Cancel Changes and Close Form' : 'Close Form'}
                 </Button>
                 <Button
                     danger
@@ -1006,21 +1049,11 @@ function Profile(props: ProfileProps) {
                     Reset
                 </Button>
             </Space>
-            // button = <Button
-            //     icon={<CloseOutlined />}
-            //     danger
-            //     onClick={toggleEditing}>
-            //     Close Editor
-            // </Button>;
-            // bannerText = <span>
-            //     Closing the editor returns your profile to display mode; all edits are saved as you make them.
-            // </span>;
         } else {
-
             const orcidLinkButton = (() => {
                 if (props.orcidState.status === AsyncProcessStatus.SUCCESS) {
                     if (props.orcidState.value.orcidId) {
-                        return <Button disabled>ORCID Linked</Button>
+                        return;
                     }
                     return <Tooltip title="Click this button to link your KBase account to your ORCID account">
                         <Button onClick={onORCIDLink}>Link to ORCID</Button>
@@ -1123,58 +1156,56 @@ function Profile(props: ProfileProps) {
 
 
     function renderORCIDIcon() {
-        return <Image
+        return <img
             src={orcidIcon}
             alt="ORCID icon"
-            preview={false}
-            style={{ height: '1em', marginRight: '0.25em' }} />
+            style={{ height: '1em', marginRight: '0.25em', flex: '0 0 auto' }} />
     }
 
+    function makeUIURL(path: string) {
+        const url = new URL(props.baseUrl);
+        url.hash = `${path}`;
+        return url.toString();
+    }
 
     function renderORCIDIdLinkEdit(orcidId: string) {
-        const link = <a href={`${ORCID_URL}/${orcidId}`} target="_blank" rel="noreferrer">
-            {renderORCIDIcon()}
-            {orcidId}
-        </a>;
-
-        const visibilityMessage = (() => {
-            if (showORCIDIdWatched) {
-                return <Typography.Text type="success">showing in profile</Typography.Text>
-            }
-            return <Typography.Text type="warning">not showing in profile</Typography.Text>
-        })();
-
-
-        function makeUIURL(path: string) {
-            const url = new URL(props.baseUrl);
-            url.hash = `${path}`;
-            return url.toString();
-        }
+        // const visibilityMessage = (() => {
+        //     if (showORCIDIdWatched) {
+        //         return <Typography.Text type="success">showing in profile</Typography.Text>
+        //     }
+        //     return <Typography.Text type="warning">not showing in profile</Typography.Text>
+        // })();
 
         return <div>
-            <div>{link}</div>
-            <div style={{ fontStyle: 'italic' }}>{visibilityMessage}</div>
+            <div>{renderORCIDIdLink(orcidId)}</div>
+            {/* <div style={{ fontStyle: 'italic' }}>{visibilityMessage}</div> */}
             <div className="Profile-field-force-inline">
                 <Form.Item name="showORCIDId" label="Display in profile?" valuePropName="checked">
                     <Switch checkedChildren="Yes" unCheckedChildren="No" />
                 </Form.Item>
             </div>
             <div>
-                <a href={makeUIURL('orcidlink')} target="_blank" rel="noreferrer">ORCID Link Manager</a>
+                <a href={makeUIURL('orcidlink')} target="_blank" rel="noreferrer"><LinkOutlined /> ORCID Link Manager</a>
             </div>
         </div>
 
+    }
+
+    function renderORCIDIdLink(orcidId: string) {
+        return <Link href={`${ORCID_URL}/${orcidId}`} target="_blank" rel="noreferrer" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+            {renderORCIDIcon()}
+            <div style={{ flex: '1 1 0' }}>
+                {orcidId}
+            </div>
+        </Link>;
     }
 
     function renderORCIDIdLinkView(orcidId: string) {
         if (!props.profileView.profile.preferences?.showORCIDId.value) {
             return;
         }
+        return renderORCIDIdLink(orcidId);
 
-        return <a href={`${ORCID_URL}/${orcidId}`} target="_blank" rel="noreferrer">
-            {renderORCIDIcon()}
-            {orcidId}
-        </a>;
     }
 
     function renderORCIDId(orcidId: string | null) {
@@ -1585,6 +1616,34 @@ function Profile(props: ProfileProps) {
             return affiliation;
 
         });
+
+    affiliations.sort((a: FormDataAffiliation, b: FormDataAffiliation) => {
+        const startedSort = parseInt(a.started, 10) - parseInt(b.started, 10);
+        if (startedSort !== 0) {
+            return startedSort;
+        }
+
+        const endedSort = (() => {
+            if (!a.ended) {
+                return -1;
+            }
+            if (!b.ended) {
+                return 1;
+            }
+            return parseInt(a.ended, 10) - parseInt(b.ended, 10);
+        })();
+
+        if (endedSort !== 0) {
+            return endedSort;
+        }
+
+        const titleSort = a.title.localeCompare(b.title);
+        if (titleSort !== 0) {
+            return titleSort;
+        }
+
+        return a.organization.localeCompare(b.organization);
+    });
 
     const initialValues = {
         researchInterests, researchInterestsOther, jobTitle, jobTitleOther,

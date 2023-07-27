@@ -1,4 +1,5 @@
 import { AutoComplete, Form } from 'antd';
+import Search from 'antd/es/input/Search';
 import React from 'react';
 import { MAX_INSTITUTIONS_TO_SHOW, MIN_ORGANIZATION_CHARS } from '../../../constants';
 import institutions from '../../../dataSources/institutions';
@@ -78,7 +79,9 @@ export default class Organization extends React.Component<OrganizationProps, Org
                 options={this.state.institutionFiltered}
                 onSearch={this.onSearch.bind(this)}
                 popupMatchSelectWidth={false}
-            />
+            >
+                <Search autoComplete='' />
+            </AutoComplete>
         </Form.Item>;
     }
 }
