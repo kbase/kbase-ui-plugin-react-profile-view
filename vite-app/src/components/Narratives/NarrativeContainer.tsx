@@ -4,9 +4,10 @@ import { StoreState } from '../../redux/interfaces';
 import WhichComponent from './WhichComponent';
 
 function mapStateToProps(state: StoreState) {
-    const { narrativeState } = state;
+    const { supplementalBaseState: { uiOrigin }, narrativeState } = state;
     return {
-        narrativeState
+        narrativeState,
+        uiOrigin
     };
 }
 

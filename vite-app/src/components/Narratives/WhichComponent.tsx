@@ -5,7 +5,8 @@ import { NarrativesState } from '../../redux/interfaces'; //interface
 import Narratives from './Narratives';
 
 interface LoaderProps {
-    narrativeState: NarrativesState
+    narrativeState: NarrativesState,
+    uiOrigin: string;
 }
 
 export default class Loader extends Component<LoaderProps> {
@@ -27,6 +28,7 @@ export default class Loader extends Component<LoaderProps> {
                     narratives={narrativesList}
                     isOwner={isOwner}
                     loading={false}
+                    uiOrigin={this.props.uiOrigin}
                 />
             }
         }
