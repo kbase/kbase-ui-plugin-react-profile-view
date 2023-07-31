@@ -164,8 +164,6 @@ export interface UserProfileProfile {
 }
 
 
-
-
 export interface UserProfile {
     user: UserProfileUser,
     profile: UserProfileProfile,
@@ -384,61 +382,6 @@ function fixProfile(rawPossibleUserProfile: unknown): [UserProfile, ProfileWarni
     return [possibleUserProfile as unknown as UserProfile, warnings];
 }
 
-
-
-// TODO: Yikes, this should actually be called fixProfile!
-// function validateProfile(possibleProfile: unknown): asserts possibleProfile is UserProfile {
-//     if (!isJSONObject(possibleProfile)) {
-//         throw new Error("User profile is not an object");
-//     }
-
-
-
-//     if (!hasOwnProperty(possibleProfile, 'user')) {
-//         throw new Error('User profile missing "user" property');
-//     }
-
-//     if (!hasOwnProperty(possibleProfile, "profile")) {
-//         throw new Error('User profile missing "profile" property');
-//     }
-
-//     const profile = possibleProfile.profile;
-
-//     if (!isJSONObject(profile)) {
-//         throw new Error('User profile "profile" is not an object');
-//     }
-
-//     if (!hasOwnProperty(profile, "userdata")) {
-//         throw new Error('User profile missing "userdata" property');
-//     }
-//     const userdata = profile.userdata;
-//     if (!isJSONObject(userdata)) {
-//         throw new Error('User profile "userdata" is not an object');
-//     }
-
-//     if (hasOwnProperty(userdata, "affiliations")) {
-//         const affiliations = userdata["affiliations"];
-//         if (!isJSONArray(affiliations)) {
-//             throw new Error('User profile "affiliations" is not an array');
-//         }
-//         const fixedAffiliations = affiliations
-//             .map((affiliation) => {
-//                 if (!isJSONObject(affiliation)) {
-//                     throw new Error('User profile "affiliation" is not an object');
-//                 }
-//                 // Check fields.
-//                 assertFieldType(affiliation, "title", ["string"]);
-//                 assertFieldType(affiliation, "organization", ["string"]);
-//                 assertFieldType(affiliation, "started", ["number"])
-//                 assertFieldType(affiliation, "ended", ["number", "string"], { nullable: true })
-
-//                 return affiliation;
-//             });
-//         userdata.affiliations = fixedAffiliations;
-//     }
-
-//     // TODO: more assertions?
-// }
 
 /**
  * Return profile data
