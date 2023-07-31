@@ -965,17 +965,22 @@ function Profile(props: ProfileProps) {
 
         const url = new URL(props.baseUrl);
         // const url = new URL(window.location.href);
+        console.log('URL', url.toString());
         url.hash = '#orcidlink/link';
 
+        // TODO: if this works, we can give the window a unique uuid name when the app loads.
+        window.name = "FOOBAR";
+
         // {id: string} is the ReturnFromWindow type expected by ORCIDLink.
+        const origin = window.location.origin;
+        // const origin = "https://ci.kbase.us";
         url.searchParams.set('ui_options', "hide-ui");
         url.searchParams.set('return_link', JSON.stringify({
             type: 'window',
-            origin: window.location.origin,
+            origin,
             id: eventId,
             label: 'User Profile'
         }));
-
         const newWindow = window.open(url.toString(), '_blank', "popup,width=1079,height=960");
         if (newWindow === null) {
             // what to do?
@@ -998,9 +1003,40 @@ function Profile(props: ProfileProps) {
                     }
                 }
             }
-
         };
         window.addEventListener('message', handleEvent);
+    }
+
+    function getLinkingLink() {
+        const linkingURL = new URL(`${props.baseUrl}/#orcidlink/link`);
+        const returnURL = new URL(document.location.href);
+        const returnLink = {
+            type: 'link',
+            url: returnURL.toString(),
+            label: 'User Profile'
+        }
+        linkingURL.searchParams.set('return_link', JSON.stringify(returnLink));
+        return linkingURL;
+    }
+
+    function onORCIDLink2() {
+        const onOk = () => {
+            document.location.href = getLinkingLink().toString();
+        }
+
+        Modal.confirm({
+            title: 'Proceed to ORCID Link',
+            onOk,
+            content: <>
+                <p>
+                    In order to create your ORCID Link, you'll leave this page, but if all goes
+                    well, return here after the linking process.
+                </p>
+            </>
+        });
+
+
+
     }
 
     function renderControls() {
@@ -1056,7 +1092,17 @@ function Profile(props: ProfileProps) {
                         return;
                     }
                     return <Tooltip title="Click this button to link your KBase account to your ORCID account">
-                        <Button onClick={onORCIDLink}>Link to ORCID</Button>
+                        <Button onClick={onORCIDLink}>Link to ORCID (popup)</Button>
+                    </Tooltip>
+                }
+            })();
+            const orcidLinkButton2 = (() => {
+                if (props.orcidState.status === AsyncProcessStatus.SUCCESS) {
+                    if (props.orcidState.value.orcidId) {
+                        return;
+                    }
+                    return <Tooltip title="Click this button to link your KBase account to your ORCID account">
+                        <Button onClick={onORCIDLink2}>Link to ORCID...</Button>
                     </Tooltip>
                 }
             })();
@@ -1068,6 +1114,7 @@ function Profile(props: ProfileProps) {
                     Edit Profile
                 </Button>
                 {orcidLinkButton}
+                {orcidLinkButton2}
                 {warnings}
             </Space>;
 
@@ -1180,7 +1227,7 @@ function Profile(props: ProfileProps) {
             <div>{renderORCIDIdLink(orcidId)}</div>
             {/* <div style={{ fontStyle: 'italic' }}>{visibilityMessage}</div> */}
             <div className="Profile-field-force-inline">
-                <Form.Item name="showORCIDId" label="Display in profile?" valuePropName="checked">
+                <Form.Item name="showORCIDId" label="Show?" valuePropName="checked">
                     <Switch checkedChildren="Yes" unCheckedChildren="No" />
                 </Form.Item>
             </div>

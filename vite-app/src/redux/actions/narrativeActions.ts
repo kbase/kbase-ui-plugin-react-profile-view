@@ -84,40 +84,10 @@ export function loadNarratives(filter: string, viewedUsername: string) {
             case 'public': {
                 // TODO: the api call should be typed!!!!!!!
                 const response = await fetchNarrativesAPI(filter, token, serviceWizardURL);
-
-                // 
                 if (typeof response !== 'undefined') {
                     dispatch(fetchNarrativesSuccess({ narrativesList: response, isOwner }))
-                    // dispatch({
-                    //     type: ActionTypes.FETCH_NARRATIVE_SUCCESS,
-                    //     payload: {
-                    //         narrativeList: response,
-                    //         loading: false,
-                    //         isOwner
-                    //     }
-                    // });
                 } else {
-                    // // OMG, just do something about this ...
-                    // const fetchFailed = [{
-                    //     wsID: '',
-                    //     permission: '',
-                    //     name: 'Something went wrong. Please check console for error messages.',
-                    //     last_saved: 0,
-                    //     users: {},
-                    //     owner: '',
-                    //     narrative_detail: { creator: '' }
-                    // }];
-
                     dispatch(fetchNarrativesError({ message: 'Error fetching Narratives' }));
-
-                    // dispatch({
-                    //     type: ActionTypes.FETCH_NARRATIVE_ERROR,
-                    //     payload: {
-                    //         narrativeList: fetchFailed,
-                    //         loading: false,
-                    //         isOwner
-                    //     }
-                    // });
                 }
                 break;
             }
