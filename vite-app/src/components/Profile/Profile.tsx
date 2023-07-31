@@ -1021,7 +1021,7 @@ function Profile(props: ProfileProps) {
 
     function onORCIDLink2() {
         const onOk = () => {
-            document.location.href = getLinkingLink().toString();
+            window.open(getLinkingLink().toString(), '_parent');
         }
 
         Modal.confirm({
