@@ -1009,7 +1009,13 @@ function Profile(props: ProfileProps) {
 
     function getLinkingLink() {
         const linkingURL = new URL(`${props.baseUrl}/#orcidlink/link`);
-        const returnURL = new URL(document.location.href);
+        const returnURL = (() => {
+            if (window.parent) {
+                return new URL(window.parent.location.href);
+            } else {
+                return new URL(window.location.href);
+            }
+        })();
         const returnLink = {
             type: 'link',
             url: returnURL.toString(),
@@ -1034,9 +1040,6 @@ function Profile(props: ProfileProps) {
                 </p>
             </>
         });
-
-
-
     }
 
     function renderControls() {
