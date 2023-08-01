@@ -13,23 +13,21 @@ Tech Stack:
 
 ## Usage
 
-Edit user profile or serach other users' profile. 
+View any user profile, edit own user profile, and search other users' profile.
 
 ## Install and run
 
 Create a project folder and clone the repo and KBase-UI https://github.com/kbase/kbase-ui to the same folder.
 
-Navigate to this repo's folder and run
+gate to this repo's directory, and then into the `vite-app` directory.
 
-    ```bash
-    yarn build
-    ```
+```bash
+cd vite-app
+npm install
+npm run dev
+```
 
-Navigate to kbase-ui folder and run:
 
-    ```bash
-    make dev-start plugins="react-profile-view" build-image=t
-    ```
 
 More details on running Kbase-UI and plugins in KBase-UI docs.
 

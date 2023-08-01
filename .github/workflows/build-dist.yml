@@ -1,0 +1,26 @@
+name: Plugin build and create dist in PR against master
+on:
+  pull_request:
+    branches:
+      - master
+    types:
+      - opened
+      - reopened
+      - synchronize
+jobs:
+  build-dist:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out GitHub Repo
+        uses: actions/checkout@v3
+
+      - name: Use specific node version
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      #
+      # Build the plugin
+      #
+      - name: Build the plugin dist
+        run: ./Taskfile build
